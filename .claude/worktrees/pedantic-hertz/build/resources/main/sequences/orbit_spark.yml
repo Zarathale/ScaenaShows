@@ -1,0 +1,18 @@
+id: orbit_spark
+name: "Orbit Spark"
+description: "Randomized sparkles around the player."
+duration_ticks: 160
+
+shots:
+  - at: 0
+    preset: scae_burst_leaf
+    count: 1
+  - at: 40
+    preset: bday_pastel_burst
+    count: 1
+  - at: 80
+    preset: pride_burst_rainbow
+    count: 1
+  - at: 120
+    preset: bday_confetti_ball
+    count: 2

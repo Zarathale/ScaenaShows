@@ -1,0 +1,15 @@
+id: finale_hit
+name: "Finale Hit"
+description: "A clean, emphatic finale hit."
+duration_ticks: 60
+
+shots:
+  - at: 0
+    preset: bday_finale_large
+    count: 1
+  - at: 10
+    preset: scae_large_fanfare
+    count: 1
+  - at: 25
+    preset: pride_finale_large
+    count: 1

@@ -1,0 +1,21 @@
+id: pride_wave
+name: "Pride Wave"
+description: "A rainbow wave: star pulses, then a burst swell."
+duration_ticks: 220
+
+shots:
+  - at: 0
+    preset: pride_wave_star
+    count: 1
+  - at: 40
+    preset: pride_wave_star
+    count: 1
+  - at: 80
+    preset: pride_wave_star
+    count: 2
+  - at: 130
+    preset: pride_burst_rainbow
+    count: 2
+  - at: 180
+    preset: pride_trans_glow_ball
+    count: 2

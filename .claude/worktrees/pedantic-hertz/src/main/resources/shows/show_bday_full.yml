@@ -1,0 +1,45 @@
+id: show_bday_full
+name: "Birthday Full"
+description: "Intentional, cinematic, and joyful."
+default_mode: follow
+default_audience: broadcast
+
+bossbar:
+  enabled: true
+  title: "<gold>🎂 Birthday Show</gold>"
+  color: YELLOW
+  overlay: PROGRESS
+  audience: broadcast
+
+timeline:
+  - at: 0
+    type: SCENE
+    scene: opening
+
+  - at: 220
+    type: SCENE
+    scene: gratitude
+
+  - at: 460
+    type: SEQUENCE
+    sequence: scae_ramp
+
+  - at: 700
+    type: SCENE
+    scene: wonder
+
+  - at: 950
+    type: SCENE
+    scene: float_moment
+
+  - at: 1220
+    type: SCENE
+    scene: peak
+
+  - at: 1300
+    type: SEQUENCE
+    sequence: finale_staircase
+
+  - at: 1600
+    type: SCENE
+    scene: coda

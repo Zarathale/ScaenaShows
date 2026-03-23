@@ -1,0 +1,42 @@
+id: bday_one_per_second_12s
+name: "Birthday: One Per Second"
+description: "A steady 12s stream of close-to-player pastel fireworks."
+duration_ticks: 240
+
+shots:
+  - at: 0
+    preset: bday_pastel_star
+    count: 1
+  - at: 20
+    preset: bday_pastel_burst
+    count: 1
+  - at: 40
+    preset: bday_pastel_star
+    count: 1
+  - at: 60
+    preset: bday_pastel_burst
+    count: 1
+  - at: 80
+    preset: bday_pastel_star
+    count: 1
+  - at: 100
+    preset: bday_pastel_burst
+    count: 1
+  - at: 120
+    preset: bday_pastel_star
+    count: 1
+  - at: 140
+    preset: bday_pastel_burst
+    count: 1
+  - at: 160
+    preset: bday_pastel_star
+    count: 1
+  - at: 180
+    preset: bday_pastel_burst
+    count: 1
+  - at: 200
+    preset: bday_pastel_star
+    count: 1
+  - at: 220
+    preset: bday_pastel_burst
+    count: 1

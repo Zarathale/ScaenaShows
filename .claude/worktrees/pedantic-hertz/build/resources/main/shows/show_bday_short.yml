@@ -1,0 +1,25 @@
+id: show_bday_short
+name: "Birthday Short"
+description: "Quick, sweet, and scenic."
+default_mode: follow
+default_audience: broadcast
+
+bossbar:
+  enabled: true
+  title: "<gold>🎂 Birthday Show</gold>"
+  color: YELLOW
+  overlay: PROGRESS
+  audience: broadcast
+
+timeline:
+  - at: 0
+    type: SCENE
+    scene: opening
+
+  - at: 220
+    type: SEQUENCE
+    sequence: gentle_twinkles
+
+  - at: 360
+    type: SCENE
+    scene: coda

@@ -1,0 +1,21 @@
+id: gratitude
+name: "Gratitude"
+duration_ticks: 200
+
+events:
+  - at: 0
+    type: MESSAGE
+    audience: broadcast
+    message: "<gold>We are celebrating you today.</gold> <gray>Thank you for being a source of inspiration and wonder.</gray>"
+
+  - at: 10
+    type: SOUND
+    sound: { id: "minecraft:entity.experience_orb.pickup", category: master, volume: 1.0, pitch: 1.05 }
+
+  - at: 40
+    type: PARTICLE
+    particle: { id: "minecraft:end_rod", count: 35, offset: [0.5, 0.9, 0.5], extra: 0.01, force: true }
+
+  - at: 80
+    type: SOUND
+    sound: { id: "minecraft:block.enchantment_table.use", category: master, volume: 1.0, pitch: 1.0 }

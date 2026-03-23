@@ -1,0 +1,21 @@
+id: bday_sparkle_cascade
+name: "Birthday Sparkle Cascade"
+description: "Pastel star & burst cascade, playful and bright."
+duration_ticks: 200
+
+shots:
+  - at: 0
+    preset: bday_pastel_star
+    count: 1
+  - at: 35
+    preset: bday_pastel_burst
+    count: 1
+  - at: 70
+    preset: bday_pastel_star
+    count: 2
+  - at: 120
+    preset: bday_pastel_burst
+    count: 2
+  - at: 170
+    preset: bday_confetti_ball
+    count: 3

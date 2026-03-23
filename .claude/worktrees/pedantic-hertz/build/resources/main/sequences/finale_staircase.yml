@@ -1,0 +1,21 @@
+id: finale_staircase
+name: "Finale Staircase"
+description: "A rising staircase of intensity ending in a finale."
+duration_ticks: 200
+
+shots:
+  - at: 0
+    preset: bday_pastel_star
+    count: 1
+  - at: 40
+    preset: bday_pastel_star
+    count: 2
+  - at: 85
+    preset: scae_burst_leaf
+    count: 2
+  - at: 130
+    preset: pride_burst_rainbow
+    count: 2
+  - at: 170
+    preset: bday_finale_large
+    count: 1
