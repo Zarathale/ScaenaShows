@@ -109,9 +109,9 @@ public final class ShowCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        if (args.length < 3) {
+        if (args.length < 2) {
             invoker.sendMessage(MM.deserialize(
-                "<red>Usage: /show play <showId> <target> [targets...] [--follow|--static] [--private] [--scenes]</red>"));
+                "<red>Usage: /show play <showId> [target...] [--follow|--static] [--private] [--scenes]</red>"));
             return;
         }
 
@@ -193,9 +193,9 @@ public final class ShowCommand implements CommandExecutor, TabCompleter {
         // Deduplicate
         List<Player> unique = participants.stream().distinct().toList();
 
+        // No targets specified or resolved — default to self
         if (unique.isEmpty()) {
-            invoker.sendMessage(MM.deserialize("<red>No valid targets found.</red>"));
-            return;
+            unique = List.of(invoker);
         }
 
         String error = showManager.startShow(show, unique, invoker, privateMode, scenesMode, forceMode);
@@ -287,7 +287,7 @@ public final class ShowCommand implements CommandExecutor, TabCompleter {
     private void sendHelp(CommandSender sender) {
         sender.sendMessage(MM.deserialize("<gold><bold>ScaenaShows v2</bold></gold>"));
         sender.sendMessage(MM.deserialize("  <white>/show list</white> <gray>— list loaded shows</gray>"));
-        sender.sendMessage(MM.deserialize("  <white>/show play <showId> <target></white> <gray>— play a show</gray>"));
+        sender.sendMessage(MM.deserialize("  <white>/show play <showId> [target]</white> <gray>— play a show (defaults to self)</gray>"));
         sender.sendMessage(MM.deserialize("  <white>/show stop <player|@a></white> <gray>— stop a show</gray>"));
         sender.sendMessage(MM.deserialize("  <white>/show stopall</white> <gray>— stop all running shows</gray>"));
         sender.sendMessage(MM.deserialize("  <white>/show reload</white> <gray>— hot-reload all YAML</gray>"));

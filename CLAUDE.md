@@ -56,7 +56,7 @@ Debrief notes by cue number (C1–C12) with Claude. Revise what doesn't land. Th
 
 The plugin is working and deployed. Key facts for future Java work:
 
-- **Build:** `./gradlew shadowJar` → `build/libs/ScaenaShows-2.0.0.jar`
+- **Build:** `./gradlew shadowJar` → `build/libs/ScaenaShows-<version>.jar`
 - **Deploy:** Stop server; replace JAR; delete `plugins/ScaenaShows/cues/` and `plugins/ScaenaShows/shows/` so bundled YAMLs re-extract; start server.
 - **Commands:** `/show list|play|stop|stopall|reload`
 - **YAML loading:** Plugin scans JAR via `JarFile(getFile())` and calls `saveResource()` for each bundled YAML on first run
@@ -177,6 +177,36 @@ Do not reopen these without Alan.
 
 ---
 
+## Versioning Policy
+
+**Current version:** `2.4.0` (as of 2026-03-24)
+**Version file:** `build.gradle.kts` — the `version = "x.y.z"` line
+
+### Rules Claude must follow
+
+Before telling Alan to build, Claude **must** either bump the version or explicitly state why no bump is needed. Never let Alan build the same version number twice.
+
+**When to bump:**
+| Change type | Bump |
+|-------------|------|
+| New cues, shows, or docs added | `MINOR` (x.**y**.0) |
+| Java plugin logic changed | `MINOR` (x.**y**.0) |
+| Bug fix only, no new content | `PATCH` (x.y.**z**) |
+| Breaking schema change or major rework | `MAJOR` (**x**.0.0) |
+
+**Labeling convention:** append a short label to the commit message describing the milestone.
+Examples: `cue-library-preview`, `grief-family`, `young-persons-rewrite`, `bugfix-cue-ref`.
+
+**How to bump:**
+1. Edit `version = "x.y.z"` in `build.gradle.kts`
+2. Update the comment in `shadowJar { archiveClassifier... }` to match
+3. Update the "Current version" line above in this section
+4. Mention the new version and JAR filename when giving Alan the build command
+
+**If no bump is needed** (e.g. Alan is rebuilding the same content to verify a fix without any file changes), say so explicitly: *"No version change needed — content is identical to the last build."*
+
+---
+
 ## How to Work in This Repo
 
 ### Starting a session
@@ -207,7 +237,8 @@ When building new cues for review:
 ### Building
 ```bash
 ./gradlew shadowJar
-# Output: build/libs/ScaenaShows-2.0.0.jar
+# Output: build/libs/ScaenaShows-<version>.jar
+# Always check/bump version in build.gradle.kts before building — see Versioning Policy above.
 ```
 
 ### Deploying (after build)

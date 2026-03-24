@@ -46,6 +46,7 @@ public final class EventParser {
                 case BOSSBAR    -> new TextEvents.BossbarEvent(m);
                 // §6.2 Sound
                 case SOUND      -> new SoundEvents.SoundEvent(m);
+                case STOP_SOUND -> new SoundEvents.StopSoundEvent(m);
                 // §6.3 Visual
                 case PARTICLE   -> new VisualEvents.ParticleEvent(m);
                 case EFFECT     -> new VisualEvents.EffectEvent(m);

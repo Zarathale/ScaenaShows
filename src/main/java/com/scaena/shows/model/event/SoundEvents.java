@@ -2,7 +2,7 @@ package com.scaena.shows.model.event;
 
 import java.util.Map;
 
-/** §6.2 — SOUND */
+/** §6.2 — SOUND and STOP_SOUND */
 public final class SoundEvents {
 
     private SoundEvents() {}
@@ -24,5 +24,28 @@ public final class SoundEvents {
         }
 
         @Override public EventType type() { return EventType.SOUND; }
+    }
+
+    /**
+     * STOP_SOUND — immediately cuts all sounds from the specified source for each participant.
+     *
+     * The stop is abrupt (no fade); pair with a transitional sound (chime, boom, thunder)
+     * at the same tick so the cut feels intentional rather than broken.
+     *
+     * source values: music | ambient | neutral | player | block | hostile | master | all
+     *   "music"   — stops the background music track (most common use)
+     *   "ambient"  — stops ambient/cave sounds
+     *   "neutral"  — stops neutral mob sounds (chickens, etc.)
+     *   "all"      — stops every sound source simultaneously
+     */
+    public static final class StopSoundEvent extends ShowEvent {
+        public final String source; // Adventure Sound.Source name, or "all"
+
+        public StopSoundEvent(Map<String, Object> m) {
+            super(intVal(m, "at", 0));
+            this.source = str(m, "source", "music");
+        }
+
+        @Override public EventType type() { return EventType.STOP_SOUND; }
     }
 }

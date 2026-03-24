@@ -1,9 +1,12 @@
 package com.scaena.shows.runtime.executor;
 
 import com.scaena.shows.model.event.ShowEvent;
+import com.scaena.shows.model.event.SoundEvents;
 import com.scaena.shows.model.event.SoundEvents.SoundEvent;
 import com.scaena.shows.runtime.AudienceResolver;
 import com.scaena.shows.runtime.RunningShow;
+import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.sound.SoundStop;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,8 +16,12 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Handles SOUND events.
- * Uses the player's location so every participant hears the sound at full volume.
+ * Handles SOUND and STOP_SOUND events.
+ *
+ * SOUND:      plays a named sound at each participant's location.
+ * STOP_SOUND: immediately cuts all sounds from a given source (no fade).
+ *             Pair with a transitional sound (chime, boom) at the same tick
+ *             so the cut feels intentional rather than broken.
  */
 public final class SoundEventExecutor implements EventExecutor {
 
@@ -28,8 +35,17 @@ public final class SoundEventExecutor implements EventExecutor {
 
     @Override
     public void execute(ShowEvent event, RunningShow show) {
-        if (!(event instanceof SoundEvent e)) return;
+        if (event instanceof SoundEvents.StopSoundEvent e) {
+            executeStop(e, show);
+        } else if (event instanceof SoundEvent e) {
+            executePlay(e, show);
+        }
+    }
 
+    // ------------------------------------------------------------------
+    // SOUND — play
+    // ------------------------------------------------------------------
+    private void executePlay(SoundEvent e, RunningShow show) {
         SoundCategory category = parseCategory(e.category);
         List<Player> audience = AudienceResolver.resolve("participants", show);
 
@@ -48,6 +64,30 @@ public final class SoundEventExecutor implements EventExecutor {
                     }
                 }
             }.runTaskLater(plugin, e.maxDurationTicks);
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // STOP_SOUND — cut
+    // ------------------------------------------------------------------
+    private void executeStop(SoundEvents.StopSoundEvent e, RunningShow show) {
+        List<Player> audience = AudienceResolver.resolve("participants", show);
+        for (Player p : audience) {
+            stopSoundsForPlayer(p, e.source);
+        }
+    }
+
+    private void stopSoundsForPlayer(Player p, String source) {
+        if (source.equalsIgnoreCase("all")) {
+            p.stopSound(SoundStop.all());
+            return;
+        }
+        try {
+            Sound.Source src = Sound.Source.valueOf(source.toUpperCase());
+            p.stopSound(SoundStop.source(src));
+        } catch (IllegalArgumentException ex) {
+            log.warning("[ScaenaShows] STOP_SOUND: unknown source '" + source
+                + "'. Valid values: music, ambient, neutral, player, block, hostile, master, all");
         }
     }
 

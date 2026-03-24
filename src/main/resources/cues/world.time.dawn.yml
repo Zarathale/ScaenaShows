@@ -1,10 +1,25 @@
 # world.time.dawn
-# Set the world to pre-dawn — just before the sun returns.
-# The most hopeful moment in the day cycle. Used for beginnings, for endings that feel like starts.
-# Pair with ramp or wonder cues for a sunrise sequence.
+# Deep night to sunrise in four steps over ~14 seconds.
+# The most hopeful moment in the day cycle — light returning, unhurried.
+# Used for endings that feel like beginnings. Pair with ramp or wonder cues.
+#
+# Step timing (real seconds):
+#   T=0   (0s)  — deep night, pre-dawn quiet (21000)
+#   T=80  (4s)  — first hint of horizon glow (22500)
+#   T=180 (9s)  — dawn — pale sky, world waking (23500)
+#   T=280 (14s) — sunrise — full morning light (0)
 id: world.time.dawn
-tags: [nostalgic, tender, dreamy, low, slow, opener, transition, silent, flash, centered, subtle, revelation]
+tags: [nostalgic, tender, dreamy, low, slow, opener, transition, silent, centered, subtle, revelation]
 timeline:
   - type: TIME_OF_DAY
     at: 0
-    time: 23000
+    time: 21000    # deep night — the pause before dawn
+  - type: TIME_OF_DAY
+    at: 80
+    time: 22500    # first horizon glow — barely perceptible
+  - type: TIME_OF_DAY
+    at: 180
+    time: 23500    # dawn — pale sky, world beginning to wake
+  - type: TIME_OF_DAY
+    at: 280
+    time: 0        # sunrise — full morning light

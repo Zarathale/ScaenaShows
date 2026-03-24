@@ -1,10 +1,26 @@
 # world.time.night
-# Set the world to midnight. The ceiling drops; the stars come out.
+# Dusk to midnight in four steps over ~15 seconds.
+# The ceiling drops; the stars come out — gradually, not all at once.
 # A stage change, not a decoration. Use once, deliberately.
 # Pair with grief, tension, or wonder cues — not with warm celebration.
+#
+# Step timing (real seconds):
+#   T=0   (0s)  — sun at horizon (12000)
+#   T=80  (4s)  — sun below horizon, sky purple (13500)
+#   T=180 (9s)  — deepening dusk (16000)
+#   T=300 (15s) — full night (18000)
 id: world.time.night
-tags: [mysterious, dramatic, tense, low, still, standalone, transition, silent, flash, centered, moderate, ceremony]
+tags: [mysterious, dramatic, tense, low, still, standalone, transition, silent, centered, moderate, ceremony]
 timeline:
   - type: TIME_OF_DAY
     at: 0
-    time: 18000
+    time: 12000    # sun at horizon — sunset beginning
+  - type: TIME_OF_DAY
+    at: 80
+    time: 13500    # sun below horizon, sky purple-orange
+  - type: TIME_OF_DAY
+    at: 180
+    time: 16000    # deepening dusk, sky nearly dark
+  - type: TIME_OF_DAY
+    at: 300
+    time: 18000    # full night — stars out

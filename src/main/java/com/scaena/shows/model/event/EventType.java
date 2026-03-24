@@ -10,7 +10,7 @@ public enum EventType {
     MESSAGE, TITLE, ACTION_BAR, BOSSBAR,
 
     // §6.2 Sound
-    SOUND,
+    SOUND, STOP_SOUND,
 
     // §6.3 Visual Effects
     PARTICLE, EFFECT, GLOW, CAMERA, LIGHTNING,

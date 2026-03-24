@@ -45,7 +45,8 @@ public final class ExecutorRegistry {
         executors.put(EventType.BOSSBAR,    text);
 
         // §6.2 Sound
-        executors.put(EventType.SOUND, sound);
+        executors.put(EventType.SOUND,      sound);
+        executors.put(EventType.STOP_SOUND, sound);
 
         // §6.3 Visual Effects
         executors.put(EventType.PARTICLE,  visual);
