@@ -1,0 +1,354 @@
+# ScaenaShows v2 — Show: demo.archetype_sampler
+# ─────────────────────────────────────────────────────────────────────
+# ARCHETYPE SAMPLER
+# A baseline calibration run. Eight cue archetypes demonstrated one at a time.
+# Each is introduced with a quiet Sprite line, fired, then labeled in the chat
+# so the director can take notes.
+#
+# What this show is testing:
+#   - Houselights down/up: does the 3-step time shift feel like "anticipation" or just
+#     "sky change"? Calibrate: too slow, too fast, wrong message count?
+#   - Each archetype: does it land the emotional note it's designed for?
+#   - Layered pause: does a 2-message 8s pause feel like rest, or does it drag?
+#   - Lift + sunrise: does the player floating down during lights-up feel right?
+#
+# Structure:
+#   T0–340       HOUSELIGHTS DOWN  — dusk → night, 3 messages
+#   T380–580     Section 1: Ember Drift     (particle-bed · still · breath)
+#   T640–840     Section 2: Warm Light      (fireworks-light · warm · low)
+#   T860–1060    Section 3: Cool Light      (fireworks-light · icy · mysterious)
+#   T1080–1260   Section 4: Cave Sound      (sound-driven · melancholic · no visuals)
+#   T1280–1440   LAYERED PAUSE              (2 messages · 8s)
+#   T1460–1660   Section 5: Arrival Flash   (explosive · flash · dramatic)
+#   T1680–1860   Section 6: Joy Burst       (celebratory · high · flash)
+#   T1880–2160   Section 7: Warm Ramp       (building · scene · scatter)
+#   T2200–2400   Section 8: Wonder Single   (reverent · overhead · subtle)
+#   T2420–2520   LIFT TO HEIGHT             (player floats up, stays there)
+#   T2540–2900   HOUSELIGHTS UP             — night → dawn, 3 messages, player drifts down
+#
+# Runtime: ~2900 ticks (~2.4 minutes)
+# ─────────────────────────────────────────────────────────────────────
+
+id: demo.archetype_sampler
+name: "Archetype Sampler"
+description: "Calibration run: eight cue archetypes demonstrated one at a time. Houselights down/up tested. Run once, take notes, iterate."
+duration_ticks: 2900
+
+portable: true
+default_mode: static
+default_audience: broadcast
+group_count: 1
+group_strategy: join_order
+front: south
+
+bossbar:
+  enabled: true
+  title: "<dark_gray>archetype sampler  ·  take notes  ·  iterate</dark_gray>"
+  color: WHITE
+  overlay: PROGRESS
+  fade_in_ticks: 20
+  fade_out_ticks: 80
+  audience: broadcast
+
+timeline:
+
+  # ═══════════════════════════════════════════════════════════════════
+  # HOUSELIGHTS DOWN  (T0–T340)
+  #
+  # Testing:
+  #   • Is 3 time shifts the right number, or does 2 feel cleaner?
+  #   • T80 dark ellipsis: too early? should be T40? T120?
+  #   • T200 "The lights are going down." — right moment, or should shift come after?
+  #   • T280 night + T320 "We begin." — enough gap before first section?
+  # ═══════════════════════════════════════════════════════════════════
+
+  # Shift 1: Dusk — sun near horizon
+  - type: TIME_OF_DAY
+    at: 0
+    time: 12500
+
+  # Ellipsis first — sky change should land before any text
+  - type: MESSAGE
+    at: 80
+    audience: broadcast
+    message: "<dark_gray>...</dark_gray>"
+
+  # Shift 2: Deep dusk — sky going purple-dark
+  - type: TIME_OF_DAY
+    at: 160
+    time: 15000
+
+  - type: MESSAGE
+    at: 200
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>The lights are going down.</gray>"
+
+  # Shift 3: Full night — stars
+  - type: TIME_OF_DAY
+    at: 280
+    time: 18000
+
+  - type: MESSAGE
+    at: 320
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>We begin.</gray>"
+
+
+  # ═══════════════════════════════════════════════════════════════════
+  # SECTION 1: EMBER DRIFT  (T380–T580)
+  # Tags being tested: particle-bed · still · breath · subtle · dreamy
+  # Question: does the particle drift read as "atmosphere" or just "effect"?
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 380
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Something settles around you.</gray>"
+
+  - type: CUE
+    at: 460
+    cue_id: atmos.ambient.ember_drift
+
+  # Label fires after cue ends (~T560)
+  - type: MESSAGE
+    at: 580
+    audience: broadcast
+    message: "<dark_gray>  ↳ atmos.ambient.ember_drift  ·  particle-bed  ·  still  ·  breath</dark_gray>"
+
+
+  # ═══════════════════════════════════════════════════════════════════
+  # SECTION 2: WARM LIGHT WASH  (T640–T840)
+  # Tags: fireworks-light · warm · low · subtle
+  # Question: does low-count warm fireworks read as "light" or still "fireworks"?
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 640
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Warmth at ground level.</gray>"
+
+  - type: CUE
+    at: 720
+    cue_id: atmos.lights.warm_bloom
+
+  - type: MESSAGE
+    at: 790
+    audience: broadcast
+    message: "<dark_gray>  ↳ atmos.lights.warm_bloom  ·  fireworks-light  ·  warm  ·  low</dark_gray>"
+
+
+  # ═══════════════════════════════════════════════════════════════════
+  # SECTION 3: COOL LIGHT WASH  (T860–T1060)
+  # Tags: fireworks-light · icy · mysterious
+  # Question: is the warm/cool contrast legible, or do both read as "fireworks"?
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 860
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>The room shifts register.</gray>"
+
+  - type: CUE
+    at: 940
+    cue_id: atmos.lights.cool_bloom
+
+  - type: MESSAGE
+    at: 1000
+    audience: broadcast
+    message: "<dark_gray>  ↳ atmos.lights.cool_bloom  ·  fireworks-light  ·  icy  ·  mysterious</dark_gray>"
+
+
+  # ═══════════════════════════════════════════════════════════════════
+  # SECTION 4: CAVE SOUND  (T1080–T1260)
+  # Tags: sound-driven · melancholic · subtle — NO visuals at all
+  # Question: does a sound-only cue establish emotional register on its own?
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 1080
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Nothing to see here.</gray>"
+
+  - type: MESSAGE
+    at: 1140
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Listen.</gray>"
+
+  - type: CUE
+    at: 1180
+    cue_id: grief.sound.cave
+
+  - type: MESSAGE
+    at: 1250
+    audience: broadcast
+    message: "<dark_gray>  ↳ grief.sound.cave  ·  sound-driven  ·  melancholic  ·  no visuals</dark_gray>"
+
+
+  # ═══════════════════════════════════════════════════════════════════
+  # LAYERED PAUSE  (T1280–T1440, ~8s)
+  # Testing: 2-message pause — first message at ~1s, second at ~5s.
+  # Question: does it feel like rest, or does it drag?
+  #           Does the second message land as revelation or interruption?
+  # ═══════════════════════════════════════════════════════════════════
+
+  # Message 1: arrives 1s into the silence (T1280 = T1260 + 20)
+  - type: MESSAGE
+    at: 1280
+    audience: broadcast
+    message: "<dark_gray>...</dark_gray>"
+
+  # Message 2: arrives ~5s in (T1380 = T1280 + 100)
+  - type: MESSAGE
+    at: 1380
+    audience: broadcast
+    message: "<dark_gray>The pause is also a cue.</dark_gray>"
+
+
+  # ═══════════════════════════════════════════════════════════════════
+  # SECTION 5: DRAMATIC ARRIVAL  (T1460–T1660)
+  # Tags: explosive · flash · dramatic — the arrival after quiet
+  # Question: does the contrast after the pause make it hit harder?
+  #           Does the thunder have resonance, or is it just loud?
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 1460
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Something arrives.</gray>"
+
+  - type: CUE
+    at: 1520
+    cue_id: mood.arrival
+
+  - type: MESSAGE
+    at: 1590
+    audience: broadcast
+    message: "<dark_gray>  ↳ mood.arrival  ·  explosive  ·  flash  ·  dramatic</dark_gray>"
+
+
+  # ═══════════════════════════════════════════════════════════════════
+  # SECTION 6: JOY BURST  (T1680–T1860)
+  # Tags: celebratory · high · flash — the opposite end of the spectrum
+  # Question: does the celebration read as warm and joyful, or just loud?
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 1680
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>The other register.</gray>"
+
+  - type: CUE
+    at: 1740
+    cue_id: fx.confetti_burst
+
+  - type: MESSAGE
+    at: 1800
+    audience: broadcast
+    message: "<dark_gray>  ↳ fx.confetti_burst  ·  celebratory  ·  high  ·  flash</dark_gray>"
+
+
+  # ═══════════════════════════════════════════════════════════════════
+  # SECTION 7: WARM RAMP  (T1880–T2160)
+  # Tags: building · scene · scatter-radial
+  # Cue runs ~170 ticks (T1940–T2110).
+  # Question: do the 4 waves of increasing density read as "building toward something"?
+  #           Or does it just feel like more fireworks each time?
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 1880
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Something building.</gray>"
+
+  - type: CUE
+    at: 1940
+    cue_id: ramp.pulse.warm
+
+  # Label fires after cue ends (~T2110)
+  - type: MESSAGE
+    at: 2130
+    audience: broadcast
+    message: "<dark_gray>  ↳ ramp.pulse.warm  ·  building  ·  scene  ·  4-wave ramp</dark_gray>"
+
+
+  # ═══════════════════════════════════════════════════════════════════
+  # SECTION 8: WONDER SINGLE  (T2200–T2400)
+  # Tags: reverent · overhead · subtle
+  # Question: does the firework → pause → chime sequence feel contemplative?
+  #           Or does the single rocket feel underwhelming after the ramp?
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 2200
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Look up.</gray>"
+
+  - type: CUE
+    at: 2260
+    cue_id: mood.wonder.single
+
+  - type: MESSAGE
+    at: 2360
+    audience: broadcast
+    message: "<dark_gray>  ↳ mood.wonder.single  ·  reverent  ·  overhead  ·  the pause is the point</dark_gray>"
+
+
+  # ═══════════════════════════════════════════════════════════════════
+  # LIFT TO HEIGHT  (T2420–T2520)
+  # Player rises ~6-8 blocks. Slow_falling then carries them through the finale.
+  # They should be near peak as the sunrise begins.
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 2420
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>One more thing.</gray>"
+
+  - type: CUE
+    at: 2480
+    cue_id: fx.lift_to_height
+
+
+  # ═══════════════════════════════════════════════════════════════════
+  # HOUSELIGHTS UP  (T2560–T2900)
+  # Player is at height and drifting down throughout this sequence.
+  #
+  # Testing:
+  #   • Same questions as houselights down — pacing of 3 shifts, message timing
+  #   • Does the floating player + rising light feel like a landing?
+  #   • Is T2900 (end of show) the right moment, or should the show end earlier/later?
+  # ═══════════════════════════════════════════════════════════════════
+
+  # Shift 1: Pre-dawn — sky beginning to lighten from deep black
+  - type: TIME_OF_DAY
+    at: 2560
+    time: 22000
+
+  - type: MESSAGE
+    at: 2600
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>The stage returns.</gray>"
+
+  # Shift 2: Dawn breaking — first pale horizon light
+  - type: TIME_OF_DAY
+    at: 2680
+    time: 23500
+
+  - type: MESSAGE
+    at: 2720
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>You were here for all of it.</gray>"
+
+  # Shift 3: Sunrise — full morning light
+  - type: TIME_OF_DAY
+    at: 2800
+    time: 0
+
+  - type: MESSAGE
+    at: 2840
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Until next time.</gray>"
+
+  - type: CUE
+    at: 2880
+    cue_id: coda.curtain.quiet

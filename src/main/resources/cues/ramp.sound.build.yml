@@ -1,0 +1,31 @@
+# ramp.sound.build
+# Four sounds in ascending pitch and volume — the music swelling before the image does.
+# The final event is a challenge-complete tone: the signal that something is arriving.
+# Duration: ~140 ticks (~7s). Use as a pure audio buildup before any peak cue.
+id: ramp.sound.build
+tags: [mysterious, grand, medium, building, ramp, sound-driven, scene, centered, moderate]
+timeline:
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:block.note_block.chime"
+    category: master
+    volume: 0.30
+    pitch: 0.80
+  - type: SOUND
+    at: 40
+    sound_id: "minecraft:block.note_block.chime"
+    category: master
+    volume: 0.50
+    pitch: 1.00
+  - type: SOUND
+    at: 80
+    sound_id: "minecraft:block.note_block.chime"
+    category: master
+    volume: 0.70
+    pitch: 1.20
+  - type: SOUND
+    at: 120
+    sound_id: "minecraft:ui.toast.challenge_complete"
+    category: master
+    volume: 0.65
+    pitch: 0.90

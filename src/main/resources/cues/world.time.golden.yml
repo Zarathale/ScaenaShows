@@ -1,0 +1,10 @@
+# world.time.golden
+# Set the world to dusk — the golden hour, everything warm and long.
+# The day's last warmth. Use for farewells, for moments that deserve a beautiful stage.
+# Pairs naturally with atmos.lights.warm_bloom and celebration cues.
+id: world.time.golden
+tags: [warm, nostalgic, tender, intimate, low, slow, standalone, transition, silent, flash, centered, subtle, farewell, ceremony]
+timeline:
+  - type: TIME_OF_DAY
+    at: 0
+    time: 12000

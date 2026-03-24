@@ -1,0 +1,17 @@
+# coda.curtain.quiet
+# The stage goes quiet. A single ✦ message, then one soft chime — and it's done.
+# Use at the end of any show to hand the stage back to the player.
+# Pair with a final MESSAGE or TITLE in the parent show before calling this.
+id: coda.curtain.quiet
+tags: [serene, tender, low, still, coda, text-forward, sound-accented, moment, centered, subtle, ceremony]
+timeline:
+  - type: MESSAGE
+    at: 0
+    audience: broadcast
+    message: "<dark_gray>✦   the stage is dark   ✦</dark_gray>"
+  - type: SOUND
+    at: 20
+    sound_id: "minecraft:block.amethyst_block.hit"
+    category: master
+    volume: 0.4
+    pitch: 0.9

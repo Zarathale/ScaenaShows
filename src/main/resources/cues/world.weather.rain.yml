@@ -1,0 +1,12 @@
+# world.weather.rain
+# Start rain — the ceiling drops, the world goes quiet and grey.
+# Rain changes the emotional register of everything that follows.
+# Duration: 2400 ticks (2 minutes). Pair with grief or tension cues.
+# To clear: use world.weather.clear (not yet authored — a pending companion).
+id: world.weather.rain
+tags: [melancholic, mysterious, tense, low, slow, standalone, transition, silent, flash, centered, moderate, ambient]
+timeline:
+  - type: WEATHER
+    at: 0
+    state: storm
+    duration_ticks: 2400

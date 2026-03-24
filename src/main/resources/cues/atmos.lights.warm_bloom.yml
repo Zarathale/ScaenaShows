@@ -3,6 +3,7 @@
 # Reads as candlelight or torchlight blooming across a stage.
 # Use during intimate, warm, or inviting scenes.
 id: atmos.lights.warm_bloom
+tags: [warm, intimate, tender, low, slow, breath, transition, fireworks-light, flash, scatter, radial, subtle, ambient, celebration]
 timeline:
   - type: FIREWORK_RANDOM
     at: 0

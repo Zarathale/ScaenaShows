@@ -3,6 +3,7 @@
 # Reads as moonlight, digital ambiance, or a wash of cold theatre blue.
 # Use during introspective, mysterious, or melancholy scenes.
 id: atmos.lights.cool_bloom
+tags: [mysterious, melancholic, ethereal, icy, low, slow, breath, transition, fireworks-light, flash, scatter, radial, subtle, ambient]
 timeline:
   - type: FIREWORK_RANDOM
     at: 0

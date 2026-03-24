@@ -3,6 +3,7 @@
 # The pause before it lands is the point — use for moments that need to breathe.
 # Pair with a TITLE event in the parent show for maximum impact.
 id: mood.wonder.single
+tags: [reverent, grand, dreamy, medium, slow, peak, breath, standalone, fireworks-light, sound-accented, beat, overhead, single, subtle, revelation, ceremony]
 timeline:
   - type: SOUND
     at: 0

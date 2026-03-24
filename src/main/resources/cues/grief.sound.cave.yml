@@ -1,0 +1,13 @@
+# grief.sound.cave
+# Cave ambient at 0.55 pitch — this is what melancholy sounds like here.
+# No visuals. The sound does all the work. Low volume; let it sit under other events.
+# As noted in showsprite.context.md: "cave ambient at 0.55 pitch is grief."
+id: grief.sound.cave
+tags: [melancholic, mysterious, tense, low, still, breath, transition, sound-driven, beat, centered, subtle, ambient]
+timeline:
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:ambient.cave"
+    category: ambient
+    volume: 0.35
+    pitch: 0.55

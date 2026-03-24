@@ -3,6 +3,7 @@
 # Duration: ~5 seconds of continuous gentle drift.
 # Use as background atmosphere during quiet or transitional moments.
 id: atmos.ambient.ember_drift
+tags: [dreamy, ethereal, serene, low, still, breath, transition, ambient, particle-bed, silent, moment, enveloping, subtle]
 timeline:
   - type: PARTICLE
     at: 0

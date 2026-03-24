@@ -1,0 +1,42 @@
+# fx.lift_to_height
+# Lifts the player ~6-8 blocks and keeps them airborne for the next 30 seconds.
+# The descent is NOT part of this cue — slow_falling carries them through whatever follows.
+# Designed to precede a closing or sunrise cue: player drifts down during that sequence.
+# Do NOT pair with fx.levitate_and_drift — use one or the other per show.
+id: fx.lift_to_height
+tags: [dreamy, ethereal, reverent, medium, slow, transition, effect-driven, sound-accented, moment, single, centered, subtle, revelation, ceremony]
+timeline:
+  # A low, soft tone — something is about to change
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:entity.experience_orb.pickup"
+    category: master
+    volume: 0.55
+    pitch: 0.60
+
+  # Levitation II for 60 ticks (~3s): lifts ~6-8 blocks
+  - type: EFFECT
+    at: 2
+    effect_id: levitation
+    duration_ticks: 60
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  # Slow_falling kicks in just before levitation expires — player glides at peak
+  # Duration: 600 ticks (30s) — enough to carry through an entire closing sequence
+  - type: EFFECT
+    at: 55
+    effect_id: slow_falling
+    duration_ticks: 600
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  # A soft chime as the player reaches peak height — the top of the arc
+  - type: SOUND
+    at: 58
+    sound_id: "minecraft:block.amethyst_block.hit"
+    category: master
+    volume: 0.40
+    pitch: 1.30

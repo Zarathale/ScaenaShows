@@ -1,0 +1,21 @@
+# coda.bloom_fade
+# Two cool-toned fireworks, sparse and wide — the lights going out slowly.
+# A visual coda. Reads as moonlight retreating, not as celebration ending.
+# Use when the show has been warm-toned and you want the closing light to shift register.
+id: coda.bloom_fade
+tags: [mysterious, melancholic, ethereal, icy, low, slow, coda, fireworks-light, flash, scatter, radial, subtle]
+timeline:
+  - type: FIREWORK_RANDOM
+    at: 0
+    preset: pride_wave_star
+    origin_offset: {x: 0, z: 0}
+    radius: 12
+    count: 2
+    y_mode: surface
+    y_offset: 1
+  - type: SOUND
+    at: 5
+    sound_id: "minecraft:block.amethyst_block.hit"
+    category: master
+    volume: 0.3
+    pitch: 0.8

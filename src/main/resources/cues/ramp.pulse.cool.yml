@@ -1,0 +1,39 @@
+# ramp.pulse.cool
+# Four rounds of cool fireworks — each closer and denser than the last.
+# A mystery building. Something vast approaching from the dark.
+# Duration: ~170 ticks (~8.5s). Follow with a peak or tension cue.
+id: ramp.pulse.cool
+tags: [mysterious, icy, ethereal, medium, building, ramp, fireworks-light, scene, scatter, radial, moderate]
+timeline:
+  - type: FIREWORK_RANDOM
+    at: 0
+    preset: pride_wave_star
+    origin_offset: {x: 0, z: 0}
+    radius: 16
+    count: 2
+    y_mode: surface
+    y_offset: 2
+  - type: FIREWORK_RANDOM
+    at: 55
+    preset: pride_wave_star
+    origin_offset: {x: 0, z: 0}
+    radius: 13
+    count: 3
+    y_mode: surface
+    y_offset: 2
+  - type: FIREWORK_RANDOM
+    at: 105
+    preset: pride_trans_glow_ball
+    origin_offset: {x: 0, z: 0}
+    radius: 10
+    count: 3
+    y_mode: surface
+    y_offset: 2
+  - type: FIREWORK_RANDOM
+    at: 148
+    preset: pride_trans_glow_ball
+    origin_offset: {x: 0, z: 0}
+    radius: 7
+    count: 4
+    y_mode: surface
+    y_offset: 2

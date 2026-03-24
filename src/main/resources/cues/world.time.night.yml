@@ -1,0 +1,10 @@
+# world.time.night
+# Set the world to midnight. The ceiling drops; the stars come out.
+# A stage change, not a decoration. Use once, deliberately.
+# Pair with grief, tension, or wonder cues — not with warm celebration.
+id: world.time.night
+tags: [mysterious, dramatic, tense, low, still, standalone, transition, silent, flash, centered, moderate, ceremony]
+timeline:
+  - type: TIME_OF_DAY
+    at: 0
+    time: 18000

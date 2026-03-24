@@ -1,0 +1,15 @@
+# coda.ember_last
+# The last ember drifts away. One sparse particle loop, then nothing.
+# The most minimal coda in the library — use when silence is the ending.
+# Works well after any show that used atmos.ambient.ember_drift as a bed.
+id: coda.ember_last
+tags: [dreamy, ethereal, serene, low, still, coda, particle-bed, silent, beat, ambient, subtle]
+timeline:
+  - type: PARTICLE
+    at: 0
+    particle_id: "minecraft:end_rod"
+    count: 1
+    offset: [1.5, 1.0, 1.5]
+    extra: 0.01
+    duration_ticks: 60
+    interval_ticks: 20

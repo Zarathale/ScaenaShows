@@ -3,6 +3,7 @@
 # 10 birthday-ball fireworks in a tight radius — joyful, immediate, festive.
 # Use for arrival moments, achievements, or the peak of a joy arc.
 id: fx.confetti_burst
+tags: [joyful, celebratory, playful, high, fast, peak, release, fireworks-heavy, sound-accented, flash, scatter, radial, intense, birthday, celebration, achievement]
 timeline:
   - type: SOUND
     at: 0

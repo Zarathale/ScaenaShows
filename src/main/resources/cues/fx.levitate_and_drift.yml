@@ -5,6 +5,7 @@
 # Safe — no fall damage; slow_falling ensures a gentle landing.
 # Pair with a TITLE or FIREWORK in the parent show for maximum impact.
 id: fx.levitate_and_drift
+tags: [dreamy, ethereal, reverent, medium, slow, peak, transition, effect-driven, sound-accented, moment, single, centered, moderate, revelation, ceremony]
 timeline:
   - type: SOUND
     at: 0

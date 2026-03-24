@@ -1,0 +1,34 @@
+# ramp.particle.gather
+# End_rod particles in three waves: sparse and wide, then tighter and denser.
+# Something is drawing toward the center. The world is paying attention.
+# Duration: ~190 ticks (~9.5s). Sound-free — compose freely with audio events.
+id: ramp.particle.gather
+tags: [mysterious, ethereal, dreamy, medium, building, ramp, particle-bed, silent, scene, enveloping, moderate]
+timeline:
+  # Wave 1: sparse, wide — barely there
+  - type: PARTICLE
+    at: 0
+    particle_id: "minecraft:end_rod"
+    count: 1
+    offset: [3.5, 2.0, 3.5]
+    extra: 0.02
+    duration_ticks: 40
+    interval_ticks: 15
+  # Wave 2: more present, tighter spread
+  - type: PARTICLE
+    at: 55
+    particle_id: "minecraft:end_rod"
+    count: 2
+    offset: [2.5, 1.5, 2.5]
+    extra: 0.02
+    duration_ticks: 50
+    interval_ticks: 10
+  # Wave 3: dense, close — almost palpable
+  - type: PARTICLE
+    at: 120
+    particle_id: "minecraft:end_rod"
+    count: 3
+    offset: [1.8, 1.2, 1.8]
+    extra: 0.03
+    duration_ticks: 60
+    interval_ticks: 7

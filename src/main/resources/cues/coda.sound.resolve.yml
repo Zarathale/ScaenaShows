@@ -1,0 +1,25 @@
+# coda.sound.resolve
+# Three amethyst chimes in descent — the music finishing, not stopping.
+# Each tone quieter and lower than the last. The third lands and holds.
+# Sound-only: use as the final beat of any show, or under a closing TITLE.
+id: coda.sound.resolve
+tags: [serene, tender, melancholic, low, slow, coda, sound-driven, moment, centered, subtle, ceremony]
+timeline:
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:block.amethyst_block.hit"
+    category: master
+    volume: 0.55
+    pitch: 1.2
+  - type: SOUND
+    at: 35
+    sound_id: "minecraft:block.amethyst_block.hit"
+    category: master
+    volume: 0.40
+    pitch: 0.95
+  - type: SOUND
+    at: 70
+    sound_id: "minecraft:block.amethyst_block.hit"
+    category: master
+    volume: 0.28
+    pitch: 0.75

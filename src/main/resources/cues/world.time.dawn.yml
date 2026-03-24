@@ -1,0 +1,10 @@
+# world.time.dawn
+# Set the world to pre-dawn — just before the sun returns.
+# The most hopeful moment in the day cycle. Used for beginnings, for endings that feel like starts.
+# Pair with ramp or wonder cues for a sunrise sequence.
+id: world.time.dawn
+tags: [nostalgic, tender, dreamy, low, slow, opener, transition, silent, flash, centered, subtle, revelation]
+timeline:
+  - type: TIME_OF_DAY
+    at: 0
+    time: 23000

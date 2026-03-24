@@ -1,0 +1,39 @@
+# ramp.pulse.warm
+# Four rounds of warm fireworks — each closer, denser, and more insistent than the last.
+# The room comes alive slowly. By round four something is clearly about to happen.
+# Duration: ~170 ticks (~8.5s). Follow with a peak cue.
+id: ramp.pulse.warm
+tags: [warm, medium, building, ramp, fireworks-light, scene, scatter, radial, moderate, celebration]
+timeline:
+  - type: FIREWORK_RANDOM
+    at: 0
+    preset: scae_star_warm
+    origin_offset: {x: 0, z: 0}
+    radius: 16
+    count: 2
+    y_mode: surface
+    y_offset: 2
+  - type: FIREWORK_RANDOM
+    at: 55
+    preset: scae_star_warm
+    origin_offset: {x: 0, z: 0}
+    radius: 13
+    count: 3
+    y_mode: surface
+    y_offset: 2
+  - type: FIREWORK_RANDOM
+    at: 105
+    preset: scae_star_warm
+    origin_offset: {x: 0, z: 0}
+    radius: 10
+    count: 4
+    y_mode: surface
+    y_offset: 2
+  - type: FIREWORK_RANDOM
+    at: 148
+    preset: scae_star_warm
+    origin_offset: {x: 0, z: 0}
+    radius: 8
+    count: 5
+    y_mode: surface
+    y_offset: 2

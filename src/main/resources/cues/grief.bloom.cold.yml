@@ -1,0 +1,15 @@
+# grief.bloom.cold
+# A single cool-toned firework, minimal count, close radius — light in a dark room.
+# Less than atmos.lights.cool_bloom. Quieter. More alone.
+# Use when something needs to be acknowledged but not celebrated.
+id: grief.bloom.cold
+tags: [melancholic, ethereal, icy, low, still, breath, coda, fireworks-light, flash, scatter, radial, subtle]
+timeline:
+  - type: FIREWORK_RANDOM
+    at: 0
+    preset: pride_wave_star
+    origin_offset: {x: 0, z: 0}
+    radius: 8
+    count: 1
+    y_mode: surface
+    y_offset: 1
