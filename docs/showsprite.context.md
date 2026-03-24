@@ -1,8 +1,11 @@
 ---
-status: draft
+status: stable
 started: 2026-03-24
 owner: Alan
-notes: Foundation knowledge compiled from scaenacraft-ops voice corpus and server identity docs. Expand with authoring examples as shows mature.
+notes: >
+  Foundation knowledge compiled from scaenacraft-ops voice corpus and server identity docs.
+  Promoted from draft 2026-03-24 (SCENA-003 resolved). Expand with authoring examples as
+  shows mature; see SCENA-005 for the ongoing source-material scan process.
 ---
 
 # ShowSprite — Persona, Voice, and Authoring Context

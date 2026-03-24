@@ -1,10 +1,23 @@
 ---
-status: in-development
+status: stable
 date: 2026-03-23
 purpose: Pre-build spec audit — Preview Performance #1
+notes: >
+  Phase 1 is complete (2026-03-24). This document is historical record.
+  All 🔴 items were resolved before or during build (error handling and GROUP_ASSIGN
+  behavior are documented as Confirmed decisions in CLAUDE.md). Composer UI items
+  (🟡/🟢) are moot — Phases 2–6 deferred indefinitely. showsprite.context.md
+  is drafted and promoted to stable (SCENA-003 resolved). The remaining actionable
+  items are the player-facing strings (ROADMAP) and the ORBIT vocabulary note in spec §11.
 ---
 
 # ScaenaShows v2 — Preview Audit
+
+> **Historical record — Phase 1 complete 2026-03-24.** This was the pre-build spec audit
+> written 2026-03-23. The 🔴 blocking items were resolved before build. Composer UI items
+> are deferred with Phases 2–6. See ROADMAP.md for current open work.
+
+---
 
 This is the second full read of the spec after the Final Dress Rehearsal pass. The spec is in excellent shape. What follows is a surgical list of gaps, minor inconsistencies, and open questions that should be resolved before or during Phase 1 build.
 
