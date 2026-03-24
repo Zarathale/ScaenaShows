@@ -1,0 +1,29 @@
+name: ScaenaShows
+main: com.scaena.shows.ScaenaShowsPlugin
+version: 1.0.0
+api-version: '1.21'
+author: Scaena
+description: Data-driven choreographed show timelines (MiniMessage, titles, bossbars, sounds, particles, effects, items, fireworks).
+commands:
+  show:
+    description: Play/stop/reload ScaenaShows
+    usage: /show <list|play|stop|stopall|reload>
+permissions:
+  scae.shows.admin:
+    description: Full access to ScaenaShows commands and bypass cooldown.
+    default: op
+  scae.shows.play:
+    description: Allow playing shows.
+    default: true
+  scae.shows.target.others:
+    description: Allow targeting other players.
+    default: op
+  scae.shows.target.all:
+    description: Allow targeting @a.
+    default: op
+  scae.shows.private:
+    description: Allow using --private.
+    default: op
+  scae.shows.cooldown.bypass:
+    description: Bypass show cooldown.
+    default: op
