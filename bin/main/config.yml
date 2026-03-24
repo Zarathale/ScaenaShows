@@ -1,0 +1,22 @@
+# ScaenaShows v2 — config.yml
+# All values have plugin defaults. Only include keys you want to override.
+
+default_cooldown_seconds: 30        # Cooldown per invoker between /show play uses
+resume_window_seconds: 900          # Seconds a disconnected participant has to rejoin before their slot is dropped
+
+# Safety defaults applied on /show stop
+safety:
+  stop_applies_slow_falling_seconds: 10
+  stop_message: "<gold>Show stopped.</gold> <gray>Landing safely.</gray>"
+  stop_sound:
+    id: "minecraft:entity.experience_orb.pickup"
+    category: master
+    volume: 1.0
+    pitch: 1.0
+
+# Hard limits — raise with caution
+limits:
+  max_cue_nesting_depth: 10
+  max_fireworks_per_second: 30
+  max_fireworks_per_shot: 12
+  max_particles_per_event: 200

@@ -1,0 +1,587 @@
+# ScaenaShows v2 — Show: test.showcase.full
+# ─────────────────────────────────────────────────────────────────────
+# THE FULL STAGE TEST — 30-second showcase of major event types.
+#
+# Phase timeline (ticks → seconds):
+#   T0–20    (0.0s)  SETUP      — GROUP_ASSIGN, team colors, opening title
+#   T20–80   (1.0s)  PHASE 1    — Text & Sound (MESSAGE, TITLE, ACTION_BAR, BOSSBAR, SOUND)
+#   T80–160  (4.0s)  PHASE 2    — Fireworks via CUE container (FIREWORK_CIRCLE + FIREWORK)
+#   T160–240 (8.0s)  PHASE 3    — FIREWORK_RANDOM scatter (seeded + random)
+#   T240–340 (12.0s) PHASE 4    — GROUP_EVENT (group-scoped cues, TEAM_COLOR, GLOW)
+#   T340–440 (17.0s) PHASE 5    — Visual Effects (PARTICLE, EFFECT, CAMERA, LIGHTNING)
+#   T440–500 (22.0s) PHASE 6    — Stage Directions (FACE, CROSS_TO, RETURN_HOME)
+#   T500–560 (25.0s) PHASE 7    — World Effects (TIME_OF_DAY, WEATHER)
+#   T560–600 (28.0s) FINALE     — Grand firework fanfare via CUE, closing title
+# ─────────────────────────────────────────────────────────────────────
+
+id: test.showcase.full
+name: "Full Stage Test — 30s"
+description: "Comprehensive Phase 1 test show. Covers all major event categories. Run with --scenes to see phase labels in the action bar."
+duration_ticks: 600
+
+portable: true
+default_mode: static
+default_audience: broadcast
+group_count: 2
+group_strategy: join_order   # first participant → Group A (Gold), second → Group B (Aqua)
+front: south
+
+# Show-level bossbar tracks overall progress
+bossbar:
+  enabled: true
+  title: "<gray>Full Stage Test</gray>"
+  color: WHITE
+  overlay: PROGRESS
+  fade_in_ticks: 20
+  fade_out_ticks: 40
+  audience: broadcast
+
+# Stage marks — offsets from spatial anchor (first named participant)
+marks:
+  center:
+    offset: {x: 0, y: 0, z: 0}
+  stage_left:
+    offset: {x: -5, y: 0, z: 0}
+  stage_right:
+    offset: {x: 5, y: 0, z: 0}
+  upstage:
+    offset: {x: 0, y: 0, z: -5}
+
+timeline:
+
+  # ═══════════════════════════════════════════════════════════════════
+  # SETUP (T0) — assigns groups, sets team colors, plays opening sting
+  # ═══════════════════════════════════════════════════════════════════
+
+  # Must be at tick 0 — divides participants into Group A and Group B
+  - type: GROUP_ASSIGN
+    at: 0
+
+  # Color-code the groups immediately so name-tags are visible from T0
+  # Group 1 = Gold, Group 2 = Aqua
+  - type: TEAM_COLOR
+    at: 2
+    target: group_1
+    color: GOLD
+
+  - type: TEAM_COLOR
+    at: 2
+    target: group_2
+    color: AQUA
+
+  # Opening title card — everyone sees it
+  - type: TITLE
+    at: 5
+    audience: broadcast
+    title: "<gold><bold>FULL STAGE TEST</bold></gold>"
+    subtitle: "<gray>30 seconds · 8 phases · all systems go</gray>"
+    fade_in: 8
+    stay: 40
+    fade_out: 10
+
+  # Opening sting sound
+  - type: SOUND
+    at: 5
+    sound_id: "minecraft:ui.toast.challenge_complete"
+    category: master
+    volume: 0.8
+    pitch: 1.0
+
+  # Brief action bar tells director to run with --scenes for phase labels
+  - type: ACTION_BAR
+    at: 10
+    audience: broadcast
+    message: "<dark_gray>Run with <white>--scenes</white> to label phases in this bar</dark_gray>"
+    duration_ticks: 40
+
+  # ═══════════════════════════════════════════════════════════════════
+  # PHASE 1: Text & Sound (T20–T80)
+  # Tests: MESSAGE, TITLE, ACTION_BAR, BOSSBAR (inline), SOUND
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 20
+    audience: broadcast
+    message: "<dark_gray>[ScaenaTest]</dark_gray> <yellow>◀ PHASE 1: Text & Sound ▶</yellow>"
+
+  # Inline bossbar for this phase — fades in over 10t, holds, fades out at the end
+  - type: BOSSBAR
+    at: 20
+    title: "<yellow>Phase 1 — Text & Sound</yellow>"
+    color: YELLOW
+    overlay: PROGRESS
+    duration_ticks: 55
+    fade_in_ticks: 10
+    fade_out_ticks: 15
+    audience: broadcast
+
+  # Participants-only message to verify audience filtering
+  - type: MESSAGE
+    at: 30
+    audience: participants
+    message: "<green>  ↳ Participants only:</green> <white>This message targets only show participants.</white>"
+
+  # Title test with custom timing
+  - type: TITLE
+    at: 35
+    audience: broadcast
+    title: "<yellow>Phase 1</yellow>"
+    subtitle: "<gray>Text & Sound</gray>"
+    fade_in: 5
+    stay: 25
+    fade_out: 8
+
+  # Action bar with duration — refreshes for 3 seconds
+  - type: ACTION_BAR
+    at: 50
+    audience: broadcast
+    message: "<white>◀ action bar with 3s duration ▶</white>"
+    duration_ticks: 60
+
+  # Sound test — harp note + level-up tone back to back
+  - type: SOUND
+    at: 55
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 1.0
+    pitch: 1.2
+
+  - type: SOUND
+    at: 65
+    sound_id: "minecraft:entity.player.levelup"
+    category: master
+    volume: 0.6
+    pitch: 1.4
+
+  # ═══════════════════════════════════════════════════════════════════
+  # PHASE 2: Fireworks via CUE Container (T80–T160)
+  # Tests: CUE reference expansion (FIREWORK_CIRCLE + FIREWORK inside sub-cue)
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 80
+    audience: broadcast
+    message: "<dark_gray>[ScaenaTest]</dark_gray> <gold>◀ PHASE 2: Fireworks via CUE container ▶</gold>"
+
+  - type: BOSSBAR
+    at: 80
+    title: "<gold>Phase 2 — CUE Container Fireworks</gold>"
+    color: GOLD
+    overlay: PROGRESS
+    duration_ticks: 75
+    fade_in_ticks: 8
+    fade_out_ticks: 15
+    audience: broadcast
+
+  # Expand test.fireworks.circle_warm inline: ring of 8 + large ball center
+  - type: CUE
+    at: 85
+    cue_id: test.fireworks.circle_warm
+
+  # Second identical call 40t later — confirms CUE is idempotent across calls
+  - type: CUE
+    at: 130
+    cue_id: test.fireworks.circle_warm
+
+  # ═══════════════════════════════════════════════════════════════════
+  # PHASE 3: FIREWORK_RANDOM Scatter (T160–T240)
+  # Tests: FIREWORK_RANDOM with seeded + unseeded variants
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 160
+    audience: broadcast
+    message: "<dark_gray>[ScaenaTest]</dark_gray> <light_purple>◀ PHASE 3: FIREWORK_RANDOM scatter ▶</light_purple>"
+
+  - type: BOSSBAR
+    at: 160
+    title: "<light_purple>Phase 3 — Random Scatter</light_purple>"
+    color: PURPLE
+    overlay: PROGRESS
+    duration_ticks: 75
+    fade_in_ticks: 8
+    fade_out_ticks: 15
+    audience: broadcast
+
+  # Seeded scatter — same 8 positions every run (seed: 7)
+  - type: MESSAGE
+    at: 165
+    audience: broadcast
+    message: "<gray>  → Seeded scatter (seed 7): same positions every run</gray>"
+
+  - type: FIREWORK_RANDOM
+    at: 165
+    preset: scae_star_warm
+    origin_offset: {x: 0, z: 0}
+    radius: 12
+    count: 8
+    y_mode: surface
+    y_offset: 2
+    seed: 7
+
+  # Unseeded scatter — different positions every run
+  - type: MESSAGE
+    at: 200
+    audience: broadcast
+    message: "<gray>  → Unseeded scatter: different positions each time</gray>"
+
+  - type: FIREWORK_RANDOM
+    at: 200
+    preset: scae_burst_leaf
+    origin_offset: {x: 0, z: 0}
+    radius: 10
+    count: 6
+    y_mode: surface
+    y_offset: 3
+    seed: null
+
+  # Pride burst scatter for color variety
+  - type: FIREWORK_RANDOM
+    at: 220
+    preset: pride_burst_rainbow
+    origin_offset: {x: 0, z: 0}
+    radius: 8
+    count: 5
+    y_mode: surface
+    y_offset: 2
+    seed: null
+
+  # ═══════════════════════════════════════════════════════════════════
+  # PHASE 4: GROUP_EVENT (T240–T340)
+  # Tests: GROUP_EVENT audience scoping, TEAM_COLOR change mid-show, GLOW
+  # Each group receives a different cue; the other group sees nothing.
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 240
+    audience: broadcast
+    message: "<dark_gray>[ScaenaTest]</dark_gray> <green>◀ PHASE 4: GROUP_EVENT — watch your personal message ▶</green>"
+
+  - type: BOSSBAR
+    at: 240
+    title: "<green>Phase 4 — Group Events</green>"
+    color: GREEN
+    overlay: PROGRESS
+    duration_ticks: 95
+    fade_in_ticks: 8
+    fade_out_ticks: 15
+    audience: broadcast
+
+  # Brief countdown so players know the group messages are coming
+  - type: ACTION_BAR
+    at: 245
+    audience: broadcast
+    message: "<gray>Your group message arrives in 3 seconds…</gray>"
+    duration_ticks: 60
+
+  # Group 1 (Gold) receives their personalized cue
+  - type: GROUP_EVENT
+    at: 260
+    target: group_1
+    cue_id: test.group.cheer_a
+
+  # Group 2 (Aqua) receives theirs — staggered 10t so the server log is distinct
+  - type: GROUP_EVENT
+    at: 270
+    target: group_2
+    cue_id: test.group.cheer_b
+
+  # Glow both groups simultaneously — confirms GLOW event works
+  - type: GLOW
+    at: 290
+    audience: group_1
+    color: GOLD
+    duration_ticks: 100
+
+  - type: GLOW
+    at: 290
+    audience: group_2
+    color: AQUA
+    duration_ticks: 100
+
+  # Everyone reunites — broadcast message confirms groups are still valid after GROUP_EVENT
+  - type: MESSAGE
+    at: 315
+    audience: broadcast
+    message: "<gray>  [All groups reunited — GROUP_EVENT phase complete]</gray>"
+
+  - type: TITLE
+    at: 315
+    audience: broadcast
+    title: "<green>Groups rejoined</green>"
+    subtitle: "<gray>Both group cues fired independently</gray>"
+    fade_in: 5
+    stay: 25
+    fade_out: 8
+
+  # ═══════════════════════════════════════════════════════════════════
+  # PHASE 5: Visual Effects (T340–T440)
+  # Tests: PARTICLE, EFFECT (potion), CAMERA, LIGHTNING
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 340
+    audience: broadcast
+    message: "<dark_gray>[ScaenaTest]</dark_gray> <aqua>◀ PHASE 5: Visual Effects ▶</aqua>"
+
+  - type: BOSSBAR
+    at: 340
+    title: "<aqua>Phase 5 — Visual Effects</aqua>"
+    color: BLUE
+    overlay: PROGRESS
+    duration_ticks: 95
+    fade_in_ticks: 8
+    fade_out_ticks: 15
+    audience: broadcast
+
+  # Particle shower around the anchor point for 3 seconds
+  - type: MESSAGE
+    at: 345
+    audience: broadcast
+    message: "<gray>  → PARTICLE: heart shower at anchor (3s)</gray>"
+
+  - type: PARTICLE
+    at: 345
+    particle_id: "minecraft:heart"
+    count: 8
+    offset: [1.5, 2.0, 1.5]
+    extra: 0.0
+    force: false
+    duration_ticks: 60
+    interval_ticks: 10
+
+  # Night vision for participants only — short enough not to linger
+  - type: MESSAGE
+    at: 360
+    audience: broadcast
+    message: "<gray>  → EFFECT: night_vision on participants (4s)</gray>"
+
+  - type: EFFECT
+    at: 360
+    effect_id: night_vision
+    duration_ticks: 80
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  # Brief levitation lift — tests that stop-safety removes it
+  - type: MESSAGE
+    at: 390
+    audience: broadcast
+    message: "<gray>  → EFFECT: levitation pulse (40t) — stop-safety will remove if show is stopped early</gray>"
+
+  - type: EFFECT
+    at: 390
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: false
+    audience: participants
+
+  # Slow falling lands them gently after the levitation expires
+  - type: EFFECT
+    at: 432
+    effect_id: slow_falling
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  # Camera sway effect
+  - type: MESSAGE
+    at: 400
+    audience: broadcast
+    message: "<gray>  → CAMERA: sway (intensity 2, 40t)</gray>"
+
+  - type: CAMERA
+    at: 400
+    effect: sway
+    intensity: 2
+    duration_ticks: 40
+    audience: participants
+
+  # Lightning strike at the anchor — cosmetic only (no damage)
+  - type: MESSAGE
+    at: 425
+    audience: broadcast
+    message: "<gray>  → LIGHTNING: cosmetic strike at anchor</gray>"
+
+  - type: LIGHTNING
+    at: 425
+    offset: {x: 0, y: 0, z: 0}
+
+  - type: SOUND
+    at: 425
+    sound_id: "minecraft:entity.lightning_bolt.thunder"
+    category: master
+    volume: 0.7
+    pitch: 1.1
+
+  # ═══════════════════════════════════════════════════════════════════
+  # PHASE 6: Stage Directions (T440–T500)
+  # Tests: FACE, CROSS_TO, RETURN_HOME
+  # Note: ENTER/EXIT require entities; skipped in this basic test.
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 440
+    audience: broadcast
+    message: "<dark_gray>[ScaenaTest]</dark_gray> <white>◀ PHASE 6: Stage Directions ▶</white>"
+
+  - type: BOSSBAR
+    at: 440
+    title: "<white>Phase 6 — Stage Directions</white>"
+    color: WHITE
+    overlay: PROGRESS
+    duration_ticks: 55
+    fade_in_ticks: 8
+    fade_out_ticks: 15
+    audience: broadcast
+
+  # Face north (toward negative Z / upstage mark)
+  - type: MESSAGE
+    at: 445
+    audience: broadcast
+    message: "<gray>  → FACE: all participants turn to look at upstage mark</gray>"
+
+  - type: FACE
+    at: 445
+    target: participants
+    look_at: mark:upstage
+
+  # Walk to stage_left over 30 ticks (~1.5s)
+  - type: MESSAGE
+    at: 460
+    audience: broadcast
+    message: "<gray>  → CROSS_TO: moving to stage_left mark (30t)</gray>"
+
+  - type: CROSS_TO
+    at: 460
+    target: participants
+    destination: mark:stage_left
+    duration_ticks: 30
+    facing: mark:center
+
+  # Return to home positions over 30 ticks
+  - type: MESSAGE
+    at: 480
+    audience: broadcast
+    message: "<gray>  → RETURN_HOME: returning to original positions (30t)</gray>"
+
+  - type: RETURN_HOME
+    at: 480
+    target: participants
+    duration_ticks: 30
+
+  # ═══════════════════════════════════════════════════════════════════
+  # PHASE 7: World Effects (T500–T560)
+  # Tests: TIME_OF_DAY, WEATHER
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 500
+    audience: broadcast
+    message: "<dark_gray>[ScaenaTest]</dark_gray> <dark_blue>◀ PHASE 7: World Effects ▶</dark_blue>"
+
+  - type: BOSSBAR
+    at: 500
+    title: "<dark_blue>Phase 7 — World Effects</dark_blue>"
+    color: BLUE
+    overlay: PROGRESS
+    duration_ticks: 55
+    fade_in_ticks: 8
+    fade_out_ticks: 15
+    audience: broadcast
+
+  # Jump to midnight — dramatic sky shift
+  - type: MESSAGE
+    at: 505
+    audience: broadcast
+    message: "<gray>  → TIME_OF_DAY: midnight (18000)</gray>"
+
+  - type: TIME_OF_DAY
+    at: 505
+    time: 18000
+
+  # Brief thunderstorm
+  - type: MESSAGE
+    at: 515
+    audience: broadcast
+    message: "<gray>  → WEATHER: thunder (30t)</gray>"
+
+  - type: WEATHER
+    at: 515
+    state: thunder
+    duration_ticks: 30
+
+  # Clear weather and set to noon — ready for the finale
+  - type: WEATHER
+    at: 545
+    state: clear
+    duration_ticks: -1
+
+  - type: MESSAGE
+    at: 550
+    audience: broadcast
+    message: "<gray>  → TIME_OF_DAY: noon (6000) — clearing for finale</gray>"
+
+  - type: TIME_OF_DAY
+    at: 550
+    time: 6000
+
+  # ═══════════════════════════════════════════════════════════════════
+  # FINALE (T560–T600)
+  # Grand firework sequence via CUE + closing title
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: MESSAGE
+    at: 560
+    audience: broadcast
+    message: "<dark_gray>[ScaenaTest]</dark_gray> <yellow>★ FINALE — Grand Fanfare ★</yellow>"
+
+  - type: BOSSBAR
+    at: 560
+    title: "<gold>★ Finale ★</gold>"
+    color: YELLOW
+    overlay: PROGRESS
+    duration_ticks: 50
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: broadcast
+
+  # Drum roll into the finale
+  - type: SOUND
+    at: 560
+    sound_id: "minecraft:entity.ender_dragon.growl"
+    category: master
+    volume: 0.4
+    pitch: 1.6
+
+  # Fire the grand fanfare cue (V-fan + rainbow circle + random scatter)
+  - type: CUE
+    at: 562
+    cue_id: test.fireworks.fanfare
+
+  # Celebration title card timed to land as the fireworks bloom (~2s in)
+  - type: TITLE
+    at: 580
+    audience: broadcast
+    title: "<yellow><bold>TEST COMPLETE</bold></yellow>"
+    subtitle: "<gray>All phases passed — check console for any warnings</gray>"
+    fade_in: 5
+    stay: 40
+    fade_out: 15
+
+  # Final chime
+  - type: SOUND
+    at: 582
+    sound_id: "minecraft:ui.toast.challenge_complete"
+    category: master
+    volume: 1.0
+    pitch: 1.0
+
+  # Closing log message
+  - type: MESSAGE
+    at: 598
+    audience: broadcast
+    message: "<dark_gray>[ScaenaTest]</dark_gray> <green>✔ show complete — duration 600t (30s)</green>"

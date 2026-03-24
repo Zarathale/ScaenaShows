@@ -1,0 +1,23 @@
+# mood.wonder.single
+# A single majestic firework launched high above, paired with an ascending tone.
+# The pause before it lands is the point — use for moments that need to breathe.
+# Pair with a TITLE event in the parent show for maximum impact.
+id: mood.wonder.single
+timeline:
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:entity.experience_orb.pickup"
+    category: master
+    volume: 0.7
+    pitch: 0.7
+  - type: FIREWORK
+    at: 2
+    preset: scae_large_fanfare
+    offset: {x: 0, y: 18, z: 0}
+    y_mode: relative
+  - type: SOUND
+    at: 20
+    sound_id: "minecraft:block.amethyst_block.hit"
+    category: master
+    volume: 0.6
+    pitch: 1.4

@@ -1,0 +1,14 @@
+# atmos.lights.warm_bloom
+# Three soft warm fireworks scattered at low altitude over a wide radius.
+# Reads as candlelight or torchlight blooming across a stage.
+# Use during intimate, warm, or inviting scenes.
+id: atmos.lights.warm_bloom
+timeline:
+  - type: FIREWORK_RANDOM
+    at: 0
+    preset: scae_star_warm
+    origin_offset: {x: 0, z: 0}
+    radius: 14
+    count: 3
+    y_mode: surface
+    y_offset: 1

@@ -1,0 +1,40 @@
+# ScaenaShows v2 — Cue: test.group.cheer_b
+# Personal message + sound for Group 2 (Aqua team).
+# Referenced by GROUP_EVENT in the test show to confirm group-scoped delivery.
+
+id: test.group.cheer_b
+name: "Test — Group B Cheer"
+description: "Personalized message and sound for Group 2 (Aqua). Verifies GROUP_EVENT audience scoping."
+duration_ticks: 40
+tags: [tone:cool, arc:moment]
+
+timeline:
+
+  # Message visible only to Group 2 members
+  - type: MESSAGE
+    at: 0
+    audience: participants
+    message: "<aqua><bold>GROUP B</bold></aqua> <dark_aqua>— You're on the Aqua team! This message is only for you.</dark_aqua>"
+
+  - type: TITLE
+    at: 0
+    audience: participants
+    title: "<aqua>💧 GROUP B 💧</aqua>"
+    subtitle: "<gray>Aqua team — group-scoped delivery</gray>"
+    fade_in: 5
+    stay: 30
+    fade_out: 10
+
+  # Note block chime — lower pitch for Group B
+  - type: SOUND
+    at: 5
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 1.0
+    pitch: 0.8
+
+  - type: ACTION_BAR
+    at: 10
+    audience: participants
+    message: "<aqua>◆ Group B ◆</aqua>"
+    duration_ticks: 30
