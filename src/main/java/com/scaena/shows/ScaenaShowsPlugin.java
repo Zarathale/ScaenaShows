@@ -1,69 +1,144 @@
 package com.scaena.shows;
 
-import com.scaena.shows.config.ConfigLoader;
-import com.scaena.shows.registry.FireworkPresetRegistry;
-import com.scaena.shows.registry.SceneRegistry;
-import com.scaena.shows.registry.SequenceRegistry;
+import com.scaena.shows.command.ShowCommand;
+import com.scaena.shows.config.ScaenaConfig;
+import com.scaena.shows.registry.CueRegistry;
+import com.scaena.shows.registry.FireworkRegistry;
 import com.scaena.shows.registry.ShowRegistry;
+import com.scaena.shows.runtime.PlayerLifecycleListener;
 import com.scaena.shows.runtime.ShowManager;
+import com.scaena.shows.runtime.executor.ExecutorRegistry;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.jar.JarFile;
+
+/**
+ * ScaenaShows v2 — main plugin entry point.
+ *
+ * Startup order:
+ *  1. Save default resources (config.yml, fireworks.yml)
+ *  2. Load config → ScaenaConfig
+ *  3. Load fireworks.yml → FireworkRegistry
+ *  4. Load cues/ → CueRegistry
+ *  5. Load shows/ → ShowRegistry (validates CUE refs + cycle detection)
+ *  6. Build ExecutorRegistry (wires all event executors)
+ *  7. Build ShowManager
+ *  8. Register /show command + tab completer
+ *  9. Register player lifecycle listener
+ */
 public final class ScaenaShowsPlugin extends JavaPlugin {
 
-    private ConfigLoader configLoader;
-    private FireworkPresetRegistry fireworkPresets;
-    private SequenceRegistry sequences;
-    private SceneRegistry scenes;
-    private ShowRegistry shows;
-    private ShowManager showManager;
-
-    private int tickTaskId = -1;
+    private ScaenaConfig      scaenaConfig;
+    private FireworkRegistry  fireworkRegistry;
+    private CueRegistry       cueRegistry;
+    private ShowRegistry      showRegistry;
+    private ExecutorRegistry  executors;
+    private ShowManager       showManager;
 
     @Override
     public void onEnable() {
-        // Ensure data folder exists + starter library
+        // 0. Theatrical banner — first thing on screen
+        ScaenaConsole.printBanner(getDescription().getVersion());
+
+        // 1. Save default resources if they don't exist
+        saveDefaultResource("config.yml");
+        saveDefaultResource("fireworks.yml");
+        saveDefaultResources("cues");
+        saveDefaultResources("shows");
+
+        // 2. Load config
         saveDefaultConfig();
-        getDataFolder().mkdirs();
+        reloadConfig();
+        scaenaConfig = new ScaenaConfig(getConfig());
 
-        ResourceCopier.copyIfMissing(this, "fireworks.yml", new java.io.File(getDataFolder(), "fireworks.yml"));
-        ResourceCopier.copyTreeIfMissing(this, "sequences", new java.io.File(getDataFolder(), "sequences"));
-        ResourceCopier.copyTreeIfMissing(this, "scenes", new java.io.File(getDataFolder(), "scenes"));
-        ResourceCopier.copyTreeIfMissing(this, "shows", new java.io.File(getDataFolder(), "shows"));
+        // 3. Registries
+        fireworkRegistry = new FireworkRegistry(getLogger());
+        cueRegistry      = new CueRegistry(getLogger());
+        showRegistry     = new ShowRegistry(getLogger(), cueRegistry);
 
-        this.configLoader = new ConfigLoader(this);
-        this.fireworkPresets = new FireworkPresetRegistry(this);
-        this.sequences = new SequenceRegistry(this);
-        this.scenes = new SceneRegistry(this);
-        this.shows = new ShowRegistry(this);
+        // 4–5. Load all YAML data (fireworks → cues → shows)
+        loadAllData();
 
-        reloadAll();
+        // Stage inventory summary
+        ScaenaConsole.printStats(
+            fireworkRegistry.getAll().size(),
+            cueRegistry.getAll().size(),
+            showRegistry.getAll().size()
+        );
 
-        this.showManager = new ShowManager(this, configLoader, fireworkPresets, sequences, scenes, shows);
+        // 6. Executor registry
+        executors = new ExecutorRegistry(this, fireworkRegistry, cueRegistry);
 
-        // Commands + events
-        var cmd = getCommand("show");
-        if (cmd != null) {
-            cmd.setExecutor(new com.scaena.shows.runtime.ShowCommand(this, showManager));
-            cmd.setTabCompleter(new com.scaena.shows.runtime.ShowCommand(this, showManager));
+        // 7. Show manager
+        showManager = new ShowManager(this, scaenaConfig, cueRegistry, executors);
+
+        // 8. Register command
+        PluginCommand showCmd = getCommand("show");
+        if (showCmd != null) {
+            ShowCommand handler = new ShowCommand(
+                this, showRegistry, cueRegistry, fireworkRegistry, showManager);
+            showCmd.setExecutor(handler);
+            showCmd.setTabCompleter(handler);
+        } else {
+            ScaenaConsole.error("plugin.yml", "'show' command not found — check plugin.yml!");
         }
 
-        getServer().getPluginManager().registerEvents(new com.scaena.shows.runtime.ShowListener(showManager), this);
+        // 9. Player lifecycle listener
+        getServer().getPluginManager().registerEvents(
+            new PlayerLifecycleListener(showManager), this);
 
-        // Global scheduler tick
-        tickTaskId = getServer().getScheduler().scheduleSyncRepeatingTask(this, showManager::tickAll, 1L, 1L);
+        // Ready!
+        ScaenaConsole.printReady();
     }
 
     @Override
     public void onDisable() {
-        if (tickTaskId != -1) getServer().getScheduler().cancelTask(tickTaskId);
-        if (showManager != null) showManager.stopAll("Server stopping.");
+        if (showManager != null) {
+            showManager.shutdown();
+        }
+        ScaenaConsole.printCurtainDown();
     }
 
-    public void reloadAll() {
-        configLoader.reload();
-        fireworkPresets.reload();
-        sequences.reload();
-        scenes.reload();
-        shows.reload();
+    // ------------------------------------------------------------------
+    // Helpers
+    // ------------------------------------------------------------------
+
+    /** Load fireworks.yml → cues/ → shows/ in the correct order. */
+    private void loadAllData() {
+        File dataFolder = getDataFolder();
+        fireworkRegistry.load(new File(dataFolder, "fireworks.yml"));
+        cueRegistry.load(new File(dataFolder, "cues"));
+        showRegistry.load(new File(dataFolder, "shows"));
+    }
+
+    private void saveDefaultResource(String name) {
+        File f = new File(getDataFolder(), name);
+        if (!f.exists()) {
+            saveResource(name, false);
+        }
+    }
+
+    /**
+     * Scans the plugin JAR for all .yml files under the given folder prefix
+     * and extracts any that don't already exist in the plugin data folder.
+     * This seeds cues/ and shows/ on first install without overwriting edits.
+     */
+    private void saveDefaultResources(String folder) {
+        // Ensure the directory exists even if the JAR has no bundled files
+        File dir = new File(getDataFolder(), folder);
+        if (!dir.exists()) dir.mkdirs();
+
+        try (JarFile jar = new JarFile(getFile())) {
+            jar.stream()
+               .filter(e -> !e.isDirectory()
+                         && e.getName().startsWith(folder + "/")
+                         && e.getName().endsWith(".yml"))
+               .forEach(e -> saveDefaultResource(e.getName()));
+        } catch (IOException e) {
+            getLogger().warning("[ScaenaShows] Could not scan bundled " + folder + "/ resources: " + e.getMessage());
+        }
     }
 }

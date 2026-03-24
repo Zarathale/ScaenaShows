@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScaenaComposer — Design System</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* ── Core palette ── */
+      --bg:           #18181E;
+      --panel:        #1F1F28;
+      --surface:      #252530;
+      --surface-hi:   #2C2C3A;
+      --border:       #333345;
+      --border-hi:    #4A4A60;
+      --text-primary:   #E2E2EA;
+      --text-secondary: #8888A0;
+      --text-muted:     #55556A;
+
+      /* ── Brand accents ── */
+      --gold:   #F0B429;   /* primary brand; ScaenaCraft identity carry-through */
+      --amber:  #D97706;   /* secondary warm; hover/active tones */
+      --purple: #C080FF;   /* ShowSprite identity */
+      --green:  #4ADE80;   /* RCON connected, success states */
+      --red:    #F87171;   /* stop, playhead, error */
+      --blue:   #60A8F8;   /* info, links */
+
+      /* ── Timeline lane colors ── */
+      --lane-messages: #C4891A;
+      --lane-titles:   #E8A230;
+      --lane-bossbar:  #C05820;
+      --lane-sounds:   #2DB5B5;
+      --lane-particles:#9B6ACF;
+      --lane-effects:  #5080D0;
+      --lane-glow:     #6DB840;
+      --lane-fireworks:#CC3020;
+      --lane-patterns: #C040A0;
+      --lane-entities: #C09050;
+      --lane-movement: #40A0D8;
+      --lane-cuerefs:  #7878A0;
+      --lane-utility:  #606080;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 40px 48px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* ── DOC CHROME ── */
+    .doc-header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 48px;
+    }
+    .doc-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+    }
+    .doc-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .section {
+      margin-bottom: 56px;
+    }
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      margin-bottom: 28px;
+    }
+
+    h3 {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      margin-bottom: 12px;
+      margin-top: 28px;
+    }
+    h3:first-child { margin-top: 0; }
+
+    p.note {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      line-height: 1.6;
+      max-width: 680px;
+    }
+
+    /* ── COLOR SWATCHES ── */
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .swatch-card {
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .swatch-color {
+      height: 56px;
+    }
+    .swatch-info {
+      background: var(--surface);
+      padding: 8px 10px;
+    }
+    .swatch-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .swatch-hex {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .swatch-role {
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    /* ── LANE REFERENCE ── */
+    .lane-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .lane-table th {
+      text-align: left;
+      padding: 6px 10px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .lane-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .lane-table tr:last-child td { border-bottom: none; }
+    .lane-table tr:hover td { background: var(--surface); }
+    .lane-swatch-cell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .lane-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .lane-bar-preview {
+      height: 14px;
+      border-radius: 3px;
+      width: 80px;
+      display: flex; align-items: center;
+      padding: 0 5px;
+      font-size: 8px; color: #fff; font-weight: 600; font-family: monospace;
+      opacity: 0.9;
+    }
+    .mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; }
+
+    /* ── TYPOGRAPHY ── */
+    .type-row {
+      display: flex;
+      align-items: baseline;
+      gap: 24px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .type-sample {
+      flex: 1;
+    }
+    .type-meta {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-family: monospace;
+      white-space: nowrap;
+    }
+
+    /* ── COMPONENTS ── */
+    .comp-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .comp-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 120px;
+    }
+    .comp-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    /* Buttons */
+    .btn { cursor: pointer; font-family: inherit; }
+    .btn-default {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 12px;
+      padding: 5px 12px;
+    }
+    .btn-default:hover { background: var(--surface-hi); border-color: var(--border-hi); }
+    .btn-gold {
+      background: #1E1300;
+      border: 1px solid var(--amber);
+      border-radius: 4px;
+      color: var(--gold);
+      font-size: 12px;
+      padding: 5px 12px;
+    }
+    .btn-purple {
+      background: #160025;
+      border: 1px solid #6040A0;
+      border-radius: 4px;
+      color: var(--purple);
+      font-size: 12px;
+      padding: 5px 12px;
+    }
+    .btn-stop {
+      background: #200000;
+      border: 1px solid #803020;
+      border-radius: 4px;
+      color: #F07060;
+      font-size: 12px;
+      padding: 5px 12px;
+    }
+    .btn-ghost {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 12px;
+      padding: 5px 8px;
+      border-radius: 4px;
+    }
+    .btn-ghost:hover { background: var(--surface); color: var(--text-primary); }
+
+    /* Inputs */
+    .inp {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 12px;
+      padding: 5px 10px;
+      font-family: inherit;
+      outline: none;
+      width: 180px;
+    }
+    .inp:focus { border-color: #6040A0; box-shadow: 0 0 0 2px rgba(96,64,160,0.2); }
+    .inp-mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; }
+
+    /* Segmented control */
+    .seg {
+      display: inline-flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .seg-opt {
+      padding: 4px 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-right: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .seg-opt:last-child { border-right: none; }
+    .seg-opt.on { background: var(--surface-hi); color: var(--text-primary); }
+
+    /* Toggle */
+    .toggle-wrap { display: flex; align-items: center; gap: 8px; }
+    .toggle {
+      width: 32px; height: 18px; border-radius: 9px;
+      position: relative; cursor: pointer;
+    }
+    .toggle.on { background: var(--green); }
+    .toggle.off { background: var(--border-hi); }
+    .toggle::after {
+      content: '';
+      position: absolute; top: 2px;
+      width: 14px; height: 14px;
+      background: white; border-radius: 50%;
+    }
+    .toggle.on::after { right: 2px; }
+    .toggle.off::after { left: 2px; }
+    .toggle-lbl { font-size: 12px; color: var(--text-secondary); }
+
+    /* Select */
+    .sel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 12px;
+      padding: 5px 22px 5px 10px;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L4 4L7 1' stroke='%238888A0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 7px center;
+      font-family: inherit;
+    }
+
+    /* Property row */
+    .prop-row {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 260px;
+    }
+    .prop-row-field { display: flex; flex-direction: column; gap: 3px; }
+    .prop-row-lbl { font-size: 10px; color: var(--text-secondary); }
+    .prop-val {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 12px;
+      padding: 4px 8px;
+    }
+
+    /* Status indicators */
+    .status-row { display: flex; gap: 16px; align-items: center; }
+    .status-item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+
+    /* Firework tiles */
+    .fw-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: flex-end;
+    }
+    .fw-tile-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .fw-tile-lbl {
+      font-size: 10px; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+
+    /* Color variation previews */
+    .variation-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .var-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      min-width: 140px;
+    }
+    .var-title { font-size: 10px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 600; }
+    .var-dots { display: flex; gap: 4px; }
+    .var-dot {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* ShowSprite diff card */
+    .diff-card {
+      background: var(--surface);
+      border: 1px solid #6040A0;
+      border-radius: 6px;
+      overflow: hidden;
+      max-width: 560px;
+    }
+    .diff-header {
+      background: #160025;
+      padding: 8px 12px;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px;
+    }
+    .diff-type-badge {
+      background: #2A0050;
+      border: 1px solid #8050C0;
+      border-radius: 3px;
+      font-size: 9px;
+      padding: 1px 6px;
+      color: var(--purple);
+      font-family: monospace;
+    }
+    .diff-desc { color: var(--text-secondary); flex: 1; }
+    .diff-body {
+      padding: 10px 12px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+    .diff-add { color: #6DB840; }
+    .diff-sub { color: #CC4040; }
+    .diff-ctx { color: var(--text-muted); }
+    .diff-footer {
+      padding: 8px 12px;
+      border-top: 1px solid var(--border);
+      display: flex; gap: 8px; align-items: center;
+    }
+    .diff-approve {
+      background: #0A200A;
+      border: 1px solid #3A8030;
+      border-radius: 4px;
+      color: #6DB840;
+      font-size: 11px;
+      padding: 4px 12px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .diff-reject {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-secondary);
+      font-size: 11px;
+      padding: 4px 12px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .diff-note { font-size: 10px; color: var(--text-muted); }
+
+    /* Tag chips */
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      border-radius: 10px;
+      font-size: 10px;
+      padding: 3px 9px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+    }
+    .tag.dim-tone     { border-color: #806020; color: #D0A040; background: #1E1800; }
+    .tag.dim-energy   { border-color: #602020; color: #E06060; background: #1E1010; }
+    .tag.dim-pace     { border-color: #204060; color: #60A0D0; background: #101828; }
+    .tag.dim-arc      { border-color: #206030; color: #60C070; background: #101E14; }
+    .tag.dim-effect   { border-color: #502060; color: #A060C0; background: #180E20; }
+    .tag.dim-duration { border-color: #404020; color: #B0B040; background: #181810; }
+    .tag.dim-pattern  { border-color: #205050; color: #40C0C0; background: #0E1818; }
+    .tag.dim-creator  { border-color: #402010; color: #D08030; background: #1A1008; }
+
+    /* Breadcrumb mockup */
+    .bc-demo {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 14px;
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px;
+      max-width: 500px;
+    }
+    .bc-item { color: var(--text-secondary); cursor: pointer; }
+    .bc-item:hover { color: var(--gold); }
+    .bc-cur { color: var(--text-primary); font-weight: 500; }
+    .bc-sep { color: var(--text-muted); }
+
+    /* Portability warning */
+    .warn-banner {
+      background: #201800;
+      border: 1px solid #604010;
+      border-radius: 6px;
+      padding: 10px 14px;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 12px;
+      max-width: 500px;
+      color: #D0A030;
+    }
+    .warn-icon { font-size: 16px; }
+    .warn-text { flex: 1; }
+
+    /* RCON status variants */
+    .rcon-connected { color: var(--green); }
+    .rcon-disconnected { color: #FF6060; }
+    .rcon-connecting { color: #D0A030; }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 28px 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="doc-header">
+  <div class="doc-title">ScaenaComposer — Design System</div>
+  <div class="doc-subtitle">
+    Pre-build reference · Visual language, component patterns, and token definitions · ScaenaShows v2
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     1. DESIGN PHILOSOPHY
+═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">1 · Design Philosophy</div>
+
+  <p class="note" style="font-size:13px;color:var(--text-secondary);margin-bottom:20px">
+    ScaenaComposer is <em>backstage</em>, not onstage. It is a production tool — dense, precise, and dark. The theatrical identity is present structurally (in vocabulary and naming) rather than decoratively. Gold is used as the single brand accent; it connects the tool to ScaenaCraft without performing it.
+  </p>
+
+  <p class="note">
+    <strong style="color:var(--text-secondary)">Dark by default.</strong> The tool is used at a desk, often in a dimmed or creative environment. A dark background reduces eye strain during long composition sessions and makes colored event bars read with maximum clarity.
+  </p>
+  <p class="note">
+    <strong style="color:var(--text-secondary)">Color encodes category.</strong> Timeline lane colors are the primary information layer for event type at a glance. All other color usage is subordinate to this. Don't repurpose a lane color for any other meaning.
+  </p>
+  <p class="note">
+    <strong style="color:var(--text-secondary)">Density is a feature.</strong> The tool needs to show 13 lanes, a spatial canvas, properties, a library, and a chat interface simultaneously. Compact rows (24px lane height), 9–10px secondary labels, and minimal padding are correct here. This is a pro tool, not an onboarding flow.
+  </p>
+  <p class="note">
+    <strong style="color:var(--text-secondary)">Purple is ShowSprite's color.</strong> The purple family (#C080FF, deep purple backgrounds) belongs to ShowSprite. It is not used for any other component. When purple appears, it means ShowSprite.
+  </p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     2. COLOR TOKENS
+═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">2 · Color Tokens</div>
+
+  <h3>Surface Stack</h3>
+  <p class="note">Background layers stack from darkest (--bg) up to highlighted surfaces (--surface-hi). Use in order — never skip layers.</p>
+  <div class="swatch-grid" style="grid-template-columns:repeat(5,1fr)">
+    <div class="swatch-card">
+      <div class="swatch-color" style="background:#18181E"></div>
+      <div class="swatch-info"><div class="swatch-name">--bg</div><div class="swatch-hex">#18181E</div><div class="swatch-role">Body / app background</div></div>
+    </div>
+    <div class="swatch-card">
+      <div class="swatch-color" style="background:#1F1F28"></div>
+      <div class="swatch-info"><div class="swatch-name">--panel</div><div class="swatch-hex">#1F1F28</div><div class="swatch-role">Panel / sidebar / toolbar</div></div>
+    </div>
+    <div class="swatch-card">
+      <div class="swatch-color" style="background:#252530"></div>
+      <div class="swatch-info"><div class="swatch-name">--surface</div><div class="swatch-hex">#252530</div><div class="swatch-role">Cards, inputs, track lanes</div></div>
+    </div>
+    <div class="swatch-card">
+      <div class="swatch-color" style="background:#2C2C3A"></div>
+      <div class="swatch-info"><div class="swatch-name">--surface-hi</div><div class="swatch-hex">#2C2C3A</div><div class="swatch-role">Hover, selected segments</div></div>
+    </div>
+    <div class="swatch-card">
+      <div class="swatch-color" style="background:#333345"></div>
+      <div class="swatch-info"><div class="swatch-name">--border</div><div class="swatch-hex">#333345</div><div class="swatch-role">Default dividers/borders</div></div>
+    </div>
+  </div>
+
+  <h3>Text</h3>
+  <div class="swatch-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="swatch-card">
+      <div class="swatch-color" style="background:#E2E2EA"></div>
+      <div class="swatch-info"><div class="swatch-name">--text-primary</div><div class="swatch-hex">#E2E2EA</div><div class="swatch-role">Primary content text</div></div>
+    </div>
+    <div class="swatch-card">
+      <div class="swatch-color" style="background:#8888A0"></div>
+      <div class="swatch-info"><div class="swatch-name">--text-secondary</div><div class="swatch-hex">#8888A0</div><div class="swatch-role">Labels, hints, inactive</div></div>
+    </div>
+    <div class="swatch-card">
+      <div class="swatch-color" style="background:#55556A"></div>
+      <div class="swatch-info"><div class="swatch-name">--text-muted</div><div class="swatch-hex">#55556A</div><div class="swatch-role">Tick labels, placeholders</div></div>
+    </div>
+  </div>
+
+  <h3>Brand &amp; Semantic Accents</h3>
+  <div class="swatch-grid" style="grid-template-columns:repeat(6,1fr)">
+    <div class="swatch-card">
+      <div class="swatch-color" style="background:#F0B429"></div>
+      <div class="swatch-info"><div class="swatch-name">--gold</div><div class="swatch-hex">#F0B429</div><div class="swatch-role">Brand; active tabs, focus</div></div>
+    </div>
+    <div class="swatch-card">
+      <div class="swatch-color" style="background:#D97706"></div>
+      <div class="swatch-info"><div class="swatch-name">--amber</div><div class="swatch-hex">#D97706</div><div class="swatch-role">Preview buttons, borders</div></div>
+    </div>
+    <div class="swatch-card">
+      <div class="swatch-color" style="background:#C080FF"></div>
+      <div class="swatch-info"><div class="swatch-name">--purple</div><div class="swatch-hex">#C080FF</div><div class="swatch-role">ShowSprite only</div></div>
+    </div>
+    <div class="swatch-card">
+      <div class="swatch-color" style="background:#4ADE80"></div>
+      <div class="swatch-info"><div class="swatch-name">--green</div><div class="swatch-hex">#4ADE80</div><div class="swatch-role">RCON connected, success, toggle-on</div></div>
+    </div>
+    <div class="swatch-card">
+      <div class="swatch-color" style="background:#F87171"></div>
+      <div class="swatch-info"><div class="swatch-name">--red</div><div class="swatch-hex">#F87171</div><div class="swatch-role">Stop, playhead, error</div></div>
+    </div>
+    <div class="swatch-card">
+      <div class="swatch-color" style="background:#60A8F8"></div>
+      <div class="swatch-info"><div class="swatch-name">--blue</div><div class="swatch-hex">#60A8F8</div><div class="swatch-role">Info, links</div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     3. TIMELINE LANE COLOR SYSTEM
+═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">3 · Timeline Lane Color System</div>
+  <p class="note">Each event category has a single assigned color. This color appears on the lane label dot, event bar fill (at ~12% opacity), and event bar border (100%). The color is never used for anything else in the UI.</p>
+
+  <table class="lane-table">
+    <thead>
+      <tr>
+        <th>Lane</th>
+        <th>Color</th>
+        <th>Token</th>
+        <th>Hex</th>
+        <th>Event types</th>
+        <th>Bar style</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><div class="lane-swatch-cell"><div class="lane-dot" style="background:#C4891A"></div> Messages</div></td>
+        <td><div class="lane-bar-preview" style="background:#C4891A20;border:1px solid #C4891A">MESSAGE</div></td>
+        <td class="mono">--lane-messages</td>
+        <td class="mono">#C4891A</td>
+        <td>MESSAGE</td>
+        <td>Point marker (diamond)</td>
+      </tr>
+      <tr>
+        <td><div class="lane-swatch-cell"><div class="lane-dot" style="background:#E8A230"></div> Titles</div></td>
+        <td><div class="lane-bar-preview" style="background:#E8A23020;border:1px solid #E8A230">TITLE</div></td>
+        <td class="mono">--lane-titles</td>
+        <td class="mono">#E8A230</td>
+        <td>TITLE, ACTION_BAR</td>
+        <td>Duration bar</td>
+      </tr>
+      <tr>
+        <td><div class="lane-swatch-cell"><div class="lane-dot" style="background:#C05820"></div> Bossbar</div></td>
+        <td><div class="lane-bar-preview" style="background:#C0582020;border:1px solid #C05820">BOSSBAR</div></td>
+        <td class="mono">--lane-bossbar</td>
+        <td class="mono">#C05820</td>
+        <td>BOSSBAR</td>
+        <td>Duration bar</td>
+      </tr>
+      <tr>
+        <td><div class="lane-swatch-cell"><div class="lane-dot" style="background:#2DB5B5"></div> Sounds</div></td>
+        <td><div class="lane-bar-preview" style="background:#2DB5B520;border:1px solid #2DB5B5">SOUND</div></td>
+        <td class="mono">--lane-sounds</td>
+        <td class="mono">#2DB5B5</td>
+        <td>SOUND</td>
+        <td>Duration bar or point</td>
+      </tr>
+      <tr>
+        <td><div class="lane-swatch-cell"><div class="lane-dot" style="background:#9B6ACF"></div> Particles</div></td>
+        <td><div class="lane-bar-preview" style="background:#9B6ACF20;border:1px solid #9B6ACF">PARTICLE</div></td>
+        <td class="mono">--lane-particles</td>
+        <td class="mono">#9B6ACF</td>
+        <td>PARTICLE, EFFECT, CAMERA</td>
+        <td>Duration bar or point</td>
+      </tr>
+      <tr>
+        <td><div class="lane-swatch-cell"><div class="lane-dot" style="background:#5080D0"></div> Effects</div></td>
+        <td><div class="lane-bar-preview" style="background:#5080D020;border:1px solid #5080D0">EFFECT</div></td>
+        <td class="mono">--lane-effects</td>
+        <td class="mono">#5080D0</td>
+        <td>EFFECT, GLOW, CAMERA, LIGHTNING</td>
+        <td>Duration bar or point</td>
+      </tr>
+      <tr>
+        <td><div class="lane-swatch-cell"><div class="lane-dot" style="background:#6DB840"></div> Glow/Team</div></td>
+        <td><div class="lane-bar-preview" style="background:#6DB84020;border:1px solid #6DB840">GLOW</div></td>
+        <td class="mono">--lane-glow</td>
+        <td class="mono">#6DB840</td>
+        <td>GLOW, TEAM_COLOR, GROUP_ASSIGN</td>
+        <td>Duration bar or point</td>
+      </tr>
+      <tr>
+        <td><div class="lane-swatch-cell"><div class="lane-dot" style="background:#CC3020"></div> Fireworks</div></td>
+        <td><div class="lane-bar-preview" style="background:#CC302020;border:1px solid #CC3020">FIREWORK</div></td>
+        <td class="mono">--lane-fireworks</td>
+        <td class="mono">#CC3020</td>
+        <td>FIREWORK (single rocket)</td>
+        <td>3-zone bar: launch · flight · bloom</td>
+      </tr>
+      <tr>
+        <td><div class="lane-swatch-cell"><div class="lane-dot" style="background:#C040A0"></div> Patterns</div></td>
+        <td><div class="lane-bar-preview" style="background:#C040A020;border:1px solid #C040A0">PATTERN</div></td>
+        <td class="mono">--lane-patterns</td>
+        <td class="mono">#C040A0</td>
+        <td>FIREWORK_CIRCLE, FIREWORK_LINE, FIREWORK_FAN</td>
+        <td>Chase-segmented bar</td>
+      </tr>
+      <tr>
+        <td><div class="lane-swatch-cell"><div class="lane-dot" style="background:#C09050"></div> Entities</div></td>
+        <td><div class="lane-bar-preview" style="background:#C0905020;border:1px solid #C09050">ENTITY</div></td>
+        <td class="mono">--lane-entities</td>
+        <td class="mono">#C09050</td>
+        <td>SPAWN_ENTITY, DESPAWN_ENTITY, CAPTURE_ENTITIES, entity behavior events</td>
+        <td>Spawn-to-despawn bar</td>
+      </tr>
+      <tr>
+        <td><div class="lane-swatch-cell"><div class="lane-dot" style="background:#40A0D8"></div> Movement</div></td>
+        <td><div class="lane-bar-preview" style="background:#40A0D820;border:1px solid #40A0D8">MOVE</div></td>
+        <td class="mono">--lane-movement</td>
+        <td class="mono">#40A0D8</td>
+        <td>Stage directions, PLAYER_TELEPORT, PLAYER_SPECTATE, PLAYER_MOUNT</td>
+        <td>Duration bar or point</td>
+      </tr>
+      <tr>
+        <td><div class="lane-swatch-cell"><div class="lane-dot" style="background:#7878A0"></div> Cue refs</div></td>
+        <td><div class="lane-bar-preview" style="background:#7878A020;border:1px dashed #7878A0">↗ CUE</div></td>
+        <td class="mono">--lane-cuerefs</td>
+        <td class="mono">#7878A0</td>
+        <td>CUE reference (child container)</td>
+        <td>Dashed-border bar (collapsible)</td>
+      </tr>
+      <tr>
+        <td><div class="lane-swatch-cell"><div class="lane-dot" style="background:#606080"></div> Utility</div></td>
+        <td><div class="lane-bar-preview" style="background:#60608020;border:1px solid #606080">REST</div></td>
+        <td class="mono">--lane-utility</td>
+        <td class="mono">#606080</td>
+        <td>REST, COMMAND, REDSTONE, TIME_OF_DAY, WEATHER</td>
+        <td>Duration bar or point</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     4. TYPOGRAPHY
+═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">4 · Typography</div>
+  <p class="note">Font stack: <span class="mono">-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif</span>. Monospace: <span class="mono">'SF Mono', 'Fira Code', 'Cascadia Code', monospace</span>.</p>
+
+  <div class="type-row">
+    <div class="type-sample" style="font-size:14px;font-weight:700;color:var(--gold);letter-spacing:0.04em">ScaenaComposer</div>
+    <div class="type-meta">14px · 700 · gold · letter-spacing 0.04em — Brand / toolbar name</div>
+  </div>
+  <div class="type-row">
+    <div class="type-sample" style="font-size:13px;font-weight:500;color:var(--text-primary)">Warm Gold Ramp</div>
+    <div class="type-meta">13px · 500 · text-primary — Cue card name, property values</div>
+  </div>
+  <div class="type-row">
+    <div class="type-sample" style="font-size:12px;color:var(--text-primary)">Event and configuration fields</div>
+    <div class="type-meta">12px · 400 · text-primary — General UI body text</div>
+  </div>
+  <div class="type-row">
+    <div class="type-sample" style="font-size:11px;color:var(--text-secondary)">Property labels, tab names, hints</div>
+    <div class="type-meta">11px · 400 · text-secondary — Labels and secondary info</div>
+  </div>
+  <div class="type-row">
+    <div class="type-sample" style="font-size:10px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.09em">Section Title</div>
+    <div class="type-meta">10px · 600 · uppercase · 0.09em — Panel section headers</div>
+  </div>
+  <div class="type-row">
+    <div class="type-sample" style="font-size:9px;color:var(--text-muted)">Tag label · Lane name · Tick marker</div>
+    <div class="type-meta">9px · 400 · text-muted — Dense UI labels</div>
+  </div>
+  <div class="type-row">
+    <div class="type-sample" style="font-size:12px;font-family:'SF Mono','Fira Code',monospace;color:var(--text-primary)">ramp.warm_gold.01  ·  at: 80  ·  x: 0, z: 0</div>
+    <div class="type-meta">12px · mono · text-primary — YAML IDs, tick values, coordinates</div>
+  </div>
+  <div class="type-row">
+    <div class="type-sample" style="font-size:9px;font-family:'SF Mono','Fira Code',monospace;color:var(--text-muted)">FIREWORK_CIRCLE · 180t · 3 events</div>
+    <div class="type-meta">9px · mono · text-muted — Lane bar labels, compact readouts</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     5. CORE COMPONENTS
+═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">5 · Core Components</div>
+
+  <h3>Buttons</h3>
+  <div class="comp-grid">
+    <div class="comp-group">
+      <div class="comp-label">Default</div>
+      <button class="btn btn-default">New Cue</button>
+      <button class="btn btn-default">Save</button>
+    </div>
+    <div class="comp-group">
+      <div class="comp-label">Preview (gold)</div>
+      <button class="btn btn-gold">▶ Preview Cue</button>
+      <button class="btn btn-gold">▶ Preview Show</button>
+    </div>
+    <div class="comp-group">
+      <div class="comp-label">Stop</div>
+      <button class="btn btn-stop">■ Stop</button>
+    </div>
+    <div class="comp-group">
+      <div class="comp-label">ShowSprite (purple)</div>
+      <button class="btn btn-purple">Send</button>
+    </div>
+    <div class="comp-group">
+      <div class="comp-label">Ghost / transport</div>
+      <button class="btn btn-ghost">⏮</button>
+      <button class="btn btn-ghost">▶</button>
+      <button class="btn btn-ghost">■</button>
+    </div>
+  </div>
+
+  <h3>Segmented Controls</h3>
+  <div class="comp-grid">
+    <div class="comp-group">
+      <div class="comp-label">Y mode</div>
+      <div class="seg">
+        <div class="seg-opt">relative</div>
+        <div class="seg-opt on">surface</div>
+      </div>
+    </div>
+    <div class="comp-group">
+      <div class="comp-label">Chase direction</div>
+      <div class="seg">
+        <div class="seg-opt on">FL →</div>
+        <div class="seg-opt">← LF</div>
+      </div>
+    </div>
+    <div class="comp-group">
+      <div class="comp-label">Zoom level</div>
+      <div class="seg">
+        <div class="seg-opt">−</div>
+        <div class="seg-opt on">4×</div>
+        <div class="seg-opt">+</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Toggles</h3>
+  <div class="comp-grid">
+    <div class="comp-group">
+      <div class="comp-label">Enabled (on)</div>
+      <div class="toggle-wrap">
+        <div class="toggle on"></div>
+        <span class="toggle-lbl">Chase enabled</span>
+      </div>
+    </div>
+    <div class="comp-group">
+      <div class="comp-label">Disabled (off)</div>
+      <div class="toggle-wrap">
+        <div class="toggle off"></div>
+        <span class="toggle-lbl" style="color:var(--text-muted)">Chase disabled</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Inputs &amp; Selects</h3>
+  <div class="comp-grid">
+    <div class="comp-group">
+      <div class="comp-label">Text input</div>
+      <input class="inp" type="text" placeholder="Search by name, ID, or tag…">
+    </div>
+    <div class="comp-group">
+      <div class="comp-label">Monospace (values)</div>
+      <input class="inp inp-mono" type="text" value="6">
+    </div>
+    <div class="comp-group">
+      <div class="comp-label">Select / dropdown</div>
+      <select class="sel">
+        <option selected>scaena_gold</option>
+        <option>texture_white_gold</option>
+      </select>
+    </div>
+  </div>
+
+  <h3>Status Indicators</h3>
+  <div class="status-row">
+    <div class="status-item">
+      <div class="status-dot" style="background:var(--green);box-shadow:0 0 6px var(--green)"></div>
+      <span class="rcon-connected">RCON connected</span>
+    </div>
+    <div class="status-item">
+      <div class="status-dot" style="background:#FF6060;box-shadow:0 0 5px #FF6060"></div>
+      <span class="rcon-disconnected">RCON disconnected</span>
+    </div>
+    <div class="status-item">
+      <div class="status-dot" style="background:#D0A030;box-shadow:0 0 5px #D0A030"></div>
+      <span class="rcon-connecting">RCON connecting…</span>
+    </div>
+  </div>
+
+  <h3>Breadcrumb Navigation</h3>
+  <div class="bc-demo">
+    <span class="bc-item">show_celebration</span>
+    <span class="bc-sep">›</span>
+    <span class="bc-item">Opening Act</span>
+    <span class="bc-sep">›</span>
+    <span class="bc-cur">ramp.warm_gold.01</span>
+  </div>
+  <p class="note" style="margin-top:8px">Top-level and one level below expand in-place. Deeper nesting replaces the timeline view and updates the breadcrumb. Clicking a breadcrumb item navigates up to that level.</p>
+
+  <h3>Portability Warning Banner</h3>
+  <div class="warn-banner">
+    <span class="warn-icon">⚠</span>
+    <div class="warn-text">This show contains world-specific events (REDSTONE, SET teleport). Portability may be limited. <span style="color:var(--text-muted)">Review world-specific events before deploying to a new location.</span></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     6. TAG SYSTEM
+═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">6 · Tag Taxonomy — Visual Reference</div>
+  <p class="note">Tags use dimension-coded colors in the library and properties panels. The tag editor shows neutral chips; dimension color appears in filtered/browsed views.</p>
+
+  <h3>Emotional Tone</h3>
+  <div class="tag-row">
+    <span class="tag dim-tone">tone:dreamy</span>
+    <span class="tag dim-tone">tone:triumphant</span>
+    <span class="tag dim-tone">tone:tender</span>
+    <span class="tag dim-tone">tone:playful</span>
+    <span class="tag dim-tone">tone:warm</span>
+    <span class="tag dim-tone">tone:icy</span>
+    <span class="tag dim-tone">tone:celebratory</span>
+    <span class="tag dim-tone">tone:melancholic</span>
+    <span class="tag dim-tone">tone:mysterious</span>
+    <span class="tag dim-tone">tone:grand</span>
+  </div>
+
+  <h3>Energy</h3>
+  <div class="tag-row">
+    <span class="tag dim-energy">energy:low</span>
+    <span class="tag dim-energy">energy:medium</span>
+    <span class="tag dim-energy">energy:high</span>
+    <span class="tag dim-energy">energy:explosive</span>
+  </div>
+
+  <h3>Pace</h3>
+  <div class="tag-row">
+    <span class="tag dim-pace">pace:still</span>
+    <span class="tag dim-pace">pace:slow</span>
+    <span class="tag dim-pace">pace:moderate</span>
+    <span class="tag dim-pace">pace:fast</span>
+    <span class="tag dim-pace">pace:frantic</span>
+    <span class="tag dim-pace">pace:pulsing</span>
+    <span class="tag dim-pace">pace:building</span>
+    <span class="tag dim-pace">pace:erratic</span>
+  </div>
+
+  <h3>Arc Position</h3>
+  <div class="tag-row">
+    <span class="tag dim-arc">arc:opener</span>
+    <span class="tag dim-arc">arc:buildup</span>
+    <span class="tag dim-arc">arc:ramp</span>
+    <span class="tag dim-arc">arc:peak</span>
+    <span class="tag dim-arc">arc:release</span>
+    <span class="tag dim-arc">arc:coda</span>
+    <span class="tag dim-arc">arc:transition</span>
+    <span class="tag dim-arc">arc:breath</span>
+    <span class="tag dim-arc">arc:standalone</span>
+    <span class="tag dim-arc">arc:bridge</span>
+  </div>
+
+  <h3>Effect Character</h3>
+  <div class="tag-row">
+    <span class="tag dim-effect">fireworks-heavy</span>
+    <span class="tag dim-effect">fireworks-light</span>
+    <span class="tag dim-effect">particle-bed</span>
+    <span class="tag dim-effect">particle-burst</span>
+    <span class="tag dim-effect">text-forward</span>
+    <span class="tag dim-effect">sound-driven</span>
+    <span class="tag dim-effect">silent</span>
+    <span class="tag dim-effect">effect-driven</span>
+    <span class="tag dim-effect">spatial</span>
+  </div>
+
+  <h3>Duration Class</h3>
+  <div class="tag-row">
+    <span class="tag dim-duration">duration:flash</span>
+    <span class="tag dim-duration" style="opacity:0.7;font-size:9px;color:var(--text-muted);padding:2px 7px;background:none;border-color:transparent">&lt;40t</span>
+    <span class="tag dim-duration">duration:beat</span>
+    <span class="tag dim-duration" style="opacity:0.7;font-size:9px;color:var(--text-muted);padding:2px 7px;background:none;border-color:transparent">40–80t</span>
+    <span class="tag dim-duration">duration:moment</span>
+    <span class="tag dim-duration" style="opacity:0.7;font-size:9px;color:var(--text-muted);padding:2px 7px;background:none;border-color:transparent">80–160t</span>
+    <span class="tag dim-duration">duration:scene</span>
+    <span class="tag dim-duration" style="opacity:0.7;font-size:9px;color:var(--text-muted);padding:2px 7px;background:none;border-color:transparent">160–600t</span>
+    <span class="tag dim-duration">duration:act</span>
+    <span class="tag dim-duration" style="opacity:0.7;font-size:9px;color:var(--text-muted);padding:2px 7px;background:none;border-color:transparent">600t+</span>
+  </div>
+
+  <h3>Creator (auto-set, do not tag manually)</h3>
+  <div class="tag-row">
+    <span class="tag dim-creator">Zara</span>
+    <span class="tag dim-creator">Smitty</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     7. FIREWORK TILE VISUAL LANGUAGE
+═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">7 · Firework Tile Visual Language</div>
+  <p class="note">Firework tiles are rendered on the 2D spatial canvas. Each tile communicates: shape, primary colors (proportional), trail, flicker, and chase sequence number.</p>
+
+  <h3>Shapes</h3>
+  <div class="fw-grid">
+    <canvas id="fw-ball" width="70" height="90"></canvas>
+    <canvas id="fw-ball-large" width="70" height="90"></canvas>
+    <canvas id="fw-star" width="70" height="90"></canvas>
+    <canvas id="fw-burst" width="70" height="90"></canvas>
+    <canvas id="fw-creeper" width="70" height="90"></canvas>
+  </div>
+
+  <h3>Color Variation Modes (FIREWORK_CIRCLE)</h3>
+  <div class="variation-row">
+    <div class="var-card">
+      <div class="var-title">UNIFORM</div>
+      <div class="var-dots">
+        <div class="var-dot" style="background:linear-gradient(135deg,#FECB00 50%,#fff 50%)"></div>
+        <div class="var-dot" style="background:linear-gradient(135deg,#FECB00 50%,#fff 50%)"></div>
+        <div class="var-dot" style="background:linear-gradient(135deg,#FECB00 50%,#fff 50%)"></div>
+        <div class="var-dot" style="background:linear-gradient(135deg,#FECB00 50%,#fff 50%)"></div>
+        <div class="var-dot" style="background:linear-gradient(135deg,#FECB00 50%,#fff 50%)"></div>
+      </div>
+      <p style="font-size:9px;color:var(--text-muted);margin-top:6px">All positions use preset colors unchanged</p>
+    </div>
+    <div class="var-card">
+      <div class="var-title">RAINBOW</div>
+      <div class="var-dots">
+        <div class="var-dot" style="background:#FF3030"></div>
+        <div class="var-dot" style="background:#FF8800"></div>
+        <div class="var-dot" style="background:#FFE000"></div>
+        <div class="var-dot" style="background:#30CC30"></div>
+        <div class="var-dot" style="background:#3090FF"></div>
+        <div class="var-dot" style="background:#8030FF"></div>
+        <div class="var-dot" style="background:#CC40CC"></div>
+      </div>
+      <p style="font-size:9px;color:var(--text-muted);margin-top:6px">Cycles through fixed 7-color array per position</p>
+    </div>
+    <div class="var-card">
+      <div class="var-title">GRADIENT</div>
+      <div class="var-dots">
+        <div class="var-dot" style="background:#FF0000"></div>
+        <div class="var-dot" style="background:#CC2040"></div>
+        <div class="var-dot" style="background:#994080"></div>
+        <div class="var-dot" style="background:#6060C0"></div>
+        <div class="var-dot" style="background:#3080FF"></div>
+        <div class="var-dot" style="background:#0000FF"></div>
+      </div>
+      <p style="font-size:9px;color:var(--text-muted);margin-top:6px">Interpolates between gradient_from → gradient_to</p>
+    </div>
+    <div class="var-card">
+      <div class="var-title">ALTERNATE</div>
+      <div class="var-dots">
+        <div class="var-dot" style="background:#FECB00"></div>
+        <div class="var-dot" style="background:#FFFFFF;border:1px solid rgba(0,0,0,0.3)"></div>
+        <div class="var-dot" style="background:#FECB00"></div>
+        <div class="var-dot" style="background:#FFFFFF;border:1px solid rgba(0,0,0,0.3)"></div>
+        <div class="var-dot" style="background:#FECB00"></div>
+      </div>
+      <p style="font-size:9px;color:var(--text-muted);margin-top:6px">Flips between preset's first and second star colors</p>
+    </div>
+  </div>
+
+  <h3>Multi-Color Star — Proportional Segment Rendering</h3>
+  <p class="note">When a star has multiple primary colors, the tile circle is divided into proportional arc segments. Color list <span class="mono">["#FFF","#FFF","#FFF","#FFD700"]</span> → ¾ white, ¼ gold. The ratio communicates relative particle density in the actual firework.</p>
+  <div style="display:flex;gap:20px;align-items:center;margin-top:10px">
+    <canvas id="fw-multicolor-1" width="60" height="60"></canvas>
+    <canvas id="fw-multicolor-2" width="60" height="60"></canvas>
+    <canvas id="fw-multicolor-3" width="60" height="60"></canvas>
+    <div style="font-size:11px;color:var(--text-secondary);max-width:280px;line-height:1.6">
+      Left: 50/50 (#FECB00, #FFF) — scaena_gold preset<br>
+      Center: 75/25 (#FFF×3, #FFD700×1) — texture_white_gold<br>
+      Right: 33/33/33 (red, gold, white) — three-color example
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     8. SHOWSPRITE — DIFF/APPROVE CARD
+═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">8 · ShowSprite — Diff / Approve Card</div>
+  <p class="note">When ShowSprite proposes a change, it appears as a structured diff card above the chat input. Each card can be approved or rejected independently. No change is applied without approval.</p>
+
+  <div class="diff-card">
+    <div class="diff-header">
+      <span class="diff-type-badge">insert_event</span>
+      <span class="diff-desc">Insert FIREWORK_CIRCLE at tick 80 in ramp.warm_gold.01</span>
+    </div>
+    <div class="diff-body">
+      <div class="diff-ctx">  - at: 0</div>
+      <div class="diff-ctx">    type: SOUND</div>
+      <div class="diff-ctx">    sound_id: minecraft:block.note_block.chime</div>
+      <div class="diff-ctx"> </div>
+      <div class="diff-ctx">  - at: 0</div>
+      <div class="diff-ctx">    type: FIREWORK_CIRCLE</div>
+      <div class="diff-ctx">    ...</div>
+      <div class="diff-ctx"> </div>
+      <div class="diff-add">+ - at: 80</div>
+      <div class="diff-add">+   type: FIREWORK_CIRCLE</div>
+      <div class="diff-add">+   preset: scaena_gold</div>
+      <div class="diff-add">+   radius: 3</div>
+      <div class="diff-add">+   count: 4</div>
+      <div class="diff-add">+   y_mode: surface</div>
+      <div class="diff-add">+   y_offset: 4</div>
+      <div class="diff-add">+   chase:</div>
+      <div class="diff-add">+     enabled: true</div>
+      <div class="diff-add">+     direction: FL</div>
+      <div class="diff-add">+     interval_ticks: 4</div>
+    </div>
+    <div class="diff-footer">
+      <button class="diff-approve">✓ Approve</button>
+      <button class="diff-reject">✕ Reject</button>
+      <span class="diff-note">This will add 1 event to ramp.warm_gold.01 · Unsaved until you Save</span>
+    </div>
+  </div>
+
+  <p class="note" style="margin-top:12px">Cards stack above the chat when multiple proposals are pending. Each is independently approvable. Approved changes are applied to the Cue in memory immediately; the file is not written until the creator saves.</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     9. OPEN DESIGN QUESTIONS (Pre-Build)
+═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">9 · Open Design Questions — Pre-Build</div>
+  <p class="note">These are visual/interaction design questions that need decisions before implementation begins. They do not affect the YAML schema or plugin — only the composer UI.</p>
+
+  <table class="lane-table">
+    <thead>
+      <tr><th>#</th><th>Question</th><th>Options</th><th>Recommended</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="font-family:monospace;color:var(--text-muted)">UI-1</td>
+        <td>How does the Cue library handle a large number of cues? (50+)</td>
+        <td>Paginate · Virtualize list · Group by category letter</td>
+        <td>Virtualize (react-virtual or similar)</td>
+      </tr>
+      <tr>
+        <td style="font-family:monospace;color:var(--text-muted)">UI-2</td>
+        <td>How does inline Cue expansion behave on the timeline? (hybrid nav)</td>
+        <td>Expand in-place pushing lanes down · Replace current view · Open in split pane</td>
+        <td>Expand in-place for 1 level; replace+breadcrumb for deeper</td>
+      </tr>
+      <tr>
+        <td style="font-family:monospace;color:var(--text-muted)">UI-3</td>
+        <td>Error display for validation (missing cue ID, cycle detected, etc.)</td>
+        <td>Inline red bar on offending cue · Toast notification · Properties panel error state</td>
+        <td>Inline red bar + properties panel error, no toast</td>
+      </tr>
+      <tr>
+        <td style="font-family:monospace;color:var(--text-muted)">UI-4</td>
+        <td>Unsaved changes indicator</td>
+        <td>Dot on Save button · Modified filename · Full banner</td>
+        <td>Dot on Save button (like VS Code) + title bar asterisk</td>
+      </tr>
+      <tr>
+        <td style="font-family:monospace;color:var(--text-muted)">UI-5</td>
+        <td>Keyboard shortcuts spec — which actions need them?</td>
+        <td>Minimal (Save, Play, Stop) · Full DAW-style (nudge ticks, etc.)</td>
+        <td>Start minimal; add as patterns emerge during use</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<script>
+// Draw firework shape tiles
+function drawFwShapes() {
+  const shapes = [
+    { id: 'fw-ball',       shape: 'BALL',       label: 'BALL',       r: 10 },
+    { id: 'fw-ball-large', shape: 'BALL_LARGE',  label: 'BALL_LARGE', r: 16 },
+    { id: 'fw-star',       shape: 'STAR',        label: 'STAR',       r: 14 },
+    { id: 'fw-burst',      shape: 'BURST',       label: 'BURST',      r: 14 },
+    { id: 'fw-creeper',    shape: 'CREEPER',     label: 'CREEPER',    r: 14 },
+  ];
+
+  shapes.forEach(s => {
+    const canvas = document.getElementById(s.id);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const cx = 35, cy = 38;
+
+    ctx.fillStyle = '#14141C';
+    ctx.fillRect(0, 0, 70, 90);
+
+    // Glow
+    const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, s.r + 12);
+    grd.addColorStop(0, 'rgba(254,203,0,0.25)');
+    grd.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.beginPath(); ctx.arc(cx, cy, s.r + 12, 0, Math.PI*2);
+    ctx.fillStyle = grd; ctx.fill();
+
+    if (s.shape === 'BALL' || s.shape === 'BALL_LARGE') {
+      ctx.beginPath(); ctx.arc(cx, cy, s.r, 0, Math.PI*2);
+      ctx.fillStyle = '#FECB00'; ctx.fill();
+      ctx.strokeStyle = 'rgba(254,203,0,0.6)'; ctx.lineWidth = 1.5; ctx.stroke();
+    } else if (s.shape === 'STAR') {
+      ctx.beginPath();
+      for (let i = 0; i < 10; i++) {
+        const a = (i * Math.PI / 5) - Math.PI / 2;
+        const r = i % 2 === 0 ? s.r : s.r * 0.45;
+        const x = cx + Math.cos(a) * r;
+        const y = cy + Math.sin(a) * r;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = '#FECB00'; ctx.fill();
+      ctx.strokeStyle = 'rgba(254,203,0,0.6)'; ctx.lineWidth = 1.5; ctx.stroke();
+    } else if (s.shape === 'BURST') {
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2;
+        ctx.strokeStyle = '#FECB00'; ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(a)*4, cy + Math.sin(a)*4);
+        ctx.lineTo(cx + Math.cos(a)*s.r, cy + Math.sin(a)*s.r);
+        ctx.stroke();
+      }
+      ctx.beginPath(); ctx.arc(cx, cy, 3, 0, Math.PI*2);
+      ctx.fillStyle = '#FECB00'; ctx.fill();
+    } else if (s.shape === 'CREEPER') {
+      // Pixel face (simplified)
+      ctx.fillStyle = '#6DB840';
+      ctx.fillRect(cx - 10, cy - 10, 20, 20);
+      ctx.fillStyle = '#14141C';
+      // Eyes
+      ctx.fillRect(cx - 7, cy - 6, 4, 4);
+      ctx.fillRect(cx + 3,  cy - 6, 4, 4);
+      // Mouth
+      ctx.fillRect(cx - 3, cy + 1, 3, 3);
+      ctx.fillRect(cx + 1, cy + 1, 3, 3);
+      ctx.fillRect(cx - 6, cy + 4, 3, 2);
+      ctx.fillRect(cx + 4, cy + 4, 3, 2);
+    }
+
+    // Label
+    ctx.fillStyle = '#555570';
+    ctx.font = '8px system-ui';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.fillText(s.label, cx, cy + s.r + 10);
+  });
+}
+
+// Multi-color proportional demos
+function drawMultiColor() {
+  const demos = [
+    { id: 'fw-multicolor-1', colors: ['#FECB00', '#FFFFFF'] },
+    { id: 'fw-multicolor-2', colors: ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFD700'] },
+    { id: 'fw-multicolor-3', colors: ['#FF3030', '#FECB00', '#FFFFFF'] },
+  ];
+
+  demos.forEach(d => {
+    const canvas = document.getElementById(d.id);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = 60; canvas.height = 60;
+    const cx = 30, cy = 30, r = 22;
+
+    ctx.fillStyle = '#14141C'; ctx.fillRect(0, 0, 60, 60);
+
+    const n = d.colors.length;
+    const sweep = (2 * Math.PI) / n;
+    d.colors.forEach((color, i) => {
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r, i * sweep - Math.PI/2, (i+1) * sweep - Math.PI/2);
+      ctx.closePath();
+      ctx.fillStyle = color; ctx.fill();
+    });
+
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(254,203,0,0.4)'; ctx.lineWidth = 1.5; ctx.stroke();
+  });
+}
+
+window.addEventListener('load', () => {
+  drawFwShapes();
+  drawMultiColor();
+});
+</script>
+
+</body>
+</html>

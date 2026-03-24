@@ -1,0 +1,34 @@
+# ScaenaShows v2 — Cue: test.fireworks.circle_warm
+# A warm firework circle used as a CUE container reference in the test show.
+# Fires 8 warm-gold fireworks in a ring around the anchor, then a single large burst.
+
+id: test.fireworks.circle_warm
+name: "Test — Warm Circle Burst"
+description: "8-point warm firework ring followed by a large ball. Used to test CUE container expansion."
+duration_ticks: 55
+tags: [effect:fireworks-heavy, arc:peak, tone:warm, intensity:medium]
+
+timeline:
+
+  # Ring of 8 warm stars: fire first-to-last around the circle over ~32t
+  - type: FIREWORK_CIRCLE
+    at: 0
+    preset: scae_star_warm
+    origin_offset: {x: 0, z: 0}
+    radius: 7
+    count: 8
+    y_mode: surface
+    y_offset: 2
+    chase:
+      enabled: true
+      direction: FL
+      interval_ticks: 4
+    power_variation: RAMP_UP
+    color_variation: UNIFORM
+
+  # Single large ball from center once the ring has settled (~1.5s later)
+  - type: FIREWORK
+    at: 30
+    preset: scae_large_fanfare
+    offset: {x: 0, y: 3, z: 0}
+    y_mode: relative

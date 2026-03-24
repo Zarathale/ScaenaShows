@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScaenaComposer — UI Mockup · ramp.warm_gold.01</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #18181E;
+      --panel:       #1F1F28;
+      --surface:     #252530;
+      --surface-hi:  #2C2C3A;
+      --border:      #333345;
+      --border-hi:   #4A4A60;
+      --text-primary:   #E2E2EA;
+      --text-secondary: #8888A0;
+      --text-muted:     #55556A;
+      --gold:   #F0B429;
+      --amber:  #D97706;
+      --green:  #4ADE80;
+      --red:    #F87171;
+      --purple: #C080FF;
+
+      --lane-messages: #C4891A;
+      --lane-titles:   #E8A230;
+      --lane-bossbar:  #C05820;
+      --lane-sounds:   #2DB5B5;
+      --lane-particles:#9B6ACF;
+      --lane-effects:  #5080D0;
+      --lane-glow:     #6DB840;
+      --lane-fireworks:#CC3020;
+      --lane-patterns: #C040A0;
+      --lane-entities: #C09050;
+      --lane-movement: #40A0D8;
+      --lane-cuerefs:  #7878A0;
+      --lane-utility:  #606080;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 13px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 46px;
+      flex-shrink: 0;
+    }
+    .toolbar-brand {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+      margin-right: 6px;
+    }
+    .toolbar-divider {
+      width: 1px; height: 22px;
+      background: var(--border);
+      margin: 0 4px;
+    }
+    .btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 11px;
+      padding: 4px 10px;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .btn:hover { background: var(--surface-hi); border-color: var(--border-hi); }
+    .btn-preview {
+      background: #1A0F00;
+      border-color: var(--amber);
+      color: var(--gold);
+    }
+    .btn-stop {
+      background: #200000;
+      border-color: #803020;
+      color: #F07060;
+    }
+    .toolbar-spacer { flex: 1; }
+    .builder-wrap {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; color: var(--text-secondary);
+    }
+    .builder-select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 11px;
+      padding: 3px 22px 3px 8px;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L4 4L7 1' stroke='%238888A0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 6px center;
+      font-family: inherit;
+    }
+    .rcon-status {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; color: var(--text-secondary);
+    }
+    .rcon-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+    }
+
+    /* ── MAIN GRID ── */
+    .main {
+      display: grid;
+      grid-template-columns: 210px 1fr 272px;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── LIBRARY ── */
+    .library {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .library-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      padding: 0 8px;
+      flex-shrink: 0;
+    }
+    .library-tab {
+      padding: 8px 10px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+    .library-tab.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+    .library-search {
+      padding: 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .search-input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 11px;
+      padding: 5px 8px;
+      width: 100%;
+      outline: none;
+      font-family: inherit;
+    }
+    .tag-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+    }
+    .tag-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text-muted);
+      font-size: 9px;
+      padding: 2px 7px;
+      cursor: pointer;
+    }
+    .tag-chip.on {
+      background: #1E1600;
+      border-color: var(--amber);
+      color: var(--gold);
+    }
+    .library-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+    .cue-card {
+      padding: 7px 10px;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+    }
+    .cue-card:hover { background: var(--surface); }
+    .cue-card.active {
+      background: var(--surface);
+      border-left-color: var(--gold);
+    }
+    .cue-card-id {
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+    .cue-card-name {
+      font-size: 12px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    .cue-card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      margin-top: 4px;
+    }
+    .cue-tag {
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 7px;
+      background: var(--surface-hi);
+      color: var(--text-secondary);
+    }
+    .cue-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+    .creator-chip {
+      font-size: 9px;
+      padding: 1px 6px;
+      border-radius: 8px;
+      background: #1E1500;
+      color: #D09020;
+    }
+    .creator-chip.smitty {
+      background: #001E20;
+      color: #30B0B0;
+    }
+    .duration-label {
+      font-size: 9px;
+      color: var(--text-muted);
+      font-family: monospace;
+    }
+
+    /* ── CENTER ── */
+    .center {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .breadcrumb {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 7px 12px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+    .bc-item { color: var(--text-secondary); cursor: pointer; }
+    .bc-item:hover { color: var(--text-primary); }
+    .bc-item:hover { text-decoration: underline; }
+    .bc-current { color: var(--text-primary); font-weight: 500; }
+    .bc-sep { color: var(--text-muted); }
+    .bc-meta {
+      margin-left: auto;
+      font-size: 10px;
+      color: var(--text-muted);
+      font-family: monospace;
+    }
+
+    /* ── TIMELINE ── */
+    .timeline-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 0;
+    }
+    .timeline-toolbar {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 5px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .transport { display: flex; align-items: center; gap: 2px; }
+    .tbtn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 3px 7px;
+      border-radius: 3px;
+      font-family: inherit;
+    }
+    .tbtn:hover { background: var(--surface); color: var(--text-primary); }
+    .tick-readout {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+    .zoom-group {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .zoom-seg {
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .zoom-btn {
+      padding: 3px 8px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: inherit;
+    }
+    .zoom-btn.active { background: var(--surface-hi); color: var(--text-primary); }
+
+    .timeline-body {
+      flex: 1;
+      overflow: auto;
+      position: relative;
+      background: var(--bg);
+    }
+    .timeline-inner {
+      width: max-content;
+      min-width: 100%;
+    }
+    /* Ruler row */
+    .ruler-row {
+      display: flex;
+      height: 22px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .lane-label-col {
+      width: 92px;
+      flex-shrink: 0;
+      border-right: 1px solid var(--border);
+    }
+    .ruler-track {
+      flex: 1;
+      position: relative;
+    }
+    /* Lane rows */
+    .lane-row {
+      display: flex;
+      height: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lane-label {
+      width: 92px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+      font-size: 9px;
+      color: var(--text-muted);
+      border-right: 1px solid var(--border);
+      background: var(--panel);
+      position: sticky;
+      left: 0;
+      z-index: 5;
+      gap: 4px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .lane-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .lane-track {
+      flex: 1;
+      position: relative;
+      background: var(--bg);
+    }
+    /* Events */
+    .ev-bar {
+      position: absolute;
+      top: 3px; height: 18px;
+      border-radius: 3px;
+      cursor: pointer;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      padding: 0 5px;
+      transition: filter 0.1s;
+    }
+    .ev-bar:hover { filter: brightness(1.2); }
+    .ev-bar-lbl {
+      font-size: 9px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .ev-bar.sel {
+      outline: 2px solid var(--gold);
+      outline-offset: 1px;
+      z-index: 4;
+    }
+    .ev-point {
+      position: absolute;
+      top: 3px;
+      width: 3px; height: 18px;
+      border-radius: 2px;
+      cursor: pointer;
+      z-index: 3;
+    }
+    .ev-diamond {
+      position: absolute;
+      top: 5px;
+      width: 14px; height: 14px;
+      transform: rotate(45deg);
+      cursor: pointer;
+      z-index: 3;
+    }
+    .grid-vline {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: var(--border);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .grid-major {
+      opacity: 0.7;
+      background: var(--border-hi);
+    }
+    .playhead-line {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 2px;
+      background: var(--red);
+      z-index: 6;
+      pointer-events: none;
+    }
+    .playhead-head {
+      position: absolute;
+      top: 0;
+      left: -4px;
+      width: 10px; height: 8px;
+      background: var(--red);
+      clip-path: polygon(50% 100%, 0 0, 100% 0);
+    }
+
+    /* ── SPATIAL VIEW ── */
+    .spatial-wrap {
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+      background: var(--panel);
+      height: 220px;
+      display: flex;
+      flex-direction: column;
+    }
+    .spatial-header {
+      padding: 5px 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .spatial-title {
+      font-size: 10px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .s-toggle {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 9px;
+      padding: 2px 6px;
+      font-family: inherit;
+    }
+    .s-toggle.on {
+      background: var(--surface-hi);
+      color: var(--text-secondary);
+      border-color: var(--border-hi);
+    }
+    .spatial-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+    .spatial-canvas-wrap {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+    #spatialCanvas { display: block; }
+    .y-strip {
+      width: 52px;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 4px;
+    }
+    .y-strip-lbl {
+      font-size: 8px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    /* ── PROPERTIES ── */
+    .properties {
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .prop-header {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .prop-title {
+      font-size: 10px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .ev-badge {
+      font-size: 9px;
+      padding: 2px 8px;
+      border-radius: 9px;
+      background: #200028;
+      color: #E060D0;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      margin-left: auto;
+    }
+    .prop-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .prop-sec {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .prop-sec-title {
+      font-size: 9px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+    }
+    .prow {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .plabel {
+      font-size: 10px;
+      color: var(--text-secondary);
+    }
+    .pval {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 12px;
+      padding: 4px 8px;
+      width: 100%;
+      font-family: inherit;
+    }
+    .pval.mono {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 11px;
+    }
+    .pval-pair {
+      display: flex; gap: 5px;
+    }
+    .pval-pair .pval { flex: 1; }
+    .pselect {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 11px;
+      padding: 4px 22px 4px 8px;
+      width: 100%;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L4 4L7 1' stroke='%238888A0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 6px center;
+      font-family: inherit;
+    }
+    .seg-group {
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .seg-opt {
+      flex: 1;
+      padding: 4px 0;
+      text-align: center;
+      font-size: 10px;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-right: 1px solid var(--border);
+    }
+    .seg-opt:last-child { border-right: none; }
+    .seg-opt.on { background: var(--surface-hi); color: var(--text-primary); }
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .toggle {
+      width: 30px; height: 16px;
+      border-radius: 8px;
+      position: relative; cursor: pointer;
+      background: var(--green);
+    }
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px; right: 2px;
+      width: 12px; height: 12px;
+      background: white; border-radius: 50%;
+    }
+    .toggle.off { background: var(--border-hi); }
+    .toggle.off::after { right: auto; left: 2px; }
+    /* Star editor */
+    .star-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 7px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .star-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .star-lbl { font-size: 10px; color: var(--text-secondary); }
+    .shape-row { display: flex; gap: 3px; }
+    .shape-btn {
+      width: 26px; height: 26px;
+      background: var(--surface-hi);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 13px;
+    }
+    .shape-btn.on {
+      background: #280030;
+      border-color: #C040A0;
+    }
+    .swatch-row { display: flex; gap: 3px; align-items: center; }
+    .swatch {
+      width: 20px; height: 20px;
+      border-radius: 3px;
+      border: 1px solid rgba(255,255,255,0.12);
+      cursor: pointer;
+      position: relative;
+    }
+    .swatch-count {
+      position: absolute;
+      bottom: 1px; right: 2px;
+      font-size: 7px; color: rgba(0,0,0,0.7);
+      font-weight: 700;
+    }
+    .swatch-add {
+      width: 20px; height: 20px;
+      border-radius: 3px;
+      border: 1px dashed var(--border-hi);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 14px; cursor: pointer;
+    }
+    .flag-row { display: flex; gap: 6px; }
+    .flag-btn {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 10px; color: var(--text-secondary);
+      background: var(--surface-hi);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 2px 7px;
+      cursor: pointer;
+    }
+    .flag-btn.on { border-color: var(--border-hi); color: var(--text-primary); }
+    /* Tag editor */
+    .tag-editor {
+      display: flex; flex-wrap: wrap; gap: 4px;
+    }
+    .tec {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text-secondary);
+      font-size: 9px;
+      padding: 2px 5px 2px 7px;
+      display: flex; align-items: center; gap: 3px;
+    }
+    .tec-x { color: var(--text-muted); cursor: pointer; }
+    .tec-add {
+      border: 1px dashed var(--border-hi);
+      border-radius: 9px;
+      color: var(--text-muted);
+      font-size: 9px;
+      padding: 2px 8px;
+      cursor: pointer;
+      background: none;
+      font-family: inherit;
+    }
+
+    /* ── SHOWSPRITE ── */
+    .showsprite {
+      background: var(--panel);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+      height: 168px;
+      display: flex;
+      flex-direction: column;
+      grid-column: 1 / -1;
+    }
+    .ss-header {
+      padding: 6px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+      flex-shrink: 0;
+    }
+    .ss-name {
+      font-size: 12px; font-weight: 700;
+      color: var(--purple);
+      letter-spacing: 0.02em;
+    }
+    .ss-ctx {
+      font-size: 10px; color: var(--text-muted);
+      margin-left: auto;
+    }
+    .review-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 10px;
+      padding: 3px 9px;
+      font-family: inherit;
+    }
+    .ss-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+    .ss-history {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .chat-msg { display: flex; gap: 7px; align-items: flex-start; }
+    .chat-av {
+      width: 20px; height: 20px; border-radius: 50%;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 700;
+      margin-top: 1px;
+    }
+    .av-zara   { background: #1E1200; color: var(--gold); }
+    .av-sprite { background: #160025; color: var(--purple); }
+    .chat-txt {
+      font-size: 11px; line-height: 1.5;
+      color: var(--text-primary);
+    }
+    .chat-txt.sprite { color: #C8A0FF; }
+    .ss-input-row {
+      padding: 7px 14px;
+      border-top: 1px solid var(--border);
+      display: flex; gap: 8px; align-items: center;
+      flex-shrink: 0;
+    }
+    .chat-input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 11px;
+      padding: 5px 10px;
+      outline: none;
+      font-family: inherit;
+    }
+    .chat-input:focus { border-color: #6040A0; }
+    .chat-send {
+      background: #160025;
+      border: 1px solid #6040A0;
+      border-radius: 4px;
+      color: var(--purple);
+      cursor: pointer;
+      font-size: 11px;
+      padding: 5px 12px;
+      font-family: inherit;
+    }
+    /* Bottom wrapper for main+showsprite */
+    .outer {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .bottom-bar {
+      display: flex;
+      flex-direction: column;
+      border-top: 2px solid #2A1060;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <span class="toolbar-brand">ScaenaComposer</span>
+  <div class="toolbar-divider"></div>
+  <button class="btn">New Cue</button>
+  <button class="btn">New Show</button>
+  <button class="btn">Save</button>
+  <button class="btn">Reload</button>
+  <div class="toolbar-divider"></div>
+  <span style="font-size:10px;color:var(--text-muted)">Preview:</span>
+  <button class="btn btn-preview">▶ Cue</button>
+  <button class="btn btn-preview">▶ Show</button>
+  <button class="btn btn-stop">■ Stop</button>
+  <div class="toolbar-spacer"></div>
+  <div class="builder-wrap">
+    <span>Builder:</span>
+    <select class="builder-select">
+      <option>Zarathale</option>
+      <option>Smitty2020</option>
+    </select>
+  </div>
+  <div class="toolbar-divider"></div>
+  <div class="rcon-status">
+    <div class="rcon-dot"></div>
+    <span>RCON connected</span>
+  </div>
+</div>
+
+<div class="outer">
+  <!-- MAIN 3-COLUMN GRID -->
+  <div class="main">
+
+    <!-- ── LIBRARY ── -->
+    <div class="library">
+      <div class="library-tabs">
+        <div class="library-tab active">Cues</div>
+        <div class="library-tab">Shows</div>
+        <div class="library-tab">Fireworks</div>
+      </div>
+      <div class="library-search">
+        <input class="search-input" type="text" placeholder="Search by name, ID, or tag…">
+        <div class="tag-filter">
+          <div class="tag-chip on">tone:warm</div>
+          <div class="tag-chip on">arc:ramp</div>
+          <div class="tag-chip">energy:high</div>
+          <div class="tag-chip">fireworks-heavy</div>
+        </div>
+      </div>
+      <div class="library-list">
+
+        <div class="cue-card">
+          <div class="cue-card-id">open.shimmer.quiet</div>
+          <div class="cue-card-name">Shimmer — Quiet Open</div>
+          <div class="cue-card-tags">
+            <span class="cue-tag">tone:ethereal</span>
+            <span class="cue-tag">arc:opener</span>
+            <span class="cue-tag">energy:low</span>
+          </div>
+          <div class="cue-card-footer">
+            <span class="creator-chip">Zara</span>
+            <span class="duration-label">120t · 6s</span>
+          </div>
+        </div>
+
+        <div class="cue-card active">
+          <div class="cue-card-id">ramp.warm_gold.01</div>
+          <div class="cue-card-name">Warm Gold Ramp</div>
+          <div class="cue-card-tags">
+            <span class="cue-tag">tone:warm</span>
+            <span class="cue-tag">arc:ramp</span>
+            <span class="cue-tag">energy:high</span>
+            <span class="cue-tag">pace:building</span>
+          </div>
+          <div class="cue-card-footer">
+            <span class="creator-chip">Zara</span>
+            <span class="duration-label">180t · 9s</span>
+          </div>
+        </div>
+
+        <div class="cue-card">
+          <div class="cue-card-id">ramp.cool_blue.01</div>
+          <div class="cue-card-name">Cool Blue Ramp</div>
+          <div class="cue-card-tags">
+            <span class="cue-tag">tone:icy</span>
+            <span class="cue-tag">arc:ramp</span>
+            <span class="cue-tag">energy:high</span>
+          </div>
+          <div class="cue-card-footer">
+            <span class="creator-chip">Zara</span>
+            <span class="duration-label">160t · 8s</span>
+          </div>
+        </div>
+
+        <div class="cue-card">
+          <div class="cue-card-id">finish.starburst.big</div>
+          <div class="cue-card-name">Big Starburst Finish</div>
+          <div class="cue-card-tags">
+            <span class="cue-tag">tone:triumphant</span>
+            <span class="cue-tag">arc:peak</span>
+            <span class="cue-tag">energy:explosive</span>
+          </div>
+          <div class="cue-card-footer">
+            <span class="creator-chip">Zara</span>
+            <span class="duration-label">200t · 10s</span>
+          </div>
+        </div>
+
+        <div class="cue-card">
+          <div class="cue-card-id">breath.glow_hold.tender</div>
+          <div class="cue-card-name">Glow Hold — Tender</div>
+          <div class="cue-card-tags">
+            <span class="cue-tag">tone:tender</span>
+            <span class="cue-tag">arc:breath</span>
+            <span class="cue-tag">energy:low</span>
+          </div>
+          <div class="cue-card-footer">
+            <span class="creator-chip">Zara</span>
+            <span class="duration-label">80t · 4s</span>
+          </div>
+        </div>
+
+        <div class="cue-card">
+          <div class="cue-card-id">transition.sweep.left</div>
+          <div class="cue-card-name">Sweep Left</div>
+          <div class="cue-card-tags">
+            <span class="cue-tag">arc:transition</span>
+            <span class="cue-tag">pattern:line</span>
+            <span class="cue-tag">tone:dramatic</span>
+          </div>
+          <div class="cue-card-footer">
+            <span class="creator-chip smitty">Smitty</span>
+            <span class="duration-label">60t · 3s</span>
+          </div>
+        </div>
+
+        <div class="cue-card">
+          <div class="cue-card-id">moment.heart_burst.close</div>
+          <div class="cue-card-name">Heart Burst — Close</div>
+          <div class="cue-card-tags">
+            <span class="cue-tag">tone:tender</span>
+            <span class="cue-tag">arc:standalone</span>
+            <span class="cue-tag">energy:medium</span>
+          </div>
+          <div class="cue-card-footer">
+            <span class="creator-chip smitty">Smitty</span>
+            <span class="duration-label">100t · 5s</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── CENTER COLUMN ── -->
+    <div class="center">
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <span class="bc-item">show_celebration</span>
+        <span class="bc-sep">›</span>
+        <span class="bc-current">ramp.warm_gold.01</span>
+        <span class="bc-meta">180t · 9.0s · 3 events · 1 child ref</span>
+      </div>
+
+      <!-- Timeline -->
+      <div class="timeline-wrap">
+        <div class="timeline-toolbar">
+          <div class="transport">
+            <button class="tbtn" title="Rewind to start">⏮</button>
+            <button class="tbtn" title="Play / Pause">▶</button>
+            <button class="tbtn" title="Stop">■</button>
+          </div>
+          <span class="tick-readout">Tick: 0 · 0.0s</span>
+          <div style="flex:1"></div>
+          <span style="font-size:10px;color:var(--text-muted)">Zoom:</span>
+          <div class="zoom-seg">
+            <button class="zoom-btn">−</button>
+            <button class="zoom-btn on">4×</button>
+            <button class="zoom-btn">+</button>
+          </div>
+          <span style="font-size:10px;color:var(--text-muted);margin-left:4px">px/tick</span>
+        </div>
+        <div class="timeline-body">
+          <div class="timeline-inner" id="timelineInner">
+
+            <!-- RULER ROW -->
+            <div class="ruler-row">
+              <div class="lane-label-col"></div>
+              <div class="ruler-track" id="rulerTrack"></div>
+            </div>
+
+            <!-- LANE: Messages -->
+            <div class="lane-row">
+              <div class="lane-label"><div class="lane-dot" style="background:var(--lane-messages)"></div>Messages</div>
+              <div class="lane-track" data-lane="messages"></div>
+            </div>
+            <!-- LANE: Titles -->
+            <div class="lane-row">
+              <div class="lane-label"><div class="lane-dot" style="background:var(--lane-titles)"></div>Titles</div>
+              <div class="lane-track" data-lane="titles"></div>
+            </div>
+            <!-- LANE: Bossbar -->
+            <div class="lane-row">
+              <div class="lane-label"><div class="lane-dot" style="background:var(--lane-bossbar)"></div>Bossbar</div>
+              <div class="lane-track" data-lane="bossbar"></div>
+            </div>
+            <!-- LANE: Sounds -->
+            <div class="lane-row">
+              <div class="lane-label"><div class="lane-dot" style="background:var(--lane-sounds)"></div>Sounds</div>
+              <div class="lane-track" data-lane="sounds"></div>
+            </div>
+            <!-- LANE: Particles -->
+            <div class="lane-row">
+              <div class="lane-label"><div class="lane-dot" style="background:var(--lane-particles)"></div>Particles</div>
+              <div class="lane-track" data-lane="particles"></div>
+            </div>
+            <!-- LANE: Effects -->
+            <div class="lane-row">
+              <div class="lane-label"><div class="lane-dot" style="background:var(--lane-effects)"></div>Effects</div>
+              <div class="lane-track" data-lane="effects"></div>
+            </div>
+            <!-- LANE: Glow/Team -->
+            <div class="lane-row">
+              <div class="lane-label"><div class="lane-dot" style="background:var(--lane-glow)"></div>Glow/Team</div>
+              <div class="lane-track" data-lane="glow"></div>
+            </div>
+            <!-- LANE: Fireworks -->
+            <div class="lane-row">
+              <div class="lane-label"><div class="lane-dot" style="background:var(--lane-fireworks)"></div>Fireworks</div>
+              <div class="lane-track" data-lane="fireworks"></div>
+            </div>
+            <!-- LANE: Patterns -->
+            <div class="lane-row">
+              <div class="lane-label"><div class="lane-dot" style="background:var(--lane-patterns)"></div>Patterns</div>
+              <div class="lane-track" data-lane="patterns"></div>
+            </div>
+            <!-- LANE: Entities -->
+            <div class="lane-row">
+              <div class="lane-label"><div class="lane-dot" style="background:var(--lane-entities)"></div>Entities</div>
+              <div class="lane-track" data-lane="entities"></div>
+            </div>
+            <!-- LANE: Movement -->
+            <div class="lane-row">
+              <div class="lane-label"><div class="lane-dot" style="background:var(--lane-movement)"></div>Movement</div>
+              <div class="lane-track" data-lane="movement"></div>
+            </div>
+            <!-- LANE: Cue refs -->
+            <div class="lane-row">
+              <div class="lane-label"><div class="lane-dot" style="background:var(--lane-cuerefs)"></div>Cue refs</div>
+              <div class="lane-track" data-lane="cuerefs"></div>
+            </div>
+            <!-- LANE: Utility -->
+            <div class="lane-row">
+              <div class="lane-label"><div class="lane-dot" style="background:var(--lane-utility)"></div>Utility</div>
+              <div class="lane-track" data-lane="utility"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Spatial View -->
+      <div class="spatial-wrap">
+        <div class="spatial-header">
+          <span class="spatial-title">Spatial View — ramp.warm_gold.01</span>
+          <button class="s-toggle on">Grid</button>
+          <button class="s-toggle on">Rings</button>
+          <button class="s-toggle">Marks</button>
+          <button class="s-toggle on">Y labels</button>
+          <div style="flex:1"></div>
+          <span style="font-size:10px;color:var(--text-muted)">Playhead: tick 0</span>
+        </div>
+        <div class="spatial-body">
+          <div class="spatial-canvas-wrap">
+            <canvas id="spatialCanvas"></canvas>
+          </div>
+          <div class="y-strip">
+            <div class="y-strip-lbl">Y View</div>
+            <canvas id="yCanvas" width="52" height="175"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end center -->
+
+    <!-- ── PROPERTIES ── -->
+    <div class="properties">
+      <div class="prop-header">
+        <span class="prop-title">Properties</span>
+        <span class="ev-badge">FIREWORK_CIRCLE</span>
+      </div>
+      <div class="prop-body">
+
+        <div class="prop-sec">
+          <div class="prop-sec-title">Timing</div>
+          <div class="prow">
+            <span class="plabel">At (tick)</span>
+            <input class="pval mono" value="0" style="width:80px">
+          </div>
+        </div>
+
+        <div class="prop-sec">
+          <div class="prop-sec-title">Position</div>
+          <div class="prow">
+            <span class="plabel">Center offset (XZ from target)</span>
+            <div class="pval-pair">
+              <input class="pval mono" value="x: 0">
+              <input class="pval mono" value="z: 0">
+            </div>
+          </div>
+        </div>
+
+        <div class="prop-sec">
+          <div class="prop-sec-title">Preset</div>
+          <div class="prow">
+            <span class="plabel">Firework preset</span>
+            <select class="pselect">
+              <option selected>scaena_gold</option>
+              <option>texture_white_gold</option>
+              <option>pride_star</option>
+            </select>
+          </div>
+          <!-- Star preview for scaena_gold -->
+          <div class="star-item">
+            <div class="star-hdr">
+              <span class="star-lbl">Star 1 — BALL_LARGE</span>
+              <span style="font-size:9px;color:var(--text-muted)">+ Add star</span>
+            </div>
+            <div class="shape-row">
+              <div class="shape-btn">●</div>
+              <div class="shape-btn on" title="BALL_LARGE">⬤</div>
+              <div class="shape-btn" title="STAR">★</div>
+              <div class="shape-btn" title="BURST">✳</div>
+              <div class="shape-btn" title="CREEPER" style="font-size:9px">😈</div>
+            </div>
+            <div class="swatch-row">
+              <span style="font-size:9px;color:var(--text-muted)">Colors:</span>
+              <div class="swatch" style="background:#FECB00"><span class="swatch-count">1×</span></div>
+              <div class="swatch" style="background:#FFFFFF;border-color:rgba(0,0,0,0.2)"><span class="swatch-count" style="color:rgba(0,0,0,0.5)">1×</span></div>
+              <div class="swatch-add">+</div>
+            </div>
+            <div class="swatch-row">
+              <span style="font-size:9px;color:var(--text-muted)">Fades:</span>
+              <div class="swatch" style="background:#EA7125"><span class="swatch-count">1×</span></div>
+              <div class="swatch-add">+</div>
+            </div>
+            <div class="flag-row">
+              <div class="flag-btn on">Trail ✓</div>
+              <div class="flag-btn">Flicker</div>
+            </div>
+          </div>
+          <div class="star-item">
+            <div class="star-hdr">
+              <span class="star-lbl">Star 2 — BURST</span>
+            </div>
+            <div class="shape-row">
+              <div class="shape-btn">●</div>
+              <div class="shape-btn" title="BALL_LARGE">⬤</div>
+              <div class="shape-btn" title="STAR">★</div>
+              <div class="shape-btn on" title="BURST">✳</div>
+              <div class="shape-btn" title="CREEPER" style="font-size:9px">😈</div>
+            </div>
+            <div class="swatch-row">
+              <span style="font-size:9px;color:var(--text-muted)">Colors:</span>
+              <div class="swatch" style="background:#FFFFFF;border-color:rgba(0,0,0,0.2)"><span class="swatch-count" style="color:rgba(0,0,0,0.5)">1×</span></div>
+              <div class="swatch-add">+</div>
+            </div>
+            <div class="flag-row">
+              <div class="flag-btn">Trail</div>
+              <div class="flag-btn on">Flicker ✓</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="prop-sec">
+          <div class="prop-sec-title">Pattern</div>
+          <div class="prow">
+            <span class="plabel">Radius (blocks)</span>
+            <input class="pval mono" value="6" style="width:80px">
+          </div>
+          <div class="prow">
+            <span class="plabel">Count</span>
+            <input class="pval mono" value="8" style="width:80px">
+          </div>
+          <div class="prow">
+            <span class="plabel">Y mode</span>
+            <div class="seg-group">
+              <div class="seg-opt">relative</div>
+              <div class="seg-opt on">surface</div>
+            </div>
+          </div>
+          <div class="prow">
+            <span class="plabel">Y offset (blocks)</span>
+            <input class="pval mono" value="2" style="width:80px">
+          </div>
+        </div>
+
+        <div class="prop-sec">
+          <div class="prop-sec-title">Chase</div>
+          <div class="toggle-row">
+            <span class="plabel">Enabled</span>
+            <div class="toggle"></div>
+          </div>
+          <div class="prow">
+            <span class="plabel">Direction</span>
+            <div class="seg-group">
+              <div class="seg-opt on">FL →</div>
+              <div class="seg-opt">← LF</div>
+            </div>
+          </div>
+          <div class="prow">
+            <span class="plabel">Interval (ticks)</span>
+            <input class="pval mono" value="6" style="width:80px">
+          </div>
+        </div>
+
+        <div class="prop-sec">
+          <div class="prop-sec-title">Variation</div>
+          <div class="prow">
+            <span class="plabel">Power variation</span>
+            <select class="pselect">
+              <option selected>RAMP_UP</option>
+              <option>UNIFORM</option>
+              <option>RAMP_DOWN</option>
+              <option>ALTERNATE</option>
+              <option>RANDOM</option>
+            </select>
+          </div>
+          <div class="prow">
+            <span class="plabel">Color variation</span>
+            <select class="pselect">
+              <option selected>UNIFORM</option>
+              <option>RAINBOW</option>
+              <option>GRADIENT</option>
+              <option>ALTERNATE</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="prop-sec">
+          <div class="prop-sec-title">Tags (on parent cue)</div>
+          <div class="tag-editor">
+            <div class="tec">energy:high <span class="tec-x">×</span></div>
+            <div class="tec">pace:building <span class="tec-x">×</span></div>
+            <div class="tec">tone:warm <span class="tec-x">×</span></div>
+            <div class="tec">arc:ramp <span class="tec-x">×</span></div>
+            <div class="tec">fireworks-heavy <span class="tec-x">×</span></div>
+            <div class="tec">pattern:circle <span class="tec-x">×</span></div>
+            <div class="tec">duration:moment <span class="tec-x">×</span></div>
+            <button class="tec-add">+ tag</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- end .main -->
+
+  <!-- ── SHOWSPRITE BAR ── -->
+  <div class="showsprite">
+    <div class="ss-header">
+      <span class="ss-name">ShowSprite</span>
+      <button class="review-btn">Review this Cue ▶</button>
+      <span class="ss-ctx">Context: ramp.warm_gold.01 · 180t · 3 events</span>
+    </div>
+    <div class="ss-body">
+      <div class="ss-history">
+        <div class="chat-msg">
+          <div class="chat-av av-zara">Z</div>
+          <div class="chat-txt">The circle at tick 0 feels like it resolves too fast — the chase ends around tick 48 but the cue runs to 180. Can you slow the interval and add something to fill the middle?</div>
+        </div>
+        <div class="chat-msg">
+          <div class="chat-av av-sprite">S</div>
+          <div class="chat-txt sprite">Stretching the interval to 8 ticks gives you a 104-tick bloom window — the circle breathes instead of snapping. For the gap I'd add a tight 4-count overhead circle at radius 3, landing around tick 80, before the peak_burst cue ref takes over. That gives the ramp a clear three-beat shape: open, fill, peak. Want me to draft those two changes?</div>
+        </div>
+      </div>
+    </div>
+    <div class="ss-input-row">
+      <button class="review-btn" style="flex-shrink:0">Review this Cue ▶</button>
+      <input class="chat-input" type="text" placeholder="Ask ShowSprite about this cue…">
+      <button class="chat-send">Send</button>
+    </div>
+  </div>
+
+</div><!-- end .outer -->
+
+<script>
+// ── CONFIG ──
+const PX   = 4;          // pixels per tick
+const TICKS = 180;
+const TICK_STEP = 20;
+
+// ── TIMELINE BUILDER ──
+function buildTimeline() {
+  const totalPx = TICKS * PX + 80;
+
+  // Set min-widths on all lane tracks
+  document.querySelectorAll('.lane-track, .ruler-track').forEach(el => {
+    el.style.minWidth = totalPx + 'px';
+    el.style.position = 'relative';
+  });
+
+  // Build ruler
+  const ruler = document.getElementById('rulerTrack');
+  for (let t = 0; t <= TICKS; t += TICK_STEP) {
+    const x = t * PX;
+    const mark = document.createElement('div');
+    mark.style.cssText = `position:absolute;left:${x}px;top:0;display:flex;flex-direction:column;align-items:center;`;
+    const isMajor = (t % 40 === 0);
+    mark.innerHTML = `
+      <div style="width:1px;height:${isMajor?8:5}px;background:${isMajor?'var(--border-hi)':'var(--border)'}"></div>
+      <div style="font-size:9px;color:${isMajor?'var(--text-secondary)':'var(--text-muted)'};margin-top:2px;transform:translateX(-50%);white-space:nowrap;">
+        ${t}t<br><span style="font-size:8px;color:var(--text-muted)">${(t/20).toFixed(1)}s</span>
+      </div>`;
+    ruler.appendChild(mark);
+  }
+
+  // Add grid lines + playhead to every lane track
+  document.querySelectorAll('.lane-track').forEach(lane => {
+    for (let t = 0; t <= TICKS; t += TICK_STEP) {
+      const line = document.createElement('div');
+      line.style.cssText = `position:absolute;top:0;bottom:0;left:${t*PX}px;width:1px;background:var(--border);opacity:${t%40===0?0.6:0.3};pointer-events:none;`;
+      lane.appendChild(line);
+    }
+    // Playhead
+    const ph = document.createElement('div');
+    ph.style.cssText = `position:absolute;top:0;bottom:0;left:0;width:2px;background:var(--red);z-index:6;pointer-events:none;`;
+    lane.appendChild(ph);
+  });
+
+  // ── EVENTS ──
+
+  // SOUND: point marker at tick 0 in sounds lane
+  const soundsLane = document.querySelector('[data-lane="sounds"]');
+  addPoint(soundsLane, 0, 'var(--lane-sounds)', 'block.note_block.chime');
+
+  // FIREWORK_CIRCLE: bar in patterns lane, tick 0–88 (8×6t chase + ~40t flight for power 2)
+  // Selected
+  const patternsLane = document.querySelector('[data-lane="patterns"]');
+  const circleBar = addBar(patternsLane, 0, 88, '#C040A020', '#C040A0', '⊙ FIREWORK_CIRCLE · scaena_gold · r=6 · ×8 · chase FL 6t', '#E060D0');
+  circleBar.classList.add('sel');
+  // Chase tick pips inside the bar
+  for (let i = 0; i < 8; i++) {
+    const pip = document.createElement('div');
+    pip.style.cssText = `position:absolute;top:0;bottom:0;left:${i*6*PX}px;width:1px;background:#C040A0;opacity:0.5;pointer-events:none;`;
+    circleBar.appendChild(pip);
+    const num = document.createElement('div');
+    num.style.cssText = `position:absolute;bottom:2px;left:${i*6*PX+2}px;font-size:7px;color:#E060D0;pointer-events:none;`;
+    num.textContent = i+1;
+    circleBar.appendChild(num);
+  }
+
+  // CUE REF: tick 80–180 in cuerefs lane
+  const cuerefsLane = document.querySelector('[data-lane="cuerefs"]');
+  addCueRef(cuerefsLane, 80, 180, 'ramp.warm_gold.01.peak_burst');
+}
+
+function addBar(lane, startTick, endTick, bg, borderColor, label, labelColor) {
+  const bar = document.createElement('div');
+  bar.className = 'ev-bar';
+  bar.style.cssText = `left:${startTick*PX+1}px;width:${(endTick-startTick)*PX-2}px;background:${bg};border:1px solid ${borderColor};`;
+  bar.innerHTML = `<div class="ev-bar-lbl" style="color:${labelColor||'inherit'}">${label}</div>`;
+  lane.appendChild(bar);
+  return bar;
+}
+
+function addPoint(lane, tick, color, tooltip) {
+  // Diamond icon marker
+  const w = document.createElement('div');
+  w.style.cssText = `position:absolute;top:3px;left:${tick*PX-6}px;display:flex;flex-direction:column;align-items:center;z-index:3;cursor:pointer;`;
+  w.title = tooltip;
+  w.innerHTML = `
+    <div style="width:12px;height:12px;border-radius:50%;background:${color};opacity:0.9;"></div>
+    <div style="font-size:8px;color:${color};margin-top:2px;white-space:nowrap;">${tooltip}</div>`;
+  lane.appendChild(w);
+}
+
+function addCueRef(lane, startTick, endTick, cueId) {
+  const bar = document.createElement('div');
+  bar.style.cssText = `
+    position:absolute;top:3px;
+    left:${startTick*PX}px;width:${(endTick-startTick)*PX-1}px;height:18px;
+    border-radius:3px;
+    border:1px dashed var(--lane-cuerefs);
+    background:linear-gradient(90deg,#1A1A28,#20202E);
+    display:flex;align-items:center;padding:0 6px;cursor:pointer;
+    z-index:2;`;
+  bar.innerHTML = `<span style="font-size:9px;color:#9090B8">↗ ${cueId}</span>`;
+  lane.appendChild(bar);
+}
+
+// ── SPATIAL CANVAS ──
+function drawSpatial() {
+  const wrap   = document.querySelector('.spatial-canvas-wrap');
+  const canvas = document.getElementById('spatialCanvas');
+  const W = wrap.offsetWidth || 500;
+  const H = wrap.offsetHeight || 175;
+  canvas.width  = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const cx = W / 2, cy = H / 2;
+  const SCALE = 13; // px per block
+
+  ctx.fillStyle = '#14141C';
+  ctx.fillRect(0, 0, W, H);
+
+  // Fine grid (1-block)
+  ctx.strokeStyle = '#222230';
+  ctx.lineWidth = 0.5;
+  for (let gx = ((cx % SCALE) + SCALE) % SCALE; gx < W; gx += SCALE) {
+    ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
+  }
+  for (let gy = ((cy % SCALE) + SCALE) % SCALE; gy < H; gy += SCALE) {
+    ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+  }
+
+  // Concentric rings every 5 blocks
+  for (let r = 5; r <= 20; r += 5) {
+    const rPx = r * SCALE;
+    ctx.strokeStyle = r === 5 ? '#2A2A40' : '#242438';
+    ctx.lineWidth = r === 10 ? 1.2 : 0.8;
+    ctx.beginPath(); ctx.arc(cx, cy, rPx, 0, Math.PI*2); ctx.stroke();
+    ctx.fillStyle = '#383858';
+    ctx.font = '8px system-ui'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(r + 'b', cx + rPx + 2, cy);
+  }
+
+  // Selection halo at r=6
+  ctx.strokeStyle = 'rgba(192,64,160,0.3)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5, 4]);
+  ctx.beginPath(); ctx.arc(cx, cy, 6 * SCALE, 0, Math.PI*2); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Firework circle tiles — 8 positions
+  const COUNT = 8, R = 6 * SCALE;
+  for (let i = 0; i < COUNT; i++) {
+    const angle = (i / COUNT) * Math.PI * 2 - Math.PI / 2;
+    const fx = cx + Math.cos(angle) * R;
+    const fy = cy + Math.sin(angle) * R;
+    const tR = 10;
+
+    // Glow
+    const grd = ctx.createRadialGradient(fx, fy, 0, fx, fy, tR + 10);
+    grd.addColorStop(0, 'rgba(254,203,0,0.3)');
+    grd.addColorStop(1, 'rgba(254,203,0,0)');
+    ctx.beginPath(); ctx.arc(fx, fy, tR + 10, 0, Math.PI*2);
+    ctx.fillStyle = grd; ctx.fill();
+
+    // Half-gold, half-white (scaena_gold: #FECB00, #FFFFFF — equal weight)
+    ctx.beginPath();
+    ctx.moveTo(fx, fy);
+    ctx.arc(fx, fy, tR, -Math.PI/2, Math.PI/2);
+    ctx.closePath();
+    ctx.fillStyle = '#FECB00'; ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(fx, fy);
+    ctx.arc(fx, fy, tR, Math.PI/2, -Math.PI/2);
+    ctx.closePath();
+    ctx.fillStyle = '#FFFFFF'; ctx.fill();
+
+    // Outline
+    ctx.beginPath();
+    ctx.arc(fx, fy, tR, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(254,203,0,0.7)';
+    ctx.lineWidth = 1.5; ctx.stroke();
+
+    // Chase number
+    ctx.fillStyle = '#12120A';
+    ctx.font = 'bold 8px system-ui';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(i+1, fx, fy);
+
+    // Y offset label
+    ctx.fillStyle = '#C040A0';
+    ctx.font = '8px system-ui';
+    ctx.fillText('+2', fx, fy + tR + 9);
+  }
+
+  // Trail lines from tiles toward center (showing direction)
+  ctx.strokeStyle = 'rgba(254,203,0,0.12)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < COUNT; i++) {
+    const angle = (i / COUNT) * Math.PI * 2 - Math.PI / 2;
+    const fx = cx + Math.cos(angle) * R;
+    const fy = cy + Math.sin(angle) * R;
+    const trailLen = 8;
+    ctx.beginPath();
+    ctx.moveTo(fx, fy);
+    ctx.lineTo(fx - Math.cos(angle)*trailLen, fy - Math.sin(angle)*trailLen);
+    ctx.stroke();
+  }
+
+  // Spatial anchor (target player "Z") at center
+  ctx.beginPath();
+  ctx.arc(cx, cy, 10, 0, Math.PI*2);
+  ctx.fillStyle = '#1A1A20'; ctx.fill();
+  ctx.strokeStyle = '#F0B429'; ctx.lineWidth = 2; ctx.stroke();
+
+  ctx.fillStyle = '#F0B429';
+  ctx.font = 'bold 10px system-ui';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('Z', cx, cy);
+
+  ctx.fillStyle = '#D09030';
+  ctx.font = '9px system-ui'; ctx.textBaseline = 'top';
+  ctx.fillText('Zarathale', cx - 26, cy + 13);
+
+  // Legend top-left
+  ctx.fillStyle = '#444460';
+  ctx.font = '9px system-ui'; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.fillText('FIREWORK_CIRCLE  ·  scaena_gold  ·  r=6  ·  ×8  ·  chase FL 6t  ·  RAMP_UP', 6, 4);
+}
+
+// ── Y PROFILE ──
+function drawYProfile() {
+  const canvas = document.getElementById('yCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = 52; canvas.height = 175;
+
+  ctx.fillStyle = '#14141C'; ctx.fillRect(0, 0, 52, 175);
+
+  const groundY = 140;
+  const PX_PER_BLOCK = 9;
+
+  // Y axis line
+  ctx.strokeStyle = '#333348'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(20, 10); ctx.lineTo(20, 160); ctx.stroke();
+
+  // Ground line
+  ctx.strokeStyle = '#3A3A52'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(52, groundY); ctx.stroke();
+  ctx.fillStyle = '#555570'; ctx.font = '8px system-ui';
+  ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+  ctx.fillText('gnd', 18, groundY);
+
+  // Y offset marks
+  for (let y = 1; y <= 5; y++) {
+    const yPx = groundY - y * PX_PER_BLOCK;
+    ctx.strokeStyle = '#282840'; ctx.lineWidth = 0.5;
+    ctx.setLineDash([2, 3]);
+    ctx.beginPath(); ctx.moveTo(14, yPx); ctx.lineTo(52, yPx); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#404060'; ctx.font = '7px system-ui';
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    ctx.fillText('+' + y, 12, yPx);
+  }
+
+  // Target player
+  const playerY = groundY - PX_PER_BLOCK * 1; // feet at ground, center of body 1 block up
+  ctx.fillStyle = '#F0B429';
+  ctx.beginPath(); ctx.arc(30, playerY, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#F0B429'; ctx.font = '7px system-ui'; ctx.textAlign = 'center';
+  ctx.fillText('Z', 30, playerY - 9);
+
+  // Firework launch points at y_offset=2
+  const fwY = groundY - 2 * PX_PER_BLOCK;
+  // Show 8 tiles as small dots across the width
+  for (let i = 0; i < 8; i++) {
+    const x = 22 + (i % 4) * 7;
+    const yAdj = fwY - Math.floor(i / 4) * 5;
+    ctx.fillStyle = '#FECB00';
+    ctx.beginPath(); ctx.arc(x, yAdj, 3, 0, Math.PI*2); ctx.fill();
+  }
+  ctx.fillStyle = '#C040A0'; ctx.font = '7px system-ui'; ctx.textAlign = 'left';
+  ctx.fillText('+2', 22, fwY - 16);
+
+  // Y axis label (vertical)
+  ctx.save();
+  ctx.translate(6, 90); ctx.rotate(-Math.PI / 2);
+  ctx.fillStyle = '#333352'; ctx.font = '8px system-ui';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('Y offset', 0, 0);
+  ctx.restore();
+}
+
+window.addEventListener('load', () => {
+  buildTimeline();
+  drawSpatial();
+  drawYProfile();
+});
+window.addEventListener('resize', () => {
+  drawSpatial();
+});
+</script>
+</body>
+</html>

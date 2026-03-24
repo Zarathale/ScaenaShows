@@ -1,310 +1,281 @@
 package com.scaena.shows.runtime;
 
-import com.scaena.shows.model.*;
+import com.scaena.shows.model.Show;
 import net.kyori.adventure.bossbar.BossBar;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
+/**
+ * Live state for one /show play invocation.
+ * One RunningShow per invocation; all participants share this instance.
+ */
 public final class RunningShow {
 
-    private final UUID targetId;
-    private final String showId;
-    private final ShowMode mode;
-    private final AudienceMode audienceMode;
-    private final Location origin;
+    // -----------------------------------------------------------------------
+    // Identity
+    // -----------------------------------------------------------------------
+    public final String instanceId;          // UUID string for uniqueness
+    public final Show show;
 
-    private final boolean directorScenes;
+    // -----------------------------------------------------------------------
+    // Invocation options
+    // -----------------------------------------------------------------------
+    public final boolean privateMode;        // --private flag
+    public final boolean scenesMode;         // --scenes (director mode)
+    public final String followMode;          // "follow" | "static"
 
-    private final int durationTicks;
+    // -----------------------------------------------------------------------
+    // Participants (keyed by UUID)
+    // -----------------------------------------------------------------------
+    private final Map<UUID, ParticipantState> participants;
+    private UUID spatialAnchorUuid;
+    private UUID invokerUuid;
 
-    private int currentTick = 0;
-    private boolean paused = false;
-    private long pausedAtMillis = -1L;
+    // -----------------------------------------------------------------------
+    // Tick counter
+    // -----------------------------------------------------------------------
+    private long currentTick = 0;
+    private boolean running  = true;
 
-    // tick -> list of actions (SceneEvent or SceneCall marker)
-    private final Map<Integer, List<Object>> scheduled = new HashMap<>();
+    // -----------------------------------------------------------------------
+    // Group assignments (group 1..N → list of UUIDs)
+    // -----------------------------------------------------------------------
+    private final Map<Integer, List<UUID>> groups = new HashMap<>();
 
-    private BossBar bossBar;
-    private AudienceMode bossBarAudience;
-    private boolean bossBarVisible = false;
+    // -----------------------------------------------------------------------
+    // Named entities spawned by this show (name → Entity)
+    // -----------------------------------------------------------------------
+    private final Map<String, Entity> spawnedEntities = new LinkedHashMap<>();
 
-    private final Set<PotionEffectType> effectsApplied = new HashSet<>();
+    // -----------------------------------------------------------------------
+    // Named entity groups captured by CAPTURE_ENTITIES (group_name → list of Entity UUIDs)
+    // -----------------------------------------------------------------------
+    private final Map<String, List<UUID>> entityGroups = new LinkedHashMap<>();
 
-    // Scene-wide title overlay support
-    private String activeSceneTextMiniMessage = null;
-    private int activeSceneTextEndsAtTick = -1;
-    private int titleLockUntilTick = -1;
-    private boolean sceneTextNeedsResend = false;
+    // -----------------------------------------------------------------------
+    // Active duration events (tracked for cleanup and bossbar animation)
+    // -----------------------------------------------------------------------
 
-    private final MiniMessage mm = MiniMessage.miniMessage();
+    /** Show-level bossbar (may be null if show.bossbar.enabled = false) */
+    private BossBar showBossBar = null;
 
-    private RunningShow(UUID targetId, String showId, ShowMode mode, AudienceMode audienceMode, Location origin, int durationTicks, boolean directorScenes) {
-        this.targetId = targetId;
-        this.showId = showId;
-        this.mode = mode;
-        this.audienceMode = audienceMode;
-        this.origin = origin;
-        this.durationTicks = Math.max(1, durationTicks);
-        this.directorScenes = directorScenes;
-    }
+    /** Per-event bossbars for inline BOSSBAR events */
+    private final List<BossBar> activeBossBars = new ArrayList<>();
 
-    public static RunningShow create(ShowManager mgr, ShowDefinition def, Player target, ShowMode mode, AudienceMode audienceMode, boolean directorScenes) {
-        int duration = DurationCalculator.calculate(mgr, def);
-        RunningShow rs = new RunningShow(target.getUniqueId(), def.id(), mode, audienceMode, target.getLocation().clone(), duration, directorScenes);
+    /** Track scoreboard team names created by this show (for cleanup) */
+    private final Set<String> ownedTeams = new HashSet<>();
 
-        // show-level bossbar
-        if (def.bossbar() != null && def.bossbar().enabled()) {
-            rs.createBossbar(def.bossbar(), audienceMode, target);
+    /** Track spectate prior gamemodes per player (UUID → prior GameMode) */
+    private final Map<UUID, org.bukkit.GameMode> spectateRestoreMap = new LinkedHashMap<>();
+
+    // -----------------------------------------------------------------------
+    // Spatial anchor position (used for follow mode + static fallback)
+    // -----------------------------------------------------------------------
+    private Location anchorLocation;   // updated each tick in follow mode
+
+    // -----------------------------------------------------------------------
+    // Constructor
+    // -----------------------------------------------------------------------
+    public RunningShow(
+        Show show,
+        List<Player> participants,
+        Player invoker,
+        boolean privateMode,
+        boolean scenesMode,
+        String followMode
+    ) {
+        this.instanceId  = UUID.randomUUID().toString().substring(0, 8);
+        this.show        = show;
+        this.privateMode = privateMode;
+        this.scenesMode  = scenesMode;
+        this.followMode  = followMode;
+        this.invokerUuid = invoker != null ? invoker.getUniqueId() : null;
+
+        Map<UUID, ParticipantState> pmap = new LinkedHashMap<>();
+        boolean firstDone = false;
+        for (Player p : participants) {
+            boolean isAnchor = !firstDone;
+            ParticipantState ps = new ParticipantState(p, isAnchor);
+            pmap.put(p.getUniqueId(), ps);
+            if (isAnchor) {
+                spatialAnchorUuid = p.getUniqueId();
+                anchorLocation    = p.getLocation().clone();
+                firstDone = true;
+            }
         }
-
-        rs.scheduleTimeline(mgr, def);
-        return rs;
+        this.participants = Collections.unmodifiableMap(pmap);
     }
 
-    private void createBossbar(ShowBossbarDefaults b, AudienceMode showAudienceMode, Player target) {
-        BossBar.Color color = BossBar.Color.YELLOW;
-        BossBar.Overlay overlay = BossBar.Overlay.PROGRESS;
-        try { color = BossBar.Color.valueOf(b.color().toUpperCase(Locale.ROOT)); } catch (Exception ignored) {}
-        try { overlay = BossBar.Overlay.valueOf(b.overlay().toUpperCase(Locale.ROOT)); } catch (Exception ignored) {}
+    // -----------------------------------------------------------------------
+    // Accessors
+    // -----------------------------------------------------------------------
 
-        this.bossBar = BossBar.bossBar(mm.deserialize(b.titleMiniMessage() == null ? "" : b.titleMiniMessage()), 0f, color, overlay);
-        this.bossBarAudience = (showAudienceMode == AudienceMode.PRIVATE) ? AudienceMode.PRIVATE : b.audience();
-        this.bossBarVisible = true;
+    public Map<UUID, ParticipantState> getParticipants() { return participants; }
+    public long getCurrentTick()  { return currentTick; }
+    public boolean isRunning()    { return running; }
+    public boolean isPrivate()    { return privateMode; }
+    public boolean isScenesMode() { return scenesMode; }
+    public String getFollowMode() { return followMode; }
 
-        if (bossBarAudience == AudienceMode.PRIVATE) {
-            target.showBossBar(bossBar);
-        } else {
-            for (Player p : Bukkit.getOnlinePlayers()) p.showBossBar(bossBar);
+    public Player getInvoker() {
+        if (invokerUuid == null) return null;
+        return org.bukkit.Bukkit.getPlayer(invokerUuid);
+    }
+
+    public Player getSpatialAnchor() {
+        if (spatialAnchorUuid == null) return null;
+        return org.bukkit.Bukkit.getPlayer(spatialAnchorUuid);
+    }
+
+    public Location getAnchorLocation() {
+        if ("follow".equalsIgnoreCase(followMode)) {
+            Player anchor = getSpatialAnchor();
+            if (anchor != null && anchor.isOnline()) {
+                anchorLocation = anchor.getLocation().clone();
+            }
+            // If anchor disconnected, fall back to last known (static fallback per spec §15)
         }
+        return anchorLocation;
     }
 
-    private void scheduleTimeline(ShowManager mgr, ShowDefinition def) {
-        for (ShowTimelineEntry te : def.timeline()) {
-            if (te instanceof ShowTimelineEntry.SceneCall sc) {
-                addSceneCallAt(sc.atTick(), sc.sceneId());
-            } else if (te instanceof ShowTimelineEntry.EventEntry ee) {
-                scheduleEventAt(te.atTick(), ee.event());
+    public void setAnchorLocation(Location loc) {
+        this.anchorLocation = loc;
+    }
+
+    /** All participants that are currently online. */
+    public List<Player> getOnlineParticipants() {
+        List<Player> out = new ArrayList<>();
+        for (ParticipantState ps : participants.values()) {
+            if (!ps.isConnected()) continue;
+            Player p = org.bukkit.Bukkit.getPlayer(ps.uuid);
+            if (p != null && p.isOnline()) out.add(p);
+        }
+        return out;
+    }
+
+    /** Returns participants assigned to the given group number (1-based). */
+    public List<Player> getGroupPlayers(int groupNum) {
+        List<UUID> uuids = groups.getOrDefault(groupNum, List.of());
+        List<Player> out = new ArrayList<>();
+        for (UUID uid : uuids) {
+            Player p = org.bukkit.Bukkit.getPlayer(uid);
+            if (p != null && p.isOnline()) out.add(p);
+        }
+        return out;
+    }
+
+    /** Assign group membership (called by GroupAssignExecutor at tick 0). */
+    public void setGroups(Map<Integer, List<UUID>> groupMap) {
+        groups.clear();
+        groups.putAll(groupMap);
+        // Write group number back onto each ParticipantState
+        for (Map.Entry<Integer, List<UUID>> entry : groupMap.entrySet()) {
+            for (UUID uid : entry.getValue()) {
+                ParticipantState ps = participants.get(uid);
+                if (ps != null) ps.groupNumber = entry.getKey();
             }
         }
     }
 
-    private void scheduleEventAt(int baseTick, SceneEvent ev) {
-        if (ev instanceof SceneEvent.SoundEvent se) addAt(baseTick + se.atTick(), se);
-        else if (ev instanceof SceneEvent.ParticleEvent pe) addAt(baseTick + pe.atTick(), pe);
-        else if (ev instanceof SceneEvent.MessageEvent me) addAt(baseTick + me.atTick(), me);
-        else if (ev instanceof SceneEvent.TitleEvent te) addAt(baseTick + te.atTick(), te);
-        else if (ev instanceof SceneEvent.BossbarEvent be) addAt(baseTick + be.atTick(), be);
-        else if (ev instanceof SceneEvent.EffectEvent ee) addAt(baseTick + ee.atTick(), ee);
-        else if (ev instanceof SceneEvent.SequenceEvent se) addAt(baseTick + se.atTick(), se);
-        else if (ev instanceof SceneEvent.ItemEvent ie) addAt(baseTick + ie.atTick(), ie);
-    }
+    // -----------------------------------------------------------------------
+    // Tick management
+    // -----------------------------------------------------------------------
 
-    private void addAt(int tick, Object obj) {
-        scheduled.computeIfAbsent(tick, k -> new ArrayList<>()).add(obj);
-    }
-
-    /**
-     * Schedule an arbitrary action to run at a given absolute tick of this show.
-     */
-    public void enqueue(int atTick, Runnable action) {
-        if (action == null) return;
-        addAt(atTick, action);
-    }
-
-    private void addSceneCallAt(int tick, String sceneId) {
-        addAt(tick, new SceneCall(sceneId));
-    }
-
-    public boolean tick(ShowManager mgr) {
-        // Update bossbar progress first
-        if (bossBar != null && bossBarVisible) {
-            float prog = Math.min(1f, (float) currentTick / (float) durationTicks);
-            bossBar.progress(prog);
-        }
-
-        // Execute scheduled things
-        List<Object> list = scheduled.remove(currentTick);
-        if (list != null) {
-            for (Object o : list) {
-                if (o instanceof Runnable r) {
-                    try { r.run(); } catch (Exception ignored) {}
-                    continue;
-                }
-                if (o instanceof SceneCall call) {
-                    // Expand scene events into the schedule relative to *this tick*
-                    Scene scene = mgr.scenes().get(call.sceneId);
-                    if (scene != null) {
-                        onSceneStart(mgr, scene);
-                        for (SceneEvent ev : scene.events()) {
-                            scheduleEventAt(currentTick, ev);
-                        }
-                    }
-                } else if (o instanceof SceneEvent.SoundEvent se) {
-                    mgr.playSound(this, se.sound());
-                } else if (o instanceof SceneEvent.ParticleEvent pe) {
-                    mgr.spawnParticle(this, pe.particle());
-                } else if (o instanceof SceneEvent.MessageEvent me) {
-                    mgr.sendMessage(this, me.message().audience(), me.message().miniMessage());
-                } else if (o instanceof SceneEvent.TitleEvent te) {
-                    // Lock scene text overlay until this title naturally completes.
-                    TitlePayload tp = te.title();
-                    if (tp != null) {
-                        int lock = Math.max(0, tp.fadeInTicks()) + Math.max(0, tp.stayTicks()) + Math.max(0, tp.fadeOutTicks());
-                        titleLockUntilTick = Math.max(titleLockUntilTick, currentTick + lock);
-                        sceneTextNeedsResend = true;
-                    }
-                    mgr.sendTitle(this, te.title());
-                } else if (o instanceof SceneEvent.BossbarEvent be) {
-                    handleBossbarEvent(be.bossbar());
-                } else if (o instanceof SceneEvent.EffectEvent ee) {
-                    mgr.applyEffect(this, ee.effect());
-                } else if (o instanceof SceneEvent.SequenceEvent se) {
-                    mgr.runSequence(this, currentTick, se.sequence().sequenceId(), 0);
-                } else if (o instanceof SceneEvent.ItemEvent ie) {
-                    mgr.grantItem(this, ie.item());
-                }
-            }
-        }
-
-        // Scene-wide overlay title (re)assertion
-        if (activeSceneTextMiniMessage != null && currentTick < activeSceneTextEndsAtTick) {
-            if (currentTick >= titleLockUntilTick && sceneTextNeedsResend) {
-                int remaining = Math.max(1, activeSceneTextEndsAtTick - currentTick);
-                mgr.showSceneTextOverlay(this, activeSceneTextMiniMessage, remaining);
-                sceneTextNeedsResend = false;
-            }
-        }
-
+    /** Advance the internal tick counter by 1. */
+    public void tick() {
         currentTick++;
-        if (currentTick > durationTicks) {
-            stopAndCleanup(mgr, false, null);
-            return true;
-        }
-        return false;
     }
 
-    private void onSceneStart(ShowManager mgr, Scene scene) {
-        if (directorScenes) {
-            mgr.showSceneDirectorLabel(this, scene);
-        }
-
-        String st = scene.sceneTextMiniMessage();
-        if (st != null && !st.isBlank() && scene.durationTicks() > 0) {
-            activeSceneTextMiniMessage = st;
-            activeSceneTextEndsAtTick = currentTick + scene.durationTicks();
-            // If a title is currently active, wait; otherwise show immediately.
-            if (currentTick >= titleLockUntilTick) {
-                mgr.showSceneTextOverlay(this, st, scene.durationTicks());
-                sceneTextNeedsResend = false;
-            } else {
-                sceneTextNeedsResend = true;
-            }
-        } else {
-            activeSceneTextMiniMessage = null;
-            activeSceneTextEndsAtTick = -1;
-            sceneTextNeedsResend = false;
-        }
+    /** Signal that the show has ended or been stopped. */
+    public void stop() {
+        running = false;
     }
 
-    private void handleBossbarEvent(BossbarPayload bb) {
-        if (bb.action() == BossbarPayload.Action.HIDE) {
-            hideBossbar();
-            return;
-        }
+    // -----------------------------------------------------------------------
+    // Group scope override (used by GROUP_EVENT executor)
+    // When non-zero, AudienceResolver restricts "broadcast" and "participants"
+    // to only players in the specified group number (1–4).
+    // Set immediately before and cleared immediately after each event dispatch.
+    // Safe because all Bukkit tasks run on the main thread (no concurrency).
+    // -----------------------------------------------------------------------
+    private int activeGroupScope = 0; // 0 = no override; 1..4 = restrict to group N
 
-        // Ensure bossbar exists
-        if (bossBar == null) {
-            BossBar.Color color = BossBar.Color.YELLOW;
-            BossBar.Overlay overlay = BossBar.Overlay.PROGRESS;
-            try { color = BossBar.Color.valueOf(bb.color().toUpperCase(Locale.ROOT)); } catch (Exception ignored) {}
-            try { overlay = BossBar.Overlay.valueOf(bb.overlay().toUpperCase(Locale.ROOT)); } catch (Exception ignored) {}
-            bossBar = BossBar.bossBar(mm.deserialize(bb.titleMiniMessage() == null ? "" : bb.titleMiniMessage()), 0f, color, overlay);
-            bossBarAudience = (audienceMode == AudienceMode.PRIVATE) ? AudienceMode.PRIVATE : bb.audience();
-        } else if (bb.titleMiniMessage() != null) {
-            bossBar.name(mm.deserialize(bb.titleMiniMessage()));
-        }
+    public int getActiveGroupScope()         { return activeGroupScope; }
+    public void setActiveGroupScope(int scope) { this.activeGroupScope = scope; }
 
-        showBossbar();
+    // -----------------------------------------------------------------------
+    // Spawned entities
+    // -----------------------------------------------------------------------
+
+    public void registerSpawnedEntity(String name, Entity entity) {
+        spawnedEntities.put(name, entity);
     }
 
-    private void showBossbar() {
-        if (bossBar == null) return;
-        bossBarVisible = true;
-        if (bossBarAudience == AudienceMode.PRIVATE) {
-            Player t = Bukkit.getPlayer(targetId);
-            if (t != null) t.showBossBar(bossBar);
-        } else {
-            for (Player p : Bukkit.getOnlinePlayers()) p.showBossBar(bossBar);
-        }
+    public Entity getSpawnedEntity(String name) {
+        return spawnedEntities.get(name);
     }
 
-    private void hideBossbar() {
-        if (bossBar == null || !bossBarVisible) return;
-        bossBarVisible = false;
-        for (Player p : Bukkit.getOnlinePlayers()) p.hideBossBar(bossBar);
+    public Map<String, Entity> getSpawnedEntities() {
+        return Collections.unmodifiableMap(spawnedEntities);
     }
 
-    public void stopAndCleanup(ShowManager mgr, boolean forced, String reason) {
-        hideBossbar();
-        Player p = Bukkit.getPlayer(targetId);
-        if (p == null) return;
-        // Minimal cleanup on natural end; full stop-safety on forced stop.
-        if (forced) {
-            mgr.stopSafety(p);
-        } else {
-            if (effectsApplied.contains(PotionEffectType.LEVITATION)) {
-                p.removePotionEffect(PotionEffectType.LEVITATION);
-            }
-        }
+    // -----------------------------------------------------------------------
+    // Entity groups
+    // -----------------------------------------------------------------------
+
+    public void setEntityGroup(String groupName, List<UUID> entityUuids) {
+        entityGroups.put(groupName, List.copyOf(entityUuids));
     }
 
-    public void pause() {
-        if (paused) return;
-        paused = true;
-        pausedAtMillis = System.currentTimeMillis();
-        if (bossBar != null && bossBarVisible && bossBarAudience == AudienceMode.PRIVATE) {
-            Player p = Bukkit.getPlayer(targetId);
-            if (p != null) p.hideBossBar(bossBar);
-        }
+    public List<UUID> getEntityGroup(String groupName) {
+        return entityGroups.getOrDefault(groupName, List.of());
     }
 
-    public void resume() {
-        paused = false;
-        pausedAtMillis = -1L;
+    /** Remove an entity group from show tracking (called by RELEASE_ENTITIES). Entities remain in the world. */
+    public void releaseEntityGroup(String groupName) {
+        entityGroups.remove(groupName);
     }
 
-    public void showBossbarToJoinerIfBroadcast(Player joiner) {
-        if (bossBar != null && bossBarVisible && bossBarAudience == AudienceMode.BROADCAST) {
-            joiner.showBossBar(bossBar);
-        }
+    // -----------------------------------------------------------------------
+    // Bossbars
+    // -----------------------------------------------------------------------
+
+    public BossBar getShowBossBar()                  { return showBossBar; }
+    public void setShowBossBar(BossBar bar)          { this.showBossBar = bar; }
+    public void addActiveBossBar(BossBar bar)        { activeBossBars.add(bar); }
+    public List<BossBar> getActiveBossBars()         { return activeBossBars; }
+
+    // -----------------------------------------------------------------------
+    // Teams
+    // -----------------------------------------------------------------------
+
+    public void registerOwnedTeam(String teamName)   { ownedTeams.add(teamName); }
+    public Set<String> getOwnedTeams()               { return ownedTeams; }
+
+    // -----------------------------------------------------------------------
+    // Spectate restore
+    // -----------------------------------------------------------------------
+
+    public void recordSpectateRestore(UUID uuid, org.bukkit.GameMode prior) {
+        spectateRestoreMap.put(uuid, prior);
     }
 
-    public void ensureBossbarShownToRejoined(Player rejoined) {
-        if (bossBar != null && bossBarVisible && bossBarAudience == AudienceMode.PRIVATE) {
-            rejoined.showBossBar(bossBar);
-        }
+    public Map<UUID, org.bukkit.GameMode> getSpectateRestoreMap() {
+        return spectateRestoreMap;
     }
 
-    public boolean isPaused() { return paused; }
-    public long getPausedAtMillis() { return pausedAtMillis; }
+    // -----------------------------------------------------------------------
+    // Participant state lookup
+    // -----------------------------------------------------------------------
 
-    public UUID targetId() { return targetId; }
-    public String showId() { return showId; }
-    public ShowMode mode() { return mode; }
-    public AudienceMode audienceMode() { return audienceMode; }
-    public Location origin() { return origin; }
-    public int currentTick() { return currentTick; }
+    public ParticipantState getParticipant(UUID uuid) {
+        return participants.get(uuid);
+    }
 
-    public void trackEffect(PotionEffectType type) { if (type != null) effectsApplied.add(type); }
-
-    // Marker
-    private static final class SceneCall {
-        final String sceneId;
-        SceneCall(String sceneId) { this.sceneId = sceneId; }
+    public boolean isParticipant(UUID uuid) {
+        return participants.containsKey(uuid);
     }
 }

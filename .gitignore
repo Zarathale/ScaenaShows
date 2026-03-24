@@ -1,16 +1,5 @@
-# Compiled class file
+# Compiled output
 *.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
 *.nar
@@ -19,6 +8,31 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# Gradle build output
+build/
+.gradle/
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
 hs_err_pid*
 replay_pid*
+
+# ScaenaComposer local config (contains RCON credentials — never commit)
+ScaenaComposer/composer.config.json
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Claude internal tool artifacts
+.claude/

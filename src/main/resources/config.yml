@@ -1,27 +1,10 @@
-version: 1
+# ScaenaShows v2 — config.yml
+# All values have plugin defaults. Only include keys you want to override.
 
-defaults:
-  mode: follow                # follow|static
-  broadcast: true             # show messages to everyone by default
-  bossbar:
-    enabled: true
-    color: YELLOW
-    overlay: PROGRESS
+default_cooldown_seconds: 30        # Cooldown per invoker between /show play uses
+resume_window_seconds: 900          # Seconds a disconnected participant has to rejoin before their slot is dropped
 
-permissions:
-  admin_permission: "scae.shows.admin"
-  play_permission: "scae.shows.play"
-  target_others_permission: "scae.shows.target.others"
-  target_all_permission: "scae.shows.target.all"
-  private_flag_permission: "scae.shows.private"
-
-cooldowns:
-  default_seconds: 60
-  bypass_permission: "scae.shows.cooldown.bypass"
-
-pause_resume:
-  resume_window_seconds: 900  # 15 minutes
-
+# Safety defaults applied on /show stop
 safety:
   stop_applies_slow_falling_seconds: 10
   stop_message: "<gold>Show stopped.</gold> <gray>Landing safely.</gray>"
@@ -31,14 +14,9 @@ safety:
     volume: 1.0
     pitch: 1.0
 
+# Hard limits — raise with caution
 limits:
-  max_events_per_show: 2000
+  max_cue_nesting_depth: 10
   max_fireworks_per_second: 30
   max_fireworks_per_shot: 12
-  max_sequence_nesting_depth: 4
   max_particles_per_event: 200
-
-ui:
-  # Optional scene-wide overlay title shown for `scene_text` (scenes/*.yml)
-  # This caps the visible (plain) characters to avoid Minecraft title truncation.
-  scene_text_max_chars: 32

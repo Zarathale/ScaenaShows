@@ -1,4 +1,6 @@
-version: 1
+# ScaenaShows v2 — fireworks.yml
+# Firework presets — referenced by ID from any FIREWORK_* event.
+# Schema: docs/spec.md § 4.3
 
 presets:
 
@@ -9,40 +11,52 @@ presets:
   scae_star_warm:
     display_name: "Scaena Star Warm"
     power: 1
-    type: STAR
-    colors: ["#FECB00", "#FFFFFF", "#589E51"]
-    fades: ["#FFFFFF"]
-    trail: true
-    flicker: true
-    launch: { mode: above, y_offset: 1.2 }
+    stars:
+      - type: STAR
+        colors: ["#FECB00", "#FFFFFF", "#589E51"]
+        fades: ["#FFFFFF"]
+        trail: true
+        flicker: true
+    launch:
+      mode: above
+      y_offset: 1.2
 
   scae_burst_leaf:
     display_name: "Scaena Burst Leaf"
     power: 1
-    type: BURST
-    colors: ["#589E51", "#FFFFFF", "#FECB00"]
-    trail: true
-    flicker: false
-    launch: { mode: random, y_offset: 1.0, spread: 2.0 }
+    stars:
+      - type: BURST
+        colors: ["#589E51", "#FFFFFF", "#FECB00"]
+        trail: true
+        flicker: false
+    launch:
+      mode: random
+      y_offset: 1.0
+      spread: 2.0
 
   scae_large_fanfare:
     display_name: "Scaena Large Fanfare"
     power: 1
-    type: LARGE
-    colors: ["#FECB00", "#FFFFFF", "#589E51"]
-    fades: ["#FFFFFF"]
-    trail: true
-    flicker: true
-    launch: { mode: above, y_offset: 2.0 }
+    stars:
+      - type: LARGE_BALL
+        colors: ["#FECB00", "#FFFFFF", "#589E51"]
+        fades: ["#FFFFFF"]
+        trail: true
+        flicker: true
+    launch:
+      mode: above
+      y_offset: 2.0
 
   scae_ball_spark:
     display_name: "Scaena Ball Spark"
     power: 1
-    type: BALL
-    colors: ["#FFFFFF", "#FECB00"]
-    trail: true
-    flicker: true
-    launch: { mode: feet }
+    stars:
+      - type: BALL
+        colors: ["#FFFFFF", "#FECB00"]
+        trail: true
+        flicker: true
+    launch:
+      mode: feet
 
   # ---------------------------
   # BIRTHDAY PASTELS
@@ -51,40 +65,52 @@ presets:
   bday_pastel_star:
     display_name: "Birthday Pastel Star"
     power: 1
-    type: STAR
-    colors: ["#FFB3C7", "#B8E7FF", "#D7C3FF", "#FFF2B2"]
-    fades: ["#FFFFFF"]
-    trail: true
-    flicker: true
-    launch: { mode: above, y_offset: 1.2 }
+    stars:
+      - type: STAR
+        colors: ["#FFB3C7", "#B8E7FF", "#D7C3FF", "#FFF2B2"]
+        fades: ["#FFFFFF"]
+        trail: true
+        flicker: true
+    launch:
+      mode: above
+      y_offset: 1.2
 
   bday_pastel_burst:
     display_name: "Birthday Pastel Burst"
     power: 1
-    type: BURST
-    colors: ["#B8E7FF", "#C7F5D9", "#FFF2B2", "#D7C3FF"]
-    trail: true
-    flicker: false
-    launch: { mode: random, y_offset: 1.0, spread: 2.5 }
+    stars:
+      - type: BURST
+        colors: ["#B8E7FF", "#C7F5D9", "#FFF2B2", "#D7C3FF"]
+        trail: true
+        flicker: false
+    launch:
+      mode: random
+      y_offset: 1.0
+      spread: 2.5
 
   bday_confetti_ball:
     display_name: "Birthday Confetti Ball"
     power: 1
-    type: BALL
-    colors: ["#FFB3C7", "#C7F5D9", "#B8E7FF", "#FFF2B2"]
-    trail: false
-    flicker: true
-    launch: { mode: feet }
+    stars:
+      - type: BALL
+        colors: ["#FFB3C7", "#C7F5D9", "#B8E7FF", "#FFF2B2"]
+        trail: false
+        flicker: true
+    launch:
+      mode: feet
 
   bday_finale_large:
     display_name: "Birthday Finale Large"
     power: 1
-    type: LARGE
-    colors: ["#FFB3C7", "#B8E7FF", "#FFF2B2", "#D7C3FF", "#FFFFFF"]
-    fades: ["#FFFFFF"]
-    trail: true
-    flicker: true
-    launch: { mode: above, y_offset: 2.2 }
+    stars:
+      - type: LARGE_BALL
+        colors: ["#FFB3C7", "#B8E7FF", "#FFF2B2", "#D7C3FF", "#FFFFFF"]
+        fades: ["#FFFFFF"]
+        trail: true
+        flicker: true
+    launch:
+      mode: above
+      y_offset: 2.2
 
   # ---------------------------
   # PRIDE (ROYGBP++)
@@ -93,36 +119,48 @@ presets:
   pride_wave_star:
     display_name: "Pride Wave Star"
     power: 1
-    type: STAR
-    colors: ["#E40303", "#FF8C00", "#FFED00", "#008026", "#24408E", "#732982"]
-    trail: true
-    flicker: true
-    launch: { mode: above, y_offset: 1.3 }
+    stars:
+      - type: STAR
+        colors: ["#E40303", "#FF8C00", "#FFED00", "#008026", "#24408E", "#732982"]
+        trail: true
+        flicker: true
+    launch:
+      mode: above
+      y_offset: 1.3
 
   pride_burst_rainbow:
     display_name: "Pride Burst Rainbow"
     power: 1
-    type: BURST
-    colors: ["#E40303", "#FF8C00", "#FFED00", "#008026", "#24408E", "#732982"]
-    trail: true
-    flicker: false
-    launch: { mode: random, y_offset: 1.0, spread: 3.0 }
+    stars:
+      - type: BURST
+        colors: ["#E40303", "#FF8C00", "#FFED00", "#008026", "#24408E", "#732982"]
+        trail: true
+        flicker: false
+    launch:
+      mode: random
+      y_offset: 1.0
+      spread: 3.0
 
   pride_trans_glow_ball:
     display_name: "Pride Trans Glow Ball"
     power: 1
-    type: BALL
-    colors: ["#5BCEFA", "#F5A9B8", "#FFFFFF"]
-    trail: true
-    flicker: true
-    launch: { mode: feet }
+    stars:
+      - type: BALL
+        colors: ["#5BCEFA", "#F5A9B8", "#FFFFFF"]
+        trail: true
+        flicker: true
+    launch:
+      mode: feet
 
   pride_finale_large:
     display_name: "Pride Finale Large"
     power: 1
-    type: LARGE
-    colors: ["#E40303", "#FF8C00", "#FFED00", "#008026", "#24408E", "#732982", "#FFFFFF"]
-    fades: ["#FFFFFF"]
-    trail: true
-    flicker: true
-    launch: { mode: above, y_offset: 2.5 }
+    stars:
+      - type: LARGE_BALL
+        colors: ["#E40303", "#FF8C00", "#FFED00", "#008026", "#24408E", "#732982", "#FFFFFF"]
+        fades: ["#FFFFFF"]
+        trail: true
+        flicker: true
+    launch:
+      mode: above
+      y_offset: 2.5

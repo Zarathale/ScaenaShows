@@ -1,0 +1,1637 @@
+# ScaenaShows v2 — Show: intro.young_persons_guide
+# ─────────────────────────────────────────────────────────────────────
+# A YOUNG PERSON'S GUIDE TO THE SCAENA THEATRE
+# Inspired by Bernstein's Young Person's Guide to the Orchestra.
+#
+# Structure:
+#   Overture:  The theme is played in full — all capabilities at once.
+#   Chapters:  Each capability family is introduced and demonstrated alone.
+#   Synthesis: Each chapter re-enters, one by one, building like a fugue.
+#   Finale:    The theme reprised in full — now the player understands every part.
+#
+# Six Chapters:
+#   1 — The Voice      (MESSAGE, TITLE, ACTION_BAR)
+#   2 — The Music      (SOUND — pitch, volume, layering)
+#   3 — The Light      (FIREWORK, FIREWORK_CIRCLE, FIREWORK_LINE, FIREWORK_FAN, FIREWORK_RANDOM)
+#   4 — The Atmosphere (PARTICLE, EFFECT, GLOW, LIGHTNING)
+#   5 — The Stage      (FACE, CROSS_TO, RETURN_HOME)
+#   6 — The World      (TIME_OF_DAY, WEATHER)
+#
+# Runtime: ~9000 ticks (~7.5 minutes)
+#
+# Chapter timeline (ticks → seconds):
+#   T0–1000   ( 0– 50s)  OVERTURE        — arrival, theme teaser, "now I'll take it apart"
+#   T1000–2000(50–100s)  CHAPTER 1       — The Voice
+#   T2000–3000(100–150s) CHAPTER 2       — The Music
+#   T3000–4600(150–230s) CHAPTER 3       — The Light (longer; 5 patterns to demonstrate)
+#   T4600–5400(230–270s) CHAPTER 4       — The Atmosphere
+#   T5400–6400(270–320s) CHAPTER 5       — The Stage (movement)
+#   T6400–7200(320–360s) CHAPTER 6       — The World
+#   T7200–8400(360–420s) THE FUGUE       — all chapters re-enter one by one
+#   T8400–9000(420–450s) FINALE          — theme reprised; the stage is yours
+# ─────────────────────────────────────────────────────────────────────
+
+id: intro.young_persons_guide
+name: "A Young Person's Guide to the Scaena Theatre"
+description: "ScaenaSprite introduces every dimension of the Scaena engine — one chapter at a time — then brings them all together. Inspired by Bernstein. ~7.5 minutes."
+duration_ticks: 9000
+
+portable: false
+default_mode: static
+default_audience: broadcast
+group_count: 1
+group_strategy: join_order
+front: south
+
+# SETUP: Stand at the base of a tall environmental object (a tree, tower, pillar —
+# anything vertical at the center of an open space). Run /show play from there.
+# The anchor locks to that point; all effects fire relative to it.
+# You will be moved around the object as an audience member while fireworks
+# fire at the fixed center throughout. face the object to appreciate the full effect.
+
+bossbar:
+  enabled: true
+  title: "<dark_gray>A Young Person's Guide to the Scaena Theatre</dark_gray>"
+  color: WHITE
+  overlay: PROGRESS
+  fade_in_ticks: 60
+  fade_out_ticks: 80
+  audience: broadcast
+
+marks:
+  # The landmark itself — fireworks fire here
+  center:
+    offset: {x: 0, y: 0, z: 0}
+  # Viewer positions ringing the landmark at 12 blocks
+  south_view:
+    offset: {x: 0, y: 0, z: 12}
+  east_view:
+    offset: {x: 12, y: 0, z: 0}
+  north_view:
+    offset: {x: 0, y: 0, z: -12}
+  west_view:
+    offset: {x: -12, y: 0, z: 0}
+  # Close-up and wide positions
+  close_view:
+    offset: {x: 0, y: 0, z: 4}
+  wide_south:
+    offset: {x: 0, y: 0, z: 20}
+
+timeline:
+
+  # ═══════════════════════════════════════════════════════════════════
+  # OVERTURE (T0–T1000)
+  # The stage is dark. Something wakes.
+  # The theme plays in full — every capability, all at once.
+  # "Now I'll take it apart."
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: TIME_OF_DAY
+    at: 0
+    time: 18000
+
+  - type: WEATHER
+    at: 0
+    state: clear
+    duration_ticks: -1
+
+  - type: CUE
+    at: 30
+    cue_id: atmos.ambient.ember_drift
+
+  - type: SOUND
+    at: 40
+    sound_id: "minecraft:ambient.cave"
+    category: ambient
+    volume: 0.2
+    pitch: 0.65
+
+  - type: ACTION_BAR
+    at: 50
+    audience: broadcast
+    message: "<dark_gray>✦   the stage is dark   ✦</dark_gray>"
+    duration_ticks: 100
+
+  # The arrival — something wakes
+  - type: CUE
+    at: 200
+    cue_id: mood.arrival
+
+  - type: TIME_OF_DAY
+    at: 220
+    time: 6000
+
+  - type: TITLE
+    at: 260
+    audience: broadcast
+    title: "<white><bold>A Young Person's Guide</bold></white>"
+    subtitle: "<gray>to the Scaena Theatre</gray>"
+    fade_in: 10
+    stay: 60
+    fade_out: 15
+
+  - type: SOUND
+    at: 265
+    sound_id: "minecraft:block.note_block.chime"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+
+  - type: MESSAGE
+    at: 380
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <white>Welcome.</white>"
+
+  - type: MESSAGE
+    at: 440
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>You are standing in a Scaena theatre — a performance space built inside Minecraft.</gray>"
+
+  - type: MESSAGE
+    at: 560
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Before I explain how it works — let me show you what it can do.</gray>"
+
+  - type: BOSSBAR
+    at: 630
+    title: "<white>Overture: The Theme</white>"
+    color: WHITE
+    overlay: PROGRESS
+    duration_ticks: 260
+    fade_in_ticks: 20
+    fade_out_ticks: 30
+    audience: broadcast
+
+  - type: MESSAGE
+    at: 650
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <yellow>The theme — everything at once.</yellow>"
+
+  - type: SOUND
+    at: 680
+    sound_id: "minecraft:entity.experience_orb.pickup"
+    category: master
+    volume: 0.5
+    pitch: 0.8
+
+  # THEME TEASER — 600 ticks (30 seconds), all capabilities compressed
+  - type: CUE
+    at: 700
+    cue_id: overture.theme_teaser
+
+  # Theme ends ~T1300. Transition narration.
+  - type: MESSAGE
+    at: 1340
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>That was everything. Every dimension of this stage.</gray>"
+
+  - type: MESSAGE
+    at: 1420
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Now I'll take it apart. One family at a time.</gray>"
+
+  - type: MESSAGE
+    at: 1500
+    audience: broadcast
+    message: "<gray>  Six chapters. Each one stands alone.</gray>"
+
+  - type: ACTION_BAR
+    at: 1560
+    audience: broadcast
+    message: "<gray>  Chapter 1 begins shortly...</gray>"
+    duration_ticks: 80
+
+  - type: SOUND
+    at: 1620
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.4
+    pitch: 1.8
+
+  # ═══════════════════════════════════════════════════════════════════
+  # CHAPTER 1: THE VOICE (T1700–T2600)
+  # MESSAGE · TITLE · ACTION_BAR
+  # A show speaks first. Three registers, one voice.
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: BOSSBAR
+    at: 1690
+    title: "<white>Chapter 1 — The Voice</white>"
+    color: WHITE
+    overlay: PROGRESS
+    duration_ticks: 380
+    fade_in_ticks: 20
+    fade_out_ticks: 30
+    audience: broadcast
+
+  - type: TITLE
+    at: 1700
+    audience: broadcast
+    title: "<white>Chapter 1</white>"
+    subtitle: "<gray>The Voice</gray>"
+    fade_in: 8
+    stay: 40
+    fade_out: 10
+
+  - type: SOUND
+    at: 1702
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.5
+    pitch: 1.0
+
+  - type: MESSAGE
+    at: 1780
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <white>A show speaks first. Before the lights. Before the sound.</white>"
+
+  - type: MESSAGE
+    at: 1860
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Three registers. I'll demonstrate each one.</gray>"
+
+  # Register 1: MESSAGE
+  - type: ACTION_BAR
+    at: 1940
+    audience: broadcast
+    message: "<gray>  ① the message —</gray>"
+    duration_ticks: 40
+
+  - type: MESSAGE
+    at: 1960
+    audience: broadcast
+    message: "<yellow>  → This is a MESSAGE. It appears here, in chat.</yellow>"
+
+  - type: MESSAGE
+    at: 2000
+    audience: broadcast
+    message: "<gray>     Messages can be any color. Any weight.</gray> <dark_gray>Even quiet.</dark_gray>"
+
+  - type: MESSAGE
+    at: 2040
+    audience: broadcast
+    message: "<red><bold>     Or urgent.</bold></red>"
+
+  # Register 2: TITLE
+  - type: ACTION_BAR
+    at: 2100
+    audience: broadcast
+    message: "<gray>  ② the title —</gray>"
+    duration_ticks: 40
+
+  - type: TITLE
+    at: 2120
+    audience: broadcast
+    title: "<white><bold>THE TITLE</bold></white>"
+    subtitle: "<gray>full-screen · impossible to miss</gray>"
+    fade_in: 5
+    stay: 35
+    fade_out: 8
+
+  - type: SOUND
+    at: 2122
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.4
+    pitch: 1.3
+
+  - type: MESSAGE
+    at: 2200
+    audience: broadcast
+    message: "<gray>     Titles are the theatre's biggest voice. Use them for the moments that matter.</gray>"
+
+  # Register 3: ACTION_BAR
+  - type: MESSAGE
+    at: 2260
+    audience: broadcast
+    message: "<gray>  ③ the action bar —</gray>"
+
+  - type: ACTION_BAR
+    at: 2280
+    audience: broadcast
+    message: "<white>  ← this is the action bar. quiet. persistent. always visible.</white>"
+    duration_ticks: 120
+
+  - type: MESSAGE
+    at: 2320
+    audience: broadcast
+    message: "<gray>     The action bar whispers while everything else shouts.</gray>"
+
+  # All three together
+  - type: MESSAGE
+    at: 2400
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <yellow>Now — all three at once.</yellow>"
+
+  - type: MESSAGE
+    at: 2440
+    audience: broadcast
+    message: "<aqua>  ✦ chat message ✦</aqua>"
+
+  - type: TITLE
+    at: 2440
+    audience: broadcast
+    title: "<gold>✦ title ✦</gold>"
+    subtitle: "<gray>all three registers, one moment</gray>"
+    fade_in: 4
+    stay: 30
+    fade_out: 8
+
+  - type: ACTION_BAR
+    at: 2440
+    audience: broadcast
+    message: "<light_purple>  ✦ action bar ✦</light_purple>"
+    duration_ticks: 60
+
+  - type: SOUND
+    at: 2442
+    sound_id: "minecraft:entity.experience_orb.pickup"
+    category: master
+    volume: 0.6
+    pitch: 1.4
+
+  - type: MESSAGE
+    at: 2540
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>The voice can layer. Three simultaneous channels. You choose the register.</gray>"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # CHAPTER 2: THE MUSIC (T2700–T3600)
+  # SOUND — pitch, volume, layering, signature
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: BOSSBAR
+    at: 2690
+    title: "<aqua>Chapter 2 — The Music</aqua>"
+    color: BLUE
+    overlay: PROGRESS
+    duration_ticks: 380
+    fade_in_ticks: 20
+    fade_out_ticks: 30
+    audience: broadcast
+
+  - type: TITLE
+    at: 2700
+    audience: broadcast
+    title: "<aqua>Chapter 2</aqua>"
+    subtitle: "<gray>The Music</gray>"
+    fade_in: 8
+    stay: 40
+    fade_out: 10
+
+  - type: SOUND
+    at: 2702
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+
+  - type: MESSAGE
+    at: 2780
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <white>Now, sound.</white>"
+
+  - type: MESSAGE
+    at: 2840
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>The same note. Three pitches.</gray>"
+
+  - type: ACTION_BAR
+    at: 2880
+    audience: broadcast
+    message: "<gray>  listen...</gray>"
+    duration_ticks: 30
+
+  # Pitch demonstration — same sound, different pitches
+  - type: SOUND
+    at: 2900
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.7
+    pitch: 0.6
+
+  - type: MESSAGE
+    at: 2905
+    audience: broadcast
+    message: "<gray>  → pitch 0.6 — low</gray>"
+
+  - type: SOUND
+    at: 2960
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.7
+    pitch: 1.0
+
+  - type: MESSAGE
+    at: 2965
+    audience: broadcast
+    message: "<gray>  → pitch 1.0 — middle</gray>"
+
+  - type: SOUND
+    at: 3020
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.7
+    pitch: 2.0
+
+  - type: MESSAGE
+    at: 3025
+    audience: broadcast
+    message: "<gray>  → pitch 2.0 — high</gray>"
+
+  - type: MESSAGE
+    at: 3100
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Different sounds carry different weight.</gray>"
+
+  - type: ACTION_BAR
+    at: 3120
+    audience: broadcast
+    message: "<gray>  three sounds — three textures...</gray>"
+    duration_ticks: 60
+
+  - type: SOUND
+    at: 3140
+    sound_id: "minecraft:block.note_block.chime"
+    category: master
+    volume: 0.6
+    pitch: 1.5
+
+  - type: MESSAGE
+    at: 3145
+    audience: broadcast
+    message: "<gray>  → chime: bright, crystalline</gray>"
+
+  - type: SOUND
+    at: 3200
+    sound_id: "minecraft:entity.experience_orb.pickup"
+    category: master
+    volume: 0.6
+    pitch: 0.9
+
+  - type: MESSAGE
+    at: 3205
+    audience: broadcast
+    message: "<gray>  → orb pickup: warm, ascending</gray>"
+
+  - type: SOUND
+    at: 3260
+    sound_id: "minecraft:entity.ender_dragon.growl"
+    category: master
+    volume: 0.2
+    pitch: 1.8
+
+  - type: MESSAGE
+    at: 3265
+    audience: broadcast
+    message: "<gray>  → dragon growl at low volume, high pitch: tense, theatrical</gray>"
+
+  - type: MESSAGE
+    at: 3360
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>And they layer.</gray>"
+
+  # Three sounds simultaneously
+  - type: SOUND
+    at: 3400
+    sound_id: "minecraft:block.note_block.chime"
+    category: master
+    volume: 0.5
+    pitch: 1.3
+
+  - type: SOUND
+    at: 3400
+    sound_id: "minecraft:entity.experience_orb.pickup"
+    category: master
+    volume: 0.5
+    pitch: 1.0
+
+  - type: SOUND
+    at: 3410
+    sound_id: "minecraft:ui.toast.challenge_complete"
+    category: master
+    volume: 0.6
+    pitch: 1.1
+
+  - type: MESSAGE
+    at: 3420
+    audience: broadcast
+    message: "<gray>  → three simultaneous sounds — a chord</gray>"
+
+  - type: MESSAGE
+    at: 3500
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>A show scores itself. Every moment can have a sonic signature.</gray>"
+
+  - type: SOUND
+    at: 3560
+    sound_id: "minecraft:ui.toast.challenge_complete"
+    category: master
+    volume: 0.5
+    pitch: 0.8
+
+  - type: ACTION_BAR
+    at: 3575
+    audience: broadcast
+    message: "<dark_gray>  ...sound doesn't need light to land</dark_gray>"
+    duration_ticks: 80
+
+  # ═══════════════════════════════════════════════════════════════════
+  # CHAPTER 3: THE LIGHT (T3700–T5400)
+  # Five firework patterns demonstrated individually, then combined
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: BOSSBAR
+    at: 3690
+    title: "<gold>Chapter 3 — The Light</gold>"
+    color: GOLD
+    overlay: PROGRESS
+    duration_ticks: 700
+    fade_in_ticks: 20
+    fade_out_ticks: 40
+    audience: broadcast
+
+  - type: TITLE
+    at: 3700
+    audience: broadcast
+    title: "<gold>Chapter 3</gold>"
+    subtitle: "<gray>The Light</gray>"
+    fade_in: 8
+    stay: 40
+    fade_out: 10
+
+  - type: SOUND
+    at: 3702
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.5
+    pitch: 1.0
+
+  - type: MESSAGE
+    at: 3780
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <white>The fireworks are our brushstrokes.</white>"
+
+  - type: MESSAGE
+    at: 3840
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Five patterns. I'll show each one in isolation, then combine them.</gray>"
+
+  # — Pattern 1: FIREWORK (single) —
+  - type: ACTION_BAR
+    at: 3920
+    audience: broadcast
+    message: "<gold>  Pattern 1 of 5 — Single</gold>"
+    duration_ticks: 60
+
+  - type: MESSAGE
+    at: 3940
+    audience: broadcast
+    message: "<gray>  → <white>FIREWORK</white>: a single rocket. One preset, one position, one moment.</gray>"
+
+  - type: FIREWORK
+    at: 3960
+    preset: scae_large_fanfare
+    offset: {x: 0, y: 18, z: 0}
+    y_mode: relative
+
+  - type: SOUND
+    at: 3962
+    sound_id: "minecraft:entity.experience_orb.pickup"
+    category: master
+    volume: 0.5
+    pitch: 0.9
+
+  - type: MESSAGE
+    at: 4020
+    audience: broadcast
+    message: "<gray>     Power, color, shape — all defined by the preset.</gray>"
+
+  # — Pattern 2: FIREWORK_CIRCLE —
+  - type: ACTION_BAR
+    at: 4080
+    audience: broadcast
+    message: "<gold>  Pattern 2 of 5 — Circle</gold>"
+    duration_ticks: 60
+
+  - type: MESSAGE
+    at: 4100
+    audience: broadcast
+    message: "<gray>  → <white>FIREWORK_CIRCLE</white>: equally-spaced rockets around a radius. Chase optional.</gray>"
+
+  - type: FIREWORK_CIRCLE
+    at: 4120
+    preset: scae_star_warm
+    origin_offset: {x: 0, z: 0}
+    radius: 9
+    count: 8
+    chase: {enabled: true, direction: FL, interval_ticks: 4}
+    power_variation: UNIFORM
+    color_variation: UNIFORM
+
+  - type: MESSAGE
+    at: 4200
+    audience: broadcast
+    message: "<gray>     With chase enabled — each rocket fires 4 ticks after the last.</gray>"
+
+  # — Pattern 3: FIREWORK_LINE —
+  - type: ACTION_BAR
+    at: 4280
+    audience: broadcast
+    message: "<gold>  Pattern 3 of 5 — Line</gold>"
+    duration_ticks: 60
+
+  - type: MESSAGE
+    at: 4300
+    audience: broadcast
+    message: "<gray>  → <white>FIREWORK_LINE</white>: a sequence of rockets along a bearing angle.</gray>"
+
+  - type: FIREWORK_LINE
+    at: 4320
+    preset: scae_burst_leaf
+    start_offset: {x: -9, z: 0}
+    length: 18
+    angle: 90
+    count: 7
+    y_mode: surface
+    y_offset: 2
+    chase: {enabled: true, direction: FL, interval_ticks: 5}
+    power_variation: RAMP_UP
+
+  - type: MESSAGE
+    at: 4420
+    audience: broadcast
+    message: "<gray>     angle: 90° = due east. Bearing is clockwise from north.</gray>"
+
+  # — Pattern 4: FIREWORK_FAN —
+  - type: ACTION_BAR
+    at: 4480
+    audience: broadcast
+    message: "<gold>  Pattern 4 of 5 — Fan</gold>"
+    duration_ticks: 60
+
+  - type: MESSAGE
+    at: 4500
+    audience: broadcast
+    message: "<gray>  → <white>FIREWORK_FAN</white>: multiple arms radiating from a point. Define each arm independently.</gray>"
+
+  - type: FIREWORK_FAN
+    at: 4520
+    origin_offset: {x: 0, z: 0}
+    arms:
+      - {angle: 300, length: 11, count: 4, preset: scae_ball_spark}
+      - {angle: 0,   length: 14, count: 5, preset: scae_large_fanfare}
+      - {angle: 60,  length: 11, count: 4, preset: scae_ball_spark}
+    y_mode: surface
+    y_offset: 2
+    chase: {enabled: true, direction: FL, interval_ticks: 5}
+
+  - type: MESSAGE
+    at: 4640
+    audience: broadcast
+    message: "<gray>     Each arm has its own angle, length, count, and preset.</gray>"
+
+  # — Pattern 5: FIREWORK_RANDOM —
+  - type: ACTION_BAR
+    at: 4700
+    audience: broadcast
+    message: "<gold>  Pattern 5 of 5 — Scatter</gold>"
+    duration_ticks: 60
+
+  - type: MESSAGE
+    at: 4720
+    audience: broadcast
+    message: "<gray>  → <white>FIREWORK_RANDOM</white>: N rockets at random positions within a radius. Scale is everything.</gray>"
+
+  - type: MESSAGE
+    at: 4760
+    audience: broadcast
+    message: "<gray>  → <white>Tight</white>: radius 3 — a dense cluster right at center.</gray>"
+
+  - type: FIREWORK_RANDOM
+    at: 4780
+    preset: scae_burst_leaf
+    origin_offset: {x: 0, z: 0}
+    radius: 3
+    count: 8
+    y_mode: surface
+    y_offset: 2
+
+  - type: SOUND
+    at: 4782
+    sound_id: "minecraft:entity.experience_orb.pickup"
+    category: master
+    volume: 0.5
+    pitch: 1.1
+
+  - type: MESSAGE
+    at: 4860
+    audience: broadcast
+    message: "<gray>  → <white>Wide</white>: same count, radius 18 — spread across the whole space.</gray>"
+
+  - type: FIREWORK_RANDOM
+    at: 4880
+    preset: scae_burst_leaf
+    origin_offset: {x: 0, z: 0}
+    radius: 18
+    count: 8
+    y_mode: surface
+    y_offset: 3
+
+  - type: SOUND
+    at: 4882
+    sound_id: "minecraft:entity.experience_orb.pickup"
+    category: master
+    volume: 0.5
+    pitch: 0.8
+
+  - type: MESSAGE
+    at: 4960
+    audience: broadcast
+    message: "<gray>     Same preset. Same count. The radius is the entire performance.</gray>"
+
+  # — Combinations —
+  - type: MESSAGE
+    at: 4940
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <yellow>Now watch what happens when patterns combine.</yellow>"
+
+  - type: FIREWORK_CIRCLE
+    at: 4980
+    preset: scae_star_warm
+    origin_offset: {x: 0, z: 0}
+    radius: 7
+    count: 6
+    power_variation: UNIFORM
+
+  - type: FIREWORK_RANDOM
+    at: 4990
+    preset: pride_burst_rainbow
+    origin_offset: {x: 0, z: 0}
+    radius: 14
+    count: 6
+    y_mode: surface
+    y_offset: 3
+
+  - type: FIREWORK_LINE
+    at: 5060
+    preset: scae_ball_spark
+    start_offset: {x: 0, z: -8}
+    length: 16
+    angle: 180
+    count: 6
+    y_mode: surface
+    y_offset: 2
+
+  - type: FIREWORK_FAN
+    at: 5070
+    origin_offset: {x: 0, z: 0}
+    arms:
+      - {angle: 270, length: 10, count: 4, preset: bday_confetti_ball}
+      - {angle: 90,  length: 10, count: 4, preset: bday_confetti_ball}
+    y_mode: surface
+    y_offset: 2
+
+  - type: SOUND
+    at: 5075
+    sound_id: "minecraft:entity.player.levelup"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+
+  - type: MESSAGE
+    at: 5160
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Five patterns. That's the full vocabulary of light in Scaena.</gray>"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # CHAPTER 4: THE ATMOSPHERE (T5400–T6200)
+  # PARTICLE · EFFECT · LIGHTNING
+  # The air itself is part of the show.
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: BOSSBAR
+    at: 5390
+    title: "<light_purple>Chapter 4 — The Atmosphere</light_purple>"
+    color: PURPLE
+    overlay: PROGRESS
+    duration_ticks: 360
+    fade_in_ticks: 20
+    fade_out_ticks: 30
+    audience: broadcast
+
+  - type: TITLE
+    at: 5400
+    audience: broadcast
+    title: "<light_purple>Chapter 4</light_purple>"
+    subtitle: "<gray>The Atmosphere</gray>"
+    fade_in: 8
+    stay: 40
+    fade_out: 10
+
+  - type: SOUND
+    at: 5402
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.5
+    pitch: 1.0
+
+  - type: MESSAGE
+    at: 5480
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <white>The air changes.</white>"
+
+  - type: MESSAGE
+    at: 5540
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Not just fireworks — particles that surround you, effects that alter your perception.</gray>"
+
+  # PARTICLE demonstration
+  - type: ACTION_BAR
+    at: 5600
+    audience: broadcast
+    message: "<light_purple>  PARTICLE — ambient drift</light_purple>"
+    duration_ticks: 60
+
+  - type: MESSAGE
+    at: 5620
+    audience: broadcast
+    message: "<gray>  → <white>PARTICLE</white>: end_rod drift — sparse, arcane motes. Duration 5 seconds.</gray>"
+
+  - type: CUE
+    at: 5640
+    cue_id: atmos.ambient.ember_drift
+
+  - type: MESSAGE
+    at: 5700
+    audience: broadcast
+    message: "<gray>  → <white>PARTICLE</white>: heart shower — dense, 3 second burst.</gray>"
+
+  - type: PARTICLE
+    at: 5720
+    particle_id: "minecraft:heart"
+    count: 6
+    offset: [2.0, 2.0, 2.0]
+    extra: 0.0
+    duration_ticks: 60
+    interval_ticks: 8
+
+  # EFFECT demonstration
+  - type: ACTION_BAR
+    at: 5780
+    audience: broadcast
+    message: "<light_purple>  EFFECT — potion on participants</light_purple>"
+    duration_ticks: 60
+
+  - type: MESSAGE
+    at: 5800
+    audience: broadcast
+    message: "<gray>  → <white>EFFECT</white>: night_vision (3 seconds). The world brightens.</gray>"
+
+  - type: EFFECT
+    at: 5820
+    effect_id: night_vision
+    duration_ticks: 60
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - type: MESSAGE
+    at: 5900
+    audience: broadcast
+    message: "<gray>  → <white>EFFECT</white>: slow_falling (3 seconds). Gravity softens.</gray>"
+
+  - type: EFFECT
+    at: 5920
+    effect_id: slow_falling
+    duration_ticks: 60
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  # LIGHTNING demonstration
+  - type: ACTION_BAR
+    at: 5980
+    audience: broadcast
+    message: "<light_purple>  LIGHTNING — cosmetic strike</light_purple>"
+    duration_ticks: 60
+
+  - type: MESSAGE
+    at: 6000
+    audience: broadcast
+    message: "<gray>  → <white>LIGHTNING</white>: cosmetic only — no damage, no fire. Pure spectacle.</gray>"
+
+  - type: LIGHTNING
+    at: 6020
+    offset: {x: 5, y: 0, z: 3}
+
+  - type: SOUND
+    at: 6020
+    sound_id: "minecraft:entity.lightning_bolt.thunder"
+    category: master
+    volume: 0.5
+    pitch: 1.0
+
+  - type: MESSAGE
+    at: 6100
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Effects layer on everything else. Use them as punctuation — not decoration.</gray>"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # CHAPTER 5: THE STAGE (T6300–T7460)
+  # FACE · CROSS_TO · RETURN_HOME
+  # You are moved around a fixed landmark. Fireworks fire at the center
+  # the whole time — the anchor is stationary; YOU are the audience.
+  # South → East → North → West → Close-up → Home
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: BOSSBAR
+    at: 6290
+    title: "<green>Chapter 5 — The Stage</green>"
+    color: GREEN
+    overlay: PROGRESS
+    duration_ticks: 500
+    fade_in_ticks: 20
+    fade_out_ticks: 30
+    audience: broadcast
+
+  - type: TITLE
+    at: 6300
+    audience: broadcast
+    title: "<green>Chapter 5</green>"
+    subtitle: "<gray>The Stage</gray>"
+    fade_in: 8
+    stay: 40
+    fade_out: 10
+
+  - type: SOUND
+    at: 6302
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.5
+    pitch: 1.0
+
+  - type: MESSAGE
+    at: 6380
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <white>You can be moved.</white>"
+
+  - type: MESSAGE
+    at: 6440
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>You're at a landmark. I'll orbit you around it — fireworks stay fixed at the center.</gray>"
+
+  - type: MESSAGE
+    at: 6520
+    audience: broadcast
+    message: "<gray>  The anchor never moves. Only your viewpoint does. Watch how the stage changes.</gray>"
+
+  - type: ACTION_BAR
+    at: 6570
+    audience: broadcast
+    message: "<gray>  → orbit beginning — south...</gray>"
+    duration_ticks: 50
+
+  # ── Leg 1: South view (arrives T6660) ─────────────────────────────
+  - type: MESSAGE
+    at: 6580
+    audience: broadcast
+    message: "<gray>  → <white>CROSS_TO south_view</white>: 12 blocks south.</gray>"
+
+  - type: CROSS_TO
+    at: 6600
+    target: participants
+    destination: mark:south_view
+    duration_ticks: 60
+
+  - type: FACE
+    at: 6665
+    target: participants
+    look_at: mark:center
+
+  - type: SOUND
+    at: 6666
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.3
+    pitch: 1.5
+
+  - type: FIREWORK
+    at: 6680
+    preset: scae_large_fanfare
+    offset: {x: 0, y: 18, z: 0}
+    y_mode: relative
+
+  - type: MESSAGE
+    at: 6700
+    audience: broadcast
+    message: "<gray>  South view. Landmark at center. Firework fires there — not at you.</gray>"
+
+  # ── Leg 2: East view (arrives T6800) ──────────────────────────────
+  - type: ACTION_BAR
+    at: 6740
+    audience: broadcast
+    message: "<gray>  → east...</gray>"
+    duration_ticks: 40
+
+  - type: CROSS_TO
+    at: 6760
+    target: participants
+    destination: mark:east_view
+    duration_ticks: 60
+
+  - type: FACE
+    at: 6825
+    target: participants
+    look_at: mark:center
+
+  - type: SOUND
+    at: 6826
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.3
+    pitch: 1.4
+
+  - type: FIREWORK_CIRCLE
+    at: 6840
+    preset: scae_star_warm
+    origin_offset: {x: 0, z: 0}
+    radius: 6
+    count: 6
+    chase: {enabled: true, direction: FL, interval_ticks: 3}
+    power_variation: UNIFORM
+
+  - type: MESSAGE
+    at: 6860
+    audience: broadcast
+    message: "<gray>  East view. The circle fires around the landmark. You're outside it now.</gray>"
+
+  # ── Leg 3: North view (arrives T6960) ─────────────────────────────
+  - type: ACTION_BAR
+    at: 6900
+    audience: broadcast
+    message: "<gray>  → north...</gray>"
+    duration_ticks: 40
+
+  - type: CROSS_TO
+    at: 6920
+    target: participants
+    destination: mark:north_view
+    duration_ticks: 60
+
+  - type: FACE
+    at: 6985
+    target: participants
+    look_at: mark:center
+
+  - type: SOUND
+    at: 6986
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.3
+    pitch: 1.3
+
+  - type: FIREWORK_FAN
+    at: 7000
+    origin_offset: {x: 0, z: 0}
+    arms:
+      - {angle: 300, length: 10, count: 3, preset: scae_ball_spark}
+      - {angle: 0,   length: 12, count: 4, preset: scae_large_fanfare}
+      - {angle: 60,  length: 10, count: 3, preset: scae_ball_spark}
+    y_mode: surface
+    y_offset: 2
+
+  - type: MESSAGE
+    at: 7020
+    audience: broadcast
+    message: "<gray>  North view — facing south. The fan radiates toward you from the landmark.</gray>"
+
+  # ── Leg 4: West view (arrives T7120) ──────────────────────────────
+  - type: ACTION_BAR
+    at: 7060
+    audience: broadcast
+    message: "<gray>  → west — completing the orbit...</gray>"
+    duration_ticks: 50
+
+  - type: CROSS_TO
+    at: 7080
+    target: participants
+    destination: mark:west_view
+    duration_ticks: 60
+
+  - type: FACE
+    at: 7145
+    target: participants
+    look_at: mark:center
+
+  - type: SOUND
+    at: 7146
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.3
+    pitch: 1.2
+
+  - type: FIREWORK_RANDOM
+    at: 7160
+    preset: pride_burst_rainbow
+    origin_offset: {x: 0, z: 0}
+    radius: 8
+    count: 8
+    y_mode: surface
+    y_offset: 2
+
+  - type: SOUND
+    at: 7162
+    sound_id: "minecraft:entity.player.levelup"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+
+  - type: MESSAGE
+    at: 7180
+    audience: broadcast
+    message: "<gray>  West view. Full orbit. North, south, east, west — one fixed anchor.</gray>"
+
+  # ── Leg 5: Close-up (arrives T7280) ───────────────────────────────
+  - type: ACTION_BAR
+    at: 7220
+    audience: broadcast
+    message: "<gray>  → close_view: 4 blocks...</gray>"
+    duration_ticks: 40
+
+  - type: CROSS_TO
+    at: 7240
+    target: participants
+    destination: mark:close_view
+    duration_ticks: 60
+
+  - type: FACE
+    at: 7305
+    target: participants
+    look_at: mark:center
+
+  - type: FIREWORK
+    at: 7320
+    preset: scae_star_warm
+    offset: {x: 0, y: 8, z: 0}
+    y_mode: relative
+
+  - type: MESSAGE
+    at: 7340
+    audience: broadcast
+    message: "<gray>  4 blocks. Intimate. Distance is a design choice — not a default.</gray>"
+
+  # ── RETURN_HOME then levitate ─────────────────────────────────────
+  - type: ACTION_BAR
+    at: 7360
+    audience: broadcast
+    message: "<gray>  → RETURN_HOME</gray>"
+    duration_ticks: 40
+
+  # Instant return to home — no duration, clean snap
+  - type: RETURN_HOME
+    at: 7380
+    target: participants
+    duration_ticks: 0
+
+  - type: MESSAGE
+    at: 7400
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Home. And one more thing the stage can do —</gray>"
+
+  - type: MESSAGE
+    at: 7420
+    audience: broadcast
+    message: "<gray>  → <white>EFFECT levitation</white>: the stage can lift you.</gray>"
+
+  - type: EFFECT
+    at: 7440
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  - type: SOUND
+    at: 7441
+    sound_id: "minecraft:entity.experience_orb.pickup"
+    category: master
+    volume: 0.7
+    pitch: 0.8
+
+  - type: ACTION_BAR
+    at: 7442
+    audience: broadcast
+    message: "<gray>  ↑ levitation — rising...</gray>"
+    duration_ticks: 40
+
+  # Slow fall takes over — player drifts back down
+  - type: EFFECT
+    at: 7480
+    effect_id: slow_falling
+    duration_ticks: 100
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - type: SOUND
+    at: 7481
+    sound_id: "minecraft:block.amethyst_block.hit"
+    category: master
+    volume: 0.5
+    pitch: 1.2
+
+  - type: ACTION_BAR
+    at: 7482
+    audience: broadcast
+    message: "<gray>  ↓ slow falling — drifting down...</gray>"
+    duration_ticks: 100
+
+  - type: MESSAGE
+    at: 7490
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>The stage can lift you, face you, orbit you — and bring you safely home.</gray>"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # CHAPTER 6: THE WORLD (T7500–T8300)
+  # TIME_OF_DAY · WEATHER
+  # The stage itself can change. The sky is part of the score.
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: BOSSBAR
+    at: 7490
+    title: "<dark_blue>Chapter 6 — The World</dark_blue>"
+    color: BLUE
+    overlay: PROGRESS
+    duration_ticks: 360
+    fade_in_ticks: 20
+    fade_out_ticks: 30
+    audience: broadcast
+
+  - type: TITLE
+    at: 7500
+    audience: broadcast
+    title: "<dark_blue>Chapter 6</dark_blue>"
+    subtitle: "<gray>The World</gray>"
+    fade_in: 8
+    stay: 40
+    fade_out: 10
+
+  - type: SOUND
+    at: 7502
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.5
+    pitch: 1.0
+
+  - type: MESSAGE
+    at: 7580
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <white>The stage itself can change.</white>"
+
+  - type: MESSAGE
+    at: 7640
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Time of day and weather are events like everything else.</gray>"
+
+  # Time demonstrations
+  - type: ACTION_BAR
+    at: 7680
+    audience: broadcast
+    message: "<gray>  → TIME_OF_DAY: midnight</gray>"
+    duration_ticks: 40
+
+  - type: TIME_OF_DAY
+    at: 7700
+    time: 18000
+
+  - type: MESSAGE
+    at: 7705
+    audience: broadcast
+    message: "<gray>  → <white>TIME_OF_DAY 18000</white>: midnight. Immediate.</gray>"
+
+  - type: SOUND
+    at: 7708
+    sound_id: "minecraft:ambient.cave"
+    category: ambient
+    volume: 0.3
+    pitch: 0.6
+
+  - type: CUE
+    at: 7720
+    cue_id: atmos.ambient.ember_drift
+
+  - type: ACTION_BAR
+    at: 7760
+    audience: broadcast
+    message: "<gray>  → TIME_OF_DAY: dawn</gray>"
+    duration_ticks: 40
+
+  - type: TIME_OF_DAY
+    at: 7780
+    time: 23500
+
+  - type: MESSAGE
+    at: 7785
+    audience: broadcast
+    message: "<gray>  → <white>TIME_OF_DAY 23500</white>: just before dawn.</gray>"
+
+  - type: TIME_OF_DAY
+    at: 7840
+    time: 6000
+
+  - type: MESSAGE
+    at: 7845
+    audience: broadcast
+    message: "<gray>  → <white>TIME_OF_DAY 6000</white>: noon light.</gray>"
+
+  - type: SOUND
+    at: 7848
+    sound_id: "minecraft:entity.experience_orb.pickup"
+    category: master
+    volume: 0.5
+    pitch: 1.2
+
+  # Weather demonstrations
+  - type: ACTION_BAR
+    at: 7880
+    audience: broadcast
+    message: "<gray>  → WEATHER: rain</gray>"
+    duration_ticks: 40
+
+  - type: WEATHER
+    at: 7900
+    state: rain
+    duration_ticks: 180
+
+  - type: MESSAGE
+    at: 7905
+    audience: broadcast
+    message: "<gray>  → <white>WEATHER rain</white>: duration 180 ticks (9 seconds).</gray>"
+
+  - type: ACTION_BAR
+    at: 7960
+    audience: broadcast
+    message: "<gray>  → WEATHER: clear</gray>"
+    duration_ticks: 40
+
+  - type: WEATHER
+    at: 7980
+    state: clear
+    duration_ticks: -1
+
+  - type: MESSAGE
+    at: 7985
+    audience: broadcast
+    message: "<gray>  → <white>WEATHER clear</white>: duration -1 = hold indefinitely.</gray>"
+
+  - type: TIME_OF_DAY
+    at: 8000
+    time: 6000
+
+  - type: MESSAGE
+    at: 8060
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>A world-state is just another instrument. The sky is part of the score.</gray>"
+
+  - type: SOUND
+    at: 8120
+    sound_id: "minecraft:block.note_block.chime"
+    category: master
+    volume: 0.5
+    pitch: 0.8
+
+  # ═══════════════════════════════════════════════════════════════════
+  # THE FUGUE — GRAND SYNTHESIS (T8300–T8800)
+  # Bernstein's fugue: each chapter re-enters one at a time,
+  # building until everything plays together.
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: BOSSBAR
+    at: 8285
+    title: "<gold>The Fugue — Grand Synthesis</gold>"
+    color: GOLD
+    overlay: PROGRESS
+    duration_ticks: 360
+    fade_in_ticks: 20
+    fade_out_ticks: 40
+    audience: broadcast
+
+  - type: TITLE
+    at: 8300
+    audience: broadcast
+    title: "<gold>The Fugue</gold>"
+    subtitle: "<gray>all chapters — one at a time — then together</gray>"
+    fade_in: 10
+    stay: 55
+    fade_out: 15
+
+  - type: MESSAGE
+    at: 8400
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <yellow>Now watch each chapter re-enter. One by one.</yellow>"
+
+  # Wave 1: THE VOICE returns
+  - type: ACTION_BAR
+    at: 8440
+    audience: broadcast
+    message: "<white>  ① The Voice returns...</white>"
+    duration_ticks: 60
+
+  - type: MESSAGE
+    at: 8460
+    audience: broadcast
+    message: "<white>  Chapter 1 — The Voice</white>"
+
+  - type: SOUND
+    at: 8462
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.5
+    pitch: 1.0
+
+  # Wave 2: THE MUSIC joins
+  - type: ACTION_BAR
+    at: 8500
+    audience: broadcast
+    message: "<aqua>  ② The Music enters...</aqua>"
+    duration_ticks: 60
+
+  - type: SOUND
+    at: 8520
+    sound_id: "minecraft:block.note_block.chime"
+    category: master
+    volume: 0.6
+    pitch: 1.3
+
+  - type: SOUND
+    at: 8540
+    sound_id: "minecraft:entity.experience_orb.pickup"
+    category: master
+    volume: 0.5
+    pitch: 1.1
+
+  # Wave 3: THE LIGHT enters
+  - type: ACTION_BAR
+    at: 8560
+    audience: broadcast
+    message: "<gold>  ③ The Light enters...</gold>"
+    duration_ticks: 60
+
+  - type: FIREWORK
+    at: 8580
+    preset: scae_large_fanfare
+    offset: {x: 0, y: 18, z: 0}
+    y_mode: relative
+
+  - type: FIREWORK_CIRCLE
+    at: 8590
+    preset: scae_star_warm
+    origin_offset: {x: 0, z: 0}
+    radius: 8
+    count: 8
+    power_variation: UNIFORM
+
+  # Wave 4: THE ATMOSPHERE enters
+  - type: ACTION_BAR
+    at: 8620
+    audience: broadcast
+    message: "<light_purple>  ④ The Atmosphere enters...</light_purple>"
+    duration_ticks: 60
+
+  - type: PARTICLE
+    at: 8640
+    particle_id: "minecraft:end_rod"
+    count: 3
+    offset: [3.0, 2.0, 3.0]
+    extra: 0.02
+    duration_ticks: 60
+    interval_ticks: 10
+
+  - type: LIGHTNING
+    at: 8650
+    offset: {x: 7, y: 0, z: 5}
+
+  - type: SOUND
+    at: 8650
+    sound_id: "minecraft:entity.lightning_bolt.thunder"
+    category: master
+    volume: 0.3
+    pitch: 1.2
+
+  # Wave 5: THE WORLD enters
+  - type: ACTION_BAR
+    at: 8680
+    audience: broadcast
+    message: "<dark_blue>  ⑤ The World enters...</dark_blue>"
+    duration_ticks: 60
+
+  - type: TIME_OF_DAY
+    at: 8700
+    time: 18000
+
+  # Wave 6: THE STAGE — the player is nudged as part of the synthesis
+  - type: ACTION_BAR
+    at: 8720
+    audience: broadcast
+    message: "<green>  ⑥ The Stage enters...</green>"
+    duration_ticks: 60
+
+  - type: FACE
+    at: 8740
+    target: participants
+    look_at: compass:north
+
+  # THE CRESCENDO — all together
+  - type: MESSAGE
+    at: 8760
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <yellow>All together — now.</yellow>"
+
+  - type: TIME_OF_DAY
+    at: 8760
+    time: 6000
+
+  - type: FIREWORK_RANDOM
+    at: 8780
+    preset: scae_large_fanfare
+    origin_offset: {x: 0, z: 0}
+    radius: 15
+    count: 6
+    y_mode: surface
+    y_offset: 3
+
+  - type: FIREWORK_RANDOM
+    at: 8790
+    preset: pride_burst_rainbow
+    origin_offset: {x: 0, z: 0}
+    radius: 16
+    count: 8
+    y_mode: surface
+    y_offset: 4
+
+  - type: SOUND
+    at: 8792
+    sound_id: "minecraft:entity.player.levelup"
+    category: master
+    volume: 0.8
+    pitch: 1.0
+
+  - type: CUE
+    at: 8800
+    cue_id: atmos.lights.warm_bloom
+
+  - type: CUE
+    at: 8810
+    cue_id: atmos.lights.cool_bloom
+
+  # ═══════════════════════════════════════════════════════════════════
+  # FINALE — THEME REPRISED (T8900–T9000)
+  # The theme plays again — but now the player understands every part.
+  # The CUE fires the same overture.theme_teaser from the opening.
+  # ═══════════════════════════════════════════════════════════════════
+
+  - type: BOSSBAR
+    at: 8890
+    title: "<gold>★  Finale — Theme Reprised  ★</gold>"
+    color: YELLOW
+    overlay: PROGRESS
+    duration_ticks: 200
+    fade_in_ticks: 10
+    fade_out_ticks: 60
+    audience: broadcast
+
+  - type: MESSAGE
+    at: 8900
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <white>You've seen the voice. The music. The light.</white>"
+
+  - type: MESSAGE
+    at: 8940
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <white>The atmosphere. The stage. The world.</white>"
+
+  - type: MESSAGE
+    at: 8980
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <yellow>Now — the theme plays again. But this time, you know every part.</yellow>"
+
+  - type: FACE
+    at: 8985
+    target: participants
+    look_at: compass:south
+
+  # Theme reprised — same CUE as the overture
+  # (show ends at 9000; the theme continues beyond the show duration — that's fine)
+  - type: CUE
+    at: 9000
+    cue_id: overture.theme_teaser
+
+  - type: TITLE
+    at: 9000
+    audience: broadcast
+    title: "<gold><bold>✦  SCAENA SHOWS  ✦</bold></gold>"
+    subtitle: "<gray>a stage in every world</gray>"
+    fade_in: 10
+    stay: 80
+    fade_out: 25

@@ -1,191 +1,104 @@
-# ScaenaShows (Paper 1.21.11 / Java 21)
+# ScaenaShows v2
 
-ScaenaShows is a data‑driven choreography engine for Minecraft Paper servers. It plays “shows” (timelines of events) targeted at a player or all online players.
+ScaenaShows is a data-driven choreography engine for Minecraft Paper servers. It plays "shows" — timelines of coordinated events — targeted at one or more players simultaneously.
 
-### How the pieces fit together
+**Version:** 2.0.0 (v2 rewrite, active development — see `ROADMAP.md`)
+**Platform:** Paper 1.21.x / Java 21
+**Build:** Gradle Kotlin DSL (`build.gradle.kts`)
 
-**Firework presets → Sequences → Scenes → Shows**
+---
 
-- **Firework preset** (`fireworks.yml`) is one firework “look + launch behavior”.
-- **Sequence** (`sequences/*.yml`) is a timed list of preset shots (and can nest other sequences).
-- **Scene** (`scenes/*.yml`) is a reusable event block (messages, particles, sounds, effects, sequences, items).
-- **Show** (`shows/*.yml`) is the top-level timeline that calls scenes and sequences (and may also contain standalone events).
+## Architecture
 
-Events supported:
+Everything in ScaenaShows v2 is a **Cue** — a named, reusable, recursively nestable event container. Shows are Cues with a runtime entry point. There are no separate "scene" or "sequence" types.
 
-- MiniMessage chat messages
-- Titles/subtitles (MiniMessage)
-- BossBar (MiniMessage + color/overlay)
-- Sounds
-- Particles
-- Potion effects (including levitation + slow falling safety)
-- Item grants (validated: must always notify with message + sound)
-- High‑quality fireworks using presets + sequences (with optional nested sequences)
+```
+fireworks.yml   → named firework presets
+cues/*.yml      → named Cue assets (reusable building blocks)
+shows/*.yml     → show definitions (top-level runtime entry points)
+```
+
+For the full design specification, see [`docs/spec.md`](docs/spec.md).
+
+---
+
+## Commands
+
+```
+/show list
+/show play <showId> <target> [<target2>...] [--follow|--static] [--private] [--scenes]
+/show stop <player|@a>
+/show stopall
+/show reload
+```
+
+**Targeting:** Multiple targets in a single `/show play` command creates one shared show instance. All named targets are participants — simultaneously actors and audience. The first named target (or the invoker if a selector is used) is the spatial anchor.
+
+**`--scenes`** — Director mode (admin-only): displays the current cue name in the action bar during playback.
+
+---
+
+## Permissions
+
+| Permission | Default | Description |
+|---|---|---|
+| `scae.shows.admin` | op | Full access, bypass cooldown |
+| `scae.shows.play` | true | Play shows |
+| `scae.shows.target.others` | op | Target other players |
+| `scae.shows.target.all` | op | Target `@a` |
+| `scae.shows.private` | op | Use `--private` flag |
+| `scae.shows.cooldown.bypass` | op | Bypass cooldown |
+| `scae.shows.scenes` | op | Use `--scenes` director mode |
+
+---
+
+## Configuration
+
+`config.yml` uses plugin defaults; only include keys you want to override:
+
+```yaml
+default_cooldown_seconds: 30
+resume_window_seconds: 900
+```
+
+---
 
 ## Install
 
-1. Build the plugin:
-   - This repo uses **Gradle Kotlin DSL** (`build.gradle.kts`).
-   - If you don’t have Gradle installed, build from an IDE (IntelliJ) or install Gradle 8+.
-2. Drop the jar into `plugins/`
-3. Start the server once. ScaenaShows will create:
+1. Build: `./gradlew build`
+2. Drop `build/libs/ScaenaShows-2.0.0.jar` into `plugins/`
+3. Start the server — ScaenaShows creates:
 
 ```
 plugins/ScaenaShows/
   config.yml
   fireworks.yml
-  sequences/*.yml
-  scenes/*.yml
-  shows/*.yml
+  cues/
+  shows/
 ```
 
-If files already exist, ScaenaShows does **not** overwrite them.
+Existing files are never overwritten on startup.
 
-## Commands
+---
 
-- `/show list`
-- `/show play <showId> <player|@a> [--follow|--static] [--private] [--scenes]`
-- `/show stop <player|@a>`
-- `/show stopall`
-- `/show reload`
+## Development
 
-`--scenes` is a director/debug mode that shows the scene name + id in the action bar at the start of each scene. (Admin-only.)
+| Directory | Contents |
+|---|---|
+| `src/main/java/` | Plugin Java source (v2) |
+| `src/main/resources/` | Default config, fireworks, cue seeds, show seeds |
+| `docs/` | Design spec, preview audit, style guide, UI mockup |
+| `_archive/v1/` | v1 plugin source (scenes/sequences model — retired) |
+| `CLAUDE.md` | Project management hub for Claude sessions |
+| `ROADMAP.md` | Phase tracker with acceptance criteria |
 
-### Targeting rules
+See `CLAUDE.md` for session startup instructions and key architectural decisions.
 
-- Default players can only target themselves unless they have:
-  - `scae.shows.target.others` (target other players)
-  - `scae.shows.target.all` (target `@a`)
-- Admin permission `scae.shows.admin` can do everything and bypass cooldown.
+---
 
-### Cooldown
+## v1 → v2 Breaking Changes
 
-- Default players have a **60s** cooldown per **initiator** (the command runner).
-- Admin (or `scae.shows.cooldown.bypass`) bypasses cooldown.
-- Config: `default_cooldown_seconds`
-
-## Behavior notes
-
-- **One active show per target player.** If a show is already running for that target, `/show play` refuses:
-  - `Show already running. Use /show stop <player>.`
-- **Pause/resume:** shows pause on logout and resume if the player rejoins within `resume_window_seconds` (default 900s / 15 minutes). Otherwise the show is canceled with cleanup.
-- **Server restart:** no persistence; pending tasks are cleared when the server stops.
-- **Stop safety:** `/show stop` immediately cancels and:
-  - removes levitation
-  - applies slow falling for `stop_safety_slow_falling_seconds` (default 10s)
-  - hides bossbar created by show
-  - plays stop sound/message (configurable)
-
-### Scene overlays
-
-- `scenes/*.yml` can optionally include `scene_text: "..."` (MiniMessage). If present, it is displayed in the **title** area for the entire scene.
-  - To avoid truncation, keep the visible text short; ScaenaShows enforces `ui.scene_text_max_chars` (default **32**).
-- `/show play ... --scenes` enables **director mode** (admin-only): the scene name is displayed in the action bar at the start of each scene (respects `--private`).
-
-## File formats (schemas)
-
-ScaenaShows implements the schemas exactly as described in your brief:
-
-### `fireworks.yml`
-
-```yml
-version: 1
-presets:
-  scaena_gold:
-    display_name: "Scaena Gold"
-    power: 1
-    type: BALL
-    colors: ["#FECB00", "#FFFFFF"]
-    fades:  ["#EA7125"]
-    trail: true
-    flicker: true
-    launch:
-      mode: above
-      y_offset: 1.0
-      spread: 0.0
-```
-
-### `sequences/*.yml`
-
-```yml
-id: birthday_pastel_pop
-name: "Birthday Pastel Pop"
-description: "A short celebratory burst"
-duration_ticks: 80
-shots:
-  - at: 0
-    preset: pastel_pop
-    count: 2
-  - at: 20
-    preset: pastel_pop
-    count: 2
-    sound:
-      id: minecraft:entity.firework_rocket.launch
-      category: master
-      volume: 1.0
-      pitch: 1.0
-```
-
-**Optional nesting:** if `preset` matches a sequence id, it is treated as a nested sequence call.
-
-### `scenes/*.yml`
-
-```yml
-id: intro_scene
-name: "Intro"
-duration_ticks: 60
-scene_text: "<gold>Act 1</gold>"  # optional
-events:
-  - at: 0
-    type: MESSAGE
-    audience: broadcast
-    message: "<gold>Welcome!</gold>"
-  - at: 0
-    type: TITLE
-    audience: private
-    title:
-      title: "<gold><bold>Scaena</bold></gold>"
-      subtitle: "<gray>Enjoy the show</gray>"
-      fade_in: 10
-      stay: 40
-      fade_out: 10
-```
-
-### `shows/*.yml`
-
-```yml
-id: sample_show
-name: "Sample Show"
-description: "Demonstrates scenes + sequences"
-default_mode: follow
-default_audience: broadcast
-bossbar:
-  enabled: true
-  title: "<gold><bold>Sample Show</bold></gold>"
-  color: YELLOW
-  overlay: PROGRESS
-  audience: broadcast
-timeline:
-  - at: 0
-    type: SCENE
-    scene: intro_scene
-  - at: 40
-    type: SEQUENCE
-    sequence: birthday_pastel_pop
-```
-
-## Troubleshooting
-
-- Run `/show reload` and watch console output for:
-  - missing ids
-  - unknown preset/sequence/scene references
-  - invalid material/sound/particle identifiers
-  - ITEM events missing required `notify` payload
-
-Invalid YAML files are skipped; ScaenaShows will not crash the server.
-
-## Notes on “broadcast vs private”
-
-- By default, **messages/titles/bossbar** are broadcast.
-- `--private` clamps those to the target player(s).
-- Individual events may also specify `audience: broadcast|private`. If the show is `--private`, broadcasts are clamped to private.
+- **Schema:** `cues/*.yml` replaces `scenes/*.yml` and `sequences/*.yml`. All Cues share one universal schema.
+- **Fireworks:** `fireworks.yml` now uses a `stars:` list per preset (multi-star support). The flat top-level star fields from v1 are removed.
+- **No version field** on Cue or Show YAML files. v1 files are not compatible.
+- **`scenes/` and `sequences/` directories** are no longer created or read by the plugin.
