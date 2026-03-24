@@ -122,6 +122,8 @@ cue *do to the audience*, not what Minecraft events does it use.
 
 | ID | Phase | Priority | Description |
 |----|-------|----------|-------------|
-| SCENA-003 | Phase 7 | **High** | `showsprite.context.md` — draft before deep show authoring |
+| SCENA-003 | Phase 7 | ~~**High**~~ ✅ | `showsprite.context.md` — drafted 2026-03-24 from scaenacraft-ops voice corpus |
+| SCENA-005 | Phase 7 | **High** | **Source-material scan** — `docs/showsprite.context.md` was seeded from scaenacraft-ops MOTD corpus, scaena-voice skill, ADRs, and `intro.scaena_sprite`. As the server voice evolves (new MOTD lines, NPC dialogue, player-facing strings), scan `scaenacraft-ops/config/motd.md` and `scaenacraft-ops/skills/scaena-voice/SKILL.md` and bring forward any new reference lines or voice guidance. Also: process `intro.young_persons_guide` narration once it is rewritten — those revised lines become the new Sprite voice reference. |
+| SCENA-006 | Phase 7 | Medium | **`intro.young_persons_guide` voice pass** — the structure (overture → chapters → fugue → reprise) is sound. The narration fails when it catalogs events instead of inhabiting them. Rewrite Sprite's chapter narration to speak from inside each movement, not from outside explaining it. The chapter experience, not the chapter heading. |
 | SCENA-002 | Phase 1+ | Low | GLOW + TAB 5.x API — defer until GLOW needed in production |
 | SCENA-004 | Phase 8 | Medium | Cue library survey — what exists vs. what's needed; plan the 30-cue set |
