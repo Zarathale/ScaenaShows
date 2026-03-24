@@ -189,6 +189,6 @@ Do not reopen these without Alan.
 
 ## Contacts
 
-- **Alan** — project owner, creative direction, Scaena voice sign-off
-- **Zarathale (Zara)** — primary show builder in-game
-- **Smitty2020 (Smitty)** — secondary show builder
+- **Alan** — project owner, overall creative direction, Scaena voice sign-off
+- **Zarathale (Zara)** — primary show builder; works directly with Claude on show authoring and cue development; the person most likely at the keyboard in a Cowork session
+- **Smitty2020 (Smitty)** — secondary show builder in-game
