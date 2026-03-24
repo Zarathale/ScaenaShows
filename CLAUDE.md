@@ -25,6 +25,25 @@
 | **Phase 7** | 🟢 Active | ShowSprite — AI-driven show generation (no UI required) |
 | **Phase 8** | 🟢 Active | Cue library + tags — seeded starter set |
 
+## Session State — 2026-03-24
+
+**Where we stopped:** Cue library expanded and demo show built. Ready for first in-game test.
+
+**What was accomplished this session:**
+- `docs/showsprite.context.md` — finalized and stable ✅
+- `docs/cue-library-survey.md` — baseline survey written; gap analysis complete
+- Cue library: **8 → 25 production cues**
+  - All 8 original cues tagged retroactively
+  - New families: `coda.*` (4), `ramp.*` (4), `grief.*` (4), `world.*` (4), `fx.lift_to_height`
+- `demo.archetype_sampler` show — built, **not yet deployed or tested**
+- `docs/demo.archetype_sampler.runsheet.md` — run sheet ready for second-screen use
+
+**Immediate next step (other machine):**
+Deploy the demo show and run it. See "Resuming on Another Machine" below.
+
+**After the test run:**
+Debrief notes by cue number (C1–C12) with Claude. Revise what doesn't land. Then continue cue library expansion with the remaining families (peak, celebration, wonder, tension, breath).
+
 > Alan's decision: bypass Phases 2–6 (the web interface). Claude can already generate shows
 > directly as YAML. The goal is to get to high-quality, emotionally resonant show authoring
 > ASAP — without waiting for a GUI.
@@ -80,12 +99,12 @@ ShowSprite speaks in `[Sprite]` chat messages throughout shows. Voice characteri
 
 ### What "done" looks like for Phase 7/8
 
-- [ ] `docs/showsprite.context.md` — ShowSprite persona document (voice, constraints, examples)
-- [ ] Cue library: 30+ cues organized by emotional function, not event type
-- [ ] Cue tagging: spec §10 taxonomy applied; each cue has `tags:` array
+- [x] `docs/showsprite.context.md` — ShowSprite persona document — **complete 2026-03-24**
+- [x] Cue tagging: spec §10 taxonomy applied; each cue has `tags:` array — **complete 2026-03-24**
+- [ ] Cue library: 30+ cues organized by emotional function (at 25 — 5 more to reach target)
 - [ ] At least 3 production-quality shows authored (not demos — actual experiences)
 - [ ] `intro.young_persons_guide` rewritten as a genuine artistic piece, not a capability tour
-- [ ] Show authoring guide: how to write for Scaena (pacing, spatial design, emotional arc)
+- [ ] Show authoring guide: how to write for Scaena — see `docs/showsprite.context.md §Authoring Workflow`
 
 ---
 
@@ -143,8 +162,10 @@ Do not reopen these without Alan.
 
 | # | Priority | Question |
 |---|----------|----------|
-| 5 | **High** | `showsprite.context.md` — draft this before deep authoring work. What is ShowSprite's full persona? What can it say about itself? What can't it? |
+| 5 | ~~High~~ | ~~showsprite.context.md~~ — **Resolved 2026-03-24.** Document is stable. |
 | 6 | Low | GLOW + TAB API coordination (TAB 5.x) — deferred to when GLOW events are needed in production |
+| 7 | **High** | demo.archetype_sampler in-game test — which archetypes land, which need revision? Unblock before expanding library further. |
+| 8 | Medium | `intro.young_persons_guide` voice pass (SCENA-006) — structure is sound, narration needs rewrite. Do after archetype baselines are confirmed. |
 
 ---
 
@@ -159,17 +180,29 @@ Do not reopen these without Alan.
 ## How to Work in This Repo
 
 ### Starting a session
-1. Read `CLAUDE.md` (this file) — current phase and direction
-2. Read `ROADMAP.md` — see Phase 7/8 priorities
-3. If writing shows: read `docs/spec.md §4` for schema, then author with voice (not feature lists)
-4. If creating cues: follow naming convention `[category].[archetype].[variant]` per spec §9; add `tags:` per taxonomy spec §10
+1. Read `CLAUDE.md` (this file) — current phase, session state, and what's next
+2. Read `ROADMAP.md` — Phase 7/8 priorities and open issues
+3. If writing shows: read `docs/spec.md §4` for schema; read `docs/showsprite.context.md` for voice
+4. If creating cues: read `docs/cue-library-survey.md` for current inventory and gaps; follow naming `[category].[archetype].[variant]` per spec §9; add `tags:` per taxonomy spec §10
 5. If writing Java: re-skim the relevant spec section first
+
+### Cue Authoring — How Alan Collaborates
+
+Before building new cues, Claude proposes a short list of archetypes and waits for alignment. Do not build until Alan confirms the list. See `docs/showsprite.context.md §Cue Library Authoring` for the full methodology.
+
+When building new cues for review:
+1. Build a **demo show** that introduces each archetype: quiet Sprite intro → cue fires → labeled in chat
+2. **Always generate a run sheet** alongside the demo show (`docs/[show-id].runsheet.md`)
+3. Each run sheet entry has: Intention, Function, Mechanics, Watch question, Notes field
+4. Number every cue in the run sheet so Alan can take notes by number (C3, C7, etc.)
+5. Alan reviews in-game on one screen, run sheet on another; debriefs with Claude by cue number
 
 ### Writing Cue/Show YAML
 - All Cue files: `src/main/resources/cues/*.yml`
 - All Show files: `src/main/resources/shows/*.yml`
 - Naming: `[category].[archetype].[variant]` per spec §9
-- Tags: taxonomy from spec §10
+- Tags: free-form strings per spec §10 (not namespaced — `warm` not `tone:warm`)
+- CUE references in show timelines: `type: CUE` with `cue_id:` field (not `cue:`)
 
 ### Building
 ```bash
@@ -178,12 +211,34 @@ Do not reopen these without Alan.
 ```
 
 ### Deploying (after build)
-```
+```bash
 # Stop server
 # Replace JAR in plugins/
 # Delete plugins/ScaenaShows/cues/ and plugins/ScaenaShows/shows/
 # Start server — bundled YAMLs extract automatically
+# Verify: /show list
 ```
+
+### Resuming on Another Machine
+
+Pull the branch, build, and deploy:
+
+```bash
+git checkout feature/ai-show-generation
+git pull
+./gradlew shadowJar
+```
+
+Then stop server, swap JAR, delete cues/ and shows/ from the plugin folder, restart.
+
+**First show to run after deploy:**
+```
+/show play demo.archetype_sampler
+```
+
+Open `docs/demo.archetype_sampler.runsheet.md` on a second screen before running.
+This is the first in-game test of the new cue library. Take notes by cue number (C1–C12).
+Debrief with Claude after — every note drives the next revision.
 
 ---
 
