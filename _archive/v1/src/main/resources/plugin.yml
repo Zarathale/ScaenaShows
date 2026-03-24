@@ -1,9 +1,9 @@
 name: ScaenaShows
 main: com.scaena.shows.ScaenaShowsPlugin
-version: 2.0.0
+version: 1.0.0
 api-version: '1.21'
 author: Scaena
-description: Data-driven choreographed show engine — Cue model (v2).
+description: Data-driven choreographed show timelines (MiniMessage, titles, bossbars, sounds, particles, effects, items, fireworks).
 commands:
   show:
     description: Play/stop/reload ScaenaShows
@@ -22,11 +22,8 @@ permissions:
     description: Allow targeting @a.
     default: op
   scae.shows.private:
-    description: Allow using --private flag.
+    description: Allow using --private.
     default: op
   scae.shows.cooldown.bypass:
     description: Bypass show cooldown.
-    default: op
-  scae.shows.scenes:
-    description: Allow using --scenes (director mode) flag.
     default: op
