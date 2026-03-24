@@ -1,0 +1,22 @@
+# atmos.lights.cool_bloom
+# Cool-toned fireworks: a wide wave-star scatter followed by a tighter glow cluster.
+# Reads as moonlight, digital ambiance, or a wash of cold theatre blue.
+# Use during introspective, mysterious, or melancholy scenes.
+id: atmos.lights.cool_bloom
+timeline:
+  - type: FIREWORK_RANDOM
+    at: 0
+    preset: pride_wave_star
+    origin_offset: {x: 0, z: 0}
+    radius: 14
+    count: 3
+    y_mode: surface
+    y_offset: 1
+  - type: FIREWORK_RANDOM
+    at: 10
+    preset: pride_trans_glow_ball
+    origin_offset: {x: 0, z: 0}
+    radius: 7
+    count: 2
+    y_mode: surface
+    y_offset: 2

@@ -1,0 +1,157 @@
+# overture.theme_teaser
+# 600-tick (30 second) compressed preview of all major event types.
+# Every chapter of the Young Person's Guide is represented here in miniature.
+# Used as the opening "theme" and the closing reprise in intro.young_persons_guide.
+# Can also be used as a standalone 30-second opener for any large event.
+id: overture.theme_teaser
+timeline:
+
+  # THE VOICE (T0) ─────────────────────────────────
+  - type: TITLE
+    at: 0
+    audience: broadcast
+    title: "<gold><bold>S  C  A  E  N  A</bold></gold>"
+    subtitle: "<gray>every capability — all at once</gray>"
+    fade_in: 5
+    stay: 55
+    fade_out: 15
+
+  # THE MUSIC (T0) ─────────────────────────────────
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:ui.toast.challenge_complete"
+    category: master
+    volume: 0.7
+    pitch: 0.85
+
+  - type: ACTION_BAR
+    at: 20
+    audience: broadcast
+    message: "<gray>voice  ·  music  ·  light  ·  atmosphere  ·  movement  ·  world</gray>"
+    duration_ticks: 100
+
+  # THE LIGHT: single rocket high (T30) ─────────────
+  - type: FIREWORK
+    at: 30
+    preset: scae_large_fanfare
+    offset: {x: 0, y: 20, z: 0}
+    y_mode: relative
+
+  - type: SOUND
+    at: 32
+    sound_id: "minecraft:block.note_block.chime"
+    category: master
+    volume: 0.5
+    pitch: 1.3
+
+  # THE ATMOSPHERE: ember drift (T60) ───────────────
+  - type: PARTICLE
+    at: 60
+    particle_id: "minecraft:end_rod"
+    count: 3
+    offset: [3.0, 2.0, 3.0]
+    extra: 0.02
+    duration_ticks: 80
+    interval_ticks: 10
+
+  # THE LIGHT: circle (T80) ─────────────────────────
+  - type: FIREWORK_CIRCLE
+    at: 80
+    preset: scae_star_warm
+    origin_offset: {x: 0, z: 0}
+    radius: 8
+    count: 8
+    chase: {enabled: true, direction: FL, interval_ticks: 3}
+    power_variation: UNIFORM
+    color_variation: UNIFORM
+
+  # THE LIGHT: line across the stage (T140) ─────────
+  - type: FIREWORK_LINE
+    at: 140
+    preset: scae_burst_leaf
+    start_offset: {x: -8, z: 0}
+    length: 16
+    angle: 90
+    count: 6
+    y_mode: surface
+    y_offset: 2
+
+  - type: MESSAGE
+    at: 160
+    audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Every element — together.</gray>"
+
+  # THE WORLD: lightning strike (T200) ──────────────
+  - type: LIGHTNING
+    at: 200
+    offset: {x: 6, y: 0, z: 4}
+
+  - type: SOUND
+    at: 200
+    sound_id: "minecraft:entity.lightning_bolt.thunder"
+    category: master
+    volume: 0.4
+    pitch: 1.1
+
+  # THE LIGHT: fan (T240) ───────────────────────────
+  - type: FIREWORK_FAN
+    at: 240
+    origin_offset: {x: 0, z: 0}
+    arms:
+      - {angle: 315, length: 10, count: 4, preset: scae_ball_spark}
+      - {angle: 0,   length: 12, count: 5, preset: scae_large_fanfare}
+      - {angle: 45,  length: 10, count: 4, preset: scae_ball_spark}
+    y_mode: surface
+    y_offset: 2
+
+  # THE LIGHT: scatter (T300) ───────────────────────
+  - type: FIREWORK_RANDOM
+    at: 300
+    preset: pride_burst_rainbow
+    origin_offset: {x: 0, z: 0}
+    radius: 14
+    count: 7
+    y_mode: surface
+    y_offset: 3
+
+  - type: SOUND
+    at: 305
+    sound_id: "minecraft:entity.player.levelup"
+    category: master
+    volume: 0.7
+    pitch: 1.1
+
+  # THE LIGHT: grand circle + scatter together (T380) ─
+  - type: FIREWORK_CIRCLE
+    at: 380
+    preset: pride_burst_rainbow
+    origin_offset: {x: 0, z: 0}
+    radius: 12
+    count: 12
+    color_variation: RAINBOW
+
+  - type: FIREWORK_RANDOM
+    at: 395
+    preset: scae_large_fanfare
+    origin_offset: {x: 0, z: 0}
+    radius: 16
+    count: 8
+    y_mode: surface
+    y_offset: 4
+
+  # CLOSING TITLE (T480) ────────────────────────────
+  - type: TITLE
+    at: 480
+    audience: broadcast
+    title: "<gold>✦</gold>"
+    subtitle: "<gray>thirty seconds — the full vocabulary</gray>"
+    fade_in: 8
+    stay: 65
+    fade_out: 25
+
+  - type: SOUND
+    at: 485
+    sound_id: "minecraft:ui.toast.challenge_complete"
+    category: master
+    volume: 0.8
+    pitch: 1.0

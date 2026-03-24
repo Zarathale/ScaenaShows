@@ -487,6 +487,20 @@ color: GOLD
 # Rhythmic color cycling: place multiple TEAM_COLOR events in sequence.
 ```
 
+**GROUP_EVENT** — point-in-time; fires a named Cue scoped to a specific player group
+```yaml
+type: GROUP_EVENT
+at: 40
+target: group_1        # group_1 | group_2 | group_3 | group_4
+cue_id: ramp.warm_gold.buildup
+# Fires the named Cue inline, but restricts all audience resolution within that Cue
+# to participants assigned to the target group. Events in the Cue that use
+# audience: broadcast or audience: participants will resolve only against the group's
+# members for the duration of this invocation.
+# If the target group has zero members (GROUP_ASSIGN underflow), this is a silent skip.
+# The Cue must exist in the Cue registry — fail at load time if the ID is unknown.
+```
+
 ---
 
 ### 6.5 Fireworks and Spatial Patterns
@@ -581,6 +595,23 @@ chase:
 
 The `mode` field on fan chase is a creator-facing toggle in the UI.
 
+**FIREWORK_RANDOM** — pattern generator; N fireworks at random XZ positions within a radius
+```yaml
+type: FIREWORK_RANDOM
+preset: scaena_gold
+origin_offset: {x: 0, z: 0}   # XZ offset from spatial anchor before scattering
+radius: 12                      # scatter radius in blocks
+count: 8                        # number of fireworks to launch
+y_mode: surface                 # surface | relative (same as other firework patterns)
+y_offset: 2
+seed: null                      # optional integer; if set, same random positions each run
+                                # if null, positions are different on every play
+```
+
+Positions are chosen using uniform random sampling within the radius circle. No two fireworks
+are guaranteed to land at the same XZ. Unlike FIREWORK_CIRCLE and FIREWORK_LINE, there is no
+`chase` field — all FIREWORK_RANDOM launches fire simultaneously.
+
 ---
 
 ### 6.6 World and Environment
@@ -642,6 +673,19 @@ group_name: chorus
 capture_mode: snapshot  # snapshot: fixed group captured once at this tick
                         # live: group re-sweeps each time a targeting event fires
 ```
+
+**RELEASE_ENTITIES** — point-in-time; releases a captured entity group from show control
+```yaml
+type: RELEASE_ENTITIES
+target: entity_group:chorus   # entity group name (must have been created by CAPTURE_ENTITIES)
+restore_ai: true              # default true — re-enables AI (reverses ENTITY_AI enabled: false)
+                              # set to false to release tracking only without touching AI state
+```
+
+Removes the entity group from the show's internal entity group registry. After RELEASE_ENTITIES,
+the group name can no longer be used as a target within this show. Entities remain in the world
+(they are not despawned). If `restore_ai: true`, an AI-enable call is issued to each entity in
+the group. If the group does not exist or has zero members, this is a silent no-op.
 
 ---
 

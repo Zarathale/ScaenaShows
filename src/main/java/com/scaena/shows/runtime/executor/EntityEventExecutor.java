@@ -1,0 +1,263 @@
+package com.scaena.shows.runtime.executor;
+
+import com.scaena.shows.model.event.*;
+import com.scaena.shows.model.event.EntityBehaviorEvents.*;
+import com.scaena.shows.model.event.EntityMgmtEvents.*;
+import com.scaena.shows.runtime.RunningShow;
+import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.*;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.logging.Logger;
+
+/**
+ * Handles all entity management and entity behavior events:
+ * SPAWN_ENTITY, DESPAWN_ENTITY, CAPTURE_ENTITIES, RELEASE_ENTITIES,
+ * ENTITY_AI, ENTITY_SPEED, ENTITY_EFFECT, ENTITY_EQUIP,
+ * ENTITY_INVISIBLE, ENTITY_VELOCITY
+ */
+public final class EntityEventExecutor implements EventExecutor {
+
+    private final Logger log;
+
+    public EntityEventExecutor(Logger log) {
+        this.log = log;
+    }
+
+    @Override
+    public void execute(ShowEvent event, RunningShow show) {
+        switch (event.type()) {
+            case SPAWN_ENTITY      -> handleSpawn((SpawnEntityEvent) event, show);
+            case DESPAWN_ENTITY    -> handleDespawn((DespawnEntityEvent) event, show);
+            case CAPTURE_ENTITIES  -> handleCapture((CaptureEntitiesEvent) event, show);
+            case RELEASE_ENTITIES  -> handleRelease((ReleaseEntitiesEvent) event, show);
+            case ENTITY_AI         -> handleEntityAi((EntityAiEvent) event, show);
+            case ENTITY_SPEED      -> handleEntitySpeed((EntitySpeedEvent) event, show);
+            case ENTITY_EFFECT     -> handleEntityEffect((EntityEffectEvent) event, show);
+            case ENTITY_EQUIP      -> handleEntityEquip((EntityEquipEvent) event, show);
+            case ENTITY_INVISIBLE  -> handleEntityInvisible((EntityInvisibleEvent) event, show);
+            case ENTITY_VELOCITY   -> handleEntityVelocity((EntityVelocityEvent) event, show);
+            default -> {}
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // SPAWN_ENTITY
+    // ------------------------------------------------------------------
+    private void handleSpawn(SpawnEntityEvent e, RunningShow show) {
+        Location anchor = show.getAnchorLocation();
+        if (anchor == null) return;
+
+        EntityType type;
+        try { type = EntityType.valueOf(e.entityType.toUpperCase()); }
+        catch (IllegalArgumentException ex) {
+            log.warning("[ScaenaShows] Unknown entity type: " + e.entityType); return;
+        }
+
+        Location spawnLoc = anchor.clone().add(e.offsetX, e.offsetY, e.offsetZ);
+        Entity entity = spawnLoc.getWorld().spawnEntity(spawnLoc, type);
+
+        // Apply name
+        if (!e.name.isEmpty()) {
+            entity.setCustomName(e.name);
+            entity.setCustomNameVisible(true);
+        }
+
+        // Baby variant
+        if (e.baby && entity instanceof Ageable ageable) {
+            ageable.setBaby();
+        }
+
+        // Equipment
+        if (entity instanceof LivingEntity living) {
+            EntityEquipment eq = living.getEquipment();
+            if (eq != null) {
+                if (itemOf(e.helmetItem)     != null) eq.setHelmet(itemOf(e.helmetItem));
+                if (itemOf(e.chestplateItem) != null) eq.setChestplate(itemOf(e.chestplateItem));
+                if (itemOf(e.leggingsItem)   != null) eq.setLeggings(itemOf(e.leggingsItem));
+                if (itemOf(e.bootsItem)      != null) eq.setBoots(itemOf(e.bootsItem));
+                if (itemOf(e.mainHandItem)   != null) eq.setItemInMainHand(itemOf(e.mainHandItem));
+                if (itemOf(e.offHandItem)    != null) eq.setItemInOffHand(itemOf(e.offHandItem));
+            }
+        }
+
+        if (!e.name.isEmpty()) show.registerSpawnedEntity(e.name, entity);
+    }
+
+    // ------------------------------------------------------------------
+    // DESPAWN_ENTITY
+    // ------------------------------------------------------------------
+    private void handleDespawn(DespawnEntityEvent e, RunningShow show) {
+        Entity entity = resolveEntity(e.target, show);
+        if (entity == null) { log.fine("[ScaenaShows] DESPAWN: entity not found: " + e.target); return; }
+
+        if (e.particleBurst) {
+            entity.getWorld().spawnParticle(Particle.EXPLOSION, entity.getLocation(), 5);
+        }
+        entity.remove();
+    }
+
+    // ------------------------------------------------------------------
+    // CAPTURE_ENTITIES
+    // ------------------------------------------------------------------
+    private void handleCapture(CaptureEntitiesEvent e, RunningShow show) {
+        Location anchor = show.getAnchorLocation();
+        if (anchor == null) return;
+
+        EntityType type;
+        try { type = EntityType.valueOf(e.entityType.toUpperCase()); }
+        catch (IllegalArgumentException ex) {
+            log.warning("[ScaenaShows] CAPTURE_ENTITIES: unknown entity type: " + e.entityType); return;
+        }
+
+        List<Entity> nearby = new ArrayList<>();
+        for (Entity ent : anchor.getWorld().getNearbyEntities(anchor, e.radius, e.radius, e.radius)) {
+            if (ent.getType() == type) nearby.add(ent);
+        }
+
+        // Limit to maxCount
+        List<UUID> captured = new ArrayList<>();
+        for (int i = 0; i < Math.min(nearby.size(), e.maxCount); i++) {
+            captured.add(nearby.get(i).getUniqueId());
+        }
+
+        show.setEntityGroup(e.groupName, captured);
+        log.fine("[ScaenaShows] CAPTURE_ENTITIES: captured " + captured.size()
+            + " " + e.entityType + " into group '" + e.groupName + "'");
+    }
+
+    // ------------------------------------------------------------------
+    // RELEASE_ENTITIES — removes a captured entity group from show control.
+    // Optionally re-enables AI on all group members. Silent no-op if group
+    // is unknown or empty.
+    // ------------------------------------------------------------------
+    private void handleRelease(ReleaseEntitiesEvent e, RunningShow show) {
+        if (!e.target.startsWith("entity_group:")) {
+            log.warning("[ScaenaShows] RELEASE_ENTITIES: target must be 'entity_group:<name>', got: " + e.target);
+            return;
+        }
+        String groupName = e.target.substring("entity_group:".length());
+        List<UUID> group = show.getEntityGroup(groupName);
+
+        if (group.isEmpty()) return; // silent no-op
+
+        if (e.restoreAi) {
+            for (UUID uid : group) {
+                Entity entity = Bukkit.getEntity(uid);
+                if (entity instanceof Mob mob) {
+                    mob.setAI(true);
+                }
+            }
+        }
+
+        // Remove the group from show tracking (entities remain in world)
+        show.releaseEntityGroup(groupName);
+        log.fine("[ScaenaShows] RELEASE_ENTITIES: released group '" + groupName
+            + "' (" + group.size() + " entities)");
+    }
+
+    // ------------------------------------------------------------------
+    // ENTITY_AI
+    // ------------------------------------------------------------------
+    private void handleEntityAi(EntityAiEvent e, RunningShow show) {
+        Entity entity = resolveEntity(e.target, show);
+        if (entity instanceof Mob mob) {
+            mob.setAI(e.enabled);
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // ENTITY_SPEED
+    // ------------------------------------------------------------------
+    private void handleEntitySpeed(EntitySpeedEvent e, RunningShow show) {
+        Entity entity = resolveEntity(e.target, show);
+        if (entity instanceof LivingEntity living && living.getAttribute(Attribute.MOVEMENT_SPEED) != null) {
+            living.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(e.speed * 0.2); // Bukkit base unit
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // ENTITY_EFFECT
+    // ------------------------------------------------------------------
+    private void handleEntityEffect(EntityEffectEvent e, RunningShow show) {
+        Entity entity = resolveEntity(e.target, show);
+        PotionEffectType type = PotionEffectType.getByName(e.effectId.toUpperCase());
+        if (type == null) { log.warning("[ScaenaShows] Unknown potion effect: " + e.effectId); return; }
+        if (entity instanceof LivingEntity living) {
+            living.addPotionEffect(new PotionEffect(type, e.durationTicks, e.amplifier));
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // ENTITY_EQUIP
+    // ------------------------------------------------------------------
+    private void handleEntityEquip(EntityEquipEvent e, RunningShow show) {
+        Entity entity = resolveEntity(e.target, show);
+        if (!(entity instanceof LivingEntity living)) return;
+        EntityEquipment eq = living.getEquipment();
+        if (eq == null) return;
+        if (itemOf(e.helmet)     != null) eq.setHelmet(itemOf(e.helmet));
+        if (itemOf(e.chestplate) != null) eq.setChestplate(itemOf(e.chestplate));
+        if (itemOf(e.leggings)   != null) eq.setLeggings(itemOf(e.leggings));
+        if (itemOf(e.boots)      != null) eq.setBoots(itemOf(e.boots));
+        if (itemOf(e.mainHand)   != null) eq.setItemInMainHand(itemOf(e.mainHand));
+        if (itemOf(e.offHand)    != null) eq.setItemInOffHand(itemOf(e.offHand));
+    }
+
+    // ------------------------------------------------------------------
+    // ENTITY_INVISIBLE
+    // ------------------------------------------------------------------
+    private void handleEntityInvisible(EntityInvisibleEvent e, RunningShow show) {
+        Entity entity = resolveEntity(e.target, show);
+        if (entity instanceof LivingEntity living) {
+            living.addPotionEffect(new PotionEffect(
+                PotionEffectType.INVISIBILITY, e.durationTicks, 0, false, false));
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // ENTITY_VELOCITY
+    // ------------------------------------------------------------------
+    private void handleEntityVelocity(EntityVelocityEvent e, RunningShow show) {
+        Entity entity = resolveEntity(e.target, show);
+        if (entity != null) {
+            entity.setVelocity(new org.bukkit.util.Vector(e.vecX, e.vecY, e.vecZ));
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Helpers
+    // ------------------------------------------------------------------
+
+    /**
+     * Resolve a target string to an Entity.
+     * Supported: entity:spawned:Name, entity_group:Name (returns first member)
+     */
+    private Entity resolveEntity(String target, RunningShow show) {
+        if (target == null) return null;
+        if (target.startsWith("entity:spawned:")) {
+            String name = target.substring("entity:spawned:".length());
+            return show.getSpawnedEntity(name);
+        }
+        if (target.startsWith("entity_group:")) {
+            String groupName = target.substring("entity_group:".length());
+            List<UUID> group = show.getEntityGroup(groupName);
+            if (group.isEmpty()) return null;
+            return Bukkit.getEntity(group.get(0));
+        }
+        return null;
+    }
+
+    private ItemStack itemOf(String material) {
+        if (material == null || material.isEmpty()) return null;
+        try { return new ItemStack(Material.valueOf(material.toUpperCase())); }
+        catch (IllegalArgumentException e) { return null; }
+    }
+}

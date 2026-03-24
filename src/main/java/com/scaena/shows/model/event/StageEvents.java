@@ -1,0 +1,103 @@
+package com.scaena.shows.model.event;
+
+import java.util.Map;
+
+/** §6.9 — HOLD, FACE, CROSS_TO, RETURN_HOME, ENTER, EXIT */
+public final class StageEvents {
+
+    private StageEvents() {}
+
+    public static final class HoldEvent extends ShowEvent {
+        public final String target;
+
+        public HoldEvent(Map<String, Object> m) {
+            super(intVal(m, "at", 0));
+            this.target = str(m, "target", "");
+        }
+
+        @Override public EventType type() { return EventType.HOLD; }
+    }
+
+    public static final class FaceEvent extends ShowEvent {
+        public final String target;
+        public final String lookAt; // mark:Name | player | compass:south | entity:spawned:Other
+
+        public FaceEvent(Map<String, Object> m) {
+            super(intVal(m, "at", 0));
+            this.target = str(m, "target", "");
+            this.lookAt = str(m, "look_at", "mark:center");
+        }
+
+        @Override public EventType type() { return EventType.FACE; }
+    }
+
+    public static final class CrossToEvent extends ShowEvent {
+        public final String target;
+        public final String destination; // mark:Name | home | home+{...} | {x,z}
+        public final int durationTicks;  // 0 = instant
+        public final String facing;      // optional
+
+        public CrossToEvent(Map<String, Object> m) {
+            super(intVal(m, "at", 0));
+            this.target        = str(m, "target", "");
+            this.destination   = str(m, "destination", "mark:center");
+            this.durationTicks = intVal(m, "duration_ticks", 0);
+            this.facing        = str(m, "facing", null);
+        }
+
+        @Override public EventType type() { return EventType.CROSS_TO; }
+    }
+
+    public static final class ReturnHomeEvent extends ShowEvent {
+        public final String target;
+        public final int durationTicks;
+
+        public ReturnHomeEvent(Map<String, Object> m) {
+            super(intVal(m, "at", 0));
+            this.target        = str(m, "target", "");
+            this.durationTicks = intVal(m, "duration_ticks", 20);
+        }
+
+        @Override public EventType type() { return EventType.RETURN_HOME; }
+    }
+
+    public static final class EnterEvent extends ShowEvent {
+        public final String entityType;
+        public final String name;
+        public final String from;        // mark:wing_left etc.
+        public final String destination;
+        public final int durationTicks;
+        public final String facing;
+        public final boolean baby;
+
+        public EnterEvent(Map<String, Object> m) {
+            super(intVal(m, "at", 0));
+            this.entityType    = str(m, "entity_type", "VILLAGER");
+            this.name          = str(m, "name", "");
+            this.from          = str(m, "from", "mark:wing_left");
+            this.destination   = str(m, "destination", "mark:center");
+            this.durationTicks = intVal(m, "duration_ticks", 30);
+            this.facing        = str(m, "facing", null);
+            this.baby          = boolVal(m, "baby", false);
+        }
+
+        @Override public EventType type() { return EventType.ENTER; }
+    }
+
+    public static final class ExitEvent extends ShowEvent {
+        public final String target;
+        public final String to;          // mark:wing_right etc.
+        public final int durationTicks;
+        public final boolean despawnOnArrival;
+
+        public ExitEvent(Map<String, Object> m) {
+            super(intVal(m, "at", 0));
+            this.target          = str(m, "target", "");
+            this.to              = str(m, "to", "mark:wing_right");
+            this.durationTicks   = intVal(m, "duration_ticks", 30);
+            this.despawnOnArrival= boolVal(m, "despawn_on_arrival", true);
+        }
+
+        @Override public EventType type() { return EventType.EXIT; }
+    }
+}

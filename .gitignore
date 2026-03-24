@@ -33,3 +33,6 @@ ScaenaComposer/composer.config.json
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
+
+# Claude internal tool artifacts
+.claude/
