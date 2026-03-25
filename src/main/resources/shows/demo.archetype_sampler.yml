@@ -1,51 +1,38 @@
 # ScaenaShows v2 — Show: demo.archetype_sampler
 # ─────────────────────────────────────────────────────────────────────
-# ARCHETYPE SAMPLER — REVISION 6  (2026-03-24)
+# ARCHETYPE SAMPLER — REVISION 7  (2026-03-25)
 #
-# Changes from Revision 5:
-#   - Full aerial rewrite. Player aloft from C2 through end of show.
-#   - Inline hover control using calibration-verified patterns:
-#       HOVER  : amp 0 lev=20t gap=8t  cycle=28t (quasi-hover confirmed)
-#       CLIMB  : amp 0 lev=20t gap=4t  cycle=24t (gentle ascent)
-#       RELEASE: amp 1 lev=20t gap=24t cycle=44t (pressure-release descent)
-#   - One persistent slow_falling from T=380 (3200t, covers full show).
-#   - C2: amp-9 lift then hover through C3 (held at altitude ~12b).
-#   - C4: pressure-release descent to ~8b (controlled, deliberate).
-#   - C5: hover at 8b — cave sound from above.
-#   - C6: climb back to 12b during silence.
-#   - C7: strong amp-9 lift to ~20b (dramatic arrival from below).
-#   - C8: hover at altitude — joy burst, elevated.
-#   - C9: pressure-release descent through fireworks.
-#         Player descends FROM above through the firework display.
-#         Firework y_offsets redesigned to wrap around 15-20b altitude.
-#   - C10: continue descent via pressure-release.
-#   - C11: amp-9 re-lift for wonder single overhead.
-#   - C12: fx.lift_to_height (unchanged).
-#   - C13: narrated slow descent (fx.lift_to_height slow_fall carries it).
-#   - Small narration edits throughout to reflect aerial staging.
+# Core change from R6: altitude is narrative, not mechanical.
+# Height is withheld, foreshadowed, and revealed once — at C7.
+# Every vertical change has a dramatic answer: why now, why this direction.
 #
-# Structure:
-#   T0–380       C1: HOUSELIGHTS DOWN     — ground · dusk · ritual
-#   T380–840     C2: Ember Drift          — lift begins · hover ~12b
-#   T840–1060    C3: Warm Light           — hover held · warmth from below
-#   T1060–1280   C4: Cool Light           — pressure release descent
-#   T1280–1480   C5: Cave Sound           — hover ~8b · sound without ground
-#   T1480–1660   C6: Pause               — climb to 12b · anticipation
-#   T1660–1880   C7: Dramatic Arrival     — strong lift to ~20b
-#   T1880–2100   C8: Joy Burst            — hover at altitude · elevated joy
-#   T2100–2360   C9: Daylight Burst       — inside fireworks · descent through light
-#   T2360–2680   C10: Warm Ramp           — pressure release · ramp as descent
-#   T2680–2900   C11: Wonder Single       — re-lift · single overhead firework
-#   T2900–3040   C12: Lift to Height      — maximum lift · silence before close
-#   T3040–3440   C13: Descent + Coda      — narrated airborne close
+# Key differences from R6:
+#   - C1: starts at day (TIME_OF_DAY 8000), steps to night over 300 ticks
+#         Dialogue fires while lights are still visibly dimming
+#   - C2: NO amp-9 burst. Hover near ground (0-2 blocks).
+#         Player barely floating. Embers surround them, not below them.
+#         Text trimmed to 3 lines (removed ACTION_BAR counterpoints).
+#   - C3: CLIMB begins (2-6 blocks). Warm light is genuinely below them now.
+#   - C4: HOVER at 6-7 blocks. Cool bloom at/near player level.
+#   - C5: HOVER at 7-9 blocks. Cave sound ascending toward them from below.
+#   - C6: CLIMB to 12-14 blocks. Silence. The rising is unannounced.
+#   - C7: amp-9 LIFT IS EARNED HERE — arrival takes the player up.
+#         First dramatic height. 14→25 blocks. Player is aware it happened.
+#   - C8: HOVER at 25 blocks. Joy burst is below — elevated observer.
+#   - C9: Pressure-release descent from 25→18b THROUGH fireworks.
+#         Firework y_offsets: 26/20/12/24/16 — spans player at 18-25b.
+#   - C10: Continue release descent 18→8b. Ramp builds as they return.
+#   - C11-C13: unchanged from R6 except timing shift.
 #
-# Runtime: ~3440 ticks (~2:52)
+# Altitude arc: 0 → 2 → 6 → 7 → 9 → 14 → 25 → 18 → 8 → 14 → 35+ → 0
+#
+# Runtime: 3500 ticks (~175s / ~2m55s)
 # ─────────────────────────────────────────────────────────────────────
 
 id: demo.archetype_sampler
 name: "Archetype Sampler"
-description: "R6 — full aerial rewrite. Player aloft from C2 onward. Hover/climb/descent control throughout. Inside fireworks at C9."
-duration_ticks: 3440
+description: "R7 — altitude dramaturgy rewrite. Height withheld, then earned. Embers at body level, arrival lifts you, inside fireworks at peak."
+duration_ticks: 3500
 
 portable: true
 default_mode: static
@@ -60,13 +47,22 @@ bossbar:
 timeline:
 
   # ═══════════════════════════════════════════════════════════════════
-  # C1: HOUSELIGHTS DOWN  (T0–T380)
+  # C1: HOUSELIGHTS DOWN  (T0–T440)
   # ═══════════════════════════════════════════════════════════════════
   #
-  # Ground level. Environment cleared. Clock set to dusk.
-  # Player stays on the ground for the opening ritual.
-  # The aerial begins at T=380.
+  # Start in day so the houselights-down is visible, not redundant.
+  # Dialogue fires while dimming is actively happening.
+  # Three time snaps step the sky from afternoon to night over 280 ticks.
 
+  - at: 0
+    type: BOSSBAR
+    title: "<dark_gray>C1 — Houselights Down</dark_gray>"
+    color: WHITE
+    overlay: PROGRESS
+    audience: broadcast
+    duration_ticks: 440
+    fade_in_ticks: 5
+    fade_out_ticks: 10
   - at: 0
     type: STOP_SOUND
     source: music
@@ -76,43 +72,44 @@ timeline:
     duration_ticks: 8000
   - at: 0
     type: TIME_OF_DAY
-    time: 13500
-  - at: 0
-    type: BOSSBAR
-    title: "<dark_gray>C1 — Houselights Down</dark_gray>"
-    color: WHITE
-    overlay: PROGRESS
-    audience: broadcast
-    duration_ticks: 380
-    fade_in_ticks: 5
-    fade_out_ticks: 10
+    time: 8000
   - at: 0
     type: MESSAGE
     audience: broadcast
-    message: "<dark_gray>demo.archetype_sampler v6  ·  minimap off — Xaero's: F8</dark_gray>"
-  - at: 20
+    message: "<dark_gray>demo.archetype_sampler v7  ·  minimap off — Xaero's: F8</dark_gray>"
+  - at: 60
     type: MESSAGE
     audience: broadcast
     message: "<dark_gray>...</dark_gray>"
-  - at: 120
+  - at: 100
     type: MESSAGE
     audience: broadcast
     message: "<light_purple>[Sprite]</light_purple>  <gray>The lights are going down.</gray>"
-  - at: 280
+  - at: 100
+    type: TIME_OF_DAY
+    time: 12500
+  - at: 200
+    type: TIME_OF_DAY
+    time: 15500
+  - at: 320
+    type: TIME_OF_DAY
+    time: 18000
+  - at: 380
     type: MESSAGE
     audience: broadcast
     message: "<light_purple>[Sprite]</light_purple>  <gray>We begin.</gray>"
 
   # ═══════════════════════════════════════════════════════════════════
-  # C2: EMBER DRIFT  (T380–T840)
+  # C2: EMBER DRIFT  (T440–T900)
   # ═══════════════════════════════════════════════════════════════════
   #
-  # The first aerial moment. Player lifted by amp-9 burst at T=380.
-  # From T=490 onward: quasi-hover (A=0 lev=20t gap=8t) holds at ~12b.
-  # One persistent slow_falling (3200t) applied here — baseline for whole show.
-  # Text: three counterpoint voices. Fourth beat is silence.
+  # The first aerial moment — but barely. Player hovers 0-2 blocks off ground.
+  # Hover pulses (28t cycle) keep them near earth, gently bobbing.
+  # Embers surround them at body level — not below, not above. Around.
+  # Text: trimmed to three. No ACTION_BAR counterpoints.
+  # The particles do the work. Trust the field.
 
-  - at: 380
+  - at: 440
     type: BOSSBAR
     title: "<gray>C2 — Ember Drift  ·  atmos.ambient.ember_drift</gray>"
     color: WHITE
@@ -121,200 +118,162 @@ timeline:
     duration_ticks: 460
     fade_in_ticks: 5
     fade_out_ticks: 10
-  - at: 380
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 100
-    amplifier: 9
-    hide_particles: false
-    audience: participants
-  - at: 380
+  - at: 440
     type: EFFECT
     effect_id: slow_falling
-    duration_ticks: 3200
+    duration_ticks: 4000
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 380
+  - at: 440
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 468
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 496
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 524
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 552
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 580
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 608
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 636
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 664
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 692
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 720
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 748
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 776
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 804
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 832
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 860
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 888
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 440
     type: MESSAGE
     audience: broadcast
     message: "<light_purple>[Sprite]</light_purple>  <gray>Something settles around you.</gray>"
   - at: 460
     type: CUE
     cue_id: atmos.ambient.ember_drift
-  - at: 490
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 518
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 546
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 574
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 602
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 630
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 658
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 686
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 714
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 742
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 770
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 798
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 826
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 854
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 882
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 910
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 938
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 966
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 994
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 1022
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 480
-    type: ACTION_BAR
-    audience: broadcast
-    message: "<dark_gray>let it settle.</dark_gray>"
-    duration_ticks: 80
-  - at: 560
+  - at: 620
     type: CUE
     cue_id: atmos.ambient.ember_drift
-  - at: 560
+  - at: 640
     type: MESSAGE
     audience: broadcast
     message: "<light_purple>[Sprite]</light_purple>  <gray>Nothing here is asking for your attention.</gray>"
-  - at: 620
-    type: ACTION_BAR
-    audience: broadcast
-    message: "<dark_gray>you noticed anyway.</dark_gray>"
-    duration_ticks: 80
-  - at: 660
+  - at: 760
     type: CUE
     cue_id: atmos.ambient.ember_drift
-  - at: 750
+  - at: 810
     type: MESSAGE
     audience: broadcast
     message: "<light_purple>[Sprite]</light_purple>  <gray>Stay as long as you need.</gray>"
 
   # ═══════════════════════════════════════════════════════════════════
-  # C3: WARM LIGHT WASH  (T840–T1060)
+  # C3: WARM LIGHT WASH  (T900–T1120)
   # ═══════════════════════════════════════════════════════════════════
   #
-  # Player hovering at ~12 blocks. The warm bloom is below and around them.
-  # Hover pulses continue from C2 (see above — pulses run to T=1060).
+  # Climb begins. Player rises from ~2 to ~6 blocks.
+  # 'Warmth from somewhere below' — now actually true. Player is above it.
 
-  - at: 840
+  - at: 900
     type: BOSSBAR
     title: "<gold>C3 — Warm Light  ·  atmos.lights.warm_bloom</gold>"
     color: YELLOW
@@ -323,14 +282,84 @@ timeline:
     duration_ticks: 220
     fade_in_ticks: 5
     fade_out_ticks: 10
-  - at: 840
+  - at: 900
     type: MESSAGE
     audience: broadcast
     message: "<light_purple>[Sprite]</light_purple>  <gray>Warmth from somewhere below.</gray>"
-  - at: 920
+  - at: 900
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 924
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 948
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 972
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 996
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1020
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1044
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1068
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1092
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1116
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 980
     type: CUE
     cue_id: atmos.lights.warm_bloom
-  - at: 920
+  - at: 980
     type: SOUND
     sound_id: "minecraft:block.note_block.guitar"
     category: master
@@ -338,14 +367,14 @@ timeline:
     pitch: 0.8
 
   # ═══════════════════════════════════════════════════════════════════
-  # C4: COOL LIGHT WASH  (T1060–T1280)
+  # C4: COOL LIGHT WASH  (T1120–T1340)
   # ═══════════════════════════════════════════════════════════════════
   #
-  # Pressure-release descent begins. A=1 lev=20t gap=24t cycle=44t.
-  # Player drifts down ~6 blocks over 220t (from ~12b to ~6b).
-  # The descent is a physical register shift — cool follows warm.
+  # HOVER — player holds altitude gained in C3 (~6 blocks).
+  # The cool shift is tonal, not vertical. No descent here.
+  # Cool bloom at/near player level.
 
-  - at: 1060
+  - at: 1120
     type: BOSSBAR
     title: "<aqua>C4 — Cool Light  ·  atmos.lights.cool_bloom</aqua>"
     color: BLUE
@@ -354,49 +383,70 @@ timeline:
     duration_ticks: 220
     fade_in_ticks: 5
     fade_out_ticks: 10
-  - at: 1060
+  - at: 1120
     type: MESSAGE
     audience: broadcast
     message: "<light_purple>[Sprite]</light_purple>  <gray>The room shifts register.</gray>"
-  - at: 1060
+  - at: 1120
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
-    amplifier: 1
-    hide_particles: true
-    audience: participants
-  - at: 1104
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 1
+    amplifier: 0
     hide_particles: true
     audience: participants
   - at: 1148
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
-    amplifier: 1
+    amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1192
+  - at: 1176
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
-    amplifier: 1
+    amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1236
+  - at: 1204
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
-    amplifier: 1
+    amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1140
+  - at: 1232
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1260
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1288
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1316
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1200
     type: CUE
     cue_id: atmos.lights.cool_bloom
-  - at: 1140
+  - at: 1200
     type: SOUND
     sound_id: "minecraft:block.note_block.harp"
     category: master
@@ -404,13 +454,13 @@ timeline:
     pitch: 1.3
 
   # ═══════════════════════════════════════════════════════════════════
-  # C5: CAVE SOUND  (T1280–T1480)
+  # C5: CAVE SOUND  (T1340–T1540)
   # ═══════════════════════════════════════════════════════════════════
   #
-  # Player hovering at ~6 blocks. Sound only — no visuals.
-  # Quasi-hover holds altitude. The cave rises toward them.
+  # HOVER at ~7 blocks. Cave sound comes from below — player is above it.
+  # The grief is underneath them now, not beside them.
 
-  - at: 1280
+  - at: 1340
     type: BOSSBAR
     title: "<light_purple>C5 — Cave Sound  ·  grief.sound.cave</light_purple>"
     color: PURPLE
@@ -419,75 +469,83 @@ timeline:
     duration_ticks: 200
     fade_in_ticks: 5
     fade_out_ticks: 10
-  - at: 1280
-    type: MESSAGE
-    audience: broadcast
-    message: "<light_purple>[Sprite]</light_purple>  <gray>Something below you, breathing.</gray>"
   - at: 1340
     type: MESSAGE
     audience: broadcast
+    message: "<light_purple>[Sprite]</light_purple>  <gray>Something below you, breathing.</gray>"
+  - at: 1460
+    type: MESSAGE
+    audience: broadcast
     message: "<light_purple>[Sprite]</light_purple>  <gray>Listen.</gray>"
-  - at: 1280
+  - at: 1340
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1308
+  - at: 1368
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1336
+  - at: 1396
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1364
+  - at: 1424
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1392
+  - at: 1452
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1420
+  - at: 1480
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1448
+  - at: 1508
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1380
+  - at: 1536
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1480
     type: CUE
     cue_id: grief.sound.cave
 
   # ═══════════════════════════════════════════════════════════════════
-  # C6: PAUSE  (T1480–T1660)
+  # C6: PAUSE  (T1540–T1720)
   # ═══════════════════════════════════════════════════════════════════
   #
-  # Silence. Climb pattern — player rises gently during the gap.
-  # A=0 lev=20t gap=4t cycle=24t — slow ascent, anticipatory.
+  # CLIMB — player rises from ~7 to ~14 blocks. Unannounced.
+  # No text. No sound. The rising is imperceptible until they realize.
+  # This is the foreshadowing before the earned lift at C7.
 
-  - at: 1480
+  - at: 1540
     type: BOSSBAR
     title: "<dark_gray>C6 — Pause</dark_gray>"
     color: WHITE
@@ -496,53 +554,60 @@ timeline:
     duration_ticks: 180
     fade_in_ticks: 5
     fade_out_ticks: 10
-  - at: 1480
+  - at: 1540
     type: MESSAGE
     audience: broadcast
     message: "<dark_gray>...</dark_gray>"
-  - at: 1480
+  - at: 1540
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1504
+  - at: 1564
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1528
+  - at: 1588
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1552
+  - at: 1612
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1576
+  - at: 1636
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1600
+  - at: 1660
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1624
+  - at: 1684
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1708
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
@@ -551,13 +616,15 @@ timeline:
     audience: participants
 
   # ═══════════════════════════════════════════════════════════════════
-  # C7: DRAMATIC ARRIVAL  (T1660–T1880)
+  # C7: DRAMATIC ARRIVAL  (T1720–T1940)
   # ═══════════════════════════════════════════════════════════════════
   #
-  # Strong amp-9 × 140t lift at section start. Player vaults to ~20 blocks.
-  # The arrival is felt before it's heard — sudden upward force.
+  # THE EARNED LIFT. amp-9 × 140t fires with the arrival.
+  # Player is at ~14 blocks. The arrival takes them to ~25+ blocks.
+  # First real altitude in the show. It's caused by what just arrived.
+  # After the burst: slow_falling carries them. C8 hover catches and holds.
 
-  - at: 1660
+  - at: 1720
     type: BOSSBAR
     title: "<red>C7 — Dramatic Arrival  ·  mood.arrival</red>"
     color: RED
@@ -566,29 +633,30 @@ timeline:
     duration_ticks: 220
     fade_in_ticks: 5
     fade_out_ticks: 10
-  - at: 1660
+  - at: 1720
     type: MESSAGE
     audience: broadcast
     message: "<light_purple>[Sprite]</light_purple>  <gray>Something arrives.</gray>"
-  - at: 1660
+  - at: 1720
     type: EFFECT
     effect_id: levitation
     duration_ticks: 140
     amplifier: 9
     hide_particles: false
     audience: participants
-  - at: 1720
+  - at: 1780
     type: CUE
     cue_id: mood.arrival
 
   # ═══════════════════════════════════════════════════════════════════
-  # C8: JOY BURST  (T1880–T2100)
+  # C8: JOY BURST  (T1940–T2160)
   # ═══════════════════════════════════════════════════════════════════
   #
-  # Player at altitude (~20 blocks). Quasi-hover holds them there.
-  # The joy burst fires at ground-level — they watch it from above.
+  # HOVER at ~25 blocks. Player is high for the first time.
+  # Joy burst fires at ground level — player watches from above.
+  # Elevated observer. The celebration is below them. They already know.
 
-  - at: 1880
+  - at: 1940
     type: BOSSBAR
     title: "<light_purple>C8 — Joy Burst  ·  fx.confetti_burst</light_purple>"
     color: PINK
@@ -597,39 +665,60 @@ timeline:
     duration_ticks: 220
     fade_in_ticks: 5
     fade_out_ticks: 10
-  - at: 1880
+  - at: 1940
     type: MESSAGE
     audience: broadcast
     message: "<light_purple>[Sprite]</light_purple>  <gray>Yes.</gray>"
-  - at: 1880
+  - at: 1940
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1908
+  - at: 1968
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1936
+  - at: 1996
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1964
+  - at: 2024
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 1992
+  - at: 2052
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2080
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2108
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2136
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
@@ -637,41 +726,19 @@ timeline:
     hide_particles: true
     audience: participants
   - at: 2020
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 2048
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 2076
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 0
-    hide_particles: true
-    audience: participants
-  - at: 1940
     type: CUE
     cue_id: fx.confetti_burst
 
   # ═══════════════════════════════════════════════════════════════════
-  # C9: DAYLIGHT BURST  (T2100–T2360)
+  # C9: DAYLIGHT BURST  (T2160–T2420)
   # ═══════════════════════════════════════════════════════════════════
   #
-  # Daylight snap. Player is at ~20 blocks — pressure-release descent begins.
-  # Player descends from ~20b through the firework display (y_off 10-25).
-  # Fireworks redesigned to wrap around 15-20b altitude (above + below player).
-  # The experience: ceiling of light above, then surrounded, then floor of light below.
-  # Snap to night mid-section. 'Dark again.' Player still descending.
+  # Pressure-release descent begins. Player descends 25→18 blocks THROUGH fireworks.
+  # No opening text — the daylight snap speaks for itself.
+  # Firework y_offsets: 26/20/12/24/16 — spans 12-26b, player at 18-25b is inside.
+  # Night snap at T=2340. Cave sound re-grounds the fall. 'Dark again.'
 
-  - at: 2100
+  - at: 2160
     type: BOSSBAR
     title: "<yellow>C9 — Daylight Burst</yellow>"
     color: YELLOW
@@ -680,140 +747,141 @@ timeline:
     duration_ticks: 260
     fade_in_ticks: 5
     fade_out_ticks: 10
-  - at: 2100
+  - at: 2160
     type: STOP_SOUND
     source: music
-  - at: 2100
+  - at: 2160
     type: TIME_OF_DAY
     time: 6000
-  - at: 2100
+  - at: 2160
     type: SOUND
     sound_id: "minecraft:entity.ender_dragon.flap"
     category: master
     volume: 0.9
     pitch: 1.4
-  - at: 2100
+  - at: 2160
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 1
     hide_particles: true
     audience: participants
-  - at: 2144
+  - at: 2204
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 1
     hide_particles: true
     audience: participants
-  - at: 2188
+  - at: 2248
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 1
     hide_particles: true
     audience: participants
-  - at: 2232
+  - at: 2292
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 1
     hide_particles: true
     audience: participants
-  - at: 2276
+  - at: 2336
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 1
     hide_particles: true
     audience: participants
-  - at: 2320
+  - at: 2380
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 1
     hide_particles: true
     audience: participants
-  - at: 2100
+  - at: 2160
     type: FIREWORK_RANDOM
     preset: pride_finale_large
     origin_offset: {x: 0, z: 0}
     radius: 20
     count: 7
     y_mode: surface
-    y_offset: 25
-  - at: 2110
+    y_offset: 26
+  - at: 2170
     type: SOUND
     sound_id: "minecraft:entity.firework_rocket.large_blast"
     category: master
     volume: 1.0
     pitch: 0.85
-  - at: 2120
+  - at: 2180
     type: FIREWORK_RANDOM
     preset: pride_burst_rainbow
     origin_offset: {x: 0, z: 0}
     radius: 16
     count: 14
     y_mode: surface
-    y_offset: 18
-  - at: 2135
+    y_offset: 20
+  - at: 2200
     type: FIREWORK_RANDOM
     preset: bday_finale_large
     origin_offset: {x: 0, z: 0}
     radius: 20
     count: 8
     y_mode: surface
-    y_offset: 10
-  - at: 2140
+    y_offset: 12
+  - at: 2205
     type: SOUND
     sound_id: "minecraft:block.amethyst_block.chime"
     category: master
     volume: 0.9
     pitch: 0.9
-  - at: 2155
+  - at: 2220
     type: FIREWORK_RANDOM
     preset: pride_wave_star
     origin_offset: {x: 0, z: 0}
     radius: 18
     count: 10
     y_mode: surface
-    y_offset: 22
-  - at: 2175
+    y_offset: 24
+  - at: 2240
     type: FIREWORK_RANDOM
     preset: pride_finale_large
     origin_offset: {x: 0, z: 0}
     radius: 24
     count: 6
     y_mode: surface
-    y_offset: 14
-  - at: 2185
+    y_offset: 16
+  - at: 2245
     type: SOUND
     sound_id: "minecraft:entity.firework_rocket.large_blast_far"
     category: master
     volume: 0.8
     pitch: 0.7
-  - at: 2260
+  - at: 2340
     type: TIME_OF_DAY
     time: 18000
-  - at: 2260
+  - at: 2340
     type: SOUND
     sound_id: "minecraft:ambient.cave"
     category: ambient
     volume: 0.25
     pitch: 0.55
-  - at: 2300
+  - at: 2360
     type: MESSAGE
     audience: broadcast
     message: "<dark_gray>Dark again. As if nothing happened.</dark_gray>"
 
   # ═══════════════════════════════════════════════════════════════════
-  # C10: WARM RAMP  (T2360–T2680)
+  # C10: WARM RAMP  (T2420–T2740)
   # ═══════════════════════════════════════════════════════════════════
   #
-  # Pressure-release descent continues. Player drifts from ~14b toward ~6b.
-  # The ramp builds as they descend — return to ground feels earned.
+  # Pressure-release descent continues: 18→8 blocks.
+  # The ramp builds as the player returns toward ground.
+  # This section already worked in testing — preserve it.
 
-  - at: 2360
+  - at: 2420
     type: BOSSBAR
     title: "<gold>C10 — Warm Ramp  ·  ramp.pulse.warm</gold>"
     color: YELLOW
@@ -822,72 +890,79 @@ timeline:
     duration_ticks: 320
     fade_in_ticks: 5
     fade_out_ticks: 10
-  - at: 2360
+  - at: 2420
     type: MESSAGE
     audience: broadcast
     message: "<light_purple>[Sprite]</light_purple>  <gray>Something building.</gray>"
-  - at: 2360
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 1
-    hide_particles: true
-    audience: participants
-  - at: 2404
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 1
-    hide_particles: true
-    audience: participants
-  - at: 2448
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 1
-    hide_particles: true
-    audience: participants
-  - at: 2492
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 1
-    hide_particles: true
-    audience: participants
-  - at: 2536
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 1
-    hide_particles: true
-    audience: participants
-  - at: 2580
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 1
-    hide_particles: true
-    audience: participants
-  - at: 2624
-    type: EFFECT
-    effect_id: levitation
-    duration_ticks: 20
-    amplifier: 1
-    hide_particles: true
-    audience: participants
   - at: 2420
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 2464
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 2508
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 2552
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 2596
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 2640
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 2684
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 2728
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 2500
     type: CUE
     cue_id: ramp.pulse.warm
 
   # ═══════════════════════════════════════════════════════════════════
-  # C11: WONDER SINGLE  (T2680–T2900)
+  # C11: WONDER SINGLE  (T2740–T2960)
   # ═══════════════════════════════════════════════════════════════════
   #
-  # Player re-lifted. Amp-9 × 80t at T=2680 brings them back to ~12b.
-  # Hover pulses from T=2760 hold them as wonder.single fires at T=2740.
-  # The single firework goes 18b above anchor — player is inside its arc.
+  # Re-lift from ~8 to ~14 blocks. amp-9 × 80t.
+  # Wonder single fires at T=2800: y=18 relative — overhead from their position.
+  # Hover holds them in the firework's arc.
 
-  - at: 2680
+  - at: 2740
     type: BOSSBAR
     title: "<light_purple>C11 — Wonder Single  ·  mood.wonder.single</light_purple>"
     color: PURPLE
@@ -896,64 +971,64 @@ timeline:
     duration_ticks: 220
     fade_in_ticks: 5
     fade_out_ticks: 10
-  - at: 2680
+  - at: 2740
     type: EFFECT
     effect_id: levitation
     duration_ticks: 80
     amplifier: 9
     hide_particles: false
     audience: participants
-  - at: 2680
+  - at: 2740
     type: MESSAGE
     audience: broadcast
     message: "<light_purple>[Sprite]</light_purple>  <gray>The ceiling opens.</gray>"
-  - at: 2760
+  - at: 2820
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 2788
+  - at: 2848
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 2816
+  - at: 2876
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 2844
+  - at: 2904
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 2872
+  - at: 2932
     type: EFFECT
     effect_id: levitation
     duration_ticks: 20
     amplifier: 0
     hide_particles: true
     audience: participants
-  - at: 2740
+  - at: 2800
     type: CUE
     cue_id: mood.wonder.single
 
   # ═══════════════════════════════════════════════════════════════════
-  # C12: LIFT TO HEIGHT  (T2900–T3040)
+  # C12: LIFT TO HEIGHT  (T2960–T3100)
   # ═══════════════════════════════════════════════════════════════════
   #
-  # The strongest moment. fx.lift_to_height: amp-2 × 120t → ~25 blocks.
-  # slow_falling inside the cue carries the player through C13.
+  # The final, strongest lift. fx.lift_to_height: amp-2 × 120t → ~25-35 blocks.
+  # This cue handles its own slow_falling (800t).
 
-  - at: 2900
+  - at: 2960
     type: BOSSBAR
     title: "<white>C12 — Lift to Height  ·  fx.lift_to_height</white>"
     color: WHITE
@@ -962,47 +1037,46 @@ timeline:
     duration_ticks: 140
     fade_in_ticks: 5
     fade_out_ticks: 10
-  - at: 2900
+  - at: 2960
     type: MESSAGE
     audience: broadcast
     message: "<light_purple>[Sprite]</light_purple>  <gray>One more thing.</gray>"
-  - at: 2960
+  - at: 3020
     type: CUE
     cue_id: fx.lift_to_height
 
   # ═══════════════════════════════════════════════════════════════════
-  # C13: DESCENT + CODA  (T3040–T3440)
+  # C13: DESCENT + CODA  (T3100–T3500)
   # ═══════════════════════════════════════════════════════════════════
   #
-  # Sky brightens with the altitude. Narration during descent.
-  # fx.lift_to_height's slow_falling (800t) carries the player gently down.
-  # Show ends while airborne — the stage goes quiet before they land.
+  # Sky brightens with the altitude. fx.lift_to_height slow_fall carries descent.
+  # Narration during the drift down. Show ends airborne.
 
-  - at: 3040
+  - at: 3100
     type: BOSSBAR
     title: "<gray>C13 — Descent  ·  coda</gray>"
     color: WHITE
     overlay: PROGRESS
     audience: broadcast
-    duration_ticks: 360
+    duration_ticks: 400
     fade_in_ticks: 5
     fade_out_ticks: 10
-  - at: 3040
+  - at: 3100
     type: TIME_OF_DAY
     time: 22500
-  - at: 3120
+  - at: 3180
     type: MESSAGE
     audience: broadcast
     message: "<light_purple>[Sprite]</light_purple>  <gray>The stage returns.</gray>"
-  - at: 3220
+  - at: 3300
     type: MESSAGE
     audience: broadcast
     message: "<light_purple>[Sprite]</light_purple>  <gray>You were here for all of it.</gray>"
-  - at: 3340
+  - at: 3420
     type: MESSAGE
     audience: broadcast
     message: "<light_purple>[Sprite]</light_purple>  <gray>Until next time.</gray>"
-  - at: 3400
+  - at: 3460
     type: CUE
     cue_id: coda.curtain.quiet
 

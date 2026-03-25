@@ -64,7 +64,7 @@ Building Phase 7 means:
 
 ### Acceptance Criteria
 
-- [ ] `docs/showsprite.context.md` — persona document committed and in good shape
+- [x] `docs/showsprite.context.md` — persona document committed and in good shape ✅ 2026-03-24
   - ShowSprite's voice characteristics (tone, vocabulary, what it avoids)
   - The Scaena Theatre concept (what is this space, philosophically?)
   - ShowSprite's relationship to Alan, Zara, Smitty — collaborator, not assistant

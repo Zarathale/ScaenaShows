@@ -1,0 +1,56 @@
+# ScaenaShows v2 — Show: SHOW_ID
+# ─────────────────────────────────────────────────────────────────────
+# Rename this file to [show_id].yml and fill in the fields below.
+# See docs/spec.md §3.2 for the full Show field reference.
+# See brief.md for the creative brief that drives all authoring decisions.
+# ─────────────────────────────────────────────────────────────────────
+
+id: SHOW_ID
+name: "SHOW NAME"
+description: "One-sentence description of what this show is and its current revision."
+duration_ticks: 0    # set before first in-game test
+
+meta:
+  created_by: BUILDER_NAME    # Zara | Smitty
+  created_at: YYYY-MM-DD
+  last_edited_by: BUILDER_NAME
+  last_edited_at: YYYY-MM-DD
+
+portable: true
+default_mode: static
+default_audience: broadcast
+group_count: 1
+group_strategy: join_order
+front: south               # compass direction that defines downstage
+
+bossbar:
+  enabled: false
+
+# marks:
+#   CC: { x: 0, z: 0 }
+#   UL: { x: -10, z: -10 }
+#   UR: { x:  10, z: -10 }
+#   DL: { x: -10, z:  10 }
+#   DR: { x:  10, z:  10 }
+#   wing_left:  { x: -20, z: 0 }
+#   wing_right: { x:  20, z: 0 }
+
+# sets:
+#   main:
+#     world: WORLD_NAME
+#     x: 0
+#     y: 64
+#     z: 0
+#     yaw: 0
+#     pitch: 0
+#     return_on_end: true
+
+timeline:
+
+  # ─────────────────────────────────────────────────────────────────
+  # Add cue events here. See docs/spec.md §6 for event type reference.
+  # Format:
+  #   - at: TICK
+  #     type: EVENT_TYPE
+  #     [fields...]
+  # ─────────────────────────────────────────────────────────────────

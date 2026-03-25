@@ -27,7 +27,7 @@
 
 ## Session State — 2026-03-24
 
-**Where we stopped:** Archetype sampler R6 complete. Calibration v3 debrief done. Ready to build 2.8.1 and run R6.
+**Where we stopped:** Archetype sampler R7 complete. Ready to build 2.9.0 and run R7.
 
 **What was accomplished this session:**
 - `docs/showsprite.context.md` — finalized and stable ✅
@@ -66,14 +66,29 @@
     - C9 redesigned: player descends THROUGH fireworks from above via pressure-release
     - C9 firework y_offsets redesigned (25/18/10/22/14) to wrap around 15-20b altitude
     - One persistent slow_falling (3200t from T=380) as whole-show baseline
-  - `build.gradle.kts` → **v2.8.1** (show-content patch)
+  - `build.gradle.kts` → **v2.8.1** (show-content patch, R6)
+- **R6 in-game test feedback (2026-03-25):** 2 passes. Altitude arc not yet narratively earned. "Boof" lift at C2 spends the reveal too early. Player often above effects rather than inside them. Text stacks over-layered. Joy/daylight transition logic muddy. "Building" section (C10) was strongest — use as model.
+- **`demo.archetype_sampler` R7 (v2.9.0):**
+  - Altitude dramaturgy rewrite — height withheld, then earned
+  - C1: starts at day (TIME_OF_DAY 8000), three steps to night; dialogue fires during dimming
+  - C2: NO amp-9 burst — hover near ground (0-2 blocks), embers surround at body level; text trimmed to 3 lines
+  - C3: CLIMB begins (2-6 blocks) — warmth now genuinely below the player
+  - C4: HOVER at ~6 blocks — cool shift is tonal not vertical
+  - C5: HOVER at ~7 blocks — cave sound ascends toward them from below
+  - C6: CLIMB to 12-14 blocks — unannounced, silent foreshadowing
+  - C7: AMP-9 LIFT EARNED HERE — arrival takes player from 14 → 25 blocks; first dramatic height
+  - C8: HOVER at 25 blocks — joy burst below, elevated observer
+  - C9: pressure-release descent through fireworks (25→18 blocks); firework y_offsets 26/20/12/24/16
+  - C10-C13: same pattern as R6 (ramp/descent/wonder/finale/coda)
+  - Altitude arc: 0 → 2 → 6 → 7 → 9 → 14 → 25 → 18 → 8 → 14 → 35+ → 0
+  - `build.gradle.kts` → **v2.9.0**
 
 **Immediate next step (other machine):**
-Build 2.8.1 and run `demo.archetype_sampler` (R6). `/show play demo.archetype_sampler`
-Key observations: Is the hover stable through each section? Does C9 feel like being inside/descending through the fireworks? Does C7 lift feel dramatic? Overall: does being aloft the whole show change the emotional arc?
+Build 2.9.0 and run `demo.archetype_sampler` (R7). `/show play demo.archetype_sampler`
+Key observations: Does the C2 hover feel like "gentle bubbling" near the ground? Does C3 climb feel like gradual separation from earth? Does C7 lift feel EARNED — like the arrival takes you? Is C9 inside the fireworks?
 
-**After R6 debrief:**
-Author `fx.hover.sustained` and `fx.hover.descend` reusable cues using calibrated parameters. Retune `fx.levitate_pulse` and `fx.levitate_surge`. Begin `intro.young_persons_guide` voice pass.
+**After R7 debrief:**
+If altitude arc feels right, begin authoring `fx.hover.sustained` / `fx.hover.descend` reusable cues. Then `intro.young_persons_guide` voice pass (open question #8).
 
 > Alan's decision: bypass Phases 2–6 (the web interface). Claude can already generate shows
 > directly as YAML. The goal is to get to high-quality, emotionally resonant show authoring
@@ -113,11 +128,16 @@ This means:
 
 Without ScaenaComposer, the authoring workflow is:
 1. Alan describes a show concept (mood, occasion, duration, tone)
-2. Claude authors the full YAML directly — cues + show file
-3. Alan deploys, plays in-game, gives feedback
-4. Claude revises
+2. **Claude convenes the production team** — before any YAML is written, Claude brings each of the ten roles to the table. The Show Director writes the brief and per-department briefings. Casting, Wardrobe, Choreography, Set, Camera, Lighting, Sound, Voice, and Stage Management each have questions to ask and decisions to make. These decisions shape the YAML that follows. Each department's decisions are tracked in the show folder under `departments/`.
+3. Claude authors the full YAML directly — cues + show file
+4. Alan deploys, plays in-game, gives feedback
+5. Claude revises
 
 Claude's role is a **creative collaborator and show author** — not a developer tool.
+
+The production team knowledge base lives in `docs/production-team.md`. ShowSprite (the future in-game AI assistant) draws its creative domain knowledge from the same document. The voice and persona ShowSprite uses to communicate that knowledge to players is defined in `docs/showsprite.context.md`.
+
+Each department head also maintains a **technical knowledgebase** in `docs/departments/` — one file per department covering Java capabilities, YAML syntax, known gaps, and workarounds. When authoring show content for a specific department's tools, read the relevant KB file before writing YAML. Files: `show-director.kb.md`, `casting.kb.md`, `wardrobe.kb.md`, `choreography.kb.md`, `set.kb.md`, `camera.kb.md`, `lighting.kb.md`, `sound.kb.md`, `voice.kb.md`, `stage-manager.kb.md`.
 
 ### ShowSprite Voice
 
@@ -147,7 +167,21 @@ ScaenaShows/
 │   └── v1/                        ← v1 plugin source (scenes/sequences model)
 ├── docs/
 │   ├── spec.md                    ← v2 YAML schema (authoritative)
-│   ├── showsprite.context.md      ← ShowSprite persona + voice guide (Phase 7 deliverable)
+│   ├── production-team.md         ← Virtual production team — common brain for show authoring + ShowSprite
+│   ├── departments/               ← Technical KBs — one per department (Java capabilities + YAML syntax)
+│   │   ├── show-director.kb.md
+│   │   ├── casting.kb.md
+│   │   ├── wardrobe.kb.md
+│   │   ├── choreography.kb.md
+│   │   ├── set.kb.md
+│   │   ├── camera.kb.md
+│   │   ├── lighting.kb.md
+│   │   ├── sound.kb.md
+│   │   ├── voice.kb.md
+│   │   └── stage-manager.kb.md
+│   ├── showsprite.context.md      ← ShowSprite persona + voice guide (modification layer over production-team.md)
+│   ├── cue-library-survey.md      ← Current cue inventory and gap analysis
+│   ├── show-import-process.md     ← How to migrate a flat show into the folder structure
 │   ├── preview-audit.md           ← Phase 1 era audit (mostly resolved)
 │   ├── style-guide.html           ← ScaenaComposer design (deferred)
 │   └── ui-mockup.html             ← ScaenaComposer UI (deferred)
@@ -160,9 +194,18 @@ ScaenaShows/
 │           ├── fireworks.yml
 │           ├── cues/               ← Cue library (growing)
 │           └── shows/              ← Shows (growing)
+│               ├── *.yml           ← Existing flat shows (plugin-loadable)
+│               ├── _template/      ← Scaffold for new show folders
+│               └── [show_id]/      ← Show folder (one per show using folder structure)
+│                   ├── [show_id].yml
+│                   ├── brief.md
+│                   ├── run-sheet.md
+│                   └── departments/
+│                       └── *.md    ← One file per department
 ├── CLAUDE.md                       ← this file
 ├── ROADMAP.md                      ← phase tracker
 ├── README.md                       ← public-facing description
+├── ops-inbox.md                    ← Java capability gap queue (Stage Management)
 └── build.gradle.kts                ← Gradle + shadow plugin
 ```
 
@@ -210,7 +253,7 @@ Do not reopen these without Alan.
 
 ## Versioning Policy
 
-**Current version:** `2.8.1` (as of 2026-03-24)
+**Current version:** `2.9.0` (as of 2026-03-25)
 **Version file:** `build.gradle.kts` — the `version = "x.y.z"` line
 
 ### Rules Claude must follow
@@ -247,9 +290,9 @@ The startup banner reads from `plugin.yml`, so it stays in sync with no extra st
 ### Starting a session
 1. Read `CLAUDE.md` (this file) — current phase, session state, and what's next
 2. Read `ROADMAP.md` — Phase 7/8 priorities and open issues
-3. If writing shows: read `docs/spec.md §4` for schema; read `docs/showsprite.context.md` for voice
+3. **If writing shows or cues (any show work):** Read `docs/production-team.md` — the full production team is at the table for all show work. Read `docs/departments/show-director.kb.md` and write the show brief before any YAML is authored. The brief and all department decisions live in the show folder (`src/main/resources/shows/[show_id]/`). Then read `docs/spec.md §4` for schema; read `docs/showsprite.context.md` for voice. For any specific department's tools, read the relevant KB file from `docs/departments/` before writing YAML (e.g., `camera.kb.md` before any camera work, `sound.kb.md` before any audio authoring). For a new show, scaffold the folder from `src/main/resources/shows/_template/`.
 4. If creating cues: read `docs/cue-library-survey.md` for current inventory and gaps; follow naming `[category].[archetype].[variant]` per spec §9; add `tags:` per taxonomy spec §10
-5. If writing Java: re-skim the relevant spec section first
+5. If writing Java: re-skim the relevant spec section first. If a Java control surface gap is identified, bring it to Stage Management — see `docs/departments/stage-manager.kb.md §Ops-Inbox Workflow`. Stage Management files to ops-inbox.md and coordinates with the Java review team.
 
 ### Cue Authoring — How Alan Collaborates
 
@@ -264,7 +307,10 @@ When building new cues for review:
 
 ### Writing Cue/Show YAML
 - All Cue files: `src/main/resources/cues/*.yml`
-- All Show files: `src/main/resources/shows/*.yml`
+- Show YAML files: `src/main/resources/shows/[show_id].yml` (flat, plugin-loadable) OR `src/main/resources/shows/[show_id]/[show_id].yml` (folder structure — see note below)
+- Show folder structure: `src/main/resources/shows/[show_id]/` — contains YAML, `brief.md`, `run-sheet.md`, and `departments/*.md`
+- **Note on show folders:** The plugin scanner currently reads only flat `shows/*.yml` files. Show folder YAMLs are not loaded by the plugin until the scanner is updated (see `ops-inbox.md`). Keep flat YAMLs for plugin compatibility during transition; use the folder for all production team documentation.
+- To migrate an existing show into folder structure: follow `docs/show-import-process.md`
 - Naming: `[category].[archetype].[variant]` per spec §9
 - Tags: free-form strings per spec §10 (not namespaced — `warm` not `tone:warm`)
 - CUE references in show timelines: `type: CUE` with `cue_id:` field (not `cue:`)
@@ -302,8 +348,8 @@ Then stop server, swap JAR, delete cues/ and shows/ from the plugin folder, rest
 /show play demo.archetype_sampler
 ```
 
-Open `docs/demo.archetype_sampler.runsheet.md` on a second screen before running.
-This is the first in-game test of the new cue library. Take notes by cue number (C1–C12).
+Open `src/main/resources/shows/demo.archetype_sampler/run-sheet.md` on a second screen before running.
+This is the current run sheet for the active revision. Take notes by cue number (C1–C13).
 Debrief with Claude after — every note drives the next revision.
 
 ---

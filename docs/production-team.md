@@ -1,0 +1,920 @@
+---
+status: active
+created: 2026-03-25
+owner: Alan
+notes: Authoritative reference for the ScaenaShows virtual production team. Shared knowledge base for Claude show authoring and the future ShowSprite in-game assistant.
+---
+
+# ScaenaShows — Virtual Production Team
+
+This document defines the ten creative and operational roles that form the ScaenaShows production team. It is the **common brain** for all show authoring work.
+
+**Claude** reads this document before any show work begins and holds all ten roles active during authoring. The production team is always at the table — not just when a role is explicitly invoked.
+
+The **Show Director** leads the team. Every show begins with a brief from the Show Director — a distillation of the creative intent into direction that each department can act on. The Show Director makes show-level decisions when departments face tradeoffs, holds the arc when individual scenes pull in different directions, and approves the show before any in-game test.
+
+**ShowSprite** (the future in-game AI show guide) draws its creative domain knowledge from this document. Its voice, persona, and player interaction style are defined separately in `docs/showsprite.context.md`. The knowledge is shared; the communication layer is not.
+
+---
+
+## Department Knowledgebases
+
+Each department head maintains a technical knowledgebase — a dedicated file that documents what the Java plugin can do for that department, how to access those capabilities through YAML, and what limitations currently exist. The KB is the technical layer; this document is the creative/directorial layer. Both are required for show authoring.
+
+**When to read a KB:** Before authoring any cue or show section that involves a specific department's tools. The KB is the authoritative reference for YAML syntax, behavioral notes, and capability awareness for that department.
+
+**Java capabilities — ownership vs. awareness:** All departments need *awareness* of what the Java plugin can and cannot do. Only **Stage Management** *owns* the full current state of capabilities, limitations, and development priorities. Stage Management maintains the ops-inbox and coordinates all communication with the Java review team on behalf of the production team. Department KBs document capability awareness; `docs/departments/stage-manager.kb.md` is the authoritative source for what's implemented, what's not, and what's in the queue.
+
+| Department | Knowledgebase |
+|------------|---------------|
+| **Show Director** | `docs/departments/show-director.kb.md` |
+| Casting Director | `docs/departments/casting.kb.md` |
+| Wardrobe & Properties Director | `docs/departments/wardrobe.kb.md` |
+| Choreographer / Movement Director | `docs/departments/choreography.kb.md` |
+| Set Director | `docs/departments/set.kb.md` |
+| Camera Director | `docs/departments/camera.kb.md` |
+| Lighting & Atmosphere Designer | `docs/departments/lighting.kb.md` |
+| Sound Designer | `docs/departments/sound.kb.md` |
+| Sprite Voice Director | `docs/departments/voice.kb.md` |
+| Stage Manager | `docs/departments/stage-manager.kb.md` |
+
+---
+
+## The Team at a Glance
+
+| Role | Owns | Core Question |
+|------|------|---------------|
+| **Show Director** | The show brief; Show Direction; cross-department decisions; the arc | What is this show, and is every department serving that? |
+| Casting Director | Performer selection, mob identity | Who is on stage, and what do they bring? |
+| Wardrobe & Properties Director | Appearance, equipment, variants | What do they look like, and what does that say? |
+| Choreographer / Movement Director | Movement as composition | When and where does each performer move, and why? |
+| Set Director | Space, marks, sets, environment modifications | Where does this happen, and what does the space look like? |
+| Camera Director | Player orientation, visual perspective | What is the player looking at, and who controls that? |
+| Lighting & Atmosphere Designer | Environmental mood layer | What does the world feel like from inside this scene? |
+| Sound Designer | Audio arc and landscape | What does the player hear, and what does the silence say? |
+| Sprite Voice Director | All on-screen text | What words reach the player, in what mode, and when? |
+| Stage Manager | Show integrity, cleanup, and Java capability registry | Will this show leave the world as it found it — and does the team know what tools they have? |
+
+---
+
+## Role Definitions
+
+---
+
+### 0. Show Director
+
+**Domain:** The show as a whole. The Show Director owns the creative brief, the Show Direction, and the arc. The Director translates Alan's concept into a clear vision each department can act on, issues the Show Direction as a statement of show-critical priorities, resolves cross-department conflicts, and is responsible for whether the finished show delivers what the brief promised. Claude holds this role.
+
+**The question this role asks:** What is this show, and is every department serving that?
+
+**Authority:** The show brief. The Show Direction. Department briefings. Show-level creative decisions. The decision to send a show to in-game test. Veto and final call on cross-department conflicts. The production review synthesis.
+
+**Alan's role:** Concept originator and creative vision holder. Alan's stated intentions and feedback are non-negotiables that enter the brief directly. The Director's job is to serve Alan's vision, not substitute for it.
+
+**Knowledgebase:** `docs/departments/show-director.kb.md` — Director authority, Show Direction concept, brief templates, revision cycle guidance, arc evaluation questions, and the pre-flight checklist.
+
+---
+
+#### The Brief and Show Direction
+
+Every show begins with a brief. The brief is not a spec — it is a creative intent expressed clearly enough that each department head can ask the right questions and make the right choices independently.
+
+A complete brief answers:
+- **What is the emotional journey?** The arc, from the player's first moment to the last.
+- **Who is the player in this show?** Witness, participant, subject, celebrant?
+- **What is the tone?** (Not genre — the emotional register. Intimate vs. grand. Tender vs. unsettling.)
+- **What does the player carry away?** The one thing they should feel or understand after.
+- **What are the constraints?** Duration, setting, cue library access, known technical limits.
+
+The brief also includes a **Show Direction** section — the Director's statement of non-negotiables, known cross-department risks, and which departments carry elevated priority for this show. The Show Direction is the Director's communication to all departments simultaneously, above the per-department briefings. See `show-director.kb.md` for the full Show Direction format.
+
+---
+
+#### Department Briefings
+
+Once the brief is written, the Show Director briefs each department head individually. Each briefing answers:
+- What does this department's work serve in this show?
+- What is the key decision this department needs to make?
+- Are there any show-level constraints that narrow their choices?
+- Are there any explicit creative requests from Alan?
+
+Not every department needs a long briefing. A show with no performers needs a two-sentence Casting brief: "No performers in this show. Entity system is not used." Brevity is a sign of clarity.
+
+---
+
+#### Cross-Department Decisions
+
+When two departments have competing claims on the same show moment, the Show Director decides — not by splitting the difference, but by asking which choice serves the arc. Common conflicts:
+
+- Camera vs. Choreography: player needs to be in position X (choreography) but should be looking at Y (camera) — which matters more in this scene?
+- Lighting vs. Voice: a scene requires darkness (lighting) but text won't read in the dark (voice) — does the text change, or does the lighting compromise?
+- Sound vs. Voice: a sound cue lands at the same tick as a chat message — will they compete or complement?
+
+The Show Director's answer always traces back to the brief and the Show Direction. "What serves the arc here?" If a non-negotiable from the Show Direction is in conflict, it wins.
+
+---
+
+### 1. Casting Director
+
+**Domain:** Performer selection. Chooses which mob type appears in a scene based on what that mob *means* in the Minecraft world and what it contributes emotionally to the story. One Casting Director choice is worth a hundred lines of choreography.
+
+**The question this role asks:** Who is this performer, and what does their nature do for free?
+
+**Authority:** Entity type decisions in SPAWN_ENTITY and ENTER events. AI state decisions (puppet vs. performer). The choice of whether to use world-resident entities (CAPTURE_ENTITIES) or spawn new ones.
+
+**Knowledgebase:** `docs/departments/casting.kb.md` — Java capabilities, YAML syntax, and known gaps for entity spawning, AI control, and group capture.
+
+---
+
+#### Mob Register — Dramatic Identity
+
+Each entry covers: identity, behavior, dramatic register, known variants, and notes on puppet vs. performer use.
+
+**Allay**
+Small, hovering, follows and collects items. Plays a musical note when delivering. Visual language of joy, affection, and loyalty. A natural chorus member for joyful sequences. Puppet state keeps it in position; released AI causes wandering but adds genuine delight. No size variants.
+
+**Bat**
+Tiny, erratic flight, cave-ambient sounds. Near-invisible in dark environments. Registers as background texture — the sensation of being watched from darkness, secrets overhead. Most effective as a group (chorus). AI enabled = chaotic and atmospheric.
+
+**Bee**
+Small, buzzing, gentle glow. Day-active, returns to hive, stings once and dies. Visual register: industry, fragility, ecological dependence. A single bee near a flower reads very differently from a swarm. Tamed feeling when AI-disabled near a player.
+
+**Cat**
+Sits on beds, hisses at phantoms, gifts items after sleeping. Register: independence, mystery, comfort, the domestic uncanny. Multiple coat variants (see Wardrobe section). A sitting cat (ENTITY_AI disabled) is a composed, still presence. A walking cat introduces autonomous curiosity.
+
+**Creeper**
+Silent approach, brief hissing delay, explosion. Register: inevitable tension, the unannounced arrival of consequence. Best used as a visual element with AI disabled — the threat that holds perfectly still. Never release AI near players without extreme caution.
+
+**Elder Guardian**
+Floats, applies Mining Fatigue curse, emits ghostly scream. Register: an ancient force of affliction, the weight of the sea, something that sees you. The Mining Fatigue effect is a real player debuff — use deliberately as a storytelling tool (the curse moment), not accidentally.
+
+**Enderman**
+Tall, teleports when looked at, stares back, carries blocks. Register: the uncanny watcher, psychological tension, something that mirrors your attention. Teleportation behavior makes it unpredictable as a performer. Best used as a single figure at distance, AI disabled, placed to be noticed rather than to act.
+
+**Fox**
+Sneaks, steals items, leaps at prey. Register: cunning, the trickster, something not quite trustworthy. Baby fox: softens the read considerably — innocence or mischief.
+
+**Iron Golem**
+Large, slow, protector. Spawns in villages when population is threatened. Mourns dead villagers by placing poppies. Register: loyalty, grief as witness, the protector who outlived what it protected. A single Iron Golem standing still in a quiet scene carries enormous emotional weight without any dialogue.
+
+**Phantom**
+Aerial, swoops players who haven't slept, distinctive screech. Register: consequence, anxiety, the cost of sleeplessness. Most effective as a sound + silhouette in a dark scene. AI-released Phantoms will actively swoop — a calculated risk for tension sequences.
+
+**Slime / Magma Cube**
+Bouncing, splits on death, harmless in small sizes. Register: harmless individually, overwhelming in quantity. A single tiny slime is almost comedic. A room filling with them is claustrophobic. Size matters: large/medium/small via spawn mechanics (not currently YAML-controlled).
+
+**Strider**
+Walks on lava, trembles in cold. Register: alien landscape, isolation, the creature that lives in a place you cannot. Best in an environment with actual lava. Saddled variant adds a riding implication.
+
+**Vex**
+Tiny, phasing, conjured by Evokers. Sword-carrying ghost-form. Register: sorrow, intrusion, fragility with an edge. A chorus of Vex circling silently overhead reads as grief made visible. Hard to control with pathfinding (phases through blocks).
+
+**Villager**
+Wandering, trading, schedule-following (work/sleep/wander). Register: community, labor, the ordinary world. *Profession is the primary expressive tool* — see Wardrobe section for profession visual register. Baby Villager: innocence, vulnerability. A crowd of Villagers with varied professions establishes a functioning society. A single Villager watching quietly is a witness.
+
+**Warden**
+Blind, sonic-detection, slow but nearly unkillable. Emits sonic boom attack. Register: inevitability, darkness incarnate, something that cannot be stopped — only avoided. AI disabled = the threat held perfectly still. Do not release AI near players.
+
+**Wolf (tamed)**
+Follows, attacks on command, shows loyalty visibly. Register: devotion, companionship, the bond between person and creature. A sitting wolf watching its owner is one of Minecraft's most emotionally loaded images. Various coat colors in 1.21+ (see Wardrobe).
+
+**Armor Stand**
+Not a mob — a static entity that holds equipment. Register: the absent body, the costume on a wire, the memorial. Can be posed. A suit of armor standing in a corner reads as presence without a person. AI disabled is the only mode. See Wardrobe section.
+
+---
+
+#### Puppet vs. Performer
+
+| Mode | How | Effect | Use when |
+|------|-----|--------|----------|
+| Puppet | ENTITY_AI enabled: false | Holds position, full show control | Placing a figure, holding a tableau |
+| Performer | ENTITY_AI enabled: true | Natural Minecraft behavior, unpredictable | Wildness, autonomy, chaos as atmosphere |
+| Guided | CROSS_TO with pathfinder | Moves toward mark, arrival not guaranteed | Entrances, exits, slow crosses |
+| Chorus | CAPTURE_ENTITIES group | Multiple entities as a unit | Crowds, swarms, ensemble atmosphere |
+
+Natural behavior as a creative tool: an Allay that genuinely follows and collects reads as devotion in a way that scripted movement cannot replicate. Choose puppet when control is required; choose performer when authenticity is worth the unpredictability.
+
+---
+
+### 2. Wardrobe & Properties Director
+
+**Domain:** Appearance. Controls what performers wear and carry, which mob variants are used, and how visual appearance contributes to storytelling. Also manages Armor Stands as set pieces and the invisible-body technique.
+
+**The question this role asks:** What do they look like, and what does that communicate before they take a single step?
+
+**Authority:** All `equipment:` fields on SPAWN_ENTITY and ENTITY_EQUIP events. `variant:` and `profession:` fields on SPAWN_ENTITY. Armor Stand design and placement. Custom name visibility.
+
+**Knowledgebase:** `docs/departments/wardrobe.kb.md` — Java capabilities, YAML syntax, and known gaps for equipment, variants, invisibility, and Armor Stands.
+
+---
+
+#### Equipment Slots
+
+All `LivingEntity` subtypes accept equipment. Fields:
+
+| Slot | YAML key | Notes |
+|------|----------|-------|
+| Helmet | `helmet` | Any helmet material, or any item (pumpkin, mob heads, etc.) |
+| Chestplate | `chestplate` | Armor materials only for full appearance |
+| Leggings | `leggings` | |
+| Boots | `boots` | |
+| Main hand | `main_hand` | Any item: sword, hoe, torch, banner, food, map, etc. |
+| Off hand | `off_hand` | Any item: torch for ambient light, shield, etc. |
+
+Equipment can be set at spawn (`equipment:` in SPAWN_ENTITY) or changed mid-show (`ENTITY_EQUIP`). A wardrobe change mid-scene is a character transformation moment.
+
+**Non-standard helmet uses:** Carved pumpkin gives a distinctive silhouette. Player heads (mob head items) create unusual character reads. A flower pot on a villager's head is absurd and memorable.
+
+**Main hand as storytelling:** What a performer holds is the first thing the eye reads after their face. A sword reads as threat. A torch reads as guide or warmth. A book reads as scholar. A hoe reads as labor. A banner reads as herald. A dead bush held in hand reads as something quietly devastating. Design the main hand prop before anything else.
+
+---
+
+#### The Invisible Body Technique
+
+Apply ENTITY_INVISIBLE (or ENTITY_EFFECT invisibility) to any LivingEntity. Their body disappears; their held items and armor remain visible. Results:
+
+- Floating sword or tool in space
+- Disembodied helmet or armor piece (atmospheric "ghost armor")
+- A torch that moves on its own
+- A banner carried by air
+
+This technique is fully available with current tooling. Use it for ethereal, uncanny, or purely atmospheric purposes.
+
+---
+
+#### Armor Stand as Set Piece
+
+Armor Stands accept all equipment slots and can be posed (pose currently requires COMMAND — see Java Gaps). They are defined in the spec glossary as "set pieces." Uses:
+
+- A full suit of armor standing in a corner: the absent knight, the memorial, the empty throne
+- An item displayed at eye height: a relic, an offering, a prop
+- Multiple stands in a row: a chorus of silent witnesses
+
+Always spawn with `despawn_on_end: true` unless the stand is a permanent world fixture.
+
+---
+
+#### Mob Variants
+
+> ⚠️ **Java Gap — see Issue #[variant-gap]:** `variant:` and `profession:` are parsed by the YAML model but not yet applied in the executor. Fields are silently ignored at runtime until the gap is resolved.
+
+Once resolved, the following variants will be available:
+
+**Villager professions** (visual register in parentheses):
+- `FARMER` — straw hat (rural, land)
+- `LIBRARIAN` — spectacles (knowledge, scholarship)
+- `CLERIC` — purple robes (ritual, mystery, the sacred)
+- `ARMORER` — black apron (craft, protection, industry)
+- `BUTCHER` — white apron, pink hair (labor, the ordinary)
+- `CARTOGRAPHER` — monocle (exploration, record-keeping)
+- `FLETCHER` — feathered cap (craft, precision)
+- `TOOLSMITH` / `WEAPONSMITH` — smithing apron (making things)
+- `NITWIT` — green robes (the fool, innocence, the one who doesn't belong)
+
+**Villager biome types:** PLAINS, DESERT, JUNGLE, SAVANNA, SNOW, SWAMP, TAIGA — each has a distinct skin palette. A Snow Villager in a desert scene is subtly wrong in a useful way.
+
+**Cat variants:** TABBY, BLACK, RED, SIAMESE, BRITISH_SHORTHAIR, CALICO, PERSIAN, RAGDOLL, WHITE, JELLIE, ALL_BLACK.
+
+**Horse variants:** WHITE, CREAMY, CHESTNUT, BROWN, BLACK, GRAY, DARK_BROWN. Plus marking overlays (NONE, SOCKS, WHITE_DOTS, BLACK_DOTS, WHITE).
+
+**Wolf coat colors (1.21+):** Multiple variants available. The pale wolf is the default; others carry distinct visual registers.
+
+**Sheep wool colors:** All 16 dye colors. A black sheep is a classic; a chorus of mixed-color sheep reads as abundance or chaos depending on context.
+
+**Tropical Fish:** Enormous pattern and color variety — each fish is individually configurable. Useful for visual texture in aquatic scenes.
+
+**Parrot colors:** RED, BLUE, GREEN, CYAN, GRAY. A parrot on a figure's shoulder immediately reads as pirate, explorer, or companion.
+
+---
+
+### 3. Choreographer / Movement Director
+
+**Domain:** Movement as composition. The Choreographer owns the movement score: when each performer moves, where they go, how they move relative to each other, and what the spatial story looks like tick by tick. Casting Director chose *who* — Choreographer decides *where and when*.
+
+**The question this role asks:** What does the movement say, and does every cross serve the story?
+
+**Authority:** CROSS_TO, ENTER, EXIT, RETURN_HOME, HOLD, FACE events targeting entities and players. ENTITY_SPEED. ENTITY_VELOCITY for launches and impacts. The timing and sequence of movement events across the show timeline.
+
+**Knowledgebase:** `docs/departments/choreography.kb.md` — Java capabilities, YAML syntax, and known gaps for movement, pathfinding, player flight, and velocity.
+
+---
+
+#### Movement Vocabulary
+
+| Event | Type | Notes |
+|-------|------|-------|
+| CROSS_TO | Point or bar | Move to a mark. `duration_ticks` > 0 = gradual (smoothMovePlayer for players, pathfinder for mobs). `facing:` sets orientation on arrival. |
+| ENTER | Bar | Spawn at a wing mark and move to destination. Semantic shorthand for arrival. |
+| EXIT | Bar | Move to a wing mark, optionally despawn on arrival. Semantic shorthand for departure. |
+| HOLD | Point | Freeze at current position (zeroes velocity). |
+| FACE | Point | Turn to face a mark, compass direction, or entity. Yaw only — see Camera Director for pitch limitations. |
+| RETURN_HOME | Point or bar | Return each participant to their captured invocation location. |
+| ENTITY_SPEED | Point | Scale movement speed. 0.0 = stopped, 1.0 = normal, 2.0 = fast. |
+| ENTITY_VELOCITY | Point | Launch entity in a vector. Combine with slow_falling for controlled arcs. |
+
+**Pathfinder note:** CROSS_TO for mobs uses Bukkit's pathfinder API — arrival is not guaranteed on complex terrain. Pathfinding mobs will navigate around obstacles but may get stuck. Design mob crosses for open space or use shorter distances. Puppet (AI disabled) mobs do not pathfind at all.
+
+---
+
+#### Movement as Storytelling
+
+A cross from upstage to downstage is an approach — a choice to come closer. A cross away from a mark mid-scene is withdrawal, hesitation, rejection. Two performers crossing simultaneously in opposite directions creates collision energy. A figure that holds while everything moves around it has weight and stillness as a statement.
+
+**Entrances and exits** are never neutral. When the performer enters, what is the first thing they see? Where does the player's eye go? When they exit, does the world close around where they stood, or does the space immediately fill with something else?
+
+**The player's movement** is part of the score even when the show doesn't control it. If the player can move freely, the Choreographer should design for the most likely path of attention. If the show uses CROSS_TO on the player, those movements are scripted and the Choreographer owns them fully.
+
+**Simultaneous movement:** Multiple entities moving at once creates composition. The Choreographer should think in frames: at tick 120, where is everyone on stage?
+
+---
+
+#### Approximate Movement Timing
+
+These are rough guides for design; actual timing depends on terrain and entity type:
+
+| Distance (blocks) | Speed (normal) | Approximate ticks |
+|-------------------|---------------|-------------------|
+| 5 (stage cross) | 1.0 | ~25t |
+| 10 (half stage) | 1.0 | ~50t |
+| 20 (full stage) | 1.0 | ~100t |
+| 5 (slow, dramatic) | 0.4 | ~60t |
+
+Player smooth movement (smoothMovePlayer) is tick-exact. Mob pathfinding timing is approximate.
+
+---
+
+### 4. Set Director
+
+**Domain:** Space and environment. The Set Director owns where shows happen, how the playing space is structured, how players move between locations, and what physical modifications are made to the world — including the discipline of cleaning them up.
+
+**The question this role asks:** Where does this happen, and does the space serve the story?
+
+**Authority:** `marks:` and `sets:` in show YAML. PLAYER_TELEPORT for set transitions. The `front:` orientation of the show. Block modification planning and cleanup. Spatial documentation of the show environment.
+
+**Knowledgebase:** `docs/departments/set.kb.md` — Java capabilities, YAML syntax, and known gaps for marks, sets, teleportation, and block modification.
+
+---
+
+#### The Spatial Hierarchy
+
+```
+World
+└── Sets (named world-specific locations — absolute coordinates)
+    └── Stage (the playing area within a set)
+        └── Marks (named XZ positions relative to anchor)
+            └── Wings (off-stage entry/exit zones, beyond playing area)
+```
+
+**Sets** (`sets:` in show YAML) are world-specific named locations with absolute XYZ, yaw, and pitch. Players teleport between sets via PLAYER_TELEPORT. The `return_on_end: true` flag ensures players return to their pre-show location when the show ends, stops, or the player disconnects. Always use `return_on_end: true` on any set that moves players away from their starting position.
+
+**Marks** (`marks:` in show YAML) are named XZ offsets relative to the show anchor. They are portable — the same show plays correctly regardless of where it is invoked. Standard 9-position grid:
+
+```
+UL (upstage_left) | UC (upstage)  | UR (upstage_right)
+SL (stage_left)   | CC (center)   | SR (stage_right)
+DL (down_left)    | DC (downstage)| DR (down_right)
+```
+
+Wings are placed beyond the playing area boundary: `wing_left`, `wing_right`, `wing_up`, `wing_down`.
+
+**Important: marks are XZ only** — they have no Y coordinate. Vertical staging (positioning entities or players at a specific height) requires hardcoded Y values in PLAYER_TELEPORT or CROSS_TO events, not mark references. Document vertical positions separately in the show's spatial notes.
+
+**Home** is each participant's captured location at show invocation — a runtime value, not a YAML value. Available as `destination: home` in any positional event.
+
+**Stage front** (`front:` in show YAML) defines which compass direction is downstage. Without it, stage_left/stage_right have no meaning. Default is the primary player's facing direction at invocation.
+
+---
+
+#### Block Modifications and the Cleanup Contract
+
+> ⚠️ **Java Gap — see Issue #[block-modification-gap]:** There is no BLOCK_PLACE or BLOCK_REMOVE event type. All block modifications must currently be executed via COMMAND (escape hatch). COMMAND-placed blocks are outside the show's stop-safety contract — they are not automatically restored if the show is interrupted.
+
+**Until the gap is resolved, the Set Director's protocol is:**
+
+1. For any block modification placed via COMMAND at tick N, write a corresponding cleanup COMMAND that restores the original block state.
+2. The cleanup COMMAND must appear in two places: at the natural show end, AND in a dedicated cleanup cue (e.g., `fx.set.cleanup.[show_id]`) that can be invoked manually if the show is interrupted.
+3. Document every block modification in the show's run sheet with: tick placed, world coordinates, original block type, replacement block type.
+4. Never use block modifications in rehearsal-mode shows unless cleanup is fully scripted and confirmed working.
+
+**Armor Stands and Display Entities as set pieces** are the preferred alternative to block modifications when possible — they use the entity system (despawn_on_end: true) and are fully covered by the cleanup contract.
+
+---
+
+#### Spatial Documentation
+
+Before authoring any show, the Set Director should document:
+- What is built in the show space? (key structures, barriers, ceiling height)
+- What are the sight lines? (what can the player see from center stage, from each wing)
+- Are there unintended pathfinding obstacles that could disrupt mob crosses?
+- What is the sky like? (open, enclosed, underground) — affects TIME_OF_DAY legibility
+- What is the ambient light level? — affects particle and effect visibility
+
+This lives in the show's run sheet under "Environment Notes," not in the YAML.
+
+---
+
+### 5. Camera Director
+
+**Domain:** The player's visual orientation throughout the show. Controls where the player is looking, when that control is taken and returned, and how the cinematic camera tools are used. Some shows hand camera control to this role for the entire duration; others use it for individual scenes only. That decision is made at the show design phase and documented upfront.
+
+**The question this role asks:** What is the player seeing at each moment, and is it intentional?
+
+**Authority:** FACE (player orientation), PLAYER_TELEPORT facing (yaw/pitch on arrival), CROSS_TO `facing:` parameter, PLAYER_SPECTATE and PLAYER_SPECTATE_END (cinematic camera), PLAYER_MOUNT (riding perspective), CAMERA event (screen distortion effects).
+
+**Knowledgebase:** `docs/departments/camera.kb.md` — Java capabilities, YAML syntax, and known gaps for player orientation, cinematic camera, and screen distortion effects.
+
+---
+
+#### Camera Modes
+
+| Mode | Description | Tools |
+|------|-------------|-------|
+| **Full control** | Camera managed throughout the show | FACE, PLAYER_SPECTATE, teleport facing |
+| **Partial control** | Camera handed to director for specific scenes only | Same tools, limited to defined sections |
+| **Player-free** | Player moves their own camera; show may set initial facing only | Facing on initial PLAYER_TELEPORT |
+
+Establish the camera mode during show design, before authoring begins. A full-control show makes different demands on every other creative department than a player-free show.
+
+---
+
+#### Orientation Tools
+
+**FACE** — turns the player (or any entity) to look toward a mark, compass direction, spawned entity, or the player. Yaw only (horizontal). Works on players and mobs. Instant — no duration.
+
+> ⚠️ **Java Gap — see Issue #[face-pitch-gap]:** FACE only computes yaw. Pitch (looking up or down) is not set. To orient the player to look upward toward an elevated firework or aerial performer, use PLAYER_TELEPORT with explicit pitch value, or use PLAYER_SPECTATE attached to an entity positioned above.
+
+**PLAYER_TELEPORT with facing** — the most reliable way to set both yaw and pitch precisely. Sets the player's camera at the exact angle defined in the YAML. Best used when a scene transition and a camera reset happen together.
+
+**CROSS_TO `facing:`** — sets player yaw on arrival at a mark. Use this when the player is moving to a position and should land oriented toward the stage focus of that position.
+
+---
+
+#### Cinematic Camera — The Drone Pattern
+
+PLAYER_SPECTATE attaches the player's camera to any named entity for a defined duration (or until PLAYER_SPECTATE_END). This is how cinematic camera angles are achieved.
+
+**The drone pattern:**
+1. SPAWN_ENTITY an invisible entity at the desired camera position (ENTITY_INVISIBLE applied at spawn or immediately after)
+2. Optionally script its movement with CROSS_TO to create a traveling shot
+3. PLAYER_SPECTATE targeting that entity
+4. PLAYER_SPECTATE_END to return camera to the player's body
+
+**Known constraint:** PLAYER_SPECTATE requires the player to be in SPECTATOR mode. While spectating: the player passes through blocks, cannot interact with the world, and their HUD clears. Plan surrounding events accordingly — avoid requiring player interaction during a spectate sequence.
+
+**PLAYER_MOUNT** puts the player in the first-person riding perspective of an entity. As long as the entity moves, the player's camera tracks with it. More visceral than spectate — the player is inside the experience rather than observing it.
+
+---
+
+#### CAMERA Event — Screen Distortion (Not Orientation)
+
+The CAMERA event is named misleadingly. It does not control camera direction. It applies potion effects that cause perceptual distortion:
+
+| Effect name | Potion applied | Visual result |
+|------------|----------------|---------------|
+| `sway` | Nausea | Screen wobble/spiral |
+| `blackout` | Darkness | Vignette closing to black |
+| `flash` | Blindness | Brief white flash |
+| `float` | Levitation + Slow Falling | Upward drift sensation |
+
+These are atmospheric tools, not orientation tools. The Lighting & Atmosphere Designer has joint authority over CAMERA effects. Camera Director owns their use when they relate to perspective shift (e.g., `blackout` as a scene transition).
+
+---
+
+#### Smooth Camera Rotation
+
+> ⚠️ **Java Gap — see Issue #[smooth-rotate-gap]:** There is no gradual yaw rotation event. FACE is instant. Simulating a slow camera pan requires rapid PLAYER_TELEPORT sequences, which is imprecise and not available as a first-class authoring primitive. Until resolved, use PLAYER_SPECTATE on a moving entity as a workaround for smooth camera movement.
+
+---
+
+### 6. Lighting & Atmosphere Designer
+
+**Domain:** The environmental mood layer. Controls time of day, weather, atmospheric particles, perceptual effects, and screen-level distortion to shape how the world feels from inside a scene. Lighting is not decoration — it is the emotional context that everything else lives inside.
+
+**The question this role asks:** What does the world feel like from inside this scene, and is the lighting arc serving the emotional arc?
+
+**Authority:** TIME_OF_DAY, WEATHER, LIGHTNING events. atmos.* cue family. PARTICLE events used for environmental atmosphere. CAMERA effects (sway/blackout/flash/float) as atmospheric tools. EFFECT events applied to players for perceptual alteration (night_vision, blindness, darkness).
+
+**Knowledgebase:** `docs/departments/lighting.kb.md` — Java capabilities, YAML syntax, and behavioral notes for time, weather, particles, screen effects, and perceptual alteration.
+
+---
+
+#### Time of Day
+
+TIME_OF_DAY is a point-in-time event — it snaps the world clock to the specified value instantly. Gradual transitions are composed by firing multiple TIME_OF_DAY events in sequence.
+
+```
+0 (or 24000) = sunrise — light returning, new beginning
+1000         = early morning — clarity, hope
+6000         = noon — full daylight, maximum visibility, no shadows
+12000        = sunset — warmth fading, transition
+13000        = dusk — liminal, the moment before dark
+18000        = midnight — full dark, the deepest night
+```
+
+**Design note:** The R7 archetype sampler uses three TIME_OF_DAY steps at C1 (8000 → 13000 → 18000) to create gradual dusk during the opening dialogue. Multiple events across 40–80 ticks each reads as a continuous fade rather than snaps.
+
+Darkness itself (values 13000–23000) matters differently depending on the environment: underground, a night sky makes no difference. Outdoors, it fundamentally changes the world's visual register.
+
+---
+
+#### Weather
+
+WEATHER fires as a bar event (duration_ticks optional). Three states:
+- `clear` — full visibility, natural skybox
+- `storm` — rain/snow, reduced visibility, ambient sound
+- `thunder` — storm + thunder + lightning strikes (random, from server — distinct from scripted LIGHTNING events)
+
+Weather changes the ambient sound layer significantly even before any scripted sound is added. A `storm` state creates a bed of rain sound that the Sound Designer should account for.
+
+---
+
+#### LIGHTNING
+
+Cosmetic-only lightning strike at an offset from the anchor. No damage, no fire (per spec §15). Uses: a single dramatic flash at a specific location, multiple simultaneous strikes for chaos, a slow sequence for ominous punctuation. LIGHTNING is a joint tool with the Sound Designer — thunder is tied to the visual strike and cannot be separated.
+
+---
+
+#### Atmospheric Particles
+
+The atmos.* cue family provides reusable atmospheric layers. Key entries:
+
+- `atmos.ambient.ember_drift` — slow upward particle drift, warmth register
+- (See `cue-library-survey.md` for full current inventory)
+
+PARTICLE events can also be authored inline for custom atmospheric effects. Duration + interval creates a continuous layer that runs alongside other events.
+
+---
+
+#### Perceptual Effects on Players
+
+These EFFECT events alter how the player perceives the world:
+
+| Effect | Impact | Use |
+|--------|--------|-----|
+| `night_vision` | Sees in darkness at full brightness | Reveal a dark space without lighting it |
+| `blindness` | Severe vignette, short sight distance | Disorientation, transition, fog of experience |
+| `darkness` | Pulsing dark vignette | Dread, weight, the Warden's domain |
+| `nausea` | Screen wobble | Disorientation (same as CAMERA sway) |
+
+**CAMERA screen effects as atmosphere:** `blackout` (DARKNESS potion) is the Lighting Designer's scene-transition tool — fade the world to black, teleport/change the environment, fade back. This is the standard "scene change in the dark" technique.
+
+---
+
+#### Lighting Arc
+
+As with all other creative dimensions, the Lighting Designer should establish the arc before authoring events. Questions to answer at show design:
+
+- What is the opening light state? (time + weather)
+- Does the show move through distinct lighting zones, or is the light world static?
+- Where are the key lighting moments? (the moment the sun rises, the storm breaks, the world goes dark)
+- What is the closing light state, and is it different from opening? Does it need to be restored?
+- Is the final state restored to the player's original environment, or does the show intentionally leave the world changed?
+
+---
+
+### 7. Sound Designer
+
+**Domain:** The audio landscape. Owns what the player hears, how sounds layer, when silence is used, and how the arc of audio across the show serves the story. Sound is the layer the player feels even when they are not consciously noticing it.
+
+**The question this role asks:** What does the player hear at each moment, and what does the silence between sounds mean?
+
+**Authority:** SOUND and STOP_SOUND events throughout the show timeline. The audio arc — decisions about layering, sequencing, and deliberate silence.
+
+**Knowledgebase:** `docs/departments/sound.kb.md` — Java capabilities, YAML syntax, behavioral notes, sound ID reference, and known limitations of the Minecraft sound system.
+
+---
+
+#### SOUND Event Parameters
+
+```yaml
+type: SOUND
+sound_id: minecraft:entity.allay.ambient_with_item
+category: ambient       # master | music | record | weather | block | hostile | neutral | player | ambient | voice
+volume: 1.0             # 0.0–1.0+ (values > 1.0 increase range, not loudness)
+pitch: 1.0              # 0.5–2.0 (1.0 = natural pitch; 2.0 = octave up, double speed)
+max_duration_ticks: 80  # optional; stops the sound after N ticks
+audience: participants  # standard audience targeting
+```
+
+Sound is positional in Minecraft — the server broadcasts the sound from the show anchor's location, and the client applies distance-based attenuation. Sounds fired from far offsets feel distant; sounds at offset 0,0,0 feel intimate.
+
+**Pitch as a tool:** Lowering pitch (0.6–0.8) makes a sound feel heavier, more ancient, more ominous. Raising pitch (1.2–1.5) makes it brighter, more urgent, more fragile. A distant thunder sound pitched down to 0.6 becomes subterranean. An allay note pitched up to 1.8 becomes a tiny, urgent chime.
+
+---
+
+#### Sound Categories
+
+Category controls which player audio channel the sound goes through. Players can have individual channel volumes. Key categories:
+
+- `ambient` — environmental sounds (cave, rain, birds)
+- `hostile` — mob threat sounds
+- `neutral` — neutral mob sounds
+- `music` — music disc / background music channel
+- `master` — overrides all channel settings
+
+For show sounds, `ambient` and `master` are most common. Use `master` for sounds that must be heard regardless of player settings.
+
+---
+
+#### Useful Sound IDs
+
+A selection for common show situations (full list at minecraft.wiki/sounds):
+
+**Atmosphere:**
+- `minecraft:ambient.cave` — cave ambience, unease
+- `minecraft:ambient.basalt_deltas.loop` — alien, volcanic
+- `minecraft:ambient.crimson_forest.loop` — otherworldly, unsettling
+- `minecraft:weather.rain` — rain without actual weather change
+
+**Presence / arrival:**
+- `minecraft:entity.elder_guardian.curse` — the curse sound, weight, significance
+- `minecraft:entity.warden.heartbeat` — dread, proximity to something large
+- `minecraft:entity.ender_dragon.growl` — ancient, powerful
+- `minecraft:block.portal.ambient` — the threshold, the in-between
+
+**Warmth / joy:**
+- `minecraft:entity.allay.ambient_with_item` — small delight
+- `minecraft:entity.villager.celebrate` — community, festivity
+- `minecraft:block.note_block.bell` — clarity, punctuation, ceremony
+
+**Transition:**
+- `minecraft:entity.lightning_bolt.thunder` — punctuation, consequence
+- `minecraft:block.beacon.activate` — rising, a thing beginning
+- `minecraft:entity.experience_orb.pickup` — arrival, completion
+- `minecraft:block.end_portal.frame.fill` — the uncanny, a threshold crossed
+
+---
+
+#### STOP_SOUND
+
+Stops a specific sound_id or all sounds for the audience. Critical for:
+- Ending a looping ambient bed before a scene transition
+- Cutting sound abruptly for dramatic silence
+- Clearing a sound layer before a new one begins
+
+Always plan STOP_SOUND events alongside their corresponding SOUND events in the show timeline. An ambient loop that isn't stopped will continue playing past its intended scene.
+
+---
+
+#### Silence as Composition
+
+The absence of sound is a creative decision. A 40-tick REST with no sounds firing, following a loud moment, is a held breath. A quiet entrance — no sound cue, just a figure appearing — can read as more unsettling than a dramatic sound hit.
+
+The Sound Designer should mark deliberate silences in the run sheet, not just let them happen by default. If a moment of silence is intentional, it should be noted as "deliberate audio silence — do not fill."
+
+---
+
+#### Audio Arc
+
+Before authoring SOUND events, establish:
+- What is the ambient audio bed at opening? (no sound is also a choice)
+- Where are the key sound moments? (the hit that lands with a visual)
+- How do sounds layer? (is there ever more than one thing playing at once, and is that intentional?)
+- Where are the silences, and are they deliberate?
+- What is the audio state at show end? (all sounds stopped, or one thing lingering?)
+
+---
+
+### 8. Sprite Voice Director
+
+**Domain:** All text delivered to the player on behalf of the show. Manages what is said, which mode it's delivered in, who receives it, when it appears, and the deliberate spaces between words. Owns the text arc across the whole show.
+
+**The question this role asks:** What reaches the player's eyes, in which mode, and why does this moment deserve words at all?
+
+**Authority:** MESSAGE, TITLE, ACTION_BAR, BOSSBAR events throughout the show timeline. Audience targeting decisions for text. The timing of text including deliberate silent passages.
+
+**Knowledgebase:** `docs/departments/voice.kb.md` — Java capabilities, YAML syntax, behavioral notes, audience targeting reference, and known gaps for all text delivery modes.
+
+---
+
+#### The Four Text Modes
+
+**MESSAGE — Chat**
+- Persists in chat history; the player can scroll back
+- Intimate register — reads as something said, not proclaimed
+- Supports color codes and formatting (legacy `§` codes; JSON components where supported)
+- Audience targeting: full range including `private`, `target`, `group_1` — private text is a storytelling tool
+- Cannot be dismissed mid-show; it exists in the log
+
+*Use for:* ShowSprite dialogue, intimate address, text the player should be able to return to, multi-line thoughts that unfold one message at a time.
+
+**TITLE — Fullscreen**
+- Large centered text with subtitle below
+- Two text lines maximum: `title:` and `subtitle:`
+- Three timing parameters: `fade_in:`, `stay:`, `fade_out:` (in ticks)
+- Cinematic register — the screen is the stage for this moment
+- Erasing before natural expiry requires a new TITLE with empty strings (resets the fade clock)
+
+*Use for:* Cinematic scene titles, a single arrival word ("You are here"), the name of something important, the final word of a show. Reserve it — overuse deflates its impact.
+
+*Timing as craft:* `fade_in: 0, stay: 10, fade_out: 60` reads as a flash of recognition. `fade_in: 40, stay: 80, fade_out: 40` is a slow revelation. These choices are as important as the words themselves.
+
+**ACTION_BAR — Above Hotbar**
+- Single line, auto-fades approximately 2 seconds after last update
+- Refreshable: fire a new ACTION_BAR within 2 seconds to keep it present
+- Subtle register — reads as ambient guidance, quiet real-time awareness
+- Does not persist; vanishes without a trace
+
+*Use for:* Stage directions whispered to the player ("Look up."), status that should fade naturally, ambient ongoing information that shouldn't linger. Not for important text the player might miss.
+
+**BOSSBAR — Top of Screen**
+- Persistent bar across the top of the screen for the event's full `duration_ticks`
+- Has `color:` (PINK/BLUE/RED/GREEN/YELLOW/PURPLE/WHITE) and a progress bar that fills over the duration
+- Structural register — reads as the show's running context, the chapter marker
+
+*Use for:* Section/scene headers that orient the player across a long show, structural labels that should persist across multiple cue firings, the "act title" that lingers. The archetype sampler uses BOSSBAR for section identification (C1–C13) with color-coded mood. This is the established pattern.
+
+---
+
+#### Text Arc — The Bossbar as Structure
+
+The canonical use: one BOSSBAR per section, color-coded by emotional register, progress bar fills over the section duration. The chat carries the voice. The bossbar carries the structure. These two layers should never compete — the bossbar establishes context so the chat can speak freely within it.
+
+---
+
+#### Audience Targeting for Text
+
+All text modes support audience targeting. This is underused as a storytelling tool:
+
+- `private` / `target` — only this player sees it. Creates a sense of personal address that broadcast text cannot replicate. "You, specifically, are seen."
+- `group_1` / `group_2` — different players in the same show see different text. Possible divergent experiences in a multi-player show.
+- `participants` — everyone in this show instance, no one outside it
+
+MESSAGE also supports `entity:spawned:Name` targeting — text appears to reach a named entity. Unusual, but available.
+
+---
+
+#### Silence as Voice
+
+The deliberate absence of text is a creative decision that must be made, not defaulted into. A 120-tick passage with no MESSAGE events is either a thoughtful breath or an empty gap — the difference is intentionality.
+
+When designing a show's text arc, mark the silences: "No text from T=240 to T=380 — the player is watching, not reading." This belongs in the run sheet, not the YAML.
+
+> ⚠️ **Java Gap — see Issue #[text-clear-gap]:** There is no TITLE_CLEAR event. To cut a TITLE before its stay timer expires, fire a new TITLE with empty strings, which resets the fade clock. This is a workaround, not a tool. Until resolved, design TITLE timing so early dismissal is not needed.
+
+---
+
+### 9. Stage Manager
+
+**Domain:** Show integrity and operational discipline. The Stage Manager owns the cleanup contract — the guarantee that every show, including interrupted and rehearsal performances, leaves the world exactly as it found it. This role does not have creative authority over any other department; it has veto authority over anything that cannot be safely undone.
+
+**The question this role asks:** If this show is interrupted at any tick, what is left behind, and is that acceptable?
+
+**Authority:** The cleanup contract. Pre-show state recording. Stop-safety awareness. Block modification protocol enforcement. Run sheet operations notes. Issue escalation to the Java review team.
+
+**Knowledgebase:** `docs/departments/stage-manager.kb.md` — What stop-safety covers, what it does not, pre-show state tracking, and the cross-department safety checklist.
+
+---
+
+#### What Stop-Safety Covers
+
+The show's built-in stop safety (`applyStopSafety`) handles the following automatically on any show end (natural, stopped, or interrupted):
+
+| Item | How it's handled |
+|------|-----------------|
+| Named spawned entities with `despawn_on_end: true` | Removed |
+| Player SPECTATOR mode from PLAYER_SPECTATE | Restored to pre-show gamemode |
+| Player flight state from PLAYER_FLIGHT hover | Restored to pre-show flight state |
+| Slow_falling effect after PLAYER_FLIGHT release | Applied transitionally |
+| Show-owned teams (GLOW, TEAM_COLOR) | Unregistered |
+
+---
+
+#### What Stop-Safety Does NOT Cover
+
+These items require explicit cleanup by the authoring team:
+
+| Item | Risk | Mitigation |
+|------|------|-----------|
+| Blocks placed via COMMAND | Permanent world modification | Cleanup COMMAND + run sheet documentation (Set Director protocol) |
+| REDSTONE state changes via REDSTONE event | Redstone circuit left in wrong state | Paired REDSTONE restore event at show end |
+| Entities from CAPTURE_ENTITIES | Released to world, not removed | If capture is destructive, pair with DESPAWN or RELEASE + cleanup |
+| ENTITY_EFFECT on world-resident mobs | Potion effects persist on non-show entities | Use conservative durations; do not apply permanent effects |
+| Named entities without `despawn_on_end: true` | Persists in world | Always use `despawn_on_end: true` unless intentional |
+
+---
+
+#### Pre-Show State Recording
+
+At show invocation (before tick 0), the following are recorded per participant:
+- World location (stored as `home`)
+- Gamemode
+- Flight state
+
+This is the restore baseline. The Stage Manager should know this list and flag any authoring choice that alters player state in a way outside this list (e.g., inventory modification via COMMAND — not currently tracked).
+
+---
+
+#### Rehearsal Discipline
+
+Every show must be safe to interrupt at any tick during rehearsal. This means:
+
+1. COMMAND-based block modifications must have cleanup scripted before the show is used in rehearsal.
+2. Any experimental show section that modifies the world must be tagged in the run sheet: "WORLD MODIFICATION — confirm cleanup before rehearsal."
+3. The Stage Manager reviews the run sheet before any in-game test and confirms cleanup coverage.
+
+---
+
+#### Java Gap Escalation
+
+When any role identifies a gap in show control surface — a thing Minecraft can do that ScaenaShows cannot author via YAML — the Stage Manager escalates it as a GitHub issue on the ScaenaShows repo. Issue format: see Appendix A.
+
+The Java review team audits the control surface regularly. The goal: every meaningful Minecraft API knob should be reachable from YAML. If it isn't, it should be filed.
+
+---
+
+## Appendix A — Java Control Surface Gaps
+
+Known gaps in show control surface are tracked in `ops-inbox.md` at the repo root. When a role identifies a new gap, add it there with sufficient context for the Java review team to pick it up.
+
+The following gaps were identified during the production team authoring session (2026-03-25) and are currently open in the inbox:
+
+---
+
+### Gap 1 — SPAWN_ENTITY: variant and profession fields parsed but not applied
+
+**Label:** `java-gap`, `control-surface`, `wardrobe`
+
+**Description:**
+The `variant:` and `profession:` fields on SPAWN_ENTITY are parsed into `SpawnEntityEvent` (model layer is complete) but `EntityEventExecutor.handleSpawn()` never applies them to the spawned entity. They are silently ignored at runtime.
+
+**Impact:** The Wardrobe & Properties Director and Casting Director cannot use villager professions, cat coat patterns, horse colorings, sheep wool colors, or wolf variants via YAML. These fields appear to work but do nothing.
+
+**Fix scope:** In `EntityEventExecutor.handleSpawn()`, after spawning, cast to the appropriate entity subtype and call the variant API:
+- `Villager` → `setProfession(Villager.Profession.valueOf(e.profession))` and `setVillagerType(Villager.Type.valueOf(e.variant))`
+- `Cat` → `setCatType(Cat.Type.valueOf(e.variant))`
+- `Horse` → `setColor(Horse.Color.valueOf(e.variant))`
+- `Sheep` → `setColor(DyeColor.valueOf(e.variant))`
+- Wolf color (1.21+) → `setVariant(Wolf.Variant.valueOf(e.variant))`
+
+Each subtype needs a guarded cast. Error handling: log and continue if variant value is invalid.
+
+---
+
+### Gap 2 — FACE: yaw only, no pitch control
+
+**Label:** `java-gap`, `control-surface`, `camera`
+
+**Description:**
+`StageEventExecutor.handleFace()` computes yaw (horizontal angle via atan2) but does not set pitch (vertical angle). The entity or player is turned to face the horizontal direction of the target but is not oriented vertically toward it.
+
+**Impact:** Camera Director and Choreographer cannot orient entities or players to look upward or downward at specific targets. Looking up at an aerial performer, overhead fireworks, or an elevated mark requires a PLAYER_TELEPORT workaround that also changes position.
+
+**Fix scope:** Add pitch computation to `handleFace()`:
+```java
+double dy = lookTarget.getY() - from.getY();
+double horizontalDist = Math.sqrt(dx*dx + dz*dz);
+float pitch = (float) (-Math.toDegrees(Math.atan2(dy, horizontalDist)));
+newLoc.setPitch(pitch);
+```
+Apply alongside the existing yaw calculation.
+
+---
+
+### Gap 3 — No BLOCK_PLACE / BLOCK_REMOVE event type
+
+**Label:** `java-gap`, `control-surface`, `set-director`, `enhancement`
+
+**Description:**
+Show-authored set dressing that requires block placement has no show-tracked representation. The only current path is via COMMAND (escape hatch), which has no cleanup contract — blocks placed via COMMAND are not restored if the show is interrupted.
+
+**Impact:** The Set Director cannot use block-based set pieces safely in rehearsal or production shows. Any block modification carries permanent-world risk if the show is interrupted.
+
+**Proposed:** Add `BLOCK_PLACE` and `BLOCK_REMOVE` event types. On `BLOCK_PLACE`, the show records the original block type at the target location and stores it in `RunningShow`. On show end (natural or interrupted), `applyStopSafety` iterates the recorded changes and restores original blocks. This brings block modification inside the cleanup contract.
+
+---
+
+### Gap 4 — No TITLE_CLEAR event
+
+**Label:** `java-gap`, `control-surface`, `voice-director`
+
+**Description:**
+There is no way to explicitly dismiss a TITLE before its `stay` timer expires without firing a new TITLE with empty strings (which resets the fade clock, causing a visual pop). The Voice Director cannot cut a title short cleanly.
+
+**Impact:** Title timing must be designed so early dismissal is never needed, which constrains show authoring.
+
+**Proposed:** Add a `TITLE_CLEAR` point-in-time event that sends a title with empty strings and `fade_in: 0, stay: 0, fade_out: 10` — a clean, fast fade-out. Alternatively, expose `fade_in`, `stay`, `fade_out` as override parameters so any TITLE can act as a clear.
+
+---
+
+### Gap 5 — No smooth yaw rotation (ROTATE event)
+
+**Label:** `java-gap`, `control-surface`, `camera`, `enhancement`
+
+**Description:**
+FACE is instant. There is no way to author a gradual camera pan (smooth yaw rotation without position movement) as a first-class event. Approximating it via rapid PLAYER_TELEPORT sequences is imprecise and not semantically clear.
+
+**Impact:** The Camera Director cannot compose smooth camera turns for cinematic sequences without using PLAYER_SPECTATE on a moving entity as a workaround.
+
+**Proposed:** Add a `ROTATE` bar event:
+```yaml
+type: ROTATE
+target: player | entity:spawned:Name
+yaw: 90.0         # target yaw in degrees; or delta: +90 for relative rotation
+duration_ticks: 40
+```
+Implementation: BukkitRunnable interpolating yaw per tick, similar to `smoothMovePlayer`, but changing only the yaw component without altering XYZ position.
+
+---
+
+*End of production-team.md*

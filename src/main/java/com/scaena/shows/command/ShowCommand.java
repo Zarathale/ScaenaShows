@@ -22,7 +22,7 @@ import java.util.Map;
  * Handles the /show command and all subcommands:
  *   /show list
  *   /show play <showId> <target> [<target2>...] [--follow|--static] [--private] [--scenes]
- *   /show stop <player|@a>
+ *   /show stop [player|@a]   (no arg = stop all)
  *   /show stopall
  *   /show reload
  */
@@ -209,7 +209,7 @@ public final class ShowCommand implements CommandExecutor, TabCompleter {
     }
 
     // ------------------------------------------------------------------
-    // /show stop <player|@a>
+    // /show stop [player|@a]   (no arg = stop all)
     // ------------------------------------------------------------------
     private void cmdStop(CommandSender sender, String[] args) {
         if (!sender.hasPermission("scae.shows.admin")) {
@@ -217,8 +217,10 @@ public final class ShowCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
+        // No target — stop everything
         if (args.length < 2) {
-            sender.sendMessage(MM.deserialize("<red>Usage: /show stop <player|@a></red>"));
+            showManager.stopAll();
+            sender.sendMessage(MM.deserialize("<gold>All shows stopped.</gold>"));
             return;
         }
 
@@ -288,7 +290,7 @@ public final class ShowCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(MM.deserialize("<gold><bold>ScaenaShows v2</bold></gold>"));
         sender.sendMessage(MM.deserialize("  <white>/show list</white> <gray>— list loaded shows</gray>"));
         sender.sendMessage(MM.deserialize("  <white>/show play <showId> [target]</white> <gray>— play a show (defaults to self)</gray>"));
-        sender.sendMessage(MM.deserialize("  <white>/show stop <player|@a></white> <gray>— stop a show</gray>"));
+        sender.sendMessage(MM.deserialize("  <white>/show stop [player|@a]</white> <gray>— stop a show (no arg = stop all)</gray>"));
         sender.sendMessage(MM.deserialize("  <white>/show stopall</white> <gray>— stop all running shows</gray>"));
         sender.sendMessage(MM.deserialize("  <white>/show reload</white> <gray>— hot-reload all YAML</gray>"));
     }
