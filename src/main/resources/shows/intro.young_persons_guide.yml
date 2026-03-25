@@ -1250,7 +1250,7 @@ timeline:
   - type: MESSAGE
     at: 7490
     audience: broadcast
-    message: "<light_purple>[Sprite]</light_purple>  <gray>The stage can lift you, face you, orbit you — and bring you safely home.</gray>"
+    message: "<light_purple>[Sprite]</light_purple>  <gray>The stage can lift you, face you, orbit you — and return you to where you began.</gray>"
 
   # ═══════════════════════════════════════════════════════════════════
   # CHAPTER 6: THE WORLD (T7500–T8300)

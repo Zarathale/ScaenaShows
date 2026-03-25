@@ -1,0 +1,127 @@
+# fx.levitate_surge
+# High-intensity pulsed levitation for emotional peaks. Clearly climbing, not hovering.
+# Intended use: after fx.levitate_pulse, as an escalation during climax moments.
+#
+# Mechanism: amp 1 levitation (2× amp vs pulse) fires every 14 ticks for 12 ticks.
+# Faster rhythm and higher amplitude produce a more aggressive bob than fx.levitate_pulse.
+# Net drift: noticeably upward. Player rises ~10 blocks over the full cue — intentional,
+# since surge moments should read as ascent, not containment.
+#
+# NOTE from calibration (2026-03-24): slow_falling descends at ~2 b/s. At 14t cycles,
+# the 2t gap drops only ~0.2 blocks before the next amp 1 pulse fires — near-continuous
+# push upward. This cue is close to altitude-maintaining at its cycle rate, but still
+# drifts up. For confirmed maintenance, use PLAYER_FLIGHT hover.
+#
+# Duration: 154 ticks (~7.7s) — 11 surge cycles.
+# Do NOT use as an opening cue — player should already be aloft from a prior lift.
+id: fx.levitate_surge
+name: "Levitate Surge"
+description: "High-energy pulsed levitation for peak moments. Faster rhythm, amp 1. Produces visible upward drift."
+duration_ticks: 154
+tags: [intense, ethereal, aloft, peak, ramp, fast, effect-driven, moment, centered, revelation, ceremony]
+
+meta:
+  created_by: Zara
+  created_at: 2026-03-24
+  last_edited_by: Zara
+  last_edited_at: 2026-03-24
+
+timeline:
+  # Baseline slow fall — ~2 b/s descent; mostly masked by 14t pulse frequency
+  - type: EFFECT
+    at: 0
+    effect_id: slow_falling
+    duration_ticks: 800
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  # 11 surge cycles: amp 1 for 12 ticks, gap 2 ticks, repeat every 14 ticks.
+  # Ticks: 0, 14, 28, 42, 56, 70, 84, 98, 112, 126, 140
+  - type: EFFECT
+    at: 0
+    effect_id: levitation
+    duration_ticks: 12
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  - type: EFFECT
+    at: 14
+    effect_id: levitation
+    duration_ticks: 12
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  - type: EFFECT
+    at: 28
+    effect_id: levitation
+    duration_ticks: 12
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  - type: EFFECT
+    at: 42
+    effect_id: levitation
+    duration_ticks: 12
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  - type: EFFECT
+    at: 56
+    effect_id: levitation
+    duration_ticks: 12
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  - type: EFFECT
+    at: 70
+    effect_id: levitation
+    duration_ticks: 12
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  - type: EFFECT
+    at: 84
+    effect_id: levitation
+    duration_ticks: 12
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  - type: EFFECT
+    at: 98
+    effect_id: levitation
+    duration_ticks: 12
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  - type: EFFECT
+    at: 112
+    effect_id: levitation
+    duration_ticks: 12
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  - type: EFFECT
+    at: 126
+    effect_id: levitation
+    duration_ticks: 12
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  - type: EFFECT
+    at: 140
+    effect_id: levitation
+    duration_ticks: 12
+    amplifier: 1
+    hide_particles: false
+    audience: participants

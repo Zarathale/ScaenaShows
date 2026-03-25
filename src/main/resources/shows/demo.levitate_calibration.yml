@@ -1,0 +1,1303 @@
+id: demo.levitate_calibration
+name: "Levitate Calibration"
+description: >
+  Structured calibration run for the levitation/slow_falling system.
+  Four sections, each with a known lift and an 18-second fall timer.
+  Second counts appear on-screen (ACTION_BAR) every tick, with audio
+  pings every second and bell tones at 5s/10s/15s marks.
+  Note the second you land for each section. Report back to Claude.
+  Results drive pulse timing, hover heights, and slow_fall constants
+  for all future authoring.
+portable: true
+default_mode: static
+default_audience: participants
+group_count: 1
+group_strategy: join_order
+
+tags: [test, calibration, aerial, effect-driven]
+
+meta:
+  created_by: Zara
+  created_at: 2026-03-24
+  last_edited_by: Zara
+  last_edited_at: 2026-03-24
+
+bossbar:
+  enabled: true
+  title: "<gray>Levitate Calibration</gray>"
+  color: WHITE
+  overlay: PROGRESS
+  audience: participants
+  fade_in_ticks: 10
+  fade_out_ticks: 20
+
+# Total: ~2340 ticks (~117 seconds / ~2 minutes)
+duration_ticks: 2340
+
+timeline:
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # INTRO
+  # ═══════════════════════════════════════════════════════════════════════
+
+  - at: 0
+    type: WEATHER
+    mode: clear
+
+  - at: 0
+    type: MESSAGE
+    text: "<gray>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</gray>"
+    audience: participants
+
+  - at: 5
+    type: MESSAGE
+    text: "<white><bold>Levitate Calibration</bold></white>"
+    audience: participants
+
+  - at: 10
+    type: MESSAGE
+    text: "<gray>Four sections. Each lifts you, then drops you.</gray>"
+    audience: participants
+
+  - at: 30
+    type: MESSAGE
+    text: "<gray>Watch the timer. Note the second you land.</gray>"
+    audience: participants
+
+  - at: 50
+    type: MESSAGE
+    text: "<gray>Pings every second. Bell at 5s, 10s, 15s.</gray>"
+    audience: participants
+
+  - at: 70
+    type: MESSAGE
+    text: "<gray>Open the run sheet. Four data fields to fill.</gray>"
+    audience: participants
+
+  - at: 90
+    type: MESSAGE
+    text: "<gray>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</gray>"
+    audience: participants
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # SECTION A: 5 pulses × amp 0, 20t each — minimal lift
+  # Expected: ~5 blocks. Expected fall time: fast (probably 3–8s).
+  # ═══════════════════════════════════════════════════════════════════════
+
+  - at: 110
+    type: BOSSBAR
+    title: "<aqua>A — 5 pulses, amp 0  |  landing second → ?</aqua>"
+    color: BLUE
+    overlay: NOTCHED_6
+    duration_ticks: 500
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+
+  - at: 110
+    type: MESSAGE
+    text: "<aqua>[ A ] 5 pulses, amp 0 (20t each). Lift begins.</aqua>"
+    audience: participants
+
+  # 5 pulses: 110, 132, 154, 176, 198
+  - at: 110
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: false
+    audience: participants
+
+  - at: 132
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: false
+    audience: participants
+
+  - at: 154
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: false
+    audience: participants
+
+  - at: 176
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: false
+    audience: participants
+
+  - at: 198
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: false
+    audience: participants
+
+  # Drop timer starts at 220. slow_falling from 215 so it's active at apex.
+  - at: 215
+    type: EFFECT
+    effect_id: slow_falling
+    duration_ticks: 2000
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - at: 220
+    type: MESSAGE
+    text: "<aqua>[ A ] DROPPING — note your landing second ↓</aqua>"
+    audience: participants
+
+  # Drop timer: T=220 is second 0. Pings at 220, 240, 260... (every 20 ticks = 1 second)
+  # Audio: pling every second; bell at 5s (320), 10s (420), 15s (520)
+  - at: 220
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓  0s</aqua>"
+    audience: participants
+  - at: 220
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 240
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓  1s</aqua>"
+    audience: participants
+  - at: 240
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 260
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓  2s</aqua>"
+    audience: participants
+  - at: 260
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 280
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓  3s</aqua>"
+    audience: participants
+  - at: 280
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 300
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓  4s</aqua>"
+    audience: participants
+  - at: 300
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 320
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓  5s ◆</aqua>"
+    audience: participants
+  - at: 320
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 1.0
+    pitch: 1.2
+    audience: participants
+
+  - at: 340
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓  6s</aqua>"
+    audience: participants
+  - at: 340
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 360
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓  7s</aqua>"
+    audience: participants
+  - at: 360
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 380
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓  8s</aqua>"
+    audience: participants
+  - at: 380
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 400
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓  9s</aqua>"
+    audience: participants
+  - at: 400
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 420
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓ 10s ◆</aqua>"
+    audience: participants
+  - at: 420
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 1.0
+    pitch: 1.2
+    audience: participants
+
+  - at: 440
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓ 11s</aqua>"
+    audience: participants
+  - at: 440
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 460
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓ 12s</aqua>"
+    audience: participants
+  - at: 460
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 480
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓ 13s</aqua>"
+    audience: participants
+  - at: 480
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 500
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓ 14s</aqua>"
+    audience: participants
+  - at: 500
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 520
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓ 15s ◆</aqua>"
+    audience: participants
+  - at: 520
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 1.0
+    pitch: 1.2
+    audience: participants
+
+  - at: 540
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓ 16s</aqua>"
+    audience: participants
+  - at: 540
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.4
+    pitch: 1.0
+    audience: participants
+
+  - at: 560
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓ 17s</aqua>"
+    audience: participants
+  - at: 560
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.4
+    pitch: 1.0
+    audience: participants
+
+  - at: 580
+    type: ACTION_BAR
+    text: "<aqua>[ A ] ↓ 18s — end of timer</aqua>"
+    audience: participants
+
+  - at: 590
+    type: MESSAGE
+    text: "<aqua>[ A ] Done. Note your landing second.</aqua>"
+    audience: participants
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # SECTION B: 5 pulses × amp 1, 20t each — moderate lift
+  # Expected: ~10-15 blocks. Expected fall time: ~8–15s.
+  # ═══════════════════════════════════════════════════════════════════════
+
+  - at: 630
+    type: BOSSBAR
+    title: "<yellow>B — 5 pulses, amp 1  |  landing second → ?</yellow>"
+    color: YELLOW
+    overlay: NOTCHED_6
+    duration_ticks: 500
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+
+  - at: 630
+    type: MESSAGE
+    text: "<yellow>[ B ] 5 pulses, amp 1 (20t each). Lift begins.</yellow>"
+    audience: participants
+
+  # 5 pulses: 630, 652, 674, 696, 718
+  - at: 630
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  - at: 652
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  - at: 674
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  - at: 696
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  - at: 718
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: false
+    audience: participants
+
+  - at: 733
+    type: EFFECT
+    effect_id: slow_falling
+    duration_ticks: 2000
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - at: 740
+    type: MESSAGE
+    text: "<yellow>[ B ] DROPPING — note your landing second ↓</yellow>"
+    audience: participants
+
+  # Section B drop timer: T=740 is 0s
+  - at: 740
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓  0s</yellow>"
+    audience: participants
+  - at: 740
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 760
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓  1s</yellow>"
+    audience: participants
+  - at: 760
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 780
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓  2s</yellow>"
+    audience: participants
+  - at: 780
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 800
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓  3s</yellow>"
+    audience: participants
+  - at: 800
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 820
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓  4s</yellow>"
+    audience: participants
+  - at: 820
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 840
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓  5s ◆</yellow>"
+    audience: participants
+  - at: 840
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 1.0
+    pitch: 1.2
+    audience: participants
+
+  - at: 860
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓  6s</yellow>"
+    audience: participants
+  - at: 860
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 880
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓  7s</yellow>"
+    audience: participants
+  - at: 880
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 900
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓  8s</yellow>"
+    audience: participants
+  - at: 900
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 920
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓  9s</yellow>"
+    audience: participants
+  - at: 920
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 940
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓ 10s ◆</yellow>"
+    audience: participants
+  - at: 940
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 1.0
+    pitch: 1.2
+    audience: participants
+
+  - at: 960
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓ 11s</yellow>"
+    audience: participants
+  - at: 960
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 980
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓ 12s</yellow>"
+    audience: participants
+  - at: 980
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1000
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓ 13s</yellow>"
+    audience: participants
+  - at: 1000
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1020
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓ 14s</yellow>"
+    audience: participants
+  - at: 1020
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1040
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓ 15s ◆</yellow>"
+    audience: participants
+  - at: 1040
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 1.0
+    pitch: 1.2
+    audience: participants
+
+  - at: 1060
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓ 16s</yellow>"
+    audience: participants
+  - at: 1060
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.4
+    pitch: 1.0
+    audience: participants
+
+  - at: 1080
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓ 17s</yellow>"
+    audience: participants
+  - at: 1080
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.4
+    pitch: 1.0
+    audience: participants
+
+  - at: 1100
+    type: ACTION_BAR
+    text: "<yellow>[ B ] ↓ 18s — end of timer</yellow>"
+    audience: participants
+
+  - at: 1110
+    type: MESSAGE
+    text: "<yellow>[ B ] Done. Note your landing second.</yellow>"
+    audience: participants
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # SECTION C: 5 pulses × amp 2, 20t each — strong lift
+  # Expected: ~20-30 blocks. Expected fall time: ~15–30s.
+  # ═══════════════════════════════════════════════════════════════════════
+
+  - at: 1150
+    type: BOSSBAR
+    title: "<gold>C — 5 pulses, amp 2  |  landing second → ?</gold>"
+    color: YELLOW
+    overlay: NOTCHED_6
+    duration_ticks: 530
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+
+  - at: 1150
+    type: MESSAGE
+    text: "<gold>[ C ] 5 pulses, amp 2 (20t each). Lift begins.</gold>"
+    audience: participants
+
+  # 5 pulses: 1150, 1172, 1194, 1216, 1238
+  - at: 1150
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 2
+    hide_particles: false
+    audience: participants
+
+  - at: 1172
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 2
+    hide_particles: false
+    audience: participants
+
+  - at: 1194
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 2
+    hide_particles: false
+    audience: participants
+
+  - at: 1216
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 2
+    hide_particles: false
+    audience: participants
+
+  - at: 1238
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 2
+    hide_particles: false
+    audience: participants
+
+  - at: 1253
+    type: EFFECT
+    effect_id: slow_falling
+    duration_ticks: 2000
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - at: 1260
+    type: MESSAGE
+    text: "<gold>[ C ] DROPPING — note your landing second ↓</gold>"
+    audience: participants
+
+  # Section C drop timer: T=1260 is 0s
+  - at: 1260
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓  0s</gold>"
+    audience: participants
+  - at: 1260
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1280
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓  1s</gold>"
+    audience: participants
+  - at: 1280
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1300
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓  2s</gold>"
+    audience: participants
+  - at: 1300
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1320
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓  3s</gold>"
+    audience: participants
+  - at: 1320
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1340
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓  4s</gold>"
+    audience: participants
+  - at: 1340
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1360
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓  5s ◆</gold>"
+    audience: participants
+  - at: 1360
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 1.0
+    pitch: 1.2
+    audience: participants
+
+  - at: 1380
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓  6s</gold>"
+    audience: participants
+  - at: 1380
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1400
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓  7s</gold>"
+    audience: participants
+  - at: 1400
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1420
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓  8s</gold>"
+    audience: participants
+  - at: 1420
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1440
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓  9s</gold>"
+    audience: participants
+  - at: 1440
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1460
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓ 10s ◆</gold>"
+    audience: participants
+  - at: 1460
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 1.0
+    pitch: 1.2
+    audience: participants
+
+  - at: 1480
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓ 11s</gold>"
+    audience: participants
+  - at: 1480
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1500
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓ 12s</gold>"
+    audience: participants
+  - at: 1500
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1520
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓ 13s</gold>"
+    audience: participants
+  - at: 1520
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1540
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓ 14s</gold>"
+    audience: participants
+  - at: 1540
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1560
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓ 15s ◆</gold>"
+    audience: participants
+  - at: 1560
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 1.0
+    pitch: 1.2
+    audience: participants
+
+  - at: 1580
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓ 16s</gold>"
+    audience: participants
+  - at: 1580
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.4
+    pitch: 1.0
+    audience: participants
+
+  - at: 1600
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓ 17s</gold>"
+    audience: participants
+  - at: 1600
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.4
+    pitch: 1.0
+    audience: participants
+
+  - at: 1620
+    type: ACTION_BAR
+    text: "<gold>[ C ] ↓ 18s — end of timer</gold>"
+    audience: participants
+
+  - at: 1630
+    type: MESSAGE
+    text: "<gold>[ C ] Done. Note your landing second.</gold>"
+    audience: participants
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # SECTION D: Single amp 9 lift for 120t — maximum achievable altitude
+  # This is the amp 9 lift from demo.flight_modes S1.
+  # Expected: ~40-60 blocks. Fall time likely >18s — timer runs out first.
+  # IF you're still airborne at 18s, note ">18s".
+  # ═══════════════════════════════════════════════════════════════════════
+
+  - at: 1680
+    type: BOSSBAR
+    title: "<red>D — amp 9 for 120t  |  landing second → ?</red>"
+    color: RED
+    overlay: NOTCHED_6
+    duration_ticks: 600
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+
+  - at: 1680
+    type: MESSAGE
+    text: "<red>[ D ] amp 9 levitation for 120 ticks. Max lift. Lift begins.</red>"
+    audience: participants
+
+  - at: 1690
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 120
+    amplifier: 9
+    hide_particles: false
+    audience: participants
+
+  - at: 1800
+    type: EFFECT
+    effect_id: slow_falling
+    duration_ticks: 2000
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - at: 1820
+    type: MESSAGE
+    text: "<red>[ D ] DROPPING — note your landing second ↓</red>"
+    audience: participants
+
+  # Section D drop timer: T=1820 is 0s. Extended to 20 seconds (some may not land before 18s).
+  - at: 1820
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓  0s</red>"
+    audience: participants
+  - at: 1820
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1840
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓  1s</red>"
+    audience: participants
+  - at: 1840
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1860
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓  2s</red>"
+    audience: participants
+  - at: 1860
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1880
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓  3s</red>"
+    audience: participants
+  - at: 1880
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1900
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓  4s</red>"
+    audience: participants
+  - at: 1900
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1920
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓  5s ◆</red>"
+    audience: participants
+  - at: 1920
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 1.0
+    pitch: 1.2
+    audience: participants
+
+  - at: 1940
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓  6s</red>"
+    audience: participants
+  - at: 1940
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1960
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓  7s</red>"
+    audience: participants
+  - at: 1960
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 1980
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓  8s</red>"
+    audience: participants
+  - at: 1980
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 2000
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓  9s</red>"
+    audience: participants
+  - at: 2000
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 2020
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓ 10s ◆</red>"
+    audience: participants
+  - at: 2020
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 1.0
+    pitch: 1.2
+    audience: participants
+
+  - at: 2040
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓ 11s</red>"
+    audience: participants
+  - at: 2040
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 2060
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓ 12s</red>"
+    audience: participants
+  - at: 2060
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 2080
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓ 13s</red>"
+    audience: participants
+  - at: 2080
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 2100
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓ 14s</red>"
+    audience: participants
+  - at: 2100
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.6
+    pitch: 1.0
+    audience: participants
+
+  - at: 2120
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓ 15s ◆</red>"
+    audience: participants
+  - at: 2120
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 1.0
+    pitch: 1.2
+    audience: participants
+
+  - at: 2140
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓ 16s</red>"
+    audience: participants
+  - at: 2140
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.4
+    pitch: 1.0
+    audience: participants
+
+  - at: 2160
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓ 17s</red>"
+    audience: participants
+  - at: 2160
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.4
+    pitch: 1.0
+    audience: participants
+
+  - at: 2180
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓ 18s ◆</red>"
+    audience: participants
+  - at: 2180
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 1.0
+    pitch: 1.0
+    audience: participants
+
+  - at: 2200
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓ 19s  (still airborne = note >18s)</red>"
+    audience: participants
+  - at: 2200
+    type: SOUND
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.3
+    pitch: 1.0
+    audience: participants
+
+  - at: 2220
+    type: ACTION_BAR
+    text: "<red>[ D ] ↓ 20s — end of timer</red>"
+    audience: participants
+
+  - at: 2230
+    type: MESSAGE
+    text: "<red>[ D ] Done. Note your landing second (or >18s).</red>"
+    audience: participants
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # CODA
+  # ═══════════════════════════════════════════════════════════════════════
+
+  - at: 2270
+    type: MESSAGE
+    text: "<gray>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</gray>"
+    audience: participants
+
+  - at: 2280
+    type: MESSAGE
+    text: "<white>Calibration complete. Four numbers to report:</white>"
+    audience: participants
+
+  - at: 2290
+    type: MESSAGE
+    text: "<aqua>A</aqua> <yellow>B</yellow> <gold>C</gold> <red>D</red>  — share these with Claude."
+    audience: participants
+
+  - at: 2310
+    type: MESSAGE
+    text: "<gray>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</gray>"
+    audience: participants

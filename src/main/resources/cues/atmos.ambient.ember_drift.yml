@@ -2,13 +2,15 @@
 # Slow-drifting end_rod particles that read as floating embers or arcane motes.
 # Duration: ~5 seconds of continuous gentle drift.
 # Use as background atmosphere during quiet or transitional moments.
+# v3: count 5→8 (denser field, more present under varied conditions)
+#     y offset [2.5, 0.5, 2.5] → [2.5, 1.5, 2.5] (taller spread, visible to elevated player)
 id: atmos.ambient.ember_drift
 tags: [dreamy, ethereal, serene, low, still, breath, transition, ambient, particle-bed, silent, moment, enveloping, subtle]
 timeline:
   - type: PARTICLE
     at: 0
     particle_id: "minecraft:end_rod"
-    count: 2
+    count: 8
     offset: [2.5, 1.5, 2.5]
     extra: 0.02
     duration_ticks: 100

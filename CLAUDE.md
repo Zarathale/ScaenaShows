@@ -27,7 +27,7 @@
 
 ## Session State — 2026-03-24
 
-**Where we stopped:** Cue library expanded and demo show built. Ready for first in-game test.
+**Where we stopped:** Archetype sampler R6 complete. Calibration v3 debrief done. Ready to build 2.8.1 and run R6.
 
 **What was accomplished this session:**
 - `docs/showsprite.context.md` — finalized and stable ✅
@@ -35,14 +35,45 @@
 - Cue library: **8 → 25 production cues**
   - All 8 original cues tagged retroactively
   - New families: `coda.*` (4), `ramp.*` (4), `grief.*` (4), `world.*` (4), `fx.lift_to_height`
-- `demo.archetype_sampler` show — built, **not yet deployed or tested**
-- `docs/demo.archetype_sampler.runsheet.md` — run sheet ready for second-screen use
+- `demo.archetype_sampler` — first in-game test complete (R4). Consolidated feedback debrief applied.
+- **Revision 5 (2026-03-24):**
+  - Per-cue BOSSBAR events (C1–C13), color-coded by mood, progress bar fills over section
+  - WEATHER clear forced at T=0
+  - Levitation now primary staging: C2 → C3/C4 elevated → C9 burst → C11 pre-lift → C12 full lift
+  - `atmos.ambient.ember_drift` v3: particle count 5→8, y-spread taller
+  - `mood.arrival` v2: dragon growl → rolling distant thunder (lower pitch)
+  - C11: "Look up." → "[Sprite] The ceiling opens." + levitation begins at section start
+  - All ↳ section-label messages removed; PRE message shortened with version ID
+- `docs/demo.archetype_sampler.runsheet.md` — updated for Revision 5
+- **Aerial calibration work (v2.8.0):**
+  - `PLAYER_FLIGHT` Java event type added (EventType, PlayerFlightEvent, PlayerEventExecutor, RunningShow, EventParser, ExecutorRegistry, ShowManager applyStopSafety)
+  - `fx.levitate_pulse.yml` and `fx.levitate_surge.yml` — new cues (rhythmic pulse patterns)
+  - `demo.flight_modes.yml` — 5-section flight test show + run sheet
+  - `demo.levitate_calibration.yml` — first calibration show (v1, run and data collected)
+  - **Calibration v1 findings:** slow_falling ≈ 2 b/s (much faster than assumed); 5 pulses of amp 0–2 all cluster at ~2–3s; only amp 9 burst distinct. Pulse aesthetics strong.
+  - `demo.levitate_calibration_2.yml` — redesigned 6-section wide-range calibration (A=1 pulse, B=amp1×60t, C=amp3×120t, D=amp9×240t, E=20 rhythmic pulses, F=40 rapid micro-pulses)
+  - `docs/demo.levitate_calibration_2.runsheet.md` — run sheet with 6-row data table and derived-constant math
+  - `fx.levitate_pulse.yml` and `fx.levitate_surge.yml` — header comments updated to reflect actual physics (climb, not maintenance; slow_falling ~2 b/s)
+  - `demo.levitate_calibration_3.yml` — 8-section quasi-hover search (4740t ~4min); **confirmed hover at Sec 2 (A=0 lev=20t gap=8t)**
+  - `docs/demo.levitate_calibration_3.runsheet.md` — run sheet with balance-point derivation math
+  - **Calibration v3 findings (debrief 2026-03-24):**
+    - Sec 2 (A=0 lev=20t gap=8t, cycle=28t) = **clean hover** ✅
+    - Sec 8 (A=1 lev=20t gap=24t, cycle=44t) = slow controlled descent — "blood pressure release" feel, liked aesthetically
+    - Confirmed: HOVER=28t cycle, CLIMB=24t cycle, RELEASE=44t cycle
+  - **`demo.archetype_sampler` R6 (this session, v2.8.1):**
+    - Full aerial rewrite — player aloft from C2 through end of show
+    - 68 inline levitation events across 8 sections using calibrated patterns
+    - C9 redesigned: player descends THROUGH fireworks from above via pressure-release
+    - C9 firework y_offsets redesigned (25/18/10/22/14) to wrap around 15-20b altitude
+    - One persistent slow_falling (3200t from T=380) as whole-show baseline
+  - `build.gradle.kts` → **v2.8.1** (show-content patch)
 
 **Immediate next step (other machine):**
-Deploy the demo show and run it. See "Resuming on Another Machine" below.
+Build 2.8.1 and run `demo.archetype_sampler` (R6). `/show play demo.archetype_sampler`
+Key observations: Is the hover stable through each section? Does C9 feel like being inside/descending through the fireworks? Does C7 lift feel dramatic? Overall: does being aloft the whole show change the emotional arc?
 
-**After the test run:**
-Debrief notes by cue number (C1–C12) with Claude. Revise what doesn't land. Then continue cue library expansion with the remaining families (peak, celebration, wonder, tension, breath).
+**After R6 debrief:**
+Author `fx.hover.sustained` and `fx.hover.descend` reusable cues using calibrated parameters. Retune `fx.levitate_pulse` and `fx.levitate_surge`. Begin `intro.young_persons_guide` voice pass.
 
 > Alan's decision: bypass Phases 2–6 (the web interface). Claude can already generate shows
 > directly as YAML. The goal is to get to high-quality, emotionally resonant show authoring
@@ -179,7 +210,7 @@ Do not reopen these without Alan.
 
 ## Versioning Policy
 
-**Current version:** `2.4.0` (as of 2026-03-24)
+**Current version:** `2.8.1` (as of 2026-03-24)
 **Version file:** `build.gradle.kts` — the `version = "x.y.z"` line
 
 ### Rules Claude must follow
@@ -202,6 +233,10 @@ Examples: `cue-library-preview`, `grief-family`, `young-persons-rewrite`, `bugfi
 2. Update the comment in `shadowJar { archiveClassifier... }` to match
 3. Update the "Current version" line above in this section
 4. Mention the new version and JAR filename when giving Alan the build command
+
+**`plugin.yml` is automatic** — do NOT edit its `version:` field manually.
+Gradle's `processResources` block injects `${version}` from `build.gradle.kts` at build time.
+The startup banner reads from `plugin.yml`, so it stays in sync with no extra steps.
 
 **If no bump is needed** (e.g. Alan is rebuilding the same content to verify a fix without any file changes), say so explicitly: *"No version change needed — content is identical to the last build."*
 

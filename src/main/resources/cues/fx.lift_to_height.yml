@@ -1,7 +1,12 @@
 # fx.lift_to_height
-# Lifts the player ~6-8 blocks and keeps them airborne for the next 30 seconds.
-# The descent is NOT part of this cue — slow_falling carries them through whatever follows.
-# Designed to precede a closing or sunrise cue: player drifts down during that sequence.
+# Lifts the player ~20-25 blocks and carries them on slow_falling for the next 40 seconds.
+#
+# Ascent: Levitation III (amplifier 2) for 120 ticks (~6s) — reaches visible altitude.
+# Descent: slow_falling holds them for 40 seconds after peak.
+#          The show's narration fires DURING the descent; the show can end
+#          while the player is still airborne — stop safety extends slow_falling further.
+#
+# Intended use: invoke ~180 ticks before the first closing narration line.
 # Do NOT pair with fx.levitate_and_drift — use one or the other per show.
 id: fx.lift_to_height
 tags: [dreamy, ethereal, reverent, medium, slow, transition, effect-driven, sound-accented, moment, single, centered, subtle, revelation, ceremony]
@@ -14,28 +19,29 @@ timeline:
     volume: 0.55
     pitch: 0.60
 
-  # Levitation II for 60 ticks (~3s): lifts ~6-8 blocks
+  # Levitation III for 120 ticks (~6s): lifts ~20-25 blocks
   - type: EFFECT
     at: 2
     effect_id: levitation
-    duration_ticks: 60
-    amplifier: 1
+    duration_ticks: 120
+    amplifier: 2
     hide_particles: false
     audience: participants
 
   # Slow_falling kicks in just before levitation expires — player glides at peak
-  # Duration: 600 ticks (30s) — enough to carry through an entire closing sequence
+  # Duration: 800 ticks (40s) — enough to carry through the entire closing narration
+  # and into natural landing after the show formally ends
   - type: EFFECT
-    at: 55
+    at: 115
     effect_id: slow_falling
-    duration_ticks: 600
+    duration_ticks: 800
     amplifier: 0
     hide_particles: true
     audience: participants
 
   # A soft chime as the player reaches peak height — the top of the arc
   - type: SOUND
-    at: 58
+    at: 118
     sound_id: "minecraft:block.amethyst_block.hit"
     category: master
     volume: 0.40

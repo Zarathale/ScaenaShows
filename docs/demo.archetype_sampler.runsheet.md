@@ -1,230 +1,312 @@
-# ARCHETYPE SAMPLER — Run Sheet
-## `/show play demo.archetype_sampler`  ·  ~2:25 runtime
+# ARCHETYPE SAMPLER — Run Sheet  ·  Revision 5
+## `/show play demo.archetype_sampler`  ·  ~2:52 runtime  ·  13 cues
 
 Use this on a second screen while watching in-game.
-Reference cues by number in notes. ("C3 — warm/cool contrast not legible.")
+Reference cues by number in notes (e.g. "C2 — couldn't see the particles until I rose into them").
+Show ends while you're still airborne — you land on your own after the stage goes quiet.
 
 ---
 
-## CUE 1  ·  0:00  ·  HOUSELIGHTS DOWN
+## Key Changes in Revision 5
 
-**Cue ID:** `world.time.night` (3-step inline sequence)
-**Tags:** `standalone` `transition` `silent` `mysterious` `low`
+- **Boss bar** — per-cue progress bar replaces static header. Shows `C# — Cue Name · cue.id.path`. Color reflects mood. Progress fills over section duration.
+- **Weather** — clear forced at T=0. Rain was killing particle visibility and muddying sound design.
+- **Levitation as primary staging** — you are moved through vertical space across the show:
+  - C2: gentle rise ~7 blocks + slow drift down through C3/C4
+  - C9: brief burst into daylight fireworks (existing)
+  - C11: fresh rise ~7 blocks into Wonder Single firework space
+  - C12: full finale lift to ~20–25 blocks
+- **C7**: dragon growl replaced with rolling distant thunder (lower pitch, quieter second hit)
+- **C11**: "Look up." replaced with "[Sprite] The ceiling opens." — player is being placed into the space; no instruction needed
+- **All ↳ section labels removed** — boss bar handles identity and context now
 
-**Intention:** The lights are literally going down — the same way houselights fade before a theatre performance begins. The sky change is the signal that something intentional is starting. The three-step sequence (dusk → deep dusk → night) is meant to feel like gradual anticipation, not an instant toggle.
+---
 
-**Function:** Every firework show should ideally run at night. This opening also establishes TIME_OF_DAY as a legitimate staging tool — a set change, not just a sky setting.
+## C1  ·  0:00  ·  HOUSELIGHTS DOWN
 
-**Mechanics:**
-- 0:00 — Sky shifts to dusk (12500)
-- 0:04 — Chat: `...`
-- 0:08 — Sky shifts to deep dusk (15000)
-- 0:10 — Chat: *"The lights are going down."*
-- 0:14 — Sky shifts to full night (18000)
-- 0:16 — Chat: *"We begin."*
+**Boss bar:** `C1 — Houselights Down` (WHITE, 340t / ~17s)
 
-**Watch:** Does 3 steps feel like anticipation or just fussiness? Is the pacing between steps right — too fast, too slow? Do the messages add to the ritual or interrupt it? Would 2 steps + 2 messages work better?
+**Type:** PRE environment + sky snap + ritual messages
+
+**What happens:**
+- 0:00 — Music killed. Weather forced clear. Sky snaps to dusk (13500).
+- 0:00 — Chat: `demo.archetype_sampler v5  ·  minimap off — Xaero's: F8`
+- 0:01 — Chat: `...`
+- 0:06 — Chat: *"The lights are going down."*
+- 0:14 — Chat: *"We begin."*
+
+**Watch:**
+- Does the version line + minimap prompt feel skimmable? Is it actionable in time (you have ~6 seconds before the first Sprite line)?
+- Single sky snap — does it feel like a deliberate theatrical choice, or abrupt?
+- Was there rain when the show started? If so, did the WEATHER clear work? If it was already clear, note that too.
 
 **Notes:**
 
 ---
 
-## CUE 2  ·  0:23  ·  EMBER DRIFT
+## C2  ·  0:19  ·  EMBER DRIFT  *(three-voice + gentle levitation)*
 
-**Cue ID:** `atmos.ambient.ember_drift`
-**Tags:** `particle-bed` `silent` `still` `dreamy` `ethereal` `serene` `low` `breath` `transition` `ambient` `enveloping` `subtle` `moment`
+**Cue ID:** `atmos.ambient.ember_drift` (fired three times)
+**Boss bar:** `C2 — Ember Drift · atmos.ambient.ember_drift` (WHITE, 460t / ~23s)
+**Tags:** `particle-bed` `still` `breath` `dreamy` `elevated`
 
-**Intention:** The room is alive. End_rod particles drifting at body height should feel like embers or arcane motes — persistent, quiet, almost not-there. The goal is atmosphere as a *bed*, not as an event. If it reads correctly, you barely notice it as a discrete thing — it just makes the space feel inhabited.
+**What happens:**
+- **Beat 1** (0:19): MESSAGE alone — *"Something settles around you."* — silence as particles arrive
+- **Beat 1** (0:23): Levitation begins. You rise ~7 blocks over the next 3 seconds.
+- **Beat 2** (0:24): ACTION_BAR alone — *"let it settle."* — 4 seconds, nothing else competing
+- **Beat 3** (0:28): MESSAGE — *"Nothing here is asking for your attention."* — then ACTION_BAR — *"you noticed anyway."*
+- **Beat 4** (0:34): CUE only. Deliberate silence.
+- **Beat 5** (0:37): MESSAGE — *"Stay as long as you need."*
+- (0:42): C3 begins — you are still elevated and slowly drifting down
 
-**Function:** An atmosphere layer meant to run *under* other things, not stand alone. Demonstrated solo here specifically to test whether it has enough presence on its own, or whether it only works in combination. Also tests whether the particle-bed concept reads as intended at all.
+**Staging note:** The slow_falling from this rise carries you through C3 and C4. You'll be elevated (~7 blocks descending to ~3 blocks) while the warm and cool light cues fire. This is intentional.
 
-**Mechanics:** End_rod particles, count 2, at 2.5-block spread, repeat every 10 ticks for 100 ticks (~5 seconds). No sound.
-
-**Watch:** Does it read as atmosphere, or visual noise? Does it feel like something that should be running under other events, or is it too present to be a background layer? Does it hold interest for the full 5 seconds, or does it feel long?
+**Watch:**
+- Do you notice the levitation beginning during the ember drift? Does the upward drift feel like part of the atmosphere, or like an imposed effect?
+- Are the particles denser and more present than before (count 8, taller spread)? Do you see them from both ground-level and elevated positions?
+- Does the ACTION_BAR register at the bottom of screen? Note whether you saw each one.
+- Beat 4 silence — does it feel like a deliberate breath, or like something was supposed to happen?
+- Does the three-voice text feel layered, or cluttered?
 
 **Notes:**
 
 ---
 
-## CUE 3  ·  0:36  ·  WARM LIGHT WASH
+## C3  ·  0:42  ·  WARM LIGHT WASH  *(elevated)*
 
 **Cue ID:** `atmos.lights.warm_bloom`
-**Tags:** `fireworks-light` `warm` `intimate` `tender` `low` `slow` `breath` `transition` `flash` `scatter` `radial` `subtle` `ambient`
+**Boss bar:** `C3 — Warm Light · atmos.lights.warm_bloom` (YELLOW, 220t / ~11s)
+**Tags:** `fireworks-light` `warm` `intimate` `low` `elevated`
 
-**Intention:** Candlelight or torchlight blooming across a stage — warm, low-energy fireworks at surface level reading as *light*, not as celebration. The goal is a tonal shift in the room's palette: from cool night to warm presence. This is not a fireworks event; it's a lighting state.
+**What happens:**
+- 0:42 — Chat: *"Warmth at ground level."*
+- 0:46 — CUE fires. 3 warm fireworks, surface level +1.
+- 0:46 — Soft guitar note at low volume (new in R5 — helps the light shift register)
 
-**Function:** One half of the warm/cool palette pair. The primary question here is whether low-count, low-altitude fireworks can function as *atmosphere* rather than *event* — whether they register as "the room got warmer" rather than "some fireworks went off."
+**Staging note:** You are elevated from the C2 lift (~6-7 blocks when C3 starts). The warm light blooms below and around you.
 
-**Mechanics:** 3 warm-toned FIREWORK_RANDOM (preset `scae_star_warm`), radius 14, surface level +1. Instant, no sound.
-
-**Watch:** Does it read as warm light or as a small fireworks display? Is 3 the right count — does it need more to establish a lighting state, or is the sparseness intentional? Does the effect persist long enough visually to register as "mood," or does it disappear before it lands?
+**Watch:**
+- From elevation, does the warm bloom read as environmental light or as small fireworks at your feet?
+- Does the guitar accent help the light shift register, or is it inaudible/unnecessary?
+- Has the staging change (elevated vs. grounded) changed how this cue reads compared to R4?
 
 **Notes:**
 
 ---
 
-## CUE 4  ·  0:47  ·  COOL LIGHT WASH
+## C4  ·  0:53  ·  COOL LIGHT WASH  *(elevated descent)*
 
 **Cue ID:** `atmos.lights.cool_bloom`
-**Tags:** `fireworks-light` `icy` `mysterious` `melancholic` `ethereal` `low` `slow` `breath` `transition` `flash` `scatter` `radial` `subtle` `ambient`
+**Boss bar:** `C4 — Cool Light · atmos.lights.cool_bloom` (BLUE, 220t / ~11s)
+**Tags:** `fireworks-light` `icy` `mysterious` `low` `elevated descent`
 
-**Intention:** Moonlight, digital ambiance, cold theatre blue — the same lighting-state concept as Cue 3, but shifting the room's emotional register to something introspective, melancholy, or mysterious. The two-event structure (wide wave-star scatter, then tighter glow-ball cluster) is meant to feel like light arriving in two layers.
+**What happens:**
+- 0:53 — Chat: *"The room shifts register."*
+- 0:57 — CUE fires. Wide scatter (radius 14) then tight glow cluster (radius 7).
+- 0:57 — Soft harp note at low volume (new in R5 — contrasts with C3's guitar)
 
-**Function:** The other half of the warm/cool palette pair. The critical question: is the contrast between Cues 3 and 4 *emotionally* legible in-game, or do both just read as "fireworks that look different"? If the contrast isn't readable, the palette tool doesn't work.
+**Staging note:** You're still elevated (~3-5 blocks) and descending. The slow_falling from C2 expires around mid-C5 (~1:15).
 
-**Mechanics:** 3 cool FIREWORK_RANDOM wide (radius 14) then 2 glow-ball tight (radius 7), ~0.5s apart. No sound.
-
-**Watch:** Is the shift from warm (Cue 3) to cool noticeably different in register — does it feel like *the room changed mood*? Or does it just feel like "different colored fireworks"? Does the 2-layer structure (wide then tight) add depth?
+**Watch:**
+- Is the warm-to-cool shift emotionally legible from elevation? Does it feel like the room changed, or like different-colored effects below you?
+- Did the harp accent land differently from the guitar in C3? Together, do they create a warm/cool contrast in sound as well as visuals?
 
 **Notes:**
 
 ---
 
-## CUE 5  ·  0:59  ·  CAVE SOUND
+## C5  ·  1:04  ·  CAVE SOUND  *(near ground)*
 
 **Cue ID:** `grief.sound.cave`
-**Tags:** `sound-driven` `melancholic` `mysterious` `tense` `low` `still` `breath` `transition` `beat` `centered` `subtle` `ambient`
+**Boss bar:** `C5 — Cave Sound · grief.sound.cave` (PURPLE, 200t / ~10s)
+**Tags:** `sound-driven` `melancholic` `mysterious` `no visuals`
 
-**Intention:** Cave ambient at 0.55 pitch is grief. This is the line directly from `showsprite.context.md` — the idea that a specific sound at a specific pitch establishes an emotional register without any visual support. The pitch shift is what matters: at 0.55 instead of 1.0, it becomes slow and subterranean, something heavy underneath the world.
+**What happens:**
+- 1:04 — Chat: *"Nothing to see here."*
+- 1:07 — Chat: *"Listen."*
+- 1:09 — CUE: cave ambient, volume 0.60, pitch 0.55 (low, slow, subterranean)
 
-**Function:** Tests whether sound-only cues have enough presence to be compositionally useful. Also the first representative of the grief/melancholy register — a palette the library has almost nothing in. Two Sprite messages ("Nothing to see here." / "Listen.") prime the attention before the sound fires.
+**Staging note:** You may still be slightly elevated (slow_falling expires ~1:15), but near ground. Weather is clear and music was killed at T=0 — the ambient channel has clean space.
 
-**Mechanics:** Cave ambient sound, category: ambient, volume 0.35, pitch 0.55. No visuals.
-
-**Watch:** Does the sound *establish a feeling* on its own, or does it feel like nothing happened? Is the priming ("Listen.") necessary, or would the sound land without it? Is the pitch right — does 0.55 read as melancholy, or just as a weird cave sound? Is the volume correct — present enough to register?
-
-**Notes:**
-
----
-
-## CUE 6  ·  1:04  ·  LAYERED PAUSE
-
-**Cue ID:** *(no cue — deliberate silence with 2 timed messages)*
-**Tags:** `breath` `still` `text-forward` `silent` `subtle` `transition`
-
-**Intention:** A pause is a composition tool, not dead air. The first message (`...`) names the silence without breaking it. The second message, arriving ~5 seconds later, reframes what just happened: "The pause is also a cue." — a meta-moment that's also true. The pause sits after four consecutive quiet cues and before the dramatic arrival; its job is to reset the audience's attention and create contrast.
-
-**Function:** Calibrating how a pause with 2 messages across 8 seconds actually feels in-game. The showsprite.context.md describes deliberate silence as one of Sprite's strongest tools. This tests whether the timing and layering of messages within silence works compositionally.
-
-**Mechanics:**
-- 1:04 — Chat: `...`
-- 1:09 — Chat: `The pause is also a cue.`
-*(~8s total silence, no events)*
-
-**Watch:** Does the first message feel like rest beginning, or is it too early? Does the second message arrive as a quiet insight — or does it interrupt the silence just when it was starting to work? Would the pause be better with just one message, or none? How does it feel transitioning into Cue 7 (the dramatic arrival) immediately after?
+**Watch:**
+- Does the pitch-shifted cave sound establish a feeling, or is it too subtle even now?
+- Does the environmental clarity (no rain, no background music) make a difference vs. R4?
+- Does "Listen." feel necessary — would the sound land without the priming?
 
 **Notes:**
 
 ---
 
-## CUE 7  ·  1:16  ·  DRAMATIC ARRIVAL
+## C6  ·  1:14  ·  PAUSE
+
+**Boss bar:** `C6 — Pause` (WHITE, 180t / ~9s)
+**Tags:** `breath` `silent` `transition`
+
+**What happens:**
+- 1:14 — Chat: `...`
+- *(9 seconds of silence — cave ambient may still be fading)*
+- 1:23 — C7 arrives
+
+**Watch:**
+- Does `...` feel like rest beginning, or too early?
+- Does the silence feel intentional and weighty, or like dead air?
+- How does C7 hit after that much quiet?
+
+**Notes:**
+
+---
+
+## C7  ·  1:23  ·  DRAMATIC ARRIVAL
 
 **Cue ID:** `mood.arrival`
-**Tags:** `explosive` `flash` `dramatic` `tense` `grand` `fast` `opener` `standalone` `sound-driven` `single` `centered` `intense` `arrival` `ceremony`
+**Boss bar:** `C7 — Dramatic Arrival · mood.arrival` (RED, 220t / ~11s)
+**Tags:** `explosive` `flash` `dramatic`
 
-**Intention:** Something arrives. The lightning strike is instantaneous visual information — impossible to miss — but the *resonance* is in the sound: thunder rolling, then a quiet ender dragon growl at 0.25 volume 4 ticks later. The growl is designed to make you feel like the lightning meant something, not just that it happened.
+**What happens:**
+- 1:23 — Chat: *"Something arrives."*
+- 1:26 — CUE: Lightning + thunder (0.6 / 0.9)
+- 1:26 — 0.3s later: second thunder hit, softer, pitch 0.55 (the strike rolling away)
 
-**Function:** Contrast after the quiet sequence (Cues 2-6). The dramatic arrival lands harder because of what preceded it — this is the payoff of 90 seconds of quiet. It's also testing whether a flash event (duration ~4 ticks of visual) can have lasting emotional weight, or whether it evaporates the moment it ends.
+**Note:** Dragon growl removed in R5. Replaced with second thunder at lower pitch — sounds like the sound traveling across the sky after the strike.
 
-**Mechanics:** Lightning at anchor, thunder at 0.6/0.9, ender dragon growl at 0.25/1.9 (4 ticks later). All instant. No particles.
-
-**Watch:** Does the flash have *resonance* — does the thunder and growl sustain the impact after the visual is gone? Or is it just "loud thing happened"? Does the contrast after the pause make it hit harder? Does the dragon growl at that pitch register as ominous or just strange?
+**Watch:**
+- Does the two-hit thunder (initial strike → rolling echo) feel resonant, or just like the same sound twice?
+- Is the rolling-echo effect legible — does the second hit feel like the strike fading, or is it confusing?
+- Does the flash still consistently land as the show's strongest visual surprise at this point?
 
 **Notes:**
 
 ---
 
-## CUE 8  ·  1:27  ·  JOY BURST
+## C8  ·  1:34  ·  JOY BURST
 
 **Cue ID:** `fx.confetti_burst`
-**Tags:** `joyful` `celebratory` `playful` `high` `fast` `peak` `release` `fireworks-heavy` `sound-accented` `flash` `scatter` `radial` `intense` `birthday` `celebration` `achievement`
+**Boss bar:** `C8 — Joy Burst · fx.confetti_burst` (PINK, 220t / ~11s)
+**Tags:** `joyful` `celebratory` `playful` `high` `fast`
 
-**Intention:** The opposite end of the emotional spectrum from the cave sound and arrival. This is immediate, unambiguous joy — 10 birthday-ball fireworks in a tight radius at the same moment as a level-up sound. It should feel like the room just celebrated something for you. It's tight to the anchor intentionally: it should feel like *this* space, not fireworks over there.
+**What happens:**
+- 1:34 — Chat: *"Yes."*
+- 1:37 — CUE: level-up sound (0.8/1.1) + 10 birthday-ball fireworks, radius 8, surface +2
 
-**Function:** The peak of the joy/celebration register. After the dramatic arrival (which is tense-exciting), this should read as warm-exciting — a completely different flavor of high energy. Also tests whether the level-up sound is the right choice, or whether something else would feel less game-y.
-
-**Mechanics:** Level-up sound (0.8/1.1) + 10 birthday-ball FIREWORK_RANDOM in radius 8, surface +2. Instant.
-
-**Watch:** Does it read as joyful and warm, or just loud and busy? Does the tight radius (8) feel like it's happening *to you*, or does it feel like it's happening nearby? Is the level-up sound the right call — does it feel celebratory, or does it feel like you just got XP?
+**Watch:**
+- Does it read as joyful and warm, or loud and busy?
+- Does the tight radius feel like it's happening *to you*, or nearby?
+- No staging changes in R5 — same as R4. Any notes for comparison?
 
 **Notes:**
 
 ---
 
-## CUE 9  ·  1:37  ·  WARM RAMP
+## C9  ·  1:45  ·  DAYLIGHT BURST  *(surprise section — elevated)*
+
+**Boss bar:** `C9 — Daylight Burst` (YELLOW, 260t / ~13s)
+**Tags:** `time-snap` `STOP_SOUND` `rainbow` `wry`
+
+**What happens:**
+- 1:45 — Snap to noon (6000) + dragon flap hit
+- 1:45 — Levitation II begins (amp 1, 40t / ~2s → ~5 blocks)
+- 1:45–1:49 — Five firework waves (see R4 run sheet for detail — unchanged)
+- 1:47 — Slow_falling begins (280t / ~14s descent)
+- 1:53 — Snap back to night. Cave ambient re-grounds.
+- 1:55 — Chat: *"Dark again. As if nothing happened."*
+
+**Watch:**
+- Unchanged from R4 except weather is now clear. Does the burst hit differently with guaranteed clear sky?
+- Does the brief levitation into the burst feel like intentional staging, or still goes unnoticed?
+
+**Notes:**
+
+---
+
+## C10  ·  1:58  ·  WARM RAMP  *(elevated → grounded)*
 
 **Cue ID:** `ramp.pulse.warm`
-**Tags:** `building` `ramp` `warm` `medium` `fireworks-light` `scene` `scatter` `radial` `moderate`
+**Boss bar:** `C10 — Warm Ramp · ramp.pulse.warm` (YELLOW, 320t / ~16s)
+**Tags:** `building` `ramp` `warm` `scene` `scatter`
 
-**Intention:** Four waves of warm fireworks, each tighter and denser than the last, over ~8.5 seconds. The intention is *felt momentum* — the sense that the room is waking up, that something is about to happen. Not "more fireworks" — that feeling of gathering pressure when the energy in a room changes.
+**What happens:**
+- 1:58 — Chat: *"Something building."*
+- 2:01 — CUE: 4 waves of warm fireworks, each closer and denser (~8.5s total)
 
-**Function:** The only ramp cue in the current show, and the only "scene" duration cue (all others are flash or beat). Tests whether the wave-progression concept actually reads as narrative — does a 4-wave sequence over 8+ seconds communicate *arc*, or do the individual moments feel disconnected?
+**Staging note:** You're descending from C9 levitation — roughly 2 blocks elevated at start, near ground by first or second wave. The ramp builds as you settle.
 
-**Mechanics:**
-- 0s: 2 fireworks, radius 16 (wide, sparse)
-- ~2.75s: 3 fireworks, radius 13
-- ~5.25s: 4 fireworks, radius 10
-- ~7.4s: 5 fireworks, radius 8 (tighter, denser)
-
-**Watch:** Do the 4 waves feel like a single building thing, or like 4 separate events? Does the tightening radius register as convergence — does it feel like things are drawing toward something? Is the gap between waves right (~2.75s), or does the momentum break between pulses? Should each wave be louder too, or is visual-only buildup enough?
+**Watch:**
+- Do the 4 waves feel like a single building thing or 4 separate events? Does momentum hold between pulses?
+- Does experiencing the first waves slightly elevated change anything vs. R4 (all from ground)?
+- Does the tightening radius register as convergence?
 
 **Notes:**
 
 ---
 
-## CUE 10  ·  1:53  ·  WONDER SINGLE
+## C11  ·  2:14  ·  WONDER SINGLE  *(elevated into firework space)*
 
 **Cue ID:** `mood.wonder.single`
-**Tags:** `reverent` `grand` `dreamy` `medium` `slow` `peak` `breath` `standalone` `fireworks-light` `sound-accented` `beat` `overhead` `single` `subtle` `revelation` `ceremony`
+**Boss bar:** `C11 — Wonder Single · mood.wonder.single` (PURPLE, 220t / ~11s)
+**Tags:** `reverent` `overhead` `elevated` `subtle`
 
-**Intention:** One large firework launched 18 blocks overhead. The soft ascending tone fires first, the firework launches a beat later, and then a chime arrives ~1 second after the launch — the chime is timed to land at the moment the firework would burst. The pause before and after the chime *is the point*. This is about sustained attention on a single thing, not spectacle.
+**What happens:**
+- 2:14 — Levitation II begins (amp 1, 60t / ~3s → ~7-8 blocks)
+- 2:14 — Chat: *"The ceiling opens."*
+- 2:17 — slow_falling begins (220t / ~11s)
+- 2:17 — CUE: ascending tone → firework at y+18 (2 ticks later) → amethyst chime at 20t
 
-**Function:** The quietest "peak" in the library — wonder rather than celebration. Coming after the ramp, it should feel like the energy gathered somewhere, then released upward and slowly. Tests whether a single rocket, given the right framing, reads as contemplative rather than underwhelming.
+**Staging note:** You're rising as the firework launches. Peak height (~7-8 blocks) is roughly within the visual range of the burst at y+18. The firework is overhead and close, not a tiny dot.
 
-**Mechanics:** Ascending tone (0.7/0.7) → FIREWORK at y+18 relative (2 ticks later) → amethyst chime (0.6/1.4) at 20 ticks.
-
-**Watch:** Does the single overhead firework feel *reverent*, or does it feel thin after the warm ramp? Does the chime land at the right moment — does it feel like a resolution to the firework, or does the timing feel off? Is looking up at one thing enough, or does this need a companion?
+**Watch:**
+- Is the elevation legible — do you feel placed *into* the firework space rather than watching from below?
+- Does the chime land at the right moment — the top of the burst?
+- Does *"The ceiling opens."* land, or feel detached from what's happening?
+- Compare to R4 "Look up." — is non-directive narration + movement better than instruction?
 
 **Notes:**
 
 ---
 
-## CUE 11  ·  2:04  ·  LIFT
+## C12  ·  2:25  ·  LIFT TO HEIGHT
 
 **Cue ID:** `fx.lift_to_height`
-**Tags:** `dreamy` `ethereal` `reverent` `medium` `slow` `transition` `effect-driven` `sound-accented` `moment` `single` `centered` `subtle` `revelation` `ceremony`
+**Boss bar:** `C12 — Lift to Height · fx.lift_to_height` (WHITE, 140t / ~7s)
+**Tags:** `dreamy` `ethereal` `reverent` `revelation`
 
-**Intention:** The player rises ~6-8 blocks and stays there — not as spectacle, but as perspective shift. Being elevated during a closing sequence changes what it feels like to watch the sky change. The slow_falling that follows carries them down through the entire sunrise so the landing is gradual, not sudden.
+**What happens:**
+- 2:25 — Chat: *"One more thing."*
+- 2:28 — CUE: soft tone (0.55/0.60) + Levitation III (amp 2, 120t / ~6s → ~20-25 blocks)
+- ~2:34 — Peak. Amethyst chime (quiet, 0.40/1.30).
+- slow_falling: 800 ticks (40s) — carries through entire closing sequence and landing
 
-**Function:** Structural transition into the finale. The lift is a compositional tool: it ends with the player floating, which gives the houselights-up sequence something to resolve against. The player drifting back to earth during sunrise is the metaphor completing itself.
+**Note:** C12 unchanged from R4. Remains the strongest spatial moment.
 
-**Mechanics:** Soft tone (0.55/0.60) → levitation II (60 ticks, ~3s rise) → chime at peak (58 ticks) → slow_falling begins at 55 ticks, lasts 600 ticks (~30s). Player should be 6-8 blocks up as the sunrise begins.
-
-**Watch:** Does the lift feel intentional and smooth, or disorienting? Is the height right — present enough to feel like perspective shift? Does the chime at peak work, or is it unnecessary? Most importantly: does floating down during the sunrise feel like a *landing*?
+**Watch:**
+- Does the new height feel genuinely different from the C11 lift — a clear step up?
+- Does the show's vertical arc (C2 gentle rise → C9 brief burst → C11 pre-lift → C12 full lift) feel like a logical progression, or disconnected?
+- Does the sky brightening mid-ascent (C13 snap) feel like it arrives with the altitude?
 
 **Notes:**
 
 ---
 
-## CUE 12  ·  2:08  ·  HOUSELIGHTS UP
+## C13  ·  2:32  ·  DESCENT + CODA
 
-**Cue ID:** `world.time.dawn` (3-step inline sequence) + `coda.curtain.quiet`
-**Tags:** `standalone` `transition` `silent` `tender` `nostalgic` `low` `coda` `ceremony`
+**Cue ID:** `coda.curtain.quiet` (at end)
+**Boss bar:** `C13 — Descent · coda` (WHITE, 360t / ~18s, slow fade)
+**Tags:** `transition` `tender` `nostalgic` `coda`
 
-**Intention:** The mirror of Cue 1 — the lights coming back up as gently as they went down. Three sky states track the player's descent from height: they start floating in the dark, drift through pre-dawn, and touch down somewhere around full sunrise. The messages are the close of ShowSprite's voice for this session. `coda.curtain.quiet` fires last: the `✦ the stage is dark ✦` message + a single descending chime.
+**What happens:**
+- 2:32 — Sky snaps to 22500 (horizon glow) — you're still rising
+- ~2:34 — Peak. Chime from C12.
+- 2:36 — Chat: *"The stage returns."*
+- 2:41 — Chat: *"You were here for all of it."*
+- 2:47 — Chat: *"Until next time."*
+- 2:50 — `coda.curtain.quiet` fires — show ends here, in the air
+- *(you continue drifting down — no further events)*
 
-**Function:** Tests the sunrise/close timing, message count, and whether the player-floating-down-during-sunrise concept actually lands as a coherent experience. Also calibrating whether 3 messages across ~17 seconds is the right density for a closing sequence.
-
-**Mechanics:**
-- 2:08 — Sky: pre-dawn (22000)
-- 2:10 — Chat: *"The stage returns."*
-- 2:14 — Sky: dawn (23500)
-- 2:16 — Chat: *"You were here for all of it."*
-- 2:20 — Sky: sunrise (0)
-- 2:22 — Chat: *"Until next time."*
-- 2:24 — `✦   the stage is dark   ✦` + amethyst chime
-
-**Watch:** Does 3 messages feel right for a close — does each one land before the next arrives? Does *"You were here for all of it."* feel meaningful or too grand? Does the player touch down near when the show ends, or is the timing off? Does the `✦` message followed by a chime feel like a clean close?
+**Watch:**
+- Does the sky brightening mid-ascent feel like it arrives with the altitude, or goes unnoticed?
+- Do the three narration lines feel correctly spaced during descent? Does each land before the next?
+- Does *"You were here for all of it."* feel meaningful or too grand?
+- How long after the coda do you actually land? Does the drift feel earned?
+- Does the show ending IN THE AIR feel like an artistic choice or unfinished?
 
 **Notes:**
 
@@ -233,16 +315,36 @@ Reference cues by number in notes. ("C3 — warm/cool contrast not legible.")
 ## Quick-note shorthand
 
 ```
-C2 — reads as noise not atmo
-C3 — YES. warm light works
-C4 — same as C3, can't tell diff
-C5 — volume too low, missed it
-C6 — 2nd msg interrupted, prefer just "..."
-C7 — thunder works, growl too quiet
-C9 — gaps between waves too long
-C12 — chime timing perfect, but "you were here for all of it" too much
+C1   — weather: was already clear / cleared by show / no rain noticed
+C1   — version line: saw it / missed it / too long / just right
+C1   — sky snap: deliberate / felt abrupt
+C2   — levitation: felt it / didn't notice / too aggressive for the moment
+C2   — particles: denser / still sparse / visible from air / visible from ground
+C2   — ACTION_BAR: saw both / saw one / missed both
+C2   — Beat 4 silence: breath / dead air
+C3   — warm light from elevation: reads as light / reads as fireworks below me
+C3   — guitar accent: heard it / didn't notice / right call / unnecessary
+C4   — warm→cool contrast: emotionally legible / just different colors
+C4   — harp accent: heard it / didn't notice
+C5   — cave sound: felt something / missed it / volume right / still quiet
+C6   — silence: intentional weight / dead air
+C7   — rolling thunder: resonant / sounds like same sound twice / confused
+C7   — flash still lands: yes / feels weaker now with thunder change
+C8   — joy burst: warm-exciting / too loud / level-up sound right / off
+C9   — noon snap: right / too jarring / different with clear weather
+C9   — levitation: noticed / didn't notice / felt right
+C10  — waves: connected / separate / gaps too long / elevation during first waves: matters / doesn't
+C11  — ceiling opens: narration landed / felt detached
+C11  — elevation: felt placed in firework space / still too low / didn't notice lift
+C11  — chime: right timing / not needed
+C12  — arc progression: logical / disconnected / this is clearly the peak
+C12  — height: genuinely different perspective / still similar to C11
+C13  — narration spacing: right / too fast / too slow
+C13  — show ends in air: intentional / unfinished
+C13  — "you were here for all of it": meaningful / too grand
+C13  — landing time: too long / too short / about right
 ```
 
 ---
 
-*Show: `demo.archetype_sampler`  ·  25 production cues in library  ·  Built 2026-03-24*
+*Show: `demo.archetype_sampler`  ·  v2.7.0  ·  25 production cues in library  ·  Revision 5, 2026-03-24*

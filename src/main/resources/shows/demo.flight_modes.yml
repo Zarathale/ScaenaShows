@@ -1,0 +1,264 @@
+id: demo.flight_modes
+name: "Flight Modes Demo"
+description: >
+  Tests three aerial approaches back-to-back at altitude.
+  Section 1: extreme lift to ~50 blocks.
+  Section 2: bare slow_falling for 11 seconds — how slow is slow?
+  Section 3: fx.levitate_pulse — rhythmic maintenance pulsing.
+  Section 4: fx.levitate_surge — high-energy escalation.
+  Section 5: PLAYER_FLIGHT hover — true freeze, then graceful release.
+  Run with the runsheet open. Note by section number, not cue number.
+portable: true
+default_mode: static
+default_audience: participants
+group_count: 1
+group_strategy: join_order
+
+tags: [test, aerial, demo, effect-driven]
+
+meta:
+  created_by: Zara
+  created_at: 2026-03-24
+  last_edited_by: Zara
+  last_edited_at: 2026-03-24
+
+bossbar:
+  enabled: true
+  title: "<gray>Flight Modes Demo</gray>"
+  color: WHITE
+  overlay: PROGRESS
+  audience: participants
+  fade_in_ticks: 10
+  fade_out_ticks: 20
+
+# Total duration: 1120 ticks (~56 seconds)
+duration_ticks: 1120
+
+timeline:
+
+  # ─────────────────────────────────────────────────────────────────────
+  # SECTION 1: Lift  (T=0–160)
+  # amp 9 levitation to reach ~50 blocks altitude before slow-fall test.
+  # ─────────────────────────────────────────────────────────────────────
+
+  - at: 0
+    type: WEATHER
+    mode: clear
+
+  - at: 0
+    type: MESSAGE
+    text: "<gray>[Sprite] Section 1: going up.</gray>"
+    audience: participants
+
+  - at: 0
+    type: BOSSBAR
+    title: "<gray>S1 — Lift</gray>"
+    color: WHITE
+    overlay: PROGRESS
+    duration_ticks: 160
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+
+  # Amp 9 levitation — hits velocity cap quickly, lifts ~50 blocks in 6s
+  - at: 10
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 120
+    amplifier: 9
+    hide_particles: false
+    audience: participants
+
+  - at: 20
+    type: MESSAGE
+    text: "<gray>[Sprite] Up.</gray>"
+    audience: participants
+
+  # ─────────────────────────────────────────────────────────────────────
+  # SECTION 2: Slow Fall Test  (T=160–380)
+  # Player is at altitude. Slow_falling amp 0 only — no pulsing.
+  # 220 ticks = 11 seconds. Watch the ground; don't move.
+  # Baseline slow fall (extended): kicks in before levitation expires,
+  # runs through end of show and beyond.
+  # ─────────────────────────────────────────────────────────────────────
+
+  - at: 120
+    type: EFFECT
+    effect_id: slow_falling
+    duration_ticks: 2000
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - at: 160
+    type: MESSAGE
+    text: "<gray>[Sprite] Section 2: slow falling.</gray>"
+    audience: participants
+
+  - at: 160
+    type: BOSSBAR
+    title: "<gray>S2 — Slow Fall (amp 0, no pulses)</gray>"
+    color: WHITE
+    overlay: PROGRESS
+    duration_ticks: 220
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+
+  - at: 170
+    type: MESSAGE
+    text: "<gray>[Sprite] This is slow_falling, amplifier zero.</gray>"
+    audience: participants
+
+  - at: 210
+    type: MESSAGE
+    text: "<gray>[Sprite] No levitation. Just this.</gray>"
+    audience: participants
+
+  - at: 260
+    type: MESSAGE
+    text: "<gray>[Sprite] Moving. Barely.</gray>"
+    audience: participants
+
+  - at: 340
+    type: MESSAGE
+    text: "<gray>[Sprite] Higher amplifiers do nothing. This is the floor.</gray>"
+    audience: participants
+
+  # ─────────────────────────────────────────────────────────────────────
+  # SECTION 3: Levitate Pulse  (T=380–700)
+  # Rhythmic pulsing — player held at rough altitude with noticeable bob.
+  # Pulse: amp 0, 20 ticks on, 2-tick gap, repeating every 22 ticks.
+  # ─────────────────────────────────────────────────────────────────────
+
+  - at: 380
+    type: MESSAGE
+    text: "<gray>[Sprite] Section 3: the pulse.</gray>"
+    audience: participants
+
+  - at: 380
+    type: BOSSBAR
+    title: "<gray>S3 — Levitate Pulse (amp 0, 22-tick cycle)</gray>"
+    color: BLUE
+    overlay: PROGRESS
+    duration_ticks: 320
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+
+  - at: 390
+    type: CUE
+    cue_id: fx.levitate_pulse
+
+  - at: 420
+    type: MESSAGE
+    text: "<gray>[Sprite] You're being held.</gray>"
+    audience: participants
+
+  - at: 490
+    type: MESSAGE
+    text: "<gray>[Sprite] Rough, but you won't fall.</gray>"
+    audience: participants
+
+  - at: 580
+    type: MESSAGE
+    text: "<gray>[Sprite] Feel the rhythm.</gray>"
+    audience: participants
+
+  # ─────────────────────────────────────────────────────────────────────
+  # SECTION 4: Levitate Surge  (T=700–870)
+  # High-energy escalation: amp 1, 12 ticks on, 2-tick gap, every 14 ticks.
+  # Player visibly rises during this section — intentional surge feeling.
+  # ─────────────────────────────────────────────────────────────────────
+
+  - at: 700
+    type: MESSAGE
+    text: "<gray>[Sprite] Section 4: the surge.</gray>"
+    audience: participants
+
+  - at: 700
+    type: BOSSBAR
+    title: "<gray>S4 — Levitate Surge (amp 1, 14-tick cycle)</gray>"
+    color: RED
+    overlay: PROGRESS
+    duration_ticks: 170
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+
+  - at: 710
+    type: CUE
+    cue_id: fx.levitate_surge
+
+  - at: 730
+    type: MESSAGE
+    text: "<gray>[Sprite] More.</gray>"
+    audience: participants
+
+  - at: 800
+    type: MESSAGE
+    text: "<gray>[Sprite] Notice the drift upward.</gray>"
+    audience: participants
+
+  # ─────────────────────────────────────────────────────────────────────
+  # SECTION 5: PLAYER_FLIGHT Hover + Release  (T=870–1120)
+  # True altitude lock: no bobbing. Completely frozen in space.
+  # Released with slow_falling at T=1020 — player drifts down into the coda.
+  # ─────────────────────────────────────────────────────────────────────
+
+  - at: 870
+    type: MESSAGE
+    text: "<gray>[Sprite] Section 5: flight.</gray>"
+    audience: participants
+
+  - at: 870
+    type: BOSSBAR
+    title: "<gray>S5 — PLAYER_FLIGHT hover → release</gray>"
+    color: GREEN
+    overlay: PROGRESS
+    duration_ticks: 250
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+
+  - at: 880
+    type: PLAYER_FLIGHT
+    state: hover
+    audience: participants
+
+  - at: 890
+    type: MESSAGE
+    text: "<gray>[Sprite] Frozen.</gray>"
+    audience: participants
+
+  - at: 940
+    type: MESSAGE
+    text: "<gray>[Sprite] No bobbing. No drift. Just here.</gray>"
+    audience: participants
+
+  - at: 1000
+    type: MESSAGE
+    text: "<gray>[Sprite] Releasing.</gray>"
+    audience: participants
+
+  - at: 1020
+    type: PLAYER_FLIGHT
+    state: release
+    release_effect: slow_falling
+    release_duration_ticks: 400
+    audience: participants
+
+  - at: 1040
+    type: MESSAGE
+    text: "<gray>[Sprite] And down.</gray>"
+    audience: participants
+
+  - at: 1080
+    type: MESSAGE
+    text: "<gray>[Sprite] That's the vocabulary.</gray>"
+    audience: participants
+
+  - at: 1100
+    type: MESSAGE
+    text: "<gray>[Sprite] What do you want to build?</gray>"
+    audience: participants

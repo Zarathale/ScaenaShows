@@ -93,6 +93,7 @@ public final class EventParser {
                 case PLAYER_SPECTATE_END -> new PlayerEvents.PlayerSpectateEndEvent(m);
                 case PLAYER_MOUNT        -> new PlayerEvents.PlayerMountEvent(m);
                 case PLAYER_DISMOUNT     -> new PlayerEvents.PlayerDismountEvent(m);
+                case PLAYER_FLIGHT       -> new PlayerEvents.PlayerFlightEvent(m);
                 // §6.11 Utility
                 case REST    -> new UtilityEvents.RestEvent(m);
                 case COMMAND -> new UtilityEvents.CommandEvent(m);

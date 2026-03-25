@@ -9,6 +9,8 @@ import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -17,7 +19,7 @@ import java.util.logging.Logger;
 /**
  * Handles player movement events:
  * PLAYER_TELEPORT, PLAYER_VELOCITY, PLAYER_SPECTATE,
- * PLAYER_SPECTATE_END, PLAYER_MOUNT, PLAYER_DISMOUNT
+ * PLAYER_SPECTATE_END, PLAYER_MOUNT, PLAYER_DISMOUNT, PLAYER_FLIGHT
  */
 public final class PlayerEventExecutor implements EventExecutor {
 
@@ -38,6 +40,7 @@ public final class PlayerEventExecutor implements EventExecutor {
             case PLAYER_SPECTATE_END  -> handleSpectateEnd((PlayerSpectateEndEvent) event, show);
             case PLAYER_MOUNT         -> handleMount((PlayerMountEvent) event, show);
             case PLAYER_DISMOUNT      -> handleDismount((PlayerDismountEvent) event, show);
+            case PLAYER_FLIGHT        -> handleFlight((PlayerFlightEvent) event, show);
             default -> {}
         }
     }
@@ -140,6 +143,56 @@ public final class PlayerEventExecutor implements EventExecutor {
     private void handleDismount(PlayerDismountEvent e, RunningShow show) {
         for (Player p : AudienceResolver.resolve(e.audience, show)) {
             if (p.isInsideVehicle()) p.leaveVehicle();
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // PLAYER_FLIGHT
+    // hover  — record pre-show state, then setAllowFlight(true) + setFlying(true).
+    //          Player is frozen at their current Y until release or show end.
+    // release — apply transition effect (slow_falling or levitate) BEFORE disabling
+    //           flight, ensuring no abrupt drop. Then restore pre-show flight state.
+    // ------------------------------------------------------------------
+    private void handleFlight(PlayerFlightEvent e, RunningShow show) {
+        List<Player> audience = AudienceResolver.resolve(e.audience, show);
+
+        if ("hover".equalsIgnoreCase(e.state)) {
+            for (Player p : audience) {
+                // Capture pre-show state once per player per show (putIfAbsent semantics)
+                show.recordFlightRestore(p.getUniqueId(), p.getAllowFlight(), p.isFlying());
+                p.setAllowFlight(true);
+                p.setFlying(true);
+            }
+
+        } else if ("release".equalsIgnoreCase(e.state)) {
+            for (Player p : audience) {
+                // Apply transition effect first — player gets a soft landing before
+                // flight is removed, so there is no hard gravity snap.
+                if (!"none".equalsIgnoreCase(e.releaseEffect)) {
+                    PotionEffectType type = "levitate".equalsIgnoreCase(e.releaseEffect)
+                        ? PotionEffectType.LEVITATION
+                        : PotionEffectType.SLOW_FALLING;
+                    int amp = "levitate".equalsIgnoreCase(e.releaseEffect) ? 0 : 0;
+                    p.addPotionEffect(new PotionEffect(type, e.releaseDurationTicks, amp, false, false));
+                }
+
+                // Restore pre-show flight state
+                RunningShow.FlightState prior = show.getFlightRestore(p.getUniqueId());
+                if (prior != null) {
+                    // If player was flying before the show, restore flying.
+                    // If not, disable flight — but only AFTER setting flying false first
+                    // (calling setAllowFlight(false) while flying=true boots the player).
+                    p.setFlying(prior.wasFlying());
+                    p.setAllowFlight(prior.allowFlight());
+                } else {
+                    // No hover was ever fired for this player — safe default
+                    p.setFlying(false);
+                    p.setAllowFlight(false);
+                }
+            }
+        } else {
+            log.warning("[ScaenaShows] PLAYER_FLIGHT: unknown state '" + e.state
+                + "' — expected 'hover' or 'release'");
         }
     }
 }

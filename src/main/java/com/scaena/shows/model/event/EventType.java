@@ -37,6 +37,7 @@ public enum EventType {
     // §6.10 Player Movement
     PLAYER_TELEPORT, PLAYER_VELOCITY, PLAYER_SPECTATE,
     PLAYER_SPECTATE_END, PLAYER_MOUNT, PLAYER_DISMOUNT,
+    PLAYER_FLIGHT,
 
     // §6.11 Utility
     REST, COMMAND, CUE;

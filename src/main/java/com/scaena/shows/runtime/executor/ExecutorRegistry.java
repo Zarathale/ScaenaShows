@@ -101,6 +101,7 @@ public final class ExecutorRegistry {
         executors.put(EventType.PLAYER_SPECTATE_END, player);
         executors.put(EventType.PLAYER_MOUNT,        player);
         executors.put(EventType.PLAYER_DISMOUNT,     player);
+        executors.put(EventType.PLAYER_FLIGHT,       player);
 
         // §6.11 Utility
         executors.put(EventType.REST,    utility);

@@ -1,0 +1,152 @@
+# fx.levitate_pulse
+# Rhythmic pulsed ascent using slow alternation of levitation and slow_falling.
+# Intended use: AFTER the player has already been lifted to altitude by fx.lift_to_height
+# or a manual levitation event. This cue produces slow rhythmic CLIMB, not maintenance.
+#
+# Mechanism: slow_falling baseline (~2 blocks/sec descent when active). Short amp 0
+# levitation pulses (20 ticks) fire every 22 ticks — the net across each 22t cycle is
+# upward drift of ~0.7 blocks/cycle. Player visibly rises over the cue's duration.
+#
+# NOTE from calibration (2026-03-24): slow_falling is NOT a gentle float — it descends
+# at ~2 b/s. These pulses do NOT maintain altitude; they climb slowly against fast descent.
+# For true altitude lock, use PLAYER_FLIGHT hover instead.
+#
+# Duration: 310 ticks (~15.5s) — 14 pulse cycles. Total rise: ~10 blocks.
+# Safe: slow_falling extends 1200 ticks; player has a soft landing after cue ends.
+# Pair with emotional build sections where subtle rhythmic rise adds tension or wonder.
+id: fx.levitate_pulse
+name: "Levitate Pulse"
+description: "Rhythmic pulsed levitation to maintain altitude. Slow upward drift. Use after a lift event."
+duration_ticks: 310
+tags: [dreamy, ethereal, aloft, suspended, rhythmic, medium, slow, effect-driven, moment, centered, subtle, revelation]
+
+meta:
+  created_by: Zara
+  created_at: 2026-03-24
+  last_edited_by: Zara
+  last_edited_at: 2026-03-24
+
+timeline:
+  # Baseline slow fall — ~2 b/s descent when active. Pulses interrupt it each cycle.
+  # Long duration so the effect outlasts this cue and provides a soft landing.
+  - type: EFFECT
+    at: 0
+    effect_id: slow_falling
+    duration_ticks: 1200
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  # 14 pulse cycles: amp 0 for 20 ticks, gap 2 ticks, repeat every 22 ticks.
+  # Ticks: 0, 22, 44, 66, 88, 110, 132, 154, 176, 198, 220, 242, 264, 286
+  - type: EFFECT
+    at: 0
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - type: EFFECT
+    at: 22
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - type: EFFECT
+    at: 44
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - type: EFFECT
+    at: 66
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - type: EFFECT
+    at: 88
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - type: EFFECT
+    at: 110
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - type: EFFECT
+    at: 132
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - type: EFFECT
+    at: 154
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - type: EFFECT
+    at: 176
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - type: EFFECT
+    at: 198
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - type: EFFECT
+    at: 220
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - type: EFFECT
+    at: 242
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - type: EFFECT
+    at: 264
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  - type: EFFECT
+    at: 286
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants

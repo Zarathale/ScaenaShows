@@ -1,7 +1,9 @@
 # mood.arrival
-# A sudden dramatic entrance: lightning flash, thunder, then silence.
+# A sudden dramatic entrance: lightning flash, thunder, rolling resonance.
 # Use to mark the moment something or someone arrives on stage.
 # Short and punchy — 1 tick of visual, the rest is resonance.
+# v2: dragon growl (unclear meaning) replaced with rolling distant thunder
+#     (lower pitch, lower volume) — sounds like the strike echoing across sky
 id: mood.arrival
 tags: [dramatic, tense, grand, explosive, fast, opener, standalone, sound-driven, flash, single, centered, intense, arrival, ceremony]
 timeline:
@@ -14,9 +16,10 @@ timeline:
     category: master
     volume: 0.6
     pitch: 0.9
+  # Second thunder hit — softer, lower pitch — the strike rolling away
   - type: SOUND
-    at: 4
-    sound_id: "minecraft:entity.ender_dragon.growl"
+    at: 6
+    sound_id: "minecraft:entity.lightning_bolt.thunder"
     category: master
-    volume: 0.25
-    pitch: 1.9
+    volume: 0.3
+    pitch: 0.55

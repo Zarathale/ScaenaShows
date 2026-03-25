@@ -1,6 +1,6 @@
 name: ScaenaShows
 main: com.scaena.shows.ScaenaShowsPlugin
-version: 2.0.0
+version: ${version}
 api-version: '1.21'
 author: Scaena
 description: Data-driven choreographed show engine — Cue model (v2).

@@ -141,8 +141,8 @@ public final class ShowManager {
         // Remove this player from the participant index
         participantIndex.remove(player.getUniqueId());
 
-        // Apply stop safety to this player
-        applyStopSafety(player, running);
+        // Apply stop safety to this player — always user-initiated here
+        applyStopSafety(player, running, true);
 
         // Check if all participants are gone
         boolean anyLeft = false;
@@ -189,7 +189,7 @@ public final class ShowManager {
         for (ParticipantState ps : running.getParticipants().values()) {
             Player p = Bukkit.getPlayer(ps.uuid);
             if (p != null && p.isOnline()) {
-                applyStopSafety(p, running);
+                applyStopSafety(p, running, userStopped);
             }
             participantIndex.remove(ps.uuid);
         }
@@ -226,30 +226,45 @@ public final class ShowManager {
     // Idempotent — safe to call multiple times per player.
     // ------------------------------------------------------------------
 
-    private void applyStopSafety(Player p, RunningShow running) {
-        // Remove levitation
+    /**
+     * Apply stop-safety cleanup to a single participant.
+     *
+     * @param userStopped true if the show was explicitly stopped by a command
+     *                    (/show stop, /show stopall, or per-player stop).
+     *                    false if the show reached its natural end via the scheduler.
+     *
+     * Slow falling + levitation removal always apply (protect against mid-air orphaning).
+     * Sound cut, stop_message, and stop_sound only fire on user-interrupted stops —
+     * on natural completion the show's own coda handles the artistic ending.
+     */
+    private void applyStopSafety(Player p, RunningShow running, boolean userStopped) {
+        // Always: remove levitation and apply slow falling regardless of stop cause
         p.removePotionEffect(PotionEffectType.LEVITATION);
-
-        // Apply slow falling for N seconds
         int slowFallTicks = config.getStopSlowFallSeconds() * 20;
         p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, slowFallTicks, 0, false, false));
 
-        // Stop sound (if any playing)
-        // Note: Minecraft doesn't have a server-side "stop all sounds" in older API versions.
-        // stopSound with no arguments stops the current sound on the client.
-        p.stopAllSounds();
+        // Restore flight state if PLAYER_FLIGHT was used in this show.
+        // Apply slow_falling first (already done above) so the player gets a soft
+        // landing when flight is removed — no gravity snap.
+        RunningShow.FlightState flightState = running.getFlightRestore(p.getUniqueId());
+        if (flightState != null) {
+            p.setFlying(flightState.wasFlying());
+            p.setAllowFlight(flightState.allowFlight());
+        }
 
-        // Send stop message
-        p.sendMessage(MM.deserialize(config.getStopMessage()));
-
-        // Play stop sound
-        try {
-            p.playSound(p.getLocation(),
-                config.getStopSoundId(),
-                SoundCategory.MASTER,
-                config.getStopSoundVolume(),
-                config.getStopSoundPitch());
-        } catch (Exception ignored) {} // graceful degradation if sound id is invalid
+        // Interruption only: cut sound, notify the player, play the stop cue.
+        // On natural end, the show's coda sound and closing messages handle this.
+        if (userStopped) {
+            p.stopAllSounds();
+            p.sendMessage(MM.deserialize(config.getStopMessage()));
+            try {
+                p.playSound(p.getLocation(),
+                    config.getStopSoundId(),
+                    SoundCategory.MASTER,
+                    config.getStopSoundVolume(),
+                    config.getStopSoundPitch());
+            } catch (Exception ignored) {} // graceful degradation if sound id is invalid
+        }
     }
 
     // ------------------------------------------------------------------

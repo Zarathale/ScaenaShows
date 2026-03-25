@@ -3,7 +3,7 @@ package com.scaena.shows.model.event;
 import java.util.Map;
 
 /** §6.10 — PLAYER_TELEPORT, PLAYER_VELOCITY, PLAYER_SPECTATE, PLAYER_SPECTATE_END,
- *           PLAYER_MOUNT, PLAYER_DISMOUNT */
+ *           PLAYER_MOUNT, PLAYER_DISMOUNT, PLAYER_FLIGHT */
 public final class PlayerEvents {
 
     private PlayerEvents() {}
@@ -96,5 +96,34 @@ public final class PlayerEvents {
         }
 
         @Override public EventType type() { return EventType.PLAYER_DISMOUNT; }
+    }
+
+    /**
+     * PLAYER_FLIGHT — engage or release server-side flight for participants.
+     *
+     * state: hover   — calls setAllowFlight(true) + setFlying(true); freezes the player
+     *                   at their current Y. Pre-show flight state captured on first hover.
+     * state: release — applies release_effect first (slow descent), then restores the
+     *                   player's pre-show flight state. Safe to call even if hover was
+     *                   never fired (no-op on flight state if nothing was recorded).
+     */
+    public static final class PlayerFlightEvent extends ShowEvent {
+        public final String audience;
+        /** "hover" | "release" */
+        public final String state;
+        /** Effect to apply on release before disabling flight: "slow_falling" | "levitate" | "none" */
+        public final String releaseEffect;
+        /** Duration of the release effect in ticks (default 300). */
+        public final int    releaseDurationTicks;
+
+        public PlayerFlightEvent(Map<String, Object> m) {
+            super(intVal(m, "at", 0));
+            this.audience             = str(m, "audience", "participants");
+            this.state                = str(m, "state", "hover");
+            this.releaseEffect        = str(m, "release_effect", "slow_falling");
+            this.releaseDurationTicks = intVal(m, "release_duration_ticks", 300);
+        }
+
+        @Override public EventType type() { return EventType.PLAYER_FLIGHT; }
     }
 }

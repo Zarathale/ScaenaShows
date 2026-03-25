@@ -7,7 +7,7 @@ resume_window_seconds: 900          # Seconds a disconnected participant has to 
 # Safety defaults applied on /show stop
 safety:
   stop_applies_slow_falling_seconds: 10
-  stop_message: "<gold>Show stopped.</gold> <gray>Landing safely.</gray>"
+  stop_message: "<dark_gray>  ◦   show ended</dark_gray>"
   stop_sound:
     id: "minecraft:entity.experience_orb.pickup"
     category: master

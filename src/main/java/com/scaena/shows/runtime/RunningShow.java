@@ -72,6 +72,18 @@ public final class RunningShow {
     private final Map<UUID, org.bukkit.GameMode> spectateRestoreMap = new LinkedHashMap<>();
 
     // -----------------------------------------------------------------------
+    // Flight state (captured on first PLAYER_FLIGHT hover per participant)
+    // -----------------------------------------------------------------------
+
+    /**
+     * Pre-show flight state per participant — captured the first time PLAYER_FLIGHT
+     * hover fires. putIfAbsent semantics ensure the true pre-show state is preserved
+     * even if hover fires multiple times.
+     */
+    public record FlightState(boolean allowFlight, boolean wasFlying) {}
+    private final Map<UUID, FlightState> flightRestoreMap = new LinkedHashMap<>();
+
+    // -----------------------------------------------------------------------
     // Spatial anchor position (used for follow mode + static fallback)
     // -----------------------------------------------------------------------
     private Location anchorLocation;   // updated each tick in follow mode
@@ -265,6 +277,27 @@ public final class RunningShow {
 
     public Map<UUID, org.bukkit.GameMode> getSpectateRestoreMap() {
         return spectateRestoreMap;
+    }
+
+    // -----------------------------------------------------------------------
+    // Flight restore
+    // -----------------------------------------------------------------------
+
+    /**
+     * Record the pre-show flight state for a participant.
+     * Uses putIfAbsent — only the first call (true pre-show state) is retained.
+     */
+    public void recordFlightRestore(UUID uuid, boolean allowFlight, boolean wasFlying) {
+        flightRestoreMap.putIfAbsent(uuid, new FlightState(allowFlight, wasFlying));
+    }
+
+    /** Returns the recorded pre-show flight state, or null if hover was never fired. */
+    public FlightState getFlightRestore(UUID uuid) {
+        return flightRestoreMap.get(uuid);
+    }
+
+    public Map<UUID, FlightState> getFlightRestoreMap() {
+        return flightRestoreMap;
     }
 
     // -----------------------------------------------------------------------

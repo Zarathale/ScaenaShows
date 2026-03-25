@@ -854,6 +854,36 @@ type: PLAYER_DISMOUNT
 audience: private | group_1 | group_2 | target
 ```
 
+**PLAYER_FLIGHT** — point-in-time; engage or release server-side flight for participants.
+
+Two states:
+
+`state: hover` — records each participant's pre-show flight state (once, via `putIfAbsent`), then calls `setAllowFlight(true)` + `setFlying(true)`. The player is frozen at their current Y until released or the show stops. A flying player can still move horizontally — add `EFFECT slowness` to discourage wandering if needed.
+
+`state: release` — applies `release_effect` first (so the player never free-falls when flight drops), then restores the participant's pre-show flight state. Pre-show flight (e.g., creative mode) is fully preserved.
+
+Stop safety extended: if `PLAYER_FLIGHT hover` was fired, `applyStopSafety` restores the pre-show flight state in addition to the standard slow_falling cleanup.
+
+```yaml
+# Engage hover — lock player at current altitude
+type: PLAYER_FLIGHT
+state: hover                        # hover | release
+audience: participants
+
+# Release with transition effect before disabling flight
+type: PLAYER_FLIGHT
+state: release
+release_effect: slow_falling        # slow_falling (default) | levitate | none
+release_duration_ticks: 300         # duration of the release effect (default 300)
+audience: participants
+```
+
+**Authoring notes:**
+- Always use a lift event (levitation via `EFFECT`) before hover — hover freezes at *current* altitude, not a target altitude.
+- Always use `state: release` before show end rather than letting stop safety handle it — this gives you control over when the player starts descending.
+- The `release_effect: levitate` option applies amp 0 levitation briefly, giving a slight upward drift before the transition. Use for dramatic "one last breath before the fall" moments.
+- Horizontal drift while hovering: expected. The player is in flight mode. Design the show to occupy their attention or add a brief `EFFECT slowness` alongside hover.
+
 **Future: PATH** — reserved event type for spline-curve player or entity movement along a multi-waypoint path with easing. Not implemented in v2.
 
 ---

@@ -1,0 +1,1022 @@
+id: demo.levitate_calibration_3
+name: "Levitate Calibration v3 — Quasi-Hover"
+description: >
+  Eight iterations alternating levitation pulses with slow_falling gaps.
+  Goal: locate the cycle ratio where player rise equals descent (quasi-hover).
+  Each section: 4s amp-9 safety lift, then 22s of lev+fall cycling.
+  Bossbar labels each section with parameters. No PLAYER_FLIGHT used.
+  Record: climbing / hovering / falling for each section.
+  Amp 0 and amp 1. Lev durations 20t and 40t. Gaps 4t-40t.
+  Physics baseline: slow_falling ~2 b/s. Amp 0 x 20t ~0.8b rise.
+portable: true
+default_mode: static
+default_audience: participants
+group_count: 1
+group_strategy: join_order
+tags: [test, calibration, aerial, effect-driven]
+meta:
+  created_by: Zara
+  created_at: 2026-03-24
+  last_edited_by: Zara
+  last_edited_at: 2026-03-24
+bossbar:
+  enabled: true
+  title: "<gray>Hover Cal v3</gray>"
+  color: WHITE
+  overlay: PROGRESS
+  audience: participants
+  fade_in_ticks: 10
+  fade_out_ticks: 20
+# Total: 4740 ticks (~237s / ~3m 57s)
+duration_ticks: 4740
+timeline:
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # INTRO — initial safety lift to operating altitude
+  # ═══════════════════════════════════════════════════════════════════════
+  - at: 0
+    type: EFFECT
+    effect_id: slow_falling
+    duration_ticks: 400
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 0
+    type: MESSAGE
+    text: "<gray>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</gray>"
+    audience: participants
+  - at: 5
+    type: MESSAGE
+    text: "<white><bold>Levitate Calibration v3 — Quasi-Hover</bold></white>"
+    audience: participants
+  - at: 20
+    type: MESSAGE
+    text: "<gray>8 sections · alternating levitate + slow_fall · find the hover point</gray>"
+    audience: participants
+  - at: 50
+    type: MESSAGE
+    text: "<gray>Watch bossbar label. Note: climbing / hovering / falling.</gray>"
+    audience: participants
+  - at: 80
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 100
+    amplifier: 9
+    hide_particles: false
+    audience: participants
+  - at: 178
+    type: EFFECT
+    effect_id: slow_falling
+    duration_ticks: 400
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # SECTION 1/8: A=0 lev=20t gap=4t  |  cycle=24t  |  18 pulses  |  pred: climbing — gap too short to fall back
+  # ═══════════════════════════════════════════════════════════════════════
+  - at: 200
+    type: BOSSBAR
+    title: "<white>[1/8] A=0 lev=20t gap=4t</white>"
+    color: WHITE
+    overlay: PROGRESS
+    duration_ticks: 545
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+  - at: 200
+    type: MESSAGE
+    text: "<white>[ 1 ] A=0 lev=20t gap=4t  —  climbing — gap too short to fall back</white>"
+    audience: participants
+  - at: 200
+    type: EFFECT
+    effect_id: slow_falling
+    duration_ticks: 1200
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 200
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 80
+    amplifier: 9
+    hide_particles: false
+    audience: participants
+  - at: 200
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 0.7
+    pitch: 0.80
+    audience: participants
+  - at: 290
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 314
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 338
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 362
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 386
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 410
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 434
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 458
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 482
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 506
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 530
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 554
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 578
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 602
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 626
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 650
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 674
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 698
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # SECTION 2/8: A=0 lev=20t gap=8t  |  cycle=28t  |  16 pulses  |  pred: predicted hover — rise should equal fall
+  # ═══════════════════════════════════════════════════════════════════════
+  - at: 760
+    type: BOSSBAR
+    title: "<white>[2/8] A=0 lev=20t gap=8t</white>"
+    color: AQUA
+    overlay: PROGRESS
+    duration_ticks: 545
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+  - at: 760
+    type: MESSAGE
+    text: "<white>[ 2 ] A=0 lev=20t gap=8t  —  predicted hover — rise should equal fall</white>"
+    audience: participants
+  - at: 760
+    type: EFFECT
+    effect_id: slow_falling
+    duration_ticks: 1200
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 760
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 80
+    amplifier: 9
+    hide_particles: false
+    audience: participants
+  - at: 760
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 0.7
+    pitch: 0.83
+    audience: participants
+  - at: 850
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 878
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 906
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 934
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 962
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 990
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1018
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1046
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1074
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1102
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1130
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1158
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1186
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1214
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1242
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1270
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # SECTION 3/8: A=0 lev=20t gap=20t  |  cycle=40t  |  11 pulses  |  pred: falling — gap 2.5x too long
+  # ═══════════════════════════════════════════════════════════════════════
+  - at: 1320
+    type: BOSSBAR
+    title: "<white>[3/8] A=0 lev=20t gap=20t</white>"
+    color: GREEN
+    overlay: PROGRESS
+    duration_ticks: 545
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+  - at: 1320
+    type: MESSAGE
+    text: "<white>[ 3 ] A=0 lev=20t gap=20t  —  falling — gap 2.5x too long</white>"
+    audience: participants
+  - at: 1320
+    type: EFFECT
+    effect_id: slow_falling
+    duration_ticks: 1200
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1320
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 80
+    amplifier: 9
+    hide_particles: false
+    audience: participants
+  - at: 1320
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 0.7
+    pitch: 0.86
+    audience: participants
+  - at: 1410
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1450
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1490
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1530
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1570
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1610
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1650
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1690
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1730
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1770
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1810
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # SECTION 4/8: A=0 lev=40t gap=10t  |  cycle=50t  |  9 pulses  |  pred: climbing — long lev, short gap
+  # ═══════════════════════════════════════════════════════════════════════
+  - at: 1880
+    type: BOSSBAR
+    title: "<white>[4/8] A=0 lev=40t gap=10t</white>"
+    color: YELLOW
+    overlay: PROGRESS
+    duration_ticks: 545
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+  - at: 1880
+    type: MESSAGE
+    text: "<white>[ 4 ] A=0 lev=40t gap=10t  —  climbing — long lev, short gap</white>"
+    audience: participants
+  - at: 1880
+    type: EFFECT
+    effect_id: slow_falling
+    duration_ticks: 1200
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 1880
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 80
+    amplifier: 9
+    hide_particles: false
+    audience: participants
+  - at: 1880
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 0.7
+    pitch: 0.89
+    audience: participants
+  - at: 1970
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2020
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2070
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2120
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2170
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2220
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2270
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2320
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2370
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # SECTION 5/8: A=0 lev=40t gap=20t  |  cycle=60t  |  7 pulses  |  pred: near hover? — longer lev cycle
+  # ═══════════════════════════════════════════════════════════════════════
+  - at: 2440
+    type: BOSSBAR
+    title: "<white>[5/8] A=0 lev=40t gap=20t</white>"
+    color: GOLD
+    overlay: PROGRESS
+    duration_ticks: 545
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+  - at: 2440
+    type: MESSAGE
+    text: "<white>[ 5 ] A=0 lev=40t gap=20t  —  near hover? — longer lev cycle</white>"
+    audience: participants
+  - at: 2440
+    type: EFFECT
+    effect_id: slow_falling
+    duration_ticks: 1200
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2440
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 80
+    amplifier: 9
+    hide_particles: false
+    audience: participants
+  - at: 2440
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 0.7
+    pitch: 0.92
+    audience: participants
+  - at: 2530
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2590
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2650
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2710
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2770
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2830
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 2890
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # SECTION 6/8: A=0 lev=40t gap=40t  |  cycle=80t  |  5 pulses  |  pred: falling — gap too long for amp 0
+  # ═══════════════════════════════════════════════════════════════════════
+  - at: 3000
+    type: BOSSBAR
+    title: "<white>[6/8] A=0 lev=40t gap=40t</white>"
+    color: RED
+    overlay: PROGRESS
+    duration_ticks: 545
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+  - at: 3000
+    type: MESSAGE
+    text: "<white>[ 6 ] A=0 lev=40t gap=40t  —  falling — gap too long for amp 0</white>"
+    audience: participants
+  - at: 3000
+    type: EFFECT
+    effect_id: slow_falling
+    duration_ticks: 1200
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 3000
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 80
+    amplifier: 9
+    hide_particles: false
+    audience: participants
+  - at: 3000
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 0.7
+    pitch: 0.95
+    audience: participants
+  - at: 3090
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 3170
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 3250
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 3330
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 3410
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 40
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # SECTION 7/8: A=1 lev=20t gap=12t  |  cycle=32t  |  14 pulses  |  pred: near hover? — amp 1 rises faster
+  # ═══════════════════════════════════════════════════════════════════════
+  - at: 3560
+    type: BOSSBAR
+    title: "<white>[7/8] A=1 lev=20t gap=12t</white>"
+    color: BLUE
+    overlay: PROGRESS
+    duration_ticks: 545
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+  - at: 3560
+    type: MESSAGE
+    text: "<white>[ 7 ] A=1 lev=20t gap=12t  —  near hover? — amp 1 rises faster</white>"
+    audience: participants
+  - at: 3560
+    type: EFFECT
+    effect_id: slow_falling
+    duration_ticks: 1200
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 3560
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 80
+    amplifier: 9
+    hide_particles: false
+    audience: participants
+  - at: 3560
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 0.7
+    pitch: 0.98
+    audience: participants
+  - at: 3650
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 3682
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 3714
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 3746
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 3778
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 3810
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 3842
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 3874
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 3906
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 3938
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 3970
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 4002
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 4034
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 4066
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # SECTION 8/8: A=1 lev=20t gap=24t  |  cycle=44t  |  10 pulses  |  pred: falling — gap likely too long for amp 1
+  # ═══════════════════════════════════════════════════════════════════════
+  - at: 4120
+    type: BOSSBAR
+    title: "<white>[8/8] A=1 lev=20t gap=24t</white>"
+    color: PURPLE
+    overlay: PROGRESS
+    duration_ticks: 545
+    fade_in_ticks: 5
+    fade_out_ticks: 20
+    audience: participants
+  - at: 4120
+    type: MESSAGE
+    text: "<white>[ 8 ] A=1 lev=20t gap=24t  —  falling — gap likely too long for amp 1</white>"
+    audience: participants
+  - at: 4120
+    type: EFFECT
+    effect_id: slow_falling
+    duration_ticks: 1200
+    amplifier: 0
+    hide_particles: true
+    audience: participants
+  - at: 4120
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 80
+    amplifier: 9
+    hide_particles: false
+    audience: participants
+  - at: 4120
+    type: SOUND
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 0.7
+    pitch: 1.01
+    audience: participants
+  - at: 4210
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 4254
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 4298
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 4342
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 4386
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 4430
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 4474
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 4518
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 4562
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+  - at: 4606
+    type: EFFECT
+    effect_id: levitation
+    duration_ticks: 20
+    amplifier: 1
+    hide_particles: true
+    audience: participants
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # OUTRO
+  # ═══════════════════════════════════════════════════════════════════════
+  - at: 4680
+    type: MESSAGE
+    text: "<white>Calibration complete. Debrief with Claude — report 1-8 results.</white>"
+    audience: participants
+  - at: 4680
+    type: EFFECT
+    effect_id: slow_falling
+    duration_ticks: 600
+    amplifier: 0
+    hide_particles: true
+    audience: participants
