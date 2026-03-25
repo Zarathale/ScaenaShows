@@ -1,0 +1,39 @@
+# gracie.glissando.accent
+# The sharp version of Gracie's glissando. Same five-note whole-tone run,
+# but zipped through in 2 ticks per step (8 ticks total, 0.4s).
+# Buttons an appearance, accents a line landing, closes a moment with a crisp flourish.
+# The difference from gracie.glissando.dreamy is entirely in tempo — same pitches, decisively faster.
+# Whole-tone pitch series: 1.20 → 1.35 → 1.51 → 1.70 → 1.91
+id: gracie.glissando.accent
+tags: [dramatic, warm, whimsical, fast, sound-driven, single, moment, high, gesture, gracie]
+timeline:
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.60
+    pitch: 1.20
+  - type: SOUND
+    at: 2
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.65
+    pitch: 1.35
+  - type: SOUND
+    at: 4
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.72
+    pitch: 1.51
+  - type: SOUND
+    at: 6
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.68
+    pitch: 1.70
+  - type: SOUND
+    at: 8
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.55
+    pitch: 1.91

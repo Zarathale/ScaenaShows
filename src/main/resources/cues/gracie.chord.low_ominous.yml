@@ -1,0 +1,15 @@
+# gracie.chord.low_ominous
+# A single low note — pitch 0.55, between a half and full octave below natural.
+# Blooms open and sustains for 3 seconds (60 ticks). Gracie plays it and holds.
+# The silence after is part of the gesture.
+# Use under dread, before a revelation, when something large has entered the room.
+id: gracie.chord.low_ominous
+tags: [tense, melancholic, dark, ominous, low, slow, sound-driven, moment, centered, gesture, gracie]
+timeline:
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.80
+    pitch: 0.55
+    max_duration_ticks: 60

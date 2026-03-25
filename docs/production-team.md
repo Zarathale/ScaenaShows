@@ -17,6 +17,37 @@ The **Show Director** leads the team. Every show begins with a brief from the Sh
 
 ---
 
+## How the Production Team Works
+
+### Named Department Heads
+
+Department heads have names. A named department head is not just a role label — they carry an identity, a disposition, and a working style that shapes how they bring their expertise to the production. **Kendra** is the Stage Manager. Other department heads will be named as their roles are developed. When Claude authors for a named department head, it speaks and thinks from that person's perspective — not as a neutral function, but as a person with opinions, judgment, and a particular way of working.
+
+### Tone and Direction
+
+The Director sets tone through experiential language — what the player *feels*, not what the plugin *executes*. Each department translates that tone into their instruments using their own KB. The translation methodology lives in each department's KB; the Director does not prescribe the how, only the what. When a department's interpretation misses the tone, the Director gives experiential feedback: "this feels clinical rather than tender." Departments own the mechanics.
+
+### The Show Folder Framework
+
+Every show has a folder at `src/main/resources/shows/[show_id]/`. The folder contains:
+
+- `brief.md` — the Show Director's brief; the entry point everyone reads first
+- `run-sheet.md` — Kendra's document: the human-readable call script, updated each revision
+- `direction/` — the Show Director's working files: `show-direction.md`, `tone.md`, `intake.md`, `revision-log.md`
+- `departments/` — one file per department: brief received, decisions, beat collision log (SM), revision notes
+
+The `direction/` folder is the Show Director's working space — same relationship to the show folder that any department's subfolder has. The Director is not above the folder structure; they have their own corner of it.
+
+### Department Intake and Revision Accountability
+
+Every show opens with a **default intake conversation** — the Show Director asks each department a standing set of questions before any YAML is written. The intake record lives in `direction/intake.md`. After each in-game test, each active department files a **revision debrief** in their `departments/[dept].md` file. The Director synthesizes into `direction/revision-log.md`. See `show-director.kb.md` for the full intake and revision accountability templates.
+
+### Escalation Discipline
+
+Each department head resolves problems within their authority and knowledge. They only escalate when a resolution requires a creative call above their scope, or would require another department to change what their work was intended to do. **Kendra (Stage Manager)** applies this most visibly: she resolves beat collisions when she can (offset, reorder, consolidate), and escalates to the Show Director with analysis and options when she cannot. This principle applies to all department heads. Departments don't bring problems — they bring resolved problems, or problems with proposed resolutions attached.
+
+---
+
 ## Department Knowledgebases
 
 Each department head maintains a technical knowledgebase — a dedicated file that documents what the Java plugin can do for that department, how to access those capabilities through YAML, and what limitations currently exist. The KB is the technical layer; this document is the creative/directorial layer. Both are required for show authoring.
@@ -25,18 +56,18 @@ Each department head maintains a technical knowledgebase — a dedicated file th
 
 **Java capabilities — ownership vs. awareness:** All departments need *awareness* of what the Java plugin can and cannot do. Only **Stage Management** *owns* the full current state of capabilities, limitations, and development priorities. Stage Management maintains the ops-inbox and coordinates all communication with the Java review team on behalf of the production team. Department KBs document capability awareness; `docs/departments/stage-manager.kb.md` is the authoritative source for what's implemented, what's not, and what's in the queue.
 
-| Department | Knowledgebase |
-|------------|---------------|
-| **Show Director** | `docs/departments/show-director.kb.md` |
-| Casting Director | `docs/departments/casting.kb.md` |
-| Wardrobe & Properties Director | `docs/departments/wardrobe.kb.md` |
-| Choreographer / Movement Director | `docs/departments/choreography.kb.md` |
-| Set Director | `docs/departments/set.kb.md` |
-| Camera Director | `docs/departments/camera.kb.md` |
-| Lighting & Atmosphere Designer | `docs/departments/lighting.kb.md` |
-| Sound Designer | `docs/departments/sound.kb.md` |
-| Sprite Voice Director | `docs/departments/voice.kb.md` |
-| Stage Manager | `docs/departments/stage-manager.kb.md` |
+| Department | Head | Knowledgebase |
+|------------|------|---------------|
+| **Show Director** | Claude | `docs/departments/show-director.kb.md` |
+| Casting Director | — | `docs/departments/casting.kb.md` |
+| Wardrobe & Properties Director | — | `docs/departments/wardrobe.kb.md` |
+| Choreographer / Movement Director | — | `docs/departments/choreography.kb.md` |
+| Set Director | — | `docs/departments/set.kb.md` |
+| Camera Director | — | `docs/departments/camera.kb.md` |
+| Lighting & Atmosphere Designer | — | `docs/departments/lighting.kb.md` |
+| Sound Designer | — | `docs/departments/sound.kb.md` |
+| Sprite Voice Director | — | `docs/departments/voice.kb.md` |
+| **Stage Manager** | **Kendra** | `docs/departments/stage-manager.kb.md` |
 
 ---
 
@@ -53,7 +84,7 @@ Each department head maintains a technical knowledgebase — a dedicated file th
 | Lighting & Atmosphere Designer | Environmental mood layer | What does the world feel like from inside this scene? |
 | Sound Designer | Audio arc and landscape | What does the player hear, and what does the silence say? |
 | Sprite Voice Director | All on-screen text | What words reach the player, in what mode, and when? |
-| Stage Manager | Show integrity, cleanup, and Java capability registry | Will this show leave the world as it found it — and does the team know what tools they have? |
+| Stage Manager (Kendra) | Prompt book, running order, cue naming, cleanup contract, capability registry | Is the show structurally sound and safe — and is every beat in the right place? |
 
 ---
 
@@ -71,7 +102,7 @@ Each department head maintains a technical knowledgebase — a dedicated file th
 
 **Alan's role:** Concept originator and creative vision holder. Alan's stated intentions and feedback are non-negotiables that enter the brief directly. The Director's job is to serve Alan's vision, not substitute for it.
 
-**Knowledgebase:** `docs/departments/show-director.kb.md` — Director authority, Show Direction concept, brief templates, revision cycle guidance, arc evaluation questions, and the pre-flight checklist.
+**Knowledgebase:** `docs/departments/show-director.kb.md` — Director authority, Show Direction concept, tone language and feedback style, brief templates, standing department asks (intake + revision accountability), revision cycle guidance, arc evaluation questions, and the pre-flight checklist.
 
 ---
 
@@ -86,7 +117,7 @@ A complete brief answers:
 - **What does the player carry away?** The one thing they should feel or understand after.
 - **What are the constraints?** Duration, setting, cue library access, known technical limits.
 
-The brief also includes a **Show Direction** section — the Director's statement of non-negotiables, known cross-department risks, and which departments carry elevated priority for this show. The Show Direction is the Director's communication to all departments simultaneously, above the per-department briefings. See `show-director.kb.md` for the full Show Direction format.
+The **Show Direction** lives in `direction/show-direction.md` within the show folder — a dedicated file, separate from the brief, that the Director keeps current throughout production. It is the Director's communication to all departments simultaneously: non-negotiables, known cross-department risks, and which departments carry elevated priority. See `show-director.kb.md` for the full Show Direction format and the `direction/` folder structure.
 
 ---
 
@@ -580,7 +611,11 @@ As with all other creative dimensions, the Lighting Designer should establish th
 
 **Authority:** SOUND and STOP_SOUND events throughout the show timeline. The audio arc — decisions about layering, sequencing, and deliberate silence.
 
-**Knowledgebase:** `docs/departments/sound.kb.md` — Java capabilities, YAML syntax, behavioral notes, sound ID reference, and known limitations of the Minecraft sound system.
+**Knowledgebase:** `docs/departments/sound.kb.md` — Java capabilities, YAML syntax, behavioral notes, sound ID reference, known limitations of the Minecraft sound system, and the full roster of named instrumentalists with their gesture vocabularies.
+
+**The ensemble:** The Sound department is staffed by named theatrical musicians who stand by throughout every production. They respond live to the show's needs — punctuating moments, supporting transitions, providing live musical texture beneath scripted SOUND events. Their gestures are available as named cues and can be summoned by the Show Director or Sound Designer at any point in the show.
+
+- **Gracie the Harpist** — the resident harpist. Always in the wings. Her vocabulary: high-register whole-tone glissandi (dreamy swirl or sharp accent), a low ominous sustained whole-note, and a two-note percussive plink in ascending fourth or fifth. See `docs/departments/sound.kb.md §Sound Department Personnel` for full gesture reference and YAML patterns. Her cues are in the library under the `gracie.*` namespace.
 
 ---
 
@@ -756,13 +791,17 @@ When designing a show's text arc, mark the silences: "No text from T=240 to T=38
 
 ### 9. Stage Manager
 
-**Domain:** Show integrity and operational discipline. The Stage Manager owns the cleanup contract — the guarantee that every show, including interrupted and rehearsal performances, leaves the world exactly as it found it. This role does not have creative authority over any other department; it has veto authority over anything that cannot be safely undone.
+**Kendra is the Stage Manager.**
 
-**The question this role asks:** If this show is interrupted at any tick, what is left behind, and is that acceptable?
+**Domain:** Show integrity and operational discipline. The Stage Manager owns the show YAML's running order and structure — the prompt book — and the cleanup contract: the guarantee that every show, including interrupted and rehearsal performances, leaves the world exactly as it found it. Kendra also owns the Java capability registry and the ops-inbox workflow. She resolves structural problems she has the authority and knowledge to resolve; she escalates to the team when a resolution would require a creative call above her scope.
 
-**Authority:** The cleanup contract. Pre-show state recording. Stop-safety awareness. Block modification protocol enforcement. Run sheet operations notes. Issue escalation to the Java review team.
+**The question this role asks:** Is the show structurally sound and safe — and is every beat in the right place?
 
-**Knowledgebase:** `docs/departments/stage-manager.kb.md` — What stop-safety covers, what it does not, pre-show state tracking, and the cross-department safety checklist.
+**Authority:** The prompt book (running order, cue naming, cue numbering, YAML structure). The cleanup contract. Pre-show state recording and tech check. Block modification protocol enforcement. Beat collision detection and resolution. Run sheet authoring and maintenance. Java gap escalation to the ops-inbox.
+
+**Kendra does not bring problems — she brings resolved problems, or problems with proposed resolutions attached.** Escalation to the Show Director happens only when a resolution requires a creative decision she isn't authorized to make, or requires a department to change what a beat *is*.
+
+**Knowledgebase:** `docs/departments/stage-manager.kb.md` — Prompt book ownership, cue naming conventions, beat collision protocol, revision continuity, run sheet format, what stop-safety covers, what it does not, pre-show tech check, rehearsal safety checklist, and the ops-inbox workflow.
 
 ---
 

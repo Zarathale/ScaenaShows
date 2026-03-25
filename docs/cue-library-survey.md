@@ -213,7 +213,9 @@ into other shows.
 
 **Under-served:** `tense`, `melancholic`, `nostalgic`, `intimate`, `triumphant`, `serene`
 
-**Absent:** `grief`, `mysterious` (only barely), `whimsical`, `reverent` (only one cue)
+**Absent:** `grief`, `mysterious` (only barely), `reverent` (only one cue)
+
+**Added 2026-03-25:** `whimsical` now served by Gracie plink cues; `ominous` now served by `gracie.chord.low_ominous`
 
 ### Tagging status
 
@@ -385,16 +387,19 @@ These gaps are blocking show authoring most immediately:
 | atmos | 3 | ember_drift, warm_bloom, cool_bloom |
 | coda | 4 | curtain.quiet, ember_last, sound.resolve, bloom_fade |
 | fx | 2 | confetti_burst, levitate_and_drift |
+| gracie | 5 | glissando.dreamy, glissando.accent, chord.low_ominous, plink.fourth, plink.fifth |
 | grief | 4 | sound.cave, particle.ash, message.still, bloom.cold |
 | mood | 2 | arrival, wonder.single |
 | overture | 1 | theme_teaser |
 | ramp | 4 | pulse.warm, pulse.cool, sound.build, particle.gather |
 | world | 4 | time.night, time.dawn, time.golden, weather.rain |
-| **Total production** | **24** | — |
+| **Total production** | **29** | — |
 | test (excluded) | 4 | — |
 
-**Still needed to reach 30+ production:** 6+ more cues. Remaining families (peak, celebration, wonder, tension, breath) cover 19 planned cues — well beyond target.
+**Still needed to reach 30+ production:** 1+ more cue. Remaining families (peak, celebration, wonder, tension, breath) cover 19 planned cues — well beyond target.
+
+**Note on `gracie.*` cues:** These are sound-only gesture cues authored by Gracie the Harpist (Sound department). They are composable punctuation and accent tools — they do not belong to a show arc role in the traditional sense, but serve as gesture vocabulary for the live sound team. See `docs/departments/sound.kb.md §Sound Department Personnel` for Gracie's full gesture reference.
 
 ---
 
-*Survey baseline: 2026-03-24. Updated 2026-03-24 after first expansion session (8→24 production cues).*
+*Survey baseline: 2026-03-24. Updated 2026-03-25 after Gracie the Harpist defined (24→29 production cues).*

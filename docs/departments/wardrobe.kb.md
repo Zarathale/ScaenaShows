@@ -1,17 +1,31 @@
 ---
 department: Wardrobe & Properties Director
 owner: Wardrobe & Properties Director
-kb_version: 1.0
+kb_version: 2.0
 updated: 2026-03-25
+notes: High-level technical reference. Detailed guides and catalogues live in docs/departments/wardrobe/ subfolder.
 ---
 
 # Wardrobe & Properties Director — Technical Knowledgebase
 
-> Technical reference for the Wardrobe & Properties department. Documents what the ScaenaShows Java plugin
-> can do for equipment, appearance, variants, and the invisible body technique — and how to access
-> those capabilities through YAML.
->
-> Creative direction for this role lives in `docs/production-team.md §2. Wardrobe & Properties Director`.
+**Quick reference:** What the ScaenaShows Java plugin can do for equipment, appearance, variants, and the invisible-body technique.
+
+**Emotional palette:** See `docs/departments/wardrobe/emotional-register.md` — what Wardrobe contributes to each emotional arc in a show.
+
+**Creative direction:** `docs/production-team.md §2. Wardrobe & Properties Director`
+
+---
+
+## Detailed References
+
+For complete catalogues and in-depth guides, see the `docs/departments/wardrobe/` folder:
+
+| File | Purpose |
+|------|---------|
+| `emotional-register.md` | How Wardrobe contributes to arrival, grief, joy, dread, wonder, intimacy, and transition moments |
+| `mob-variants.md` | Complete inventory of villager professions, cat colors, horse variants, sheep wool colors, parrots, and other mob appearance options (current status + future capability after Java gap is fixed) |
+| `equipment-slots.md` | Detailed guide to each equipment slot: helmet, chestplate, leggings, boots, main hand, off hand — what each communicates and creative uses |
+| `invisible-body.md` | Technical and creative guide to the invisible-body technique (ENTITY_INVISIBLE): floating weapons, disembodied armor, ghostly presences |
 
 ---
 
@@ -193,6 +207,45 @@ equipment:
 
 | Gap | Status | Workaround |
 |-----|--------|-----------|
-| `variant` and `profession` on SPAWN_ENTITY — silently ignored | Open (ops-inbox.md) | Use equipment to differentiate visually |
+| `variant` and `profession` on SPAWN_ENTITY — silently ignored | Open (ops-inbox.md) | Use equipment to differentiate visually (see `equipment-slots.md` for creative workarounds) |
 | Armor Stand pose — requires COMMAND | No filed gap (low priority) | Document cleanup; use sparingly |
 | No ENTITY_EQUIP for players | Not applicable — players manage their own inventory | Use COMMAND escape hatch for inventory modification; not covered by stop-safety |
+
+---
+
+## What Wardrobe Currently Brings to Shows
+
+**Very strong:**
+- Equipment at spawn (all 6 slots on any LivingEntity)
+- Mid-show equipment changes (ENTITY_EQUIP)
+- The invisible-body technique (floating weapons, ghostly armor, ethereal presences)
+- Armor Stands as static costume displays
+- Non-standard helmet uses (carved pumpkins, mob heads, decorative items)
+
+**Strong (once variant Java gap is resolved):**
+- Villager professions (9 types, each with distinct visual identity)
+- Villager biome variants (7 types with different skin palettes)
+- Cat coat colors (11 variants)
+- Horse variants (7 colors + 5 marking overlays)
+- Wolf coat colors (multiple variants in 1.21+)
+- Sheep wool colors (all 16 dye colors)
+
+**Currently thin or unavailable:**
+- Tropical fish detailed customization (parsed, but exact YAML syntax not yet documented)
+- Parrot placement beyond simple spawn (perch on shoulder awaits full implementation)
+- Armor Stand pose control (requires COMMAND, outside show cleanup contract)
+- Custom textures or skins (vanilla Minecraft only)
+
+---
+
+## Cue Library Contributions — Opportunities
+
+The following cue families are **candidates for development** once Wardrobe KB is stable:
+
+1. **`wardrobe.reveal.*`** — Wardrobe-focused cues bundling equipment changes, invisibility, and voice reactions. E.g., `wardrobe.reveal.transform` (entity swaps armor mid-show, text announces change).
+2. **`wardrobe.float.*`** — Reusable patterns for floating objects: `wardrobe.float.weapon`, `wardrobe.float.torch`, `wardrobe.float.relic`.
+3. **`wardrobe.stand.*`** — Armor Stand choreography: memorial circles, formal poses, silent witnesses.
+4. **`appearance.villager.*`** — Once variant gap fixed: profession-based appearance cues (`appearance.villager.scholar`, `appearance.villager.clergy`, etc.).
+5. **`appearance.animals.*`** — Once variant gap fixed: animal color palettes organized by tone (`appearance.animals.festive`, `appearance.animals.melancholic`, etc.).
+
+**Note:** Do not write cue YAML for capabilities blocked by Java gaps. Flag proposed cues as "pending gap resolution" instead.

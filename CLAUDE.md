@@ -200,6 +200,11 @@ ScaenaShows/
 │                   ├── [show_id].yml
 │                   ├── brief.md
 │                   ├── run-sheet.md
+│                   ├── direction/  ← Show Director's working files
+│                   │   ├── show-direction.md
+│                   │   ├── tone.md
+│                   │   ├── intake.md
+│                   │   └── revision-log.md
 │                   └── departments/
 │                       └── *.md    ← One file per department
 ├── CLAUDE.md                       ← this file
@@ -290,7 +295,7 @@ The startup banner reads from `plugin.yml`, so it stays in sync with no extra st
 ### Starting a session
 1. Read `CLAUDE.md` (this file) — current phase, session state, and what's next
 2. Read `ROADMAP.md` — Phase 7/8 priorities and open issues
-3. **If writing shows or cues (any show work):** Read `docs/production-team.md` — the full production team is at the table for all show work. Read `docs/departments/show-director.kb.md` and write the show brief before any YAML is authored. The brief and all department decisions live in the show folder (`src/main/resources/shows/[show_id]/`). Then read `docs/spec.md §4` for schema; read `docs/showsprite.context.md` for voice. For any specific department's tools, read the relevant KB file from `docs/departments/` before writing YAML (e.g., `camera.kb.md` before any camera work, `sound.kb.md` before any audio authoring). For a new show, scaffold the folder from `src/main/resources/shows/_template/`.
+3. **If writing shows or cues (any show work):** Read `docs/production-team.md` — the full production team is at the table for all show work. Read `docs/departments/show-director.kb.md` and write the show brief before any YAML is authored. The brief, Show Direction, intake record, and all department decisions live in the show folder (`src/main/resources/shows/[show_id]/`) — the Director's working files under `direction/`, department files under `departments/`. Then read `docs/spec.md §4` for schema; read `docs/showsprite.context.md` for voice. For any specific department's tools, read the relevant KB file from `docs/departments/` before writing YAML (e.g., `camera.kb.md` before any camera work, `sound.kb.md` before any audio authoring). For a new show, scaffold the folder from `src/main/resources/shows/_template/`.
 4. If creating cues: read `docs/cue-library-survey.md` for current inventory and gaps; follow naming `[category].[archetype].[variant]` per spec §9; add `tags:` per taxonomy spec §10
 5. If writing Java: re-skim the relevant spec section first. If a Java control surface gap is identified, bring it to Stage Management — see `docs/departments/stage-manager.kb.md §Ops-Inbox Workflow`. Stage Management files to ops-inbox.md and coordinates with the Java review team.
 
@@ -308,7 +313,7 @@ When building new cues for review:
 ### Writing Cue/Show YAML
 - All Cue files: `src/main/resources/cues/*.yml`
 - Show YAML files: `src/main/resources/shows/[show_id].yml` (flat, plugin-loadable) OR `src/main/resources/shows/[show_id]/[show_id].yml` (folder structure — see note below)
-- Show folder structure: `src/main/resources/shows/[show_id]/` — contains YAML, `brief.md`, `run-sheet.md`, and `departments/*.md`
+- Show folder structure: `src/main/resources/shows/[show_id]/` — contains YAML, `brief.md`, `run-sheet.md`, Show Director's `direction/` subfolder, and `departments/*.md`
 - **Note on show folders:** The plugin scanner currently reads only flat `shows/*.yml` files. Show folder YAMLs are not loaded by the plugin until the scanner is updated (see `ops-inbox.md`). Keep flat YAMLs for plugin compatibility during transition; use the folder for all production team documentation.
 - To migrate an existing show into folder structure: follow `docs/show-import-process.md`
 - Naming: `[category].[archetype].[variant]` per spec §9

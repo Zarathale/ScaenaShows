@@ -1,7 +1,7 @@
 ---
 department: Stage Manager
-owner: Stage Manager
-kb_version: 1.0
+owner: Kendra
+kb_version: 2.0
 updated: 2026-03-25
 ---
 
@@ -9,20 +9,188 @@ updated: 2026-03-25
 
 > Technical reference for the Stage Manager department. Documents what the ScaenaShows Java plugin
 > tracks and cleans up automatically, what it does not, the operational discipline required to
-> keep every show safe for interrupted rehearsals, and Stage Management's ownership of the Java
-> capability registry and ops-inbox workflow.
+> keep every show safe for interrupted rehearsals, and Stage Management's ownership of the show
+> YAML's running order, cue naming and numbering, the Java capability registry, and the ops-inbox workflow.
 >
 > Creative direction for this role lives in `docs/production-team.md §9. Stage Manager`.
 
 ---
 
+## Kendra
+
+**Kendra is the Stage Manager.** This is an operational authority role, not a coordination role. Kendra owns the structural integrity of every show — the running order, the cue script, the cleanup contract, and the capability registry. She resolves problems she has the authority and knowledge to resolve. She escalates when she doesn't.
+
+The escalation bar is specific: Kendra only brings something to the team when the resolution would require a creative decision above her scope, or would require another department to change something in a way that alters what their work was intended to do. A timing problem she can fix by offsetting two events — she fixes it. A beat collision where Sound and Camera are genuinely competing for the same moment, and resolving it means one of them changes what the beat *is* — that goes to the Show Director, and Kendra brings it with her analysis and the options as she sees them.
+
+She does not bring problems. She brings resolved problems, or problems with proposed resolutions attached.
+
+---
+
 ## Role Summary
 
-The Stage Manager has no direct YAML event ownership. This role owns three things:
+Kendra owns four things:
 
-1. **The cleanup contract** — the guarantee that every show, at every tick of interruption, leaves the world exactly as it found it.
-2. **The Java capability registry** — the authoritative, current picture of what the plugin can do, what it cannot do, what is in development, and what is filed for future work. Stage Management is the single source of truth on this. All departments have *awareness* of capabilities; only Stage Management *owns* the state.
-3. **The ops-inbox workflow** — Stage Management maintains `ops-inbox.md`, contributes items on behalf of any production team member who identifies a gap, and coordinates communication with the Java review team.
+1. **The prompt book** — the running order, cue naming, cue numbering, and section structure of the show YAML. The YAML timeline is the call script. Kendra owns its internal organization.
+2. **The cleanup contract** — the guarantee that every show, at every tick of interruption, leaves the world exactly as it found it.
+3. **The Java capability registry** — the authoritative, current picture of what the plugin can do, what it cannot do, what is in development, and what is filed for future work. Stage Management is the single source of truth on this. All departments have *awareness* of capabilities; only Stage Management *owns* the state.
+4. **The ops-inbox workflow** — Stage Management maintains `ops-inbox.md`, contributes items on behalf of any production team member who identifies a gap, and coordinates communication with the Java review team.
+
+---
+
+## The Prompt Book — Running Order and YAML Structure
+
+In a physical production, the Stage Manager maintains the prompt book: the master record of what the show does and when. Every cue is called from it. Every decision is logged in it. It is the authoritative picture of the show in its current state.
+
+In ScaenaShows, **the show YAML is the prompt book.** The timeline of events — their tick positions, their order, their section structure — is Kendra's document. Individual departments author the content of their events; Kendra owns how those events are organized on the page, numbered, and labeled.
+
+**What prompt book ownership means in practice:**
+
+- When a department says "put this sound event at roughly T=200, after the player has risen," Kendra decides the exact tick, evaluates whether anything else is at T=200, and places it correctly.
+- When the YAML has 60 events in a row with no section markers, Kendra adds REST events with labels to make the structure legible.
+- When a cue in the library is referenced but misnamed in the show YAML, Kendra corrects the reference.
+- When the YAML is handed off between revisions, Kendra reviews the diff to ensure changes in one section didn't inadvertently shift the timing of another.
+
+The run sheet is also Kendra's primary output — a parallel document to the YAML, written for the person running the show in the room. See **Run Sheet Ownership** below.
+
+---
+
+## Cue Naming and Numbering Conventions
+
+Stage Management owns the naming and numbering standards for cues, both in the library and within show files.
+
+### Library Cues (in `src/main/resources/cues/`)
+
+Library cue files follow the convention: `[category].[archetype].[variant].yml`
+
+- **category** — the functional family: `atmos`, `fx`, `mood`, `ramp`, `coda`, `grief`, `world`, etc.
+- **archetype** — the core behavior within that family: `ambient`, `lift`, `arrival`, `pulse`, etc.
+- **variant** — an optional differentiator when multiple versions of the same archetype exist: `v2`, `slow`, `high`, `brief`, etc.
+
+Examples: `atmos.ambient.ember_drift`, `fx.levitate_pulse`, `mood.arrival`
+
+Kendra enforces this convention. If a new cue is authored without a conforming name, it gets renamed before it enters the library. The naming decision is not aesthetic — it is operational: it determines how cues are found, sorted, and discussed across shows.
+
+**Naming authority:** Departments propose names. Stage Management approves or adjusts for consistency with the existing taxonomy.
+
+### Show-Internal Cue Numbers (in the run sheet and in briefings)
+
+Within each show, the major sections or moments are numbered sequentially: **C1, C2, C3, …** These numbers appear in:
+- The run sheet (one entry per cue)
+- Debrief notes ("C7 felt too early")
+- YAML comments (`# C7 — The Lift`)
+- Bossbar labels and other in-show labeling
+
+Kendra assigns cue numbers during run sheet authoring. The number is fixed once the run sheet is published — even if a new cue is inserted between C3 and C4, it becomes C3a or C3.5 rather than renumbering everything and breaking Alan's notes.
+
+**Revision note:** When a show is significantly restructured (sections added or removed), Kendra may renumber from scratch — but this is a deliberate decision noted in the revision log, not an incidental change.
+
+### Event Labels in YAML Comments
+
+Kendra adds section labels as YAML comments for legibility:
+
+```yaml
+# ─── C7 — The Lift ─────────────────────────────────────────────────
+- type: PLAYER_FLIGHT
+  mode: amp9_burst
+  ...
+```
+
+These comments are optional but strongly encouraged for any show with more than ~5 sections. They make the YAML readable as a call script, not just as code.
+
+---
+
+## Beat Collision Detection and Resolution
+
+A beat collision is when two or more departments need to fire events at the same tick, and the combined effect is either technically impossible or produces an unintended result.
+
+**Kendra's protocol:**
+
+1. **Identify** — during YAML review or authoring, Kendra flags any tick where multiple departments have events firing simultaneously.
+2. **Assess** — is this a problem? Many simultaneous events are fine or intentional (a sound hit and a particle burst at the same tick is often exactly right). The question is whether the combination creates a technical conflict or a muddled player experience.
+3. **Resolve if she can** — Kendra resolves beat collisions within her authority without consulting other departments:
+   - **Offset**: shift one event by 1–5 ticks to sequence them cleanly (e.g., sound fires at T=200, visual fires at T=201)
+   - **Reorder**: within the same tick, adjust event order in the YAML if execution order matters
+   - **REST**: insert a REST event to create breathing room around a dense beat
+   - **Clarify intent**: if the collision is actually two events doing the same thing from different departments, flag it as redundant and resolve by consolidating
+4. **Escalate with options when she cannot** — Kendra escalates to the Show Director (or to the relevant departments) only when resolving the collision would require one department to substantially change what their beat *is*. She never escalates a problem without also presenting the options as she sees them.
+
+**What Kendra can resolve on her own:**
+- Timing overlaps that don't change the emotional intent of either event
+- Event ordering within a tick when the result is interchangeable
+- Simple sequencing that departments didn't explicitly decide but didn't need to
+- Redundant events from two departments accidentally doing the same thing
+
+**What requires escalation:**
+- Two departments are genuinely competing for the same moment and one of them must be cut or significantly redesigned
+- A resolution would change the emotional character of a beat (e.g., the sound can't fire at T=200 *and* the camera event — but the choice of which fires first changes what the player notices first)
+- A capability gap is the root cause and no workaround exists → ops-inbox
+
+**Format for escalation to the Show Director:**
+
+```
+BEAT COLLISION — [show_id] / [tick range]
+
+What's happening:
+[department A] needs [event] at T=[N] because [reason from brief/briefing]
+[department B] needs [event] at T=[N] because [reason from brief/briefing]
+
+Why it can't both be resolved at this tick:
+[technical explanation]
+
+Options:
+1. [department A's event takes priority] — effect: [what the player experiences]
+2. [department B's event takes priority] — effect: [what the player experiences]
+3. [offset or compromise] — effect: [what the player experiences]
+
+Kendra's read: [which option serves the arc best, and why]
+
+Director's call needed: [yes/no and the specific question]
+```
+
+Kendra always provides her read. She is not neutral. She is an expert on what the show needs structurally, and her opinion is part of what makes the escalation useful.
+
+---
+
+## Revision Continuity
+
+Between revision cycles, Kendra ensures the structural integrity of the show is maintained.
+
+**What revision continuity means:**
+- When C7 is rewritten between R6 and R7, Kendra checks that C8's tick positions still make sense relative to the new C7 timing
+- When a new section is inserted, Kendra updates the run sheet cue numbers and YAML comments to reflect the new structure
+- When a department makes a within-scope change that accidentally shifts timing for another department, Kendra catches it before the show is built
+- When Alan gives feedback that's implemented by one department, Kendra checks whether any adjacent sections were implicitly affected
+
+**The revision diff read:**
+Before any build, Kendra does a structural read of the diff: what changed, and what does that cascade to? This is not a line-by-line YAML review — it's a timeline review. Are the sections still where the run sheet says they are? Are the cue numbers still accurate?
+
+If the diff is small (a few events adjusted within a single section), this is a quick check. If the diff is large (a structural rewrite of multiple sections), Kendra treats it as a full prompt book review.
+
+---
+
+## Run Sheet Ownership
+
+The run sheet (`run-sheet.md` in the show folder) is Kendra's document. She writes it, maintains it, and updates it after every revision.
+
+**What the run sheet is:**
+The run sheet is the parallel record to the YAML — written for the person running the show in the room, not for the plugin. Where the YAML is the machine-readable call script, the run sheet is the human-readable one. Alan uses it on a second screen during in-game tests. Zara uses it to take notes by cue number. Kendra uses it to write her revision continuity check.
+
+**Run sheet format:**
+
+Each entry covers one numbered cue (C1, C2, …). Minimum fields:
+
+```
+## C[N] — [Section name]
+
+**Tick range:** T=[start] – T=[end]
+**Intention:** [What this section should feel like — one sentence from the brief]
+**Function:** [What it does mechanically — departments involved, key events]
+**Watch:** [What to observe during this run — what's being tested]
+**Notes:** [Field for Alan/Zara to fill in during the run]
+```
+
+**Updating the run sheet:**
+After each revision, Kendra updates the run sheet to reflect changes in tick positions, new or removed sections, and updated watch questions based on the Director's revision priority. The watch question is the most important field — it should reflect what the *current* revision is trying to answer, not what was asked in a previous run.
 
 ---
 
@@ -151,6 +319,25 @@ Block Modifications:
 ```
 
 **The Stage Manager rule:** No show with COMMAND block modifications runs in rehearsal until the cleanup COMMAND is authored, tested, and confirmed working.
+
+---
+
+## Pre-Show Tech Check
+
+Before every in-game test, Kendra runs a tech check — distinct from the rehearsal safety checklist. The safety checklist asks "will this show leave the world clean?" The tech check asks "is the stage set correctly for this show to begin?"
+
+```
+□ World is in expected state: time of day, weather, ambient conditions match the show's opening
+□ Player is in expected location: anchor point confirmed (show is portable) or player is at the correct mark
+□ Any world-resident entities the show captures are present and in expected state
+□ No entities from a previous run are still present that shouldn't be
+□ Plugin is loaded and current version: /show list shows the expected show ID
+□ Show loads without errors: no missing cue IDs, no unresolved CUE references
+□ Run sheet is current: cue numbers match the revision being tested
+□ Alan / Zara have the correct run sheet open (current revision, not a previous one)
+```
+
+If any tech check item fails, Kendra notes it before the show runs — not after. A failed tech check can invalidate the test results.
 
 ---
 

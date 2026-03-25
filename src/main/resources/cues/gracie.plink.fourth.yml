@@ -1,0 +1,20 @@
+# gracie.plink.fourth
+# Two notes, 3 ticks apart, ascending a perfect fourth (pitch ratio 1.335).
+# Gracie's wink — light, open, slightly mischievous. Less resolved than a fifth.
+# Pitch: 1.50 → 2.00 (1.50 × 1.335 = 2.002, at the pitch ceiling)
+# Use to nod at a clever moment, acknowledge something quietly, or punctuate without calling attention.
+id: gracie.plink.fourth
+tags: [warm, whimsical, tender, fast, sound-driven, single, moment, high, gesture, gracie]
+timeline:
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.65
+    pitch: 1.50
+  - type: SOUND
+    at: 3
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.55
+    pitch: 2.00

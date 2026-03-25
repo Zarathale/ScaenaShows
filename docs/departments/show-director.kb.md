@@ -1,7 +1,7 @@
 ---
 department: Show Director
 owner: Show Director
-kb_version: 1.1
+kb_version: 2.0
 updated: 2026-03-25
 ---
 
@@ -58,6 +58,33 @@ significantly. It is the Director's communication channel to the whole team, abo
 
 ---
 
+## Tone Language and Feedback Style
+
+The Director communicates tone through experiential language — what the player *feels*, not what the plugin *executes*. "Tender and a little strange" is a tone statement. "Raise the view window by 10 degrees" is a mechanic. The Director works in the first register. Departments work in the second.
+
+**How tone communication works:**
+
+The brief's TONE field carries the core emotional register: 2–3 words or a short phrase. Each department reads that phrase and translates it into their instruments using their own KB. Sound reads "tender" as a sustained soft ambient bed. Camera reads "a little strange" as orientation choices that put the player in slightly non-standard viewpoints relative to the subject. The translation methodology lives in each department's KB — the Director does not prescribe how departments interpret tone, only *what* to aim for.
+
+If a department's interpretation misses the tone, the Director says so in experiential terms: "This moment feels clinical rather than tender" — not "adjust the reverb parameter." The Director may elaborate on tone by expanding the phrase: "By 'tender' I mean the player should feel like they are being handled carefully — cared for, not studied."
+
+Where the Director communicates with more precision is in **relationship and perspective**: "Can the player feel like they're looking *up* at the Herald rather than directly at them — that subservience?" This is still experiential (it describes how the player should feel relative to something) rather than mechanical. Camera then determines whether that's an orientation angle, a SPECTATE mode, or a spatial arrangement.
+
+The Director may go mechanical when a department hasn't found the answer after a revision cycle, or when the Director has a specific technical insight. But mechanical feedback is an assist, not a substitution for department judgment. If the Director is frequently specifying mechanics, that's a signal the tone language or briefing was unclear — fix the brief, not the YAML directly.
+
+**Tone document:**
+
+For any show where tone needs unpacking across multiple departments, the Director may write a `direction/tone.md` — a brief elaboration of the tone phrase, noting what it means for each department's domain. This is not required for every show; it's most useful when the tone phrase is ambiguous or when departments have conflicting default interpretations.
+
+**Feedback escalation path:**
+
+1. Director gives experiential feedback: "This feels too assured — can it be more hesitant?"
+2. Department proposes interpretation: "I can pull back the ambient bed and add a softer event sequence at C3."
+3. Director approves or redirects: "The audio pull-back is right. For choreography, can we also slow the ascent?"
+4. If a department consistently can't find the tone, the Director escalates to an updated Show Direction non-negotiable — not a line-by-line note, but a clearer statement of what must be true.
+
+---
+
 ## The Show Director's Sequence
 
 Every show follows this sequence before any YAML is written:
@@ -87,8 +114,13 @@ Every show gets its own folder at `src/main/resources/shows/[show_id]/`. This is
 ```
 shows/[show_id]/
 ├── [show_id].yml       ← the show YAML (plugin-loadable after scanner update)
-├── brief.md            ← Show Director's brief + per-department briefings
+├── brief.md            ← Show brief (entry point; everyone reads this first)
 ├── run-sheet.md        ← In-game test guide, revised each round
+├── direction/          ← Show Director's working files (owned by Show Director)
+│   ├── show-direction.md    ← Non-negotiables, watch-for, elevated departments
+│   ├── tone.md              ← Tone phrase elaboration per department (optional; write when needed)
+│   ├── intake.md            ← Default intake record: dept questions + initial answers
+│   └── revision-log.md      ← Running debrief log, one entry per revision cycle
 └── departments/
     ├── casting.md
     ├── wardrobe.md
@@ -101,16 +133,22 @@ shows/[show_id]/
     └── stage-manager.md
 ```
 
+The `direction/` folder is the Show Director's working space — the same relationship to the show folder that any other department's subfolder has to the production. The Director is not above the folder structure; they have their own corner of it.
+
+`brief.md` stays at the show root because it is the entry point everyone reads first. It is the Director's document, but it belongs to the whole production.
+
 **How to start a new show folder:**
 
 1. Copy the scaffold: `cp -r src/main/resources/shows/_template/ src/main/resources/shows/[show_id]/`
 2. Rename the template YAML placeholder to `[show_id].yml`
 3. Fill in `brief.md` with the show brief before any YAML authoring begins
-4. Fill in each `departments/[dept].md` with the brief received and initial decisions
-5. Add the run sheet to `run-sheet.md` after the first authoring pass
+4. Fill in `direction/show-direction.md` with the Show Direction (non-negotiables, watch-for, elevated depts)
+5. Fill in `direction/intake.md` using the Standing Department Asks (below) — one section per department
+6. Fill in each `departments/[dept].md` with the briefing and initial department decisions
+7. Add the run sheet to `run-sheet.md` after the first authoring pass
 
-**Keeping department files current:**
-After every revision (R2, R3, …), update the relevant department files with decisions made in that revision. Add the revision label and a brief summary. The file should be readable by anyone who needs to understand what this department decided and why.
+**Keeping direction/ files current:**
+`direction/show-direction.md` should be updated any time the arc changes significantly — before re-briefing departments, not after. `direction/revision-log.md` gets a new entry after every in-game test. `direction/intake.md` is a record of the initial intake; it doesn't change after authoring begins (it documents what was decided before the show was written).
 
 **On the plugin scanner:** The plugin currently reads flat `shows/*.yml` files. Until the scanner is updated (see `ops-inbox.md`), keep the YAML accessible as a flat file. The folder serves as production team documentation now; it becomes the canonical plugin path after the scanner ships. See `docs/show-import-process.md` for migration guidance.
 
@@ -241,6 +279,123 @@ Are there any REDSTONE or time/weather changes that need restoring?
 Any COMMAND escape hatches planned?
 What is the run sheet format required?
 ```
+
+---
+
+## Standing Department Asks — Default Intake
+
+These are the Director's standing questions for each department at the start of every show. They are templates — adapt phrasing for the show's context, but all questions should have answers in `direction/intake.md` before authoring begins.
+
+The intake record is a snapshot of what each department committed to before writing began. It is not updated after authoring starts — that's what `departments/[dept].md` is for.
+
+---
+
+### Casting — Intake
+- What performers (if any) appear? Name (role name, not type name), entity type, and function in the arc.
+- Are they puppet (controlled), performer (native AI), or do they transition between states?
+- Are world-resident entities being involved or avoided?
+- Does any performer need to be on stage before the show starts?
+- *If no performers:* Confirm. A show without performers is complete — state this explicitly so the department doesn't spend authoring time on aspirational casting.
+
+### Wardrobe — Intake
+- What is the player's appearance during this show? (default / armored / invisible-body technique / other)
+- What do performers wear, and what does each choice communicate?
+- Are any props or visual objects (Armor Stands, item displays) in scope?
+- Are appearance transitions planned? When and why?
+
+### Choreography — Intake
+- Is the player stationary, moving through the world, or aloft during this show?
+- What is the player's altitude arc? (ground / hover / graduated lift / full aerial / mixed) — sketch the shape if known.
+- Are performers moving independently of the player? Key movement beats?
+- Are flight/levitation effects in scope? If yes, which calibrated patterns apply?
+
+### Set — Intake
+- Where does this show take place? (world, rough coordinates, space type)
+- Is the show portable (anchor-based) or location-specific?
+- What marks are needed — standard 9-grid, custom layout, or none?
+- Are any block modifications in scope?
+- What is the spatial container? (outdoor open sky, arena, cave, underwater, elevated platform)
+
+### Camera — Intake
+- What is the camera philosophy for this show? (Director-directed / player-free / cinematic sequences / mixed)
+- Is the player's view oriented at the start?
+- Are there key beats where the Director needs the player looking at something specific?
+- Any PLAYER_SPECTATE or cinematic transitions planned?
+
+### Lighting — Intake
+- What is the environmental state at first tick? (time of day, weather, particle atmosphere)
+- Does the show move through distinct atmospheric zones? Name them.
+- What are the key lighting events — the environmental shifts that serve the arc?
+- What is the state at show end — does it restore to pre-show, or is the final state intentional?
+
+### Sound — Intake
+- What is the audio state at opening? (ambient bed running / silence / player's world audio unchanged)
+- What are the key hit moments — sounds that punctuate visual or movement beats?
+- Are looping ambient layers in scope? When do they start and stop?
+- What is the audio state at show end? Does it need explicit cleanup?
+
+### Voice — Intake
+- How present is Sprite in this show? (dialogue-heavy / sparse punctuation / mostly silent)
+- Which text modes are in scope? (CHAT / TITLE / ACTION_BAR / BOSSBAR)
+- Is the player addressed directly ("you") or is this ambient narration?
+- Where does Sprite speak, and where does Sprite go quiet — what is the silence doing?
+
+### Stage Manager — Intake
+- Are block modifications in scope? (triggers full cleanup protocol)
+- Are world-resident entities being captured or modified?
+- Are any world-state changes (time, weather, game rules) planned that need restoring?
+- Any known capability gaps that affect this show's design? Name them now, before authoring begins.
+- What must always be true if the player calls `/show stop` mid-show?
+
+---
+
+## Standing Department Asks — Revision Accountability
+
+After each in-game test, the Director asks each active department for a debrief. Not every department is active in every revision — only departments whose domain was exercised that run need to report.
+
+Department debriefs are written into `departments/[dept].md` under a `## Revision N (vX.Y.Z)` header. The Director reads all department debriefs and writes their own synthesis into `direction/revision-log.md`.
+
+---
+
+### Per-Department Debrief (asked after every revision where the department's work was in play)
+
+1. **What worked** — What in your domain landed as intended?
+2. **What didn't land** — What needs adjustment, and why? (Experiential first: "it felt too early / too loud / too present." Mechanical second: "the timing was off by ~10 ticks.")
+3. **Capability gap?** — Did a plugin limitation affect your section? If yes, flag to Stage Management.
+4. **Director question** — Is there anything you need direction on before the next revision? Don't work around a conflict without surfacing it.
+5. **Next revision plan** — What specifically will you change, and what is the intended effect?
+
+---
+
+### Director's Synthesis (written into direction/revision-log.md after each debrief round)
+
+```
+## Revision N (vX.Y.Z — YYYY-MM-DD)
+
+### Overall read
+[1–3 sentences: is the show closer to or further from the brief after this run?
+What is the primary thing that changed?]
+
+### What's working
+[Department contributions that are landing — name them, don't just say "good overall"]
+
+### What isn't working
+[Be specific. "The altitude arc isn't earned" is more useful than "needs work."]
+
+### Show Direction update
+[Has any non-negotiable changed? Has a new watch-for emerged?
+Write "No change" if the direction holds.]
+
+### Priority for Revision N+1
+[One sentence. The single most important thing the next revision must address.]
+
+### Department notes
+[Any specific redirects, approvals, or escalations from the debrief round]
+```
+
+---
+
+The revision log is the Director's running record of the production's current state. It is the document that answers the question: "Where did we leave off, and why does the show look the way it does right now?"
 
 ---
 

@@ -1,0 +1,20 @@
+# gracie.plink.fifth
+# Two notes, 3 ticks apart, ascending a perfect fifth (pitch ratio 1.498).
+# Gracie's nod — slightly more open and conclusive than the fourth.
+# Use when the moment being acknowledged has some resolution to it.
+# Pitch: 1.33 → 2.00 (1.33 × 1.498 = 1.992, landing at the pitch ceiling)
+id: gracie.plink.fifth
+tags: [warm, whimsical, tender, fast, sound-driven, single, moment, high, gesture, gracie]
+timeline:
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.65
+    pitch: 1.33
+  - type: SOUND
+    at: 3
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.55
+    pitch: 2.00

@@ -218,3 +218,102 @@ A curated selection organized by emotional function. Full list: `minecraft.wiki/
 | Looping management | Looping ambient sounds persist until STOP_SOUND fires. Every SOUND that loops must have a corresponding STOP_SOUND in the show timeline. |
 
 No gaps are currently filed for the Sound department. These are inherent Minecraft sound system constraints, not ScaenaShows implementation gaps.
+
+---
+
+## Sound Department Personnel
+
+The Sound department is staffed by a team of theatrical musicians who stand by throughout rehearsals and performances. They respond to the show's needs — punctuating moments, supporting transitions, and providing the live musical texture beneath scripted SOUND events. Each musician has a defined vocabulary of gestures that can be summoned by name.
+
+Additional instrumentalists will be added to this roster as they are defined.
+
+---
+
+### Gracie the Harpist
+
+Gracie is always in the wings, instrument at the ready. She doesn't score scenes — she *comments* on them. Her gestures are small, precise, and perfectly timed: a flourish to greet an arrival, a low note that turns a room ominous, a quick plink to punctuate a wry moment.
+
+Her primary instrument in the engine is `minecraft:block.note_block.harp` — the closest vanilla analog to a concert harp. It has a short, clean decay. Gracie works the pitch parameter as her register control: values 1.4–2.0 are her high register (bright, crystalline), 0.5–0.8 are her low register (resonant, weighty).
+
+**Gracie's gesture vocabulary** — all available as named cues:
+
+---
+
+#### Gesture 1: High-register whole-tone glissando — dreamy swirl
+
+`gracie.glissando.dreamy`
+
+Gracie's thinking gesture. She swirls through a five-note ascending whole-tone sequence in the high register, one note every 3 ticks (0.15 seconds). Used when a mood is shifting, when something wistful is happening, or when the show needs to breathe and float for a beat. Unhurried. The notes don't announce themselves — they arrive.
+
+| Note | Tick | Pitch | Interval |
+|------|------|-------|----------|
+| 1 | 0 | 1.20 | — |
+| 2 | 3 | 1.35 | +whole tone |
+| 3 | 6 | 1.51 | +whole tone |
+| 4 | 9 | 1.70 | +whole tone |
+| 5 | 12 | 1.91 | +whole tone |
+
+Duration: 12 ticks (0.6 seconds). Volumes arc from 0.50 → 0.62 → 0.58 (peak at note 3, taper out).
+
+---
+
+#### Gesture 2: High-register whole-tone glissando — sharp accent
+
+`gracie.glissando.accent`
+
+The same five-note whole-tone run, but zipped through in 2 ticks per step (8 ticks total, 0.4 seconds). Used to button an appearance, accent a line landing, or close a moment with a crisp flourish. The difference from the dreamy version is entirely in tempo — same pitches, decisively faster. Volumes are brighter throughout, with a sharper initial attack.
+
+| Note | Tick | Pitch |
+|------|------|-------|
+| 1 | 0 | 1.20 |
+| 2 | 2 | 1.35 |
+| 3 | 4 | 1.51 |
+| 4 | 6 | 1.70 |
+| 5 | 8 | 1.91 |
+
+---
+
+#### Gesture 3: Low-register whole-note — ominous sustain
+
+`gracie.chord.low_ominous`
+
+A single low note, pitched down to 0.55 (between a half and a full octave below natural). It blooms open and sustains. Used under moments of dread, before a revelation, or when something large and unavoidable has entered the room. Gracie plays this one and holds it — the silence after is part of the gesture. `max_duration_ticks: 60` (3 seconds).
+
+---
+
+#### Gesture 4: Two-note plink — ascending fourth
+
+`gracie.plink.fourth`
+
+Two notes, quick and percussive, a fourth apart. The "wink" gesture. Gracie uses this to nod at something, acknowledge a clever moment, or give a light punctuation that doesn't call attention to itself. Two eighth notes, 3 ticks between them. The interval of a fourth (pitch ratio 1.335) gives it a light, open-question quality — less resolved than a fifth, slightly more mischievous.
+
+| Note | Tick | Pitch |
+|------|------|-------|
+| 1 | 0 | 1.50 |
+| 2 | 3 | 2.00 |
+
+#### Gesture 5: Two-note plink — ascending fifth
+
+`gracie.plink.fifth`
+
+Same two-note structure, but a fifth interval (pitch ratio 1.498). Slightly more open and conclusive than the fourth. Use when the moment being acknowledged is more resolved — the nod rather than the wink. Note 1 at pitch 1.33, note 2 at 2.00 (1.33 × 1.498 ≈ 1.99, at the pitch ceiling).
+
+| Note | Tick | Pitch |
+|------|------|-------|
+| 1 | 0 | 1.33 |
+| 2 | 3 | 2.00 |
+
+---
+
+#### Pitch Math Reference (for authoring Gracie variants)
+
+| Interval | Semitones | Pitch multiplier |
+|----------|-----------|-----------------|
+| Whole tone | 2 | × 1.1225 |
+| Minor third | 3 | × 1.1892 |
+| Major third | 4 | × 1.2599 |
+| Perfect fourth | 5 | × 1.3348 |
+| Perfect fifth | 7 | × 1.4983 |
+| Octave | 12 | × 2.0000 |
+
+All Gracie gestures use `minecraft:block.note_block.harp`, category `master`. The note block harp has a short decay — it does not sustain naturally except at low pitches. The dreamy glissando relies on the slight overlap of decays between notes spaced 3 ticks apart; tighter spacing muddies the articulation.

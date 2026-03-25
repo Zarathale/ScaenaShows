@@ -1,0 +1,38 @@
+# gracie.glissando.dreamy
+# Gracie's thinking gesture. Five-note ascending whole-tone glissando in the high register.
+# Unhurried — one note every 3 ticks (0.15s). The notes arrive, they don't announce.
+# Use when a mood is drifting, something wistful is landing, or the show needs to float.
+# Whole-tone pitch series: 1.20 → 1.35 → 1.51 → 1.70 → 1.91 (each × 1.1225)
+id: gracie.glissando.dreamy
+tags: [serene, tender, whimsical, warm, slow, sound-driven, moment, high, gesture, gracie]
+timeline:
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.50
+    pitch: 1.20
+  - type: SOUND
+    at: 3
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.55
+    pitch: 1.35
+  - type: SOUND
+    at: 6
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.62
+    pitch: 1.51
+  - type: SOUND
+    at: 9
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.58
+    pitch: 1.70
+  - type: SOUND
+    at: 12
+    sound_id: "minecraft:block.note_block.harp"
+    category: master
+    volume: 0.45
+    pitch: 1.91
