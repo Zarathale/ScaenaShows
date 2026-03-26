@@ -128,7 +128,7 @@ This means:
 
 Without ScaenaComposer, the authoring workflow is:
 1. Alan describes a show concept (mood, occasion, duration, tone)
-2. **Claude convenes the production team** — before any YAML is written, Claude brings each of the ten roles to the table. The Show Director writes the brief and per-department briefings. Casting, Wardrobe, Choreography, Set, Camera, Lighting, Sound, Voice, and Stage Management each have questions to ask and decisions to make. These decisions shape the YAML that follows. Each department's decisions are tracked in the show folder under `departments/`.
+2. **Claude convenes the production team** — before any YAML is written, Claude brings each of the eleven roles to the table. The Show Director writes the brief and per-department briefings. Casting, Wardrobe, Choreography, Set, Effects (includes Camera as a specialty), Lighting, Sound, Fireworks, Voice, and Stage Management each have questions to ask and decisions to make. These decisions shape the YAML that follows. Each department's decisions are tracked in the show folder under `departments/`.
 3. Claude authors the full YAML directly — cues + show file
 4. Alan deploys, plays in-game, gives feedback
 5. Claude revises
@@ -162,9 +162,10 @@ ScaenaShows/
 │   │   ├── wardrobe.kb.md         (+ wardrobe/ subfolder with extended references)
 │   │   ├── choreography.kb.md
 │   │   ├── set.kb.md
-│   │   ├── camera.kb.md
+│   │   ├── effects.kb.md          (+ camera.kb.md — Camera is a specialty within Effects, not a standalone department)
 │   │   ├── lighting.kb.md
 │   │   ├── sound.kb.md
+│   │   ├── fireworks.kb.md
 │   │   ├── voice.kb.md            (+ voice/ subfolder: showsprite.context.md)
 │   │   ├── stage-manager.kb.md
 │   │   └── approved-sources.md

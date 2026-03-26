@@ -1,0 +1,27 @@
+# motif.arrival.bell
+# Rising 3-note bell figure: A4 → B4 → C#5
+# A threshold crossed with grace. Something good has arrived.
+# 4 ticks per note (0.2s each). Total: 8 ticks.
+# Use: under an entrance, after a resolving voice line, confirming a quiet arrival.
+# Fire it after the moment — it confirms rather than announces.
+id: motif.arrival.bell
+tags: [arrival, ceremony, joy, warm, bright, melodic, gesture, motif]
+timeline:
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 0.70
+    pitch: 1.189    # A4
+  - type: SOUND
+    at: 4
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 0.75
+    pitch: 1.335    # B4
+  - type: SOUND
+    at: 8
+    sound_id: "minecraft:block.note_block.bell"
+    category: master
+    volume: 0.80
+    pitch: 1.498    # C#5

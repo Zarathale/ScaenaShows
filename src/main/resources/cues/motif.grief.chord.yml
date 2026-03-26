@@ -1,0 +1,31 @@
+# motif.grief.chord
+# Sustained A minor chord: A4 + C5 + E5 on pling (electric piano)
+# The room's response to loss. Not loud — interior. A single color held.
+# All three voices fire simultaneously at T=0. Duration: 60 ticks (3 seconds).
+# Use: after a grief peak, not during it. Fire after text has landed and silence has held
+# for at least 20 ticks. The chord exhales — it doesn't compete with the moment.
+# Volume tapers from root to fifth so the chord has body without the upper notes overpowering.
+id: motif.grief.chord
+tags: [grief, sorrow, weight, tender, quiet, slow, chord, motif]
+timeline:
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.50
+    pitch: 1.189    # A4 — root, loudest
+    max_duration_ticks: 60
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.45
+    pitch: 1.414    # C5 — minor third
+    max_duration_ticks: 60
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:block.note_block.pling"
+    category: master
+    volume: 0.38
+    pitch: 1.782    # E5 — fifth, quietest
+    max_duration_ticks: 60

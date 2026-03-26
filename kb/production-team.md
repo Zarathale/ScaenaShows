@@ -610,9 +610,11 @@ As with all other creative dimensions, the Lighting Designer should establish th
 
 **Authority:** SOUND and STOP_SOUND events throughout the show timeline. The audio arc — decisions about layering, sequencing, and deliberate silence.
 
-**Knowledgebase:** `kb/departments/sound.kb.md` — Java capabilities, YAML syntax, behavioral notes, sound ID reference, known limitations of the Minecraft sound system, and the full roster of named instrumentalists with their gesture vocabularies.
+**Knowledgebase:** `kb/departments/sound.kb.md` — Java capabilities, YAML syntax, behavioral notes, sound ID reference, known limitations of the Minecraft sound system, and the full roster of named instrumentalists with their gesture vocabularies. Extended reference: `kb/departments/sound/music-director.md`.
 
-**The ensemble:** The Sound department is staffed by named theatrical musicians who stand by throughout every production. They respond live to the show's needs — punctuating moments, supporting transitions, providing live musical texture beneath scripted SOUND events. Their gestures are available as named cues and can be summoned by the Show Director or Sound Designer at any point in the show.
+**The Music Director** is a specialist within the Sound department who advises on and authors the musical layer specifically — note block arrangements, motifs, riffs, and ensemble deployment. The Sound Designer owns the audio arc; the Music Director is called when a scene needs something with pitch, rhythm, and musical identity. The Music Director calls the ensemble. See `kb/departments/sound/music-director.md` for the note block instrument palette, pitch/harmony reference, world-built redstone arrangement workflow, and starter motif library (`motif.*` namespace, 5 cues).
+
+**The ensemble:** The Sound department is staffed by named theatrical musicians who stand by throughout every production. They respond live to the show's needs — punctuating moments, supporting transitions, providing live musical texture beneath scripted SOUND events. Their gestures are available as named cues and can be summoned by the Show Director, Sound Designer, or Music Director at any point in the show.
 
 - **Gracie the Harpist** — the resident harpist. Always in the wings. Her vocabulary: high-register whole-tone glissandi (dreamy swirl or sharp accent), a low ominous sustained whole-note, and a two-note percussive plink in ascending fourth or fifth. See `kb/departments/sound.kb.md §Sound Department Personnel` for full gesture reference and YAML patterns. Her cues are in the library under the `gracie.*` namespace.
 
@@ -624,13 +626,12 @@ As with all other creative dimensions, the Lighting Designer should establish th
 type: SOUND
 sound_id: minecraft:entity.allay.ambient_with_item
 category: ambient       # master | music | record | weather | block | hostile | neutral | player | ambient | voice
-volume: 1.0             # 0.0–1.0+ (values > 1.0 increase range, not loudness)
+volume: 1.0             # 0.0–1.0 controls loudness; > 1.0 expands broadcast radius for nearby non-participants
 pitch: 1.0              # 0.5–2.0 (1.0 = natural pitch; 2.0 = octave up, double speed)
-max_duration_ticks: 80  # optional; stops the sound after N ticks
-audience: participants  # standard audience targeting
+max_duration_ticks: 80  # optional; stops the sound after N ticks (hard cut, no fade)
 ```
 
-Sound is positional in Minecraft — the server broadcasts the sound from the show anchor's location, and the client applies distance-based attenuation. Sounds fired from far offsets feel distant; sounds at offset 0,0,0 feel intimate.
+Sound plays at each participant's location (`p.getLocation()`). Every participant hears the sound as if it originates from where they are standing — there is no anchor-relative offset. Volume (0.0–1.0) controls perceived loudness; values above 1.0 expand the broadcast radius so nearby non-participants may also hear it.
 
 **Pitch as a tool:** Lowering pitch (0.6–0.8) makes a sound feel heavier, more ancient, more ominous. Raising pitch (1.2–1.5) makes it brighter, more urgent, more fragile. A distant thunder sound pitched down to 0.6 becomes subterranean. An allay note pitched up to 1.8 becomes a tiny, urgent chime.
 
@@ -681,7 +682,7 @@ A selection for common show situations (full list at minecraft.wiki/sounds):
 
 #### STOP_SOUND
 
-Stops a specific sound_id or all sounds for the audience. Critical for:
+Stops all sounds on a given channel (or all channels) for participants. Does **not** stop a specific sound by ID — stopping is by `source` channel only. Critical for:
 - Ending a looping ambient bed before a scene transition
 - Cutting sound abruptly for dramatic silence
 - Clearing a sound layer before a new one begins

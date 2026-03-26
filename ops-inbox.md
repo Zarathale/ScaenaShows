@@ -32,7 +32,7 @@ Guard each cast; log and continue if the variant value is invalid.
 
 ### [java-gap] FACE: yaw only, no pitch control
 
-**Area:** Camera Director, Choreographer
+**Area:** Effects Director (Camera specialty), Choreographer
 **Event:** `FACE`
 
 `StageEventExecutor.handleFace()` computes yaw (horizontal angle via atan2) but does not set pitch. The entity or player turns horizontally toward the target but is not oriented vertically.
@@ -75,7 +75,7 @@ No way to cleanly dismiss a `TITLE` before its `stay` timer expires. Current wor
 
 ### [java-gap] No smooth yaw rotation (ROTATE event)
 
-**Area:** Camera Director
+**Area:** Effects Director (Camera specialty)
 **Event:** (new — does not exist)
 
 `FACE` is instant. No first-class primitive exists for gradual camera panning (yaw rotation without position movement). Current workaround is rapid PLAYER_TELEPORT sequences, which is imprecise.
@@ -248,6 +248,18 @@ The workaround is CROSS_TO (back to spawn offset) or DESPAWN_ENTITY.
 spawn location as its home at SPAWN_ENTITY time. In handleReturnHome(), add a branch for
 non-Player entities that CROSS_TO's or teleports them to the recorded spawn location when
 `return_home` is called.
+
+---
+
+---
+
+### [future-idea] Human as Designer — preamble layer for department KBs
+
+**Area:** All department KBs, production team workflow
+**Priority:** Low — not blocking anything
+**Filed:** 2026-03-25
+
+Add a "Human as Designer" preamble to each department KB clarifying the creative role split: the human designer (Alan/Zara, occasionally Smitty) sets the intention; Claude proposes the form. Each show has one human designer. The preamble would appear at the top of each of the 11 dept KBs with a universal statement plus a dept-specific one-liner. Not needed now — repo is working fine — but worth revisiting if onboarding new collaborators or if Claude starts overstepping design decisions.
 
 ---
 

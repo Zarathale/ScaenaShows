@@ -1,0 +1,33 @@
+# motif.wonder.chime
+# Ascending 4-note chime figure: C5 → D5 → E5 → F#5
+# Discovery. Something rare seen. The beautiful uncanny.
+# 2 ticks per note (0.1s each) — wonder arrives fast. Total: 6 ticks.
+# Use: after a set reveal, under a particle burst, when the player arrives somewhere extraordinary.
+# Fire 2–4 ticks after the visual moment — confirms rather than announces.
+id: motif.wonder.chime
+tags: [wonder, discovery, joy, uncanny, bright, high, fast, motif]
+timeline:
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:block.note_block.chime"
+    category: master
+    volume: 0.60
+    pitch: 1.414    # C5
+  - type: SOUND
+    at: 2
+    sound_id: "minecraft:block.note_block.chime"
+    category: master
+    volume: 0.65
+    pitch: 1.587    # D5
+  - type: SOUND
+    at: 4
+    sound_id: "minecraft:block.note_block.chime"
+    category: master
+    volume: 0.70
+    pitch: 1.782    # E5
+  - type: SOUND
+    at: 6
+    sound_id: "minecraft:block.note_block.chime"
+    category: master
+    volume: 0.60
+    pitch: 2.000    # F#5 — the ceiling, the top of the range

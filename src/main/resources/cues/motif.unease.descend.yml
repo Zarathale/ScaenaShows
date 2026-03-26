@@ -1,0 +1,28 @@
+# motif.unease.descend
+# Descending chromatic bass figure: E4 → D#4 → D4
+# The weight increasing. Something wrong is settling in.
+# 8 ticks per note (0.4s each). Slow descent is the instrument — do not speed up.
+# Total: 16 ticks.
+# Use: under a darkening reveal, before a dangerous entity appears, when a tone shifts to dread.
+# Let it land and hold before the next event fires.
+id: motif.unease.descend
+tags: [tension, dread, darkness, grief, weight, descend, slow, motif]
+timeline:
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:block.note_block.bass"
+    category: master
+    volume: 0.80
+    pitch: 0.891    # E4
+  - type: SOUND
+    at: 8
+    sound_id: "minecraft:block.note_block.bass"
+    category: master
+    volume: 0.85
+    pitch: 0.841    # D#4
+  - type: SOUND
+    at: 16
+    sound_id: "minecraft:block.note_block.bass"
+    category: master
+    volume: 0.90
+    pitch: 0.794    # D4 — settles into the dark

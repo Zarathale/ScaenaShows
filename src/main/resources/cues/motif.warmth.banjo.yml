@@ -1,0 +1,40 @@
+# motif.warmth.banjo
+# Pentatonic arch on banjo: D4 → F#4 → A4 → B4 → A4
+# Warmth, community, the ordinary world at its best. Folk-character.
+# 4 ticks per note (0.2s each). Unhurried. Total: 16 ticks.
+# Use: under a moment of domestic peace, when allies or villagers are present,
+# as underscore to a warmth cue or a voice line about togetherness.
+# This motif has strong character — use it when the moment earns it, not as filler.
+id: motif.warmth.banjo
+tags: [warm, community, comfort, folk, joy, tender, motif]
+timeline:
+  - type: SOUND
+    at: 0
+    sound_id: "minecraft:block.note_block.banjo"
+    category: master
+    volume: 0.70
+    pitch: 0.794    # D4 — start grounded
+  - type: SOUND
+    at: 4
+    sound_id: "minecraft:block.note_block.banjo"
+    category: master
+    volume: 0.75
+    pitch: 1.000    # F#4
+  - type: SOUND
+    at: 8
+    sound_id: "minecraft:block.note_block.banjo"
+    category: master
+    volume: 0.80
+    pitch: 1.189    # A4 — the arch peak
+  - type: SOUND
+    at: 12
+    sound_id: "minecraft:block.note_block.banjo"
+    category: master
+    volume: 0.72
+    pitch: 1.335    # B4
+  - type: SOUND
+    at: 16
+    sound_id: "minecraft:block.note_block.banjo"
+    category: master
+    volume: 0.62
+    pitch: 1.189    # A4 — return, settle back in
