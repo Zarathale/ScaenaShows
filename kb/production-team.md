@@ -58,7 +58,7 @@ Each department head maintains a technical knowledgebase — a dedicated file th
 
 | Department | Head | Knowledgebase |
 |------------|------|---------------|
-| **Show Director** | Claude | `kb/departments/show-director.kb.md` |
+| **Show Director** | Claude | `kb/departments/show-director/show-director.kb.md` |
 | Casting Director | — | `kb/departments/casting.kb.md` |
 | Wardrobe & Properties Director | — | `kb/departments/wardrobe.kb.md` |
 | Choreographer / Movement Director | — | `kb/departments/choreography.kb.md` |
@@ -68,7 +68,7 @@ Each department head maintains a technical knowledgebase — a dedicated file th
 | Lighting & Atmosphere Designer | — | `kb/departments/lighting.kb.md` |
 | Sound Designer | — | `kb/departments/sound.kb.md` |
 | Sprite Voice Director | — | `kb/departments/voice.kb.md` |
-| **Stage Manager** | **Kendra** | `kb/departments/stage-manager.kb.md` |
+| **Stage Management & Production** | **Kendra** | `kb/departments/stage-manager.kb.md` *(migrates to `stage-management/` on next uplift)* |
 | **Fireworks Director** | **Mira** | `kb/departments/fireworks.kb.md` |
 
 ---
@@ -87,7 +87,7 @@ Each department head maintains a technical knowledgebase — a dedicated file th
 | Lighting & Atmosphere Designer | World-state changes visible to all | What does the world feel like from inside this scene? |
 | Sound Designer | Audio arc and landscape | What does the player hear, and what does the silence say? |
 | Sprite Voice Director | All on-screen text | What words reach the player, in what mode, and when? |
-| Stage Manager (Kendra) | Prompt book, running order, cue naming, cleanup contract, capability registry | Is the show structurally sound and safe — and is every beat in the right place? |
+| Stage Management & Production (Kendra) | Prompt book, running order, cue naming, cleanup contract, capability registry, show creation workflow, pre-production coordination | Is the show structurally sound and safe — and is every beat in the right place? |
 | Fireworks Director | Fireworks — every detonation in the show | What detonates, where, at what altitude, and what does that moment mean? |
 
 ---
@@ -858,138 +858,4 @@ Every show must be safe to interrupt at any tick during rehearsal. This means:
 
 When any role identifies a gap in show control surface — a thing Minecraft can do that ScaenaShows cannot author via YAML — the Stage Manager escalates it as a GitHub issue on the ScaenaShows repo. Issue format: see Appendix A.
 
-The Java review team audits the control surface regularly. The goal: every meaningful Minecraft API knob should be reachable from YAML. If it isn't, it should be filed.
-
----
-
-### 10. Fireworks Director — Mira
-
-**Domain:** All fireworks. The Fireworks Director owns every detonation in the show — the single rocket, the spatial pattern, the finale. Where Lighting sets the world's ambient register, Fireworks punctuates it.
-
-**The question this role asks:** What detonates, where, at what altitude, and what does that moment mean for the player?
-
-**Authority:** All FIREWORK_* events (FIREWORK, FIREWORK_CIRCLE, FIREWORK_LINE, FIREWORK_FAN, FIREWORK_RANDOM). The fireworks.yml preset library — authoring, naming, and curation of all rocket definitions. Pyrotechnic composition decisions: which pattern type, at what density, with what color palette, at which altitude relative to the player.
-
-**Relationship to Lighting & Atmosphere:** Fireworks are light sources. Every burst illuminates the player's world for a moment. The Fireworks Director designs the burst; the Lighting Designer designs the ambient world the burst lives inside. They coordinate on color register and on LIGHTNING timing — strikes that accompany pyrotechnic moments need both departments to agree on what that beat is doing. Neither overrides the other — they agree.
-
-**Relationship to Effects:** Altitude is dramaturgy. Where a burst detonates relative to the player's position determines whether it reads as a sky event (overhead, watched from below), an envelopment (surrounding the player), or a descent (player above the bursts, looking down). The Fireworks Director designs for the player's altitude at the moment of detonation; the Effects Director owns that altitude. These two departments must agree on where the player is when a pyrotechnic moment fires.
-
-**Knowledgebase:** `kb/departments/fireworks.kb.md` — Named head (Mira), instrument inventory, Java capabilities, YAML syntax, behavioral notes, preset library reference, pattern composition vocabulary, tone translation, and capability status.
-
----
-
-### 11. Camera Director — Mark
-
-**Domain:** The player's viewpoint. The Camera Director owns everything that governs where the player is looking and what cinematic perspective they occupy: orientation events, spectate and mount modes, and screen-level perceptual distortion. Where Effects controls the player's body, Camera controls the player's eyes.
-
-**The question this role asks:** Where is the player looking right now — and is that the right place for them to be?
-
-**Authority:** FACE (all targets), PLAYER_TELEPORT yaw/pitch fields (orientation on arrival — destination remains Effects authority), CROSS_TO `facing:` field, PLAYER_SPECTATE, PLAYER_SPECTATE_END, PLAYER_MOUNT, PLAYER_DISMOUNT, CAMERA (sway, blackout, flash, float). Orientation-only PLAYER_TELEPORT calls (offset {x:0,y:0,z:0}) are Camera-authored.
-
-**The Focus Point Doctrine:** Mark's core operating principle. Every beat has an intended focus point — the firework burst, the entering performer, the world transformation. If the player is likely looking somewhere else when that beat fires, Mark asserts an attention-orienting call. He reviews every significant beat in the show and flags gaps during pre-production, not after in-game testing.
-
-**Relationship to Effects:** The closest coordination pair. Effects decides where the player's body is; Camera decides which direction their eyes are pointing. Every PLAYER_TELEPORT that also resets orientation is a joint authoring moment — Effects sets the destination, Camera sets the yaw/pitch. Both departments coordinate on the sequence of any blackout-transition-arrival.
-
-**Relationship to Fireworks:** Before any high-impact pyrotechnic beat, Mira flags to Mark where the burst will be relative to the player's position and altitude. Mark determines whether the player's likely orientation puts that burst in their field of view. If not, Mark authors an orientation call timed just before the firework fires.
-
-**Relationship to Choreography:** If a performer enters from a direction the player is unlikely to be facing, Mark puts in a FACE just before the entrance. Choreography owns the entrance; Camera owns its reveal.
-
-**Knowledgebase:** `kb/departments/camera.kb.md` — Named head (Mark), Focus Point Doctrine, honest accounting of pan/tilt/zoom/follow capabilities, instrument inventory, cross-department coordination, gaps, and capability status.
-
----
-
-## Appendix A — Java Control Surface Gaps
-
-Known gaps in show control surface are tracked in `ops-inbox.md` at the repo root. When a role identifies a new gap, add it there with sufficient context for the Java review team to pick it up.
-
-The following gaps were identified during the production team authoring session (2026-03-25) and are currently open in the inbox:
-
----
-
-### Gap 1 — SPAWN_ENTITY: variant and profession fields parsed but not applied
-
-**Label:** `java-gap`, `control-surface`, `wardrobe`
-
-**Description:**
-The `variant:` and `profession:` fields on SPAWN_ENTITY are parsed into `SpawnEntityEvent` (model layer is complete) but `EntityEventExecutor.handleSpawn()` never applies them to the spawned entity. They are silently ignored at runtime.
-
-**Impact:** The Wardrobe & Properties Director and Casting Director cannot use villager professions, cat coat patterns, horse colorings, sheep wool colors, or wolf variants via YAML. These fields appear to work but do nothing.
-
-**Fix scope:** In `EntityEventExecutor.handleSpawn()`, after spawning, cast to the appropriate entity subtype and call the variant API:
-- `Villager` → `setProfession(Villager.Profession.valueOf(e.profession))` and `setVillagerType(Villager.Type.valueOf(e.variant))`
-- `Cat` → `setCatType(Cat.Type.valueOf(e.variant))`
-- `Horse` → `setColor(Horse.Color.valueOf(e.variant))`
-- `Sheep` → `setColor(DyeColor.valueOf(e.variant))`
-- Wolf color (1.21+) → `setVariant(Wolf.Variant.valueOf(e.variant))`
-
-Each subtype needs a guarded cast. Error handling: log and continue if variant value is invalid.
-
----
-
-### Gap 2 — FACE: yaw only, no pitch control
-
-**Label:** `java-gap`, `control-surface`, `camera`
-
-**Description:**
-`StageEventExecutor.handleFace()` computes yaw (horizontal angle via atan2) but does not set pitch (vertical angle). The entity or player is turned to face the horizontal direction of the target but is not oriented vertically toward it.
-
-**Impact:** The Camera Director and Choreographer cannot orient entities or players to look upward or downward at specific targets. Looking up at an aerial performer, overhead fireworks, or an elevated mark requires a PLAYER_TELEPORT workaround that also changes position.
-
-**Fix scope:** Add pitch computation to `handleFace()`:
-```java
-double dy = lookTarget.getY() - from.getY();
-double horizontalDist = Math.sqrt(dx*dx + dz*dz);
-float pitch = (float) (-Math.toDegrees(Math.atan2(dy, horizontalDist)));
-newLoc.setPitch(pitch);
-```
-Apply alongside the existing yaw calculation.
-
----
-
-### Gap 3 — No BLOCK_PLACE / BLOCK_REMOVE event type
-
-**Label:** `java-gap`, `control-surface`, `set-director`, `enhancement`
-
-**Description:**
-Show-authored set dressing that requires block placement has no show-tracked representation. The only current path is via COMMAND (escape hatch), which has no cleanup contract — blocks placed via COMMAND are not restored if the show is interrupted.
-
-**Impact:** The Set Director cannot use block-based set pieces safely in rehearsal or production shows. Any block modification carries permanent-world risk if the show is interrupted.
-
-**Proposed:** Add `BLOCK_PLACE` and `BLOCK_REMOVE` event types. On `BLOCK_PLACE`, the show records the original block type at the target location and stores it in `RunningShow`. On show end (natural or interrupted), `applyStopSafety` iterates the recorded changes and restores original blocks. This brings block modification inside the cleanup contract.
-
----
-
-### Gap 4 — No TITLE_CLEAR event
-
-**Label:** `java-gap`, `control-surface`, `voice-director`
-
-**Description:**
-There is no way to explicitly dismiss a TITLE before its `stay` timer expires without firing a new TITLE with empty strings (which resets the fade clock, causing a visual pop). The Voice Director cannot cut a title short cleanly.
-
-**Impact:** Title timing must be designed so early dismissal is never needed, which constrains show authoring.
-
-**Proposed:** Add a `TITLE_CLEAR` point-in-time event that sends a title with empty strings and `fade_in: 0, stay: 0, fade_out: 10` — a clean, fast fade-out. Alternatively, expose `fade_in`, `stay`, `fade_out` as override parameters so any TITLE can act as a clear.
-
----
-
-### Gap 5 — No smooth yaw rotation (ROTATE event)
-
-**Label:** `java-gap`, `control-surface`, `camera`, `enhancement`
-
-**Description:**
-FACE is instant. There is no way to author a gradual camera pan (smooth yaw rotation without position movement) as a first-class event. Approximating it via rapid PLAYER_TELEPORT sequences is imprecise and not semantically clear.
-
-**Impact:** The Camera Director cannot compose smooth camera turns for cinematic sequences without using PLAYER_SPECTATE on a moving entity as a workaround.
-
-**Proposed:** Add a `ROTATE` bar event:
-```yaml
-type: ROTATE
-target: player | entity:spawned:Name
-yaw: 90.0         # target yaw in degrees; or delta: +90 for relative rotation
-duration_ticks: 40
-```
-Implementation: BukkitRunnable interpolating yaw per tick, similar to `smoothMovePlayer`, but changing only the yaw component without altering XYZ position.
-
----
-
-*End of production-team.md*
+The Java review team audits the control surface regularly. The goal: every meaningful Minecraft API knob should be reacha

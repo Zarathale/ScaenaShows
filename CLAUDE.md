@@ -22,26 +22,34 @@
 |-------|--------|-------------|
 | Phase 1 | ✅ Complete (2026-03-24) | Java plugin rewrite (Cue schema) — fully working |
 | Phases 2–6 | ⏭ Skipped | ScaenaComposer UI/RCON — deferred indefinitely |
-| **Phase 7** | 🟢 Active | ShowSprite — AI-driven show generation (no UI required) |
-| **Phase 8** | 🟢 Active | Cue library + tags — seeded starter set |
+| Phase 7 | ✅ Complete (2026-03-24) | ShowSprite persona + production team framework established |
+| Phase 8 | ✅ Complete (2026-03-24) | Cue library seeded; creative language foundation laid |
+| **Phase 9** | 🟢 Active | Department readiness + show creation workflow |
+| **Phase 10** | 🟢 Active | Showcase Series — team calibration (3 shows scaffolded, 0 passes complete) |
 
 ## Session State — 2026-03-26
 
-**Where we stopped:** Mid-conversation roadmap planning. R7 (v2.9.0) is built and ready to run but has NOT been tested in-game yet. This session pivoted to a strategic roadmap discussion before the R7 test happened. Pick up the R7 test first, then return to roadmap work.
+**Where we stopped:** Repo audit complete and all changes applied. R7 (`demo.archetype_sampler` v2.9.0) is built but has NOT been tested in-game. All three showcases are at Brief stage, P1 (Set) not started for any of them.
 
 **What was accomplished this session (2026-03-26):**
-- Full KB depth audit across all 12 department KBs
-- Roadmap gap analysis — current ROADMAP.md predates the production team framework entirely and needs major restructuring
-- Began designing new phase structure (Phases 9–11) — see `kb/roadmap-planning-2026-03-26.md` for full context
-- Confirmed strategic direction: team calibration loop → production show pipeline
-- **Two open questions before ROADMAP.md can be rewritten** — see planning doc for details
+- ROADMAP.md fully rewritten — Phases 9/10/11 defined, Phases 7+8 closed
+- All three Showcase shows scaffolded: `showcase.01` "The Cabinet", `showcase.02` "The Long Night", `showcase.03` "Welcome" — full folder structure, briefs, show-direction, and department briefs written
+- `kb/departments/show-director/showcase-roadmap.md` — pass sequences for all three shows
+- `skills/audit-this-repo/SKILL.md` — new skill created
+- Repo audit completed: `kb/audits/2026-03-26_pre-showcase-audit.md`
+- CLAUDE.md updated: phase table (9+10 active), skills list, session state
+- `kb/roadmap-planning-2026-03-26.md` — archived to `kb/artifacts/` (superseded by ROADMAP.md)
+- `kb/cue-library-survey.md` — archived to `kb/artifacts/` (stale; direct cue scan preferred)
+- **Strategic clarification:** Cue library is no longer measured by count. The measure is depth of creative language — departmental vocabulary, tone translation, and decision-making framework. The library grows with the work.
 
-**Immediate next step (other machine):**
-Build 2.9.0 and run `demo.archetype_sampler` (R7). `/show play demo.archetype_sampler`
-Key observations: Does the C2 hover feel like "gentle bubbling" near the ground? Does C3 climb feel like gradual separation from earth? Does C7 lift feel EARNED — like the arrival takes you? Is C9 inside the fireworks?
+**Immediate next step:**
+Run R7 in-game on the other machine. `/show play demo.archetype_sampler`
+Watch questions: Does C2 hover feel like gentle bubbling near the ground? Does C3 climb feel like gradual separation from earth? Does C7 lift feel EARNED — like the arrival takes you? Is C9 inside the fireworks?
 
 **After R7 debrief:**
-Return to roadmap planning conversation. Read `kb/roadmap-planning-2026-03-26.md` to restore context. Two open questions need Alan's answers before the roadmap can be written.
+Begin showcase departmental work. All three shows await P1 (Set). Set is the first mover for all three — P1 requires in-world scouting by Zarathale (in-game, not in Claude). Pick one show, open P1 (Set), begin the scouting brief and coordinate stage registry entries with `kb/departments/set/stage-registry.md`.
+
+Phase 9 Track A: Effects, Set, and Lighting KBs are the thinnest and have critical roles in the showcases. Schedule KB uplift sessions before those departments' passes run.
 
 ---
 
@@ -132,7 +140,7 @@ The plugin is working and deployed. Key facts for future Java work:
 
 ---
 
-## Phase 7 + 8 — Active Work
+## Phase 7 + 8 — Reference (Complete)
 
 ### The Core Insight
 
@@ -163,9 +171,10 @@ Each department maintains a **technical knowledgebase** in `kb/departments/` —
 
 - [x] ShowSprite persona document — **complete 2026-03-24** (`kb/departments/voice/showsprite.context.md`)
 - [x] Cue tagging: spec §10 taxonomy applied; each cue has `tags:` array — **complete 2026-03-24**
-- [ ] Cue library: 30+ cues organized by emotional function (at 25 — 5 more to reach target)
-- [ ] At least 3 production-quality shows authored (not demos — actual experiences)
-- [ ] `intro.young_persons_guide` rewritten as a genuine artistic piece, not a capability tour
+- [x] Cue library seeded — 37 production cues across 10 families — **complete 2026-03-24**
+  - Note: count is no longer the relevant metric. The measure going forward is depth of creative language — departmental vocabulary, tone translation capability, and the team's ability to make decisions from a shared design framework. The library grows with the shows.
+- [ ] At least 3 production-quality shows authored — this is Phase 10/11 work
+- [ ] `intro.young_persons_guide` rewritten as a genuine artistic piece — deferred to Phase 11
 
 ---
 
@@ -198,7 +207,9 @@ ScaenaShows/
 │       ├── style-guide.html       ← ScaenaComposer UI draft (unaccepted, deferred)
 │       └── ui-mockup.html         ← ScaenaComposer UI draft (unaccepted, deferred)
 ├── skills/                        ← Claude working skills (plain markdown)
-│   ├── dept-kb-builder/SKILL.md   ← Build/update a department KB
+│   ├── audit-this-repo/SKILL.md   ← Full repo health check; session orientation
+│   ├── dept-kb-builder/SKILL.md   ← Department KB uplift (see also kb-builder)
+│   ├── kb-builder/SKILL.md        ← Build/update a dept KB; audit full KB; quick summary
 │   ├── production-review/SKILL.md ← Full production team show review
 │   └── show-import-process/SKILL.md ← Migrate a flat show to folder structure
 ├── docs/                          ← Legacy run sheets (migration debt — move to show folders)
@@ -314,9 +325,9 @@ The startup banner reads from `plugin.yml`, so it stays in sync with no extra st
 
 ### Starting a session
 1. Read `CLAUDE.md` (this file) — current phase, session state, and what's next
-2. Read `ROADMAP.md` — Phase 7/8 priorities and open issues
-3. **If writing shows or cues (any show work):** Read `kb/production-team.md` — the full production team is at the table for all show work. Read `kb/departments/show-director.kb.md` and write the show brief before any YAML is authored. The brief, Show Direction, intake record, and all department decisions live in the show folder (`src/main/resources/shows/[show_id]/`) — the Director's working files under `direction/`, department files under `departments/`. Then read `kb/system/spec.md §4` for schema; read `kb/departments/voice/showsprite.context.md` for voice. For any specific department's tools, read the relevant KB file from `kb/departments/` before writing YAML. For a new show, scaffold from `src/main/resources/shows/_template/`.
-4. If creating cues: follow naming `[category].[archetype].[variant]` per spec §9; add `tags:` per taxonomy spec §10. The cue-library-survey in `kb/` is out-of-date — assess current inventory directly from `src/main/resources/cues/`.
+2. Read `ROADMAP.md` — Phase 9/10 priorities, acceptance criteria, and open issues
+3. **If writing shows or cues (any show work):** Read `kb/production-team.md` — the full production team is at the table for all show work. Read `kb/departments/show-director/show-director.kb.md` and write the show brief before any YAML is authored. The brief, Show Direction, intake record, and all department decisions live in the show folder (`src/main/resources/shows/[show_id]/`) — the Director's working files under `direction/`, department files under `departments/`. Then read `kb/system/spec.md §4` for schema; read `kb/departments/voice/showsprite.context.md` for voice. For any specific department's tools, read the relevant KB file from `kb/departments/` before writing YAML. For a new show, scaffold from `src/main/resources/shows/_template/`.
+4. If creating cues: follow naming `[category].[archetype].[variant]` per spec §9; add `tags:` per taxonomy spec §10. Assess current cue inventory directly from `src/main/resources/cues/`. The measure of the cue library is creative language depth, not count.
 5. If writing Java: re-skim the relevant spec section first. If a Java control surface gap is identified, bring it to Stage Management — see `kb/departments/stage-manager.kb.md §Ops-Inbox Workflow`. Stage Management files to ops-inbox.md and coordinates with the Java review team.
 
 ### Cue Authoring — How Alan Collaborates
@@ -336,51 +347,4 @@ When building new cues for review:
 - Show folder structure: `src/main/resources/shows/[show_id]/` — contains YAML, `brief.md`, `run-sheet.md`, Show Director's `direction/` subfolder, and `departments/*.md`
 - **Note on show folders:** The plugin scanner currently reads only flat `shows/*.yml` files. Show folder YAMLs are not loaded by the plugin until the scanner is updated (see `ops-inbox.md`). Keep flat YAMLs for plugin compatibility during transition; use the folder for all production team documentation.
 - To migrate an existing show into folder structure: use `skills/show-import-process/SKILL.md`
-- Naming: `[category].[archetype].[variant]` per spec §9
-- Tags: free-form strings per spec §10 (not namespaced — `warm` not `tone:warm`)
-- CUE references in show timelines: `type: CUE` with `cue_id:` field (not `cue:`)
-
-### Building
-```bash
-./gradlew shadowJar
-# Output: build/libs/ScaenaShows-<version>.jar
-# Always check/bump version in build.gradle.kts before building — see Versioning Policy above.
-```
-
-### Deploying (after build)
-```bash
-# Stop server
-# Replace JAR in plugins/
-# Delete plugins/ScaenaShows/cues/ and plugins/ScaenaShows/shows/
-# Start server — bundled YAMLs extract automatically
-# Verify: /show list
-```
-
-### Resuming on Another Machine
-
-Pull the branch, build, and deploy:
-
-```bash
-git checkout feature/ai-show-generation
-git pull
-./gradlew shadowJar
-```
-
-Then stop server, swap JAR, delete cues/ and shows/ from the plugin folder, restart.
-
-**First show to run after deploy:**
-```
-/show play demo.archetype_sampler
-```
-
-Open `src/main/resources/shows/demo.archetype_sampler/run-sheet.md` on a second screen before running.
-This is the current run sheet for the active revision. Take notes by cue number (C1–C13).
-Debrief with Claude after — every note drives the next revision.
-
----
-
-## Contacts
-
-- **Alan** — project owner, overall creative direction, Scaena voice sign-off
-- **Zarathale (Zara)** — primary show builder; works directly with Claude on show authoring and cue development; the person most likely at the keyboard in a Cowork session
-- **Smitty2020 (Smitty)** — secondary show builder in-game
+- Naming: `[category].[arc
