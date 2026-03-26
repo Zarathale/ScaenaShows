@@ -28,23 +28,6 @@ What does this department bring to each emotional arc? Appearance is the first l
 
 ---
 
-## Grief / Loss
-
-**What the department contributes:**
-
-- **Disembodied armor.** Apply ENTITY_INVISIBLE to an Armor Stand or entity equipped with a full suit of armor. The body vanishes; the armor remains, floating in space like an absence. This is the visual language of the missing person, the fallen soldier, the memorial.
-- **Grief-worn appearance via color absence.** Once variants are live, a SNOW Villager in a warm biome reads as wrong, displaced, out of place. A black or dark-gray sheep (via variant) among white ones reads as sorrow or isolation.
-- **Dark/heavy equipment palette.** Iron armor reads heavier than diamond. Black wool (on a sheep) reads darker than white. Dark colors in equipment signal weight and loss.
-- **Floating objects as relics.** Spawn an entity (e.g., a Zombie or Skeleton), equip it with a single item (a torch, a book, a banner), apply ENTITY_INVISIBLE to the body, and let the item float. A torch floating in darkness reads as memory. A book reads as lost knowledge.
-- **Still, silent presence via Armor Stands.** Unlike mobs, Armor Stands don't move unless commanded. A circle of Armor Stands in armor reads as a memorial, a gathering of witnesses, or the weight of the absence.
-
-**Key mechanics:**
-- ENTITY_INVISIBLE applies an invisibility effect with hidden particles. The entity's body disappears; all equipped items (armor, main hand, off hand) remain visible.
-- Invisibility is duration-based. Set `duration_ticks` high (e.g., 9999) to maintain invisibility for a full show.
-- Armor Stands have no body in the traditional sense — ENTITY_INVISIBLE doesn't apply meaningfully to them. Use them as pure display surfaces via equipment alone.
-
----
-
 ## Joy / Celebration
 
 **What the department contributes:**
@@ -151,7 +134,7 @@ The following emotional registers are **underserved in the current cue library**
 
 1. **Appearance transformation sequences.** A cue family (e.g., `wardrobe.reveal.*`) that bundles ENTITY_INVISIBLE, ENTITY_EQUIP, and text messaging to create narrative wardrobe moments.
 2. **Floating object aesthetics.** Reusable patterns for spawning invisible-bodied entities with held items (floating torches, floating books, floating weapons).
-3. **Armor Stand choreography.** Static formations of Armor Stands used as stage pictures — memorial circles, formal processions, throne-room setups.
+3. **Armor Stand choreography.** Static formations of Armor Stands used as stage pictures — formal processions, dramatic tableaux, throne-room setups.
 4. **Mob variant palettes.** Once the variant gap is resolved, cue families organized by emotional tone (e.g., `appearance.villager.authority`, `appearance.animals.festive`, `appearance.animals.melancholic`).
 
 ---

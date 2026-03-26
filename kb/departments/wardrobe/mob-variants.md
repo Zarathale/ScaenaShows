@@ -58,7 +58,7 @@ Once the Java gap is fixed, `variant:` will set the Villager's biome type, which
 | `SWAMP` | Green, murky palette, damp aesthetic | Murky, hidden, mysterious, dark-rooted | Eerie or swampy settings |
 | `TAIGA` | Cool-toned palette, forest clothing | Boreal, cool, evergreen, forested | Woodsy or northern settings |
 
-**Cross-biome strategy:** A single SNOW Villager in a PLAINS scene reads as visually "wrong" — perfect for signaling displacement, loss, or otherness. Mix biome variants to suggest diverse origins or diaspora.
+**Cross-biome strategy:** A single SNOW Villager in a PLAINS scene reads as visually "wrong" — perfect for comic displacement, visual strangeness, or deliberate otherness. Mix biome variants to suggest diverse origins or a colorful crowd.
 
 ---
 
@@ -137,7 +137,7 @@ Each DyeColor maps to a sheep wool variant. The 16 colors of Minecraft wool.
 | Yellow | `YELLOW` | Bright, cheerful, sunny | Joy, warmth, light |
 | Lime | `LIME` | Acidic, eerie, neon | Wrongness, unnatural, tech |
 | Pink | `PINK` | Soft, delicate, vulnerable | Gentleness, femininity, sweetness |
-| Gray | `GRAY` | Neutral, somber, ashened | Sorrow, ash, neutrality |
+| Gray | `GRAY` | Neutral, understated, cool | Subtlety, cool contrast, the quiet one |
 | Light Gray | `LIGHT_GRAY` | Pale, ghostly, faded | Fading, ghostliness, age |
 | Cyan | `CYAN` | Cool, aquatic, techno | Water, cool, digital |
 | Purple | `PURPLE` | Regal, mysterious, ritual | Ritual, mystery, nobility |
@@ -145,11 +145,11 @@ Each DyeColor maps to a sheep wool variant. The 16 colors of Minecraft wool.
 | Brown | `BROWN` | Earthy, warm, grounded | Earth, grounding, warmth |
 | Green | `GREEN` | Natural, growth, fertile | Nature, growth, life |
 | Red | `RED` | Intense, hot, passionate | Passion, heat, intensity |
-| Black | `BLACK` | Dark, void, sorrow | Sorrow, void, darkness, the absent |
+| Black | `BLACK` | Dark, dramatic, bold | Mystery, dramatic contrast, the striking one |
 
 **Group strategy:**
 - **All white:** Unity, uniformity, innocence
-- **All black:** Mourning, solemnity, void
+- **All black:** Dramatic, bold, theatrical mystery
 - **Mixed colors:** Abundance, festivity, chaos (depending on context)
 - **Gradient (light to dark):** Journey, transition
 - **Single odd color among whites:** Otherness, the outlier, the different one (powerful for narrative)
@@ -233,7 +233,7 @@ The following entities accept equipment via the `equipment:` block but have limi
 1. **Decide profession/variant early.** These choices shape emotional register. Flag with Wardrobe during the brief.
 2. **Account for the Java gap.** Until variants are live, use equipment (armor, main-hand props) to differentiate mobs visually.
 3. **Plan color palettes by scene.** If a scene uses multiple mobs, group variants by emotional tone, not randomly.
-4. **Use Armor Stands for static displays.** If you need a costume on a wire or a memorial, Armor Stands are the tool.
+4. **Use Armor Stands for static displays.** If you need a costume on a wire or a dramatic tableau, Armor Stands are the tool.
 5. **Remember the invisible body technique.** A figure with variant clothing + invisibility + floating held item is profoundly ethereal.
 
 ### Variant-Dependent Show Concepts:
@@ -241,9 +241,9 @@ The following entities accept equipment via the `equipment:` block but have limi
 These show concepts become possible once the variant gap is fixed:
 
 - **"The Society" (Villagers with varied professions in one scene)** — a bustling community reads as diverse and alive
-- **"The Diaspora" (Villagers from different biomes)** — displacement, loss, otherness through visual mismatch
+- **"The Travelers" (Villagers from different biomes)** — a colorful delegation, diversity through visual mismatch
 - **"The Menagerie" (mixed animal variants)** — abundance, festivity, or chaos depending on context
-- **"The Memorial" (Armor Stands in varied armor but unified stance)** — witnesses, guardians, the weight of loss
+- **"The Guard" (Armor Stands in varied armor but unified stance)** — witnesses, sentinels, the dramatic pageant
 - **"The Flock" (colored sheep, all one variant or all different)** — unity or chaos; abundance
 - **"The Hunt" (wolves with distinct coat colors, moving with purpose)** — wildness, danger, or strange beauty
 

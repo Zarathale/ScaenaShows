@@ -86,7 +86,7 @@ The entity is now an invisible body with a visible sword, moving through space. 
 
 **Emotional registers:**
 - Threat floating in darkness (dread, danger, the invisible enemy)
-- Memory of a battle or violence (grief, loss)
+- Comedic reveal (the sword with no wielder — theatrical absurdity)
 - Mystical weapon in motion (wonder, magic, otherworldliness)
 - Precision instrument moving alone (technical spectacle, craft)
 
@@ -113,20 +113,20 @@ duration_ticks: 60
 
 ### 2. Disembodied Armor (Full Suits or Pieces)
 
-**What it creates:** A suit of armor standing in space with no body inside. The medieval nightmare or the memorial.
+**What it creates:** A suit of armor standing in space with no body inside. The costume on a wire, the dramatic tableau, the sentinel without a person.
 
 **Emotional registers:**
-- Absence and loss (who was inside this armor?)
 - Formal witness (a statue, a sentinel)
 - Majesty without person (divine or cosmic authority)
-- The costume on a wire (pure aesthetic object)
+- The dramatic reveal (armor waiting for its performer)
+- The costume on a wire (pure theatrical aesthetic object)
 
-**Example:** Spawn an Armor Stand (or Zombie) equipped with full iron armor, apply invisibility. If it's an Armor Stand, it stands still — perfect for a memorial. If it's a mob, it will move — the armor follows movement paths, haunting.
+**Example:** Spawn an Armor Stand (or Zombie) equipped with full iron armor, apply invisibility. If it's an Armor Stand, it stands still — perfect for a dramatic tableau, a throne, or a sentinel pose. If it's a mob, it will move — the armor follows movement paths, striking.
 
 ```yaml
 type: SPAWN_ENTITY
 entity_type: ARMOR_STAND
-name: "MemorialArmor"
+name: "SentinelArmor"
 offset: {x: 0, y: 0, z: 0}
 despawn_on_end: true
 equipment:
@@ -180,7 +180,7 @@ The torch moves across the stage, illuminating as it goes, with no visible beare
 **Emotional registers:**
 - Sacred object or relic (a book floating at altar height)
 - Trophy or treasure (a banner or crown held aloft)
-- Memory made physical (a dead bush floating as sorrow)
+- Strange relic (a dead bush floating — theatrical oddness, dry wit)
 - Offering or gift (flowers or apples held at eye level)
 
 **Example (floating book as knowledge or memory):**

@@ -21,7 +21,7 @@ The **Show Director** leads the team. Every show begins with a brief from the Sh
 
 ### Named Department Heads
 
-Department heads have names. A named department head is not just a role label — they carry an identity, a disposition, and a working style that shapes how they bring their expertise to the production. **Kendra** is the Stage Manager. Other department heads will be named as their roles are developed. When Claude authors for a named department head, it speaks and thinks from that person's perspective — not as a neutral function, but as a person with opinions, judgment, and a particular way of working.
+Department heads have names. A named department head is not just a role label — they carry an identity, a disposition, and a working style that shapes how they bring their expertise to the production. **Kendra** runs Stage Management & Production. Other department heads will be named as their roles are developed. When Claude authors for a named department head, it speaks and thinks from that person's perspective — not as a neutral function, but as a person with opinions, judgment, and a particular way of working.
 
 ### Tone and Direction
 
@@ -44,7 +44,7 @@ Every show opens with a **default intake conversation** — the Show Director as
 
 ### Escalation Discipline
 
-Each department head resolves problems within their authority and knowledge. They only escalate when a resolution requires a creative call above their scope, or would require another department to change what their work was intended to do. **Kendra (Stage Manager)** applies this most visibly: she resolves beat collisions when she can (offset, reorder, consolidate), and escalates to the Show Director with analysis and options when she cannot. This principle applies to all department heads. Departments don't bring problems — they bring resolved problems, or problems with proposed resolutions attached.
+Each department head resolves problems within their authority and knowledge. They only escalate when a resolution requires a creative call above their scope, or would require another department to change what their work was intended to do. **Kendra (Stage Management & Production)** applies this most visibly: she resolves beat collisions when she can (offset, reorder, consolidate), and escalates to the Show Director with analysis and options when she cannot. This principle applies to all department heads. Departments don't bring problems — they bring resolved problems, or problems with proposed resolutions attached.
 
 ---
 
@@ -54,21 +54,21 @@ Each department head maintains a technical knowledgebase — a dedicated file th
 
 **When to read a KB:** Before authoring any cue or show section that involves a specific department's tools. The KB is the authoritative reference for YAML syntax, behavioral notes, and capability awareness for that department.
 
-**Java capabilities — ownership vs. awareness:** All departments need *awareness* of what the Java plugin can and cannot do. Only **Stage Management** *owns* the full current state of capabilities, limitations, and development priorities. Stage Management maintains the ops-inbox and coordinates all communication with the Java review team on behalf of the production team. Department KBs document capability awareness; `kb/departments/stage-manager.kb.md` is the authoritative source for what's implemented, what's not, and what's in the queue.
+**Java capabilities — ownership vs. awareness:** All departments need *awareness* of what the Java plugin can and cannot do. Only **Stage Management** *owns* the full current state of capabilities, limitations, and development priorities. Stage Management maintains the ops-inbox and coordinates all communication with the Java review team on behalf of the production team. Department KBs document capability awareness; `kb/departments/stage-management/stage-management.kb.md` is the authoritative source for what's implemented, what's not, and what's in the queue.
 
 | Department | Head | Knowledgebase |
 |------------|------|---------------|
 | **Show Director** | Claude | `kb/departments/show-director/show-director.kb.md` |
 | Casting Director | — | `kb/departments/casting.kb.md` |
-| Wardrobe & Properties Director | — | `kb/departments/wardrobe.kb.md` |
+| **Wardrobe & Properties Director** | **Margaret** | `kb/departments/wardrobe/wardrobe.kb.md` |
 | Choreographer / Movement Director | — | `kb/departments/choreography.kb.md` |
-| Set Director | — | `kb/departments/set.kb.md` |
-| Effects Director | — | `kb/departments/effects.kb.md` |
+| **Set Director** | **Michael C.** | `kb/departments/set/set.kb.md` |
+| **Effects Director** | **Felix** | `kb/departments/effects/effects.kb.md` |
 | **Camera Director** | **Mark** | `kb/departments/camera.kb.md` |
-| Lighting & Atmosphere Designer | — | `kb/departments/lighting.kb.md` |
+| **Lighting & Atmosphere Designer** | **Steve N.** | `kb/departments/lighting/lighting.kb.md` |
 | Sound Designer | — | `kb/departments/sound.kb.md` |
 | Sprite Voice Director | — | `kb/departments/voice.kb.md` |
-| **Stage Management & Production** | **Kendra** | `kb/departments/stage-manager.kb.md` *(migrates to `stage-management/` on next uplift)* |
+| **Stage Management & Production** | **Kendra** | `kb/departments/stage-management/stage-management.kb.md` |
 | **Fireworks Director** | **Mira** | `kb/departments/fireworks.kb.md` |
 
 ---
@@ -233,13 +233,15 @@ Natural behavior as a creative tool: an Allay that genuinely follows and collect
 
 ### 2. Wardrobe & Properties Director
 
+**Department head: Margaret.** Her bias: *"Ask what they hold, not what they wear — the hand tells the story."* She thinks in objects before she thinks in costumes, approaches design from an object theater tradition, and escalates slowly. She will propose a minimal wardrobe first and add only what the scene requires. When something is unresolved, she asks the Director: *"Is this about the figure's relationship to their costume, or about an object's independent presence?"*
+
 **Domain:** Appearance. Controls what performers wear and carry, which mob variants are used, and how visual appearance contributes to storytelling. Also manages Armor Stands as set pieces and the invisible-body technique.
 
 **The question this role asks:** What do they look like, and what does that communicate before they take a single step?
 
 **Authority:** All `equipment:` fields on SPAWN_ENTITY and ENTITY_EQUIP events. `variant:` and `profession:` fields on SPAWN_ENTITY. Armor Stand design and placement. Custom name visibility.
 
-**Knowledgebase:** `kb/departments/wardrobe.kb.md` (v3.0) — Role summary, instrument inventory, tone translation, department principles, cross-department coordination, and capability status table. Detailed technical catalogues in `kb/departments/wardrobe/` subfolder: `equipment-slots.md`, `invisible-body.md`, `mob-variants.md`, `emotional-register.md`.
+**Knowledgebase:** `kb/departments/wardrobe/wardrobe.kb.md` (v4.0) — Role summary, Margaret's voice and bias, instrument inventory, tone translation (10 entries including grief, arrival, nocturnal, intimacy), department principles, cross-department coordination, and capability status table. Detailed technical catalogues in `kb/departments/wardrobe/` subfolder: `equipment-slots.md`, `invisible-body.md`, `mob-variants.md`, `emotional-register.md`.
 
 ---
 
@@ -390,7 +392,9 @@ Player smooth movement (smoothMovePlayer) is tick-exact. Mob pathfinding timing 
 
 **Authority:** `marks:` and `sets:` in show YAML. PLAYER_TELEPORT for set transitions. The `front:` orientation of the show. Block modification planning and cleanup. Spatial documentation of the show environment.
 
-**Knowledgebase:** `kb/departments/set.kb.md` (v2.0) — Role Summary, full instrument reference with Java verification (PLAYER_TELEPORT, REDSTONE, COMMAND, marks, sets), Tone Translation, Department Principles, Capability Status Summary. Active gaps: BLOCK_PLACE/BLOCK_REMOVE (filed), REDSTONE stop-safety (filed).
+**Named head:** Michael C. See `kb/departments/set/set.kb.md §Michael C.` for working style and escalation posture. Zarathale executes all in-game scouting and building; Michael C. owns the design voice and documentation.
+
+**Knowledgebase:** `kb/departments/set/set.kb.md` (v2.1) — Michael C. introduction, P1 Scouting Process, Environment Notes format, full instrument reference with Java verification (PLAYER_TELEPORT, REDSTONE, COMMAND, marks, sets), Tone Translation, Department Principles, Capability Status Summary. Active gaps: BLOCK_PLACE/BLOCK_REMOVE (filed), REDSTONE stop-safety (filed). Stage Registry: `kb/departments/set/stage-registry.md`.
 
 ---
 
@@ -462,7 +466,11 @@ This lives in the show's run sheet under "Environment Notes," not in the YAML.
 
 **Relationship to Camera:** Effects and Camera are the closest coordination pair. Effects decides where the player's body is; Camera decides which direction their eyes are pointing. Every PLAYER_TELEPORT with facing fields and every levitation sequence is a joint production. See `kb/departments/camera.kb.md`.
 
-**Knowledgebase:** `kb/departments/effects.kb.md` — Java capabilities, YAML syntax, calibrated levitation patterns, particle vocabulary, and known gaps.
+**Named head:** Felix. See `kb/departments/effects/effects.kb.md §Felix` for working style and escalation posture.
+
+**Knowledgebase:** `kb/departments/effects/effects.kb.md` — Java capabilities, YAML syntax, calibrated levitation patterns, particle vocabulary, tone translation, and known gaps.
+
+**CAMERA boundary note:** CAMERA screen distortion events (`blackout`, `sway`, `flash`, `float`) belong to Camera (Mark), not Effects. Felix does not author CAMERA events. The overlap point: EFFECT `nausea` and CAMERA `sway` both produce screen wobble — Effects owns the potion application; Camera owns the screen-effect shorthand. Coordinate when both are in proximity.
 
 ---
 
@@ -550,7 +558,9 @@ Full YAML reference lives in `kb/departments/camera.kb.md`. Summary of what Came
 
 **night_vision coordination:** `night_vision` is an Effects instrument, but it reveals the environment that Lighting is crafting. Any scene that uses `night_vision` requires joint awareness — Effects applies it; Lighting ensures the revealed environment is intentional.
 
-**Knowledgebase:** `kb/departments/lighting.kb.md` (v2.0) — Role summary, instrument inventory with Java verification (TIME_OF_DAY, WEATHER, LIGHTNING), tone translation, department principles, cross-department coordination, and capability status table. Note: LIGHTNING uses `offset: {x, y, z}` (all relative to anchor) — not absolute coordinates.
+**Named head:** Steve N. See `kb/departments/lighting/lighting.kb.md §Steve N.` for working style and escalation posture.
+
+**Knowledgebase:** `kb/departments/lighting/lighting.kb.md` (v2.1) — Steve N. introduction, Arc Design methodology, full Sky Arc Reference (all TIME_OF_DAY values with sky quality descriptions), instrument inventory with Java verification (TIME_OF_DAY, WEATHER, LIGHTNING), tone translation including "Weight / grief", department principles, and capability status table. Note: LIGHTNING uses `offset: {x, y, z}` (all relative to anchor) — not absolute coordinates.
 
 ---
 
@@ -789,19 +799,19 @@ When designing a show's text arc, mark the silences: "No text from T=240 to T=38
 
 ---
 
-### 9. Stage Manager
+### 9. Stage Management & Production
 
-**Kendra is the Stage Manager.**
+**Kendra runs Stage Management & Production.** This role carries two integrated functions: Stage Manager (structural show integrity, prompt book, cleanup contract, beat collision, ops-inbox, run sheets) and Production Manager (pre-production workflow, department briefing coordination, YAML authorship sequencing, show creation process).
 
-**Domain:** Show integrity and operational discipline. The Stage Manager owns the show YAML's running order and structure — the prompt book — and the cleanup contract: the guarantee that every show, including interrupted and rehearsal performances, leaves the world exactly as it found it. Kendra also owns the Java capability registry and the ops-inbox workflow. She resolves structural problems she has the authority and knowledge to resolve; she escalates to the team when a resolution would require a creative call above her scope.
+**Domain:** Show integrity, operational discipline, and the pre-production workflow. Kendra owns the show YAML's running order and structure — the prompt book — and the cleanup contract: the guarantee that every show, including interrupted and rehearsal performances, leaves the world exactly as it found it. She also owns the Java capability registry, the ops-inbox workflow, and the show creation process from concept acceptance through in-game test.
 
 **The question this role asks:** Is the show structurally sound and safe — and is every beat in the right place?
 
-**Authority:** The prompt book (running order, cue naming, cue numbering, YAML structure). The cleanup contract. Pre-show state recording and tech check. Block modification protocol enforcement. Beat collision detection and resolution. Run sheet authoring and maintenance. Java gap escalation to the ops-inbox.
+**Authority:** The prompt book (running order, cue naming, cue numbering, YAML structure). The cleanup contract. Pre-show state recording and tech check. Block modification protocol enforcement. Beat collision detection and resolution. Run sheet authoring and maintenance. Java gap escalation to the ops-inbox. Show creation workflow. Department briefing coordination. YAML authorship sequencing and gates.
 
 **Kendra does not bring problems — she brings resolved problems, or problems with proposed resolutions attached.** Escalation to the Show Director happens only when a resolution requires a creative decision she isn't authorized to make, or requires a department to change what a beat *is*.
 
-**Knowledgebase:** `kb/departments/stage-manager.kb.md` — Prompt book ownership, cue naming conventions, beat collision protocol, revision continuity, run sheet format, what stop-safety covers, what it does not, pre-show tech check, rehearsal safety checklist, and the ops-inbox workflow.
+**Knowledgebase:** `kb/departments/stage-management/stage-management.kb.md` (v3.0) — Prompt book ownership, cue naming conventions, beat collision protocol, revision continuity, run sheet format, what stop-safety covers, what it does not, pre-show tech check, rehearsal safety checklist, ops-inbox workflow, Production Manager role, show creation workflow, department briefing coordination, YAML authorship sequencing, and Tone Translation (structural/pacing). Show creation process: `kb/departments/stage-management/show-creation-process.md`.
 
 ---
 

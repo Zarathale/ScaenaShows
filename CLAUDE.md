@@ -208,7 +208,7 @@ ScaenaShows/
 │       └── ui-mockup.html         ← ScaenaComposer UI draft (unaccepted, deferred)
 ├── skills/                        ← Claude working skills (plain markdown)
 │   ├── audit-this-repo/SKILL.md   ← Full repo health check; session orientation
-│   ├── dept-kb-builder/SKILL.md   ← Department KB uplift (see also kb-builder)
+│   ├── dept-kb-builder/SKILL.md   ← DEPRECATED — superseded by kb-builder (tombstone only)
 │   ├── kb-builder/SKILL.md        ← Build/update a dept KB; audit full KB; quick summary
 │   ├── production-review/SKILL.md ← Full production team show review
 │   └── show-import-process/SKILL.md ← Migrate a flat show to folder structure

@@ -1,8 +1,8 @@
 ---
 department: Wardrobe & Properties Director
-owner: Wardrobe & Properties Director
-kb_version: 3.0
-updated: 2026-03-25
+owner: Wardrobe & Properties Director (Margaret in-game)
+kb_version: 4.0
+updated: 2026-03-26
 notes: >
   Full department KB — role summary, instruments, tone translation, department principles,
   and capability status table. Detailed technical catalogues live in kb/departments/wardrobe/ subfolder.
@@ -15,6 +15,20 @@ notes: >
 **Emotional palette:** See `kb/departments/wardrobe/emotional-register.md` — what Wardrobe contributes to each emotional arc in a show.
 
 **Creative direction:** `kb/production-team.md §2. Wardrobe & Properties Director`
+
+---
+
+## Department Head
+
+**Margaret** heads Wardrobe & Properties.
+
+Her bias, in one line: *"Ask what they hold, not what they wear — the hand tells the story."*
+
+She thinks in objects before she thinks in costumes. When she reads a show brief, her first question is what the entity's main hand slot contains — not the full armor set. She's comfortable leaving most slots empty. Her signature move is the invisible-body technique, not because she finds it clever, but because it proves her point: strip the body away and what remains in the hand is the whole character.
+
+She approaches the work from an **object theater tradition** — the practice of endowing ordinary objects with agency by placing them deliberately in the performance frame. A mundane item held by a figure in a show is not that item anymore. It's whatever the show makes it. A STICK is not a stick when it's the only thing an invisible presence is carrying through a dark space. Her restraint comes from that same tradition: fewer items, better chosen, always.
+
+**What to expect from Margaret:** She escalates slowly, proposes minimal wardrobes first, and distrusts design decisions made before the show's emotional arc is understood. She'll ask "what does it hold?" before she asks "what does it wear?" She considers the main hand slot the most expressive instrument in her toolkit — more expressive than a full suit of armor.
 
 ---
 
@@ -34,7 +48,7 @@ For complete catalogues and in-depth guides, see the `kb/departments/wardrobe/` 
 
 | File | Purpose |
 |------|---------|
-| `emotional-register.md` | How Wardrobe contributes to arrival, grief, joy, dread, wonder, intimacy, and transition moments |
+| `emotional-register.md` | How Wardrobe contributes to arrival, joy, wonder, dread, intimacy, and transition moments |
 | `mob-variants.md` | Complete inventory of villager professions, cat colors, horse variants, sheep wool colors, parrots, and other mob appearance options (current status + future capability after Java gap is fixed) |
 | `equipment-slots.md` | Detailed guide to each equipment slot: helmet, chestplate, leggings, boots, main hand, off hand — what each communicates and creative uses |
 | `invisible-body.md` | Technical and creative guide to the invisible-body technique (ENTITY_INVISIBLE): floating weapons, disembodied armor, ghostly presences |
@@ -73,7 +87,7 @@ equipment:
   leggings: IRON_LEGGINGS
   boots: IRON_BOOTS
   main_hand: STICK             # any item: SWORD, TORCH, BOOK, HOE, BANNER, DEAD_BUSH, etc.
-  off_hand: TORCH              # torch in off-hand casts light without occupying main hand
+  off_hand: TORCH              # torch in off-hand casts real block light; warms without occupying main hand
 ```
 
 **Slot reference:**
@@ -89,7 +103,7 @@ equipment:
 
 **Item name format:** Use Minecraft material names in ALLCAPS (e.g., `DIAMOND_SWORD`, `TORCH`, `OAK_SIGN`, `DEAD_BUSH`). These map directly to Bukkit `Material` enum values.
 
-**Any slot can be omitted.** Only specified slots are set; unspecified slots remain empty.
+**Any slot can be omitted.** Only specified slots are set; unspecified slots remain empty. Margaret's default: start with one slot, add only what the scene requires.
 
 ---
 
@@ -136,9 +150,10 @@ duration_ticks: 200             # how long the invisibility lasts
 
 **Use cases:**
 - Floating sword or torch — spawn an entity, equip a weapon or torch, apply ENTITY_INVISIBLE → a weapon or light source that moves through space on its own
-- Disembodied armor — a suit of armor standing still with no body inside → the absent knight, the memorial
+- Disembodied armor — a suit of armor standing still with no body inside → a dramatic statue, an empty throne, a costume waiting for its performer
 - A banner carried by air
 - A book or map floating at reading height
+- A single DEAD_BUSH drifting through a scene: strange presence, absurdist comedy, or dry theatrical wit
 
 **Behavioral notes:**
 - The invisibility is duration-based. After `duration_ticks` elapses, the body reappears. To maintain invisibility for the full show, set `duration_ticks` generously (e.g., 9999).
@@ -186,7 +201,7 @@ offset: {x: 3, y: 0, z: 0}
 despawn_on_end: true
 ```
 
-**Current workaround while gap is open:** Use the `equipment:` block to differentiate entities visually. A Villager with a carved pumpkin helmet and a hoe in main hand reads as farmer even without the FARMER profession skin. A Villager with spectacles (golden helmet with a Book in main hand) reads as scholar. Equipment is the only currently reliable visual differentiation tool.
+**Current workaround while gap is open:** Use the `equipment:` block to differentiate entities visually. A Villager with a carved pumpkin helmet and a hoe in main hand reads as farmer even without the FARMER profession skin. A Villager with a golden helmet and a Book in main hand reads as scholar. Equipment is the only currently reliable visual differentiation tool.
 
 ---
 
@@ -256,7 +271,7 @@ The following cue families are **candidates for development** once Wardrobe KB i
 
 1. **`wardrobe.reveal.*`** — Wardrobe-focused cues bundling equipment changes, invisibility, and voice reactions. E.g., `wardrobe.reveal.transform` (entity swaps armor mid-show, text announces change).
 2. **`wardrobe.float.*`** — Reusable patterns for floating objects: `wardrobe.float.weapon`, `wardrobe.float.torch`, `wardrobe.float.relic`.
-3. **`wardrobe.stand.*`** — Armor Stand choreography: memorial circles, formal poses, silent witnesses.
+3. **`wardrobe.stand.*`** — Armor Stand choreography: formal processions, dramatic tableaux, silent sentinels.
 4. **`appearance.villager.*`** — Once variant gap fixed: profession-based appearance cues (`appearance.villager.scholar`, `appearance.villager.clergy`, etc.).
 5. **`appearance.animals.*`** — Once variant gap fixed: animal color palettes organized by tone (`appearance.animals.festive`, `appearance.animals.melancholic`, etc.).
 
@@ -267,6 +282,10 @@ The following cue families are **candidates for development** once Wardrobe KB i
 ## Tone Translation
 
 How the Wardrobe department interprets the Show Director's experiential tone language.
+
+Margaret's first clarifying question when a tone phrase is ambiguous: *"Is this about the figure's relationship to their costume — are they a person wearing something — or is this about an object's independent presence?"* That distinction determines whether to focus on character equipment or the invisible-body technique.
+
+---
 
 **"Tender"**
 Wardrobe reads tender as: soft materials, small items, nothing heavy. Leather over iron. A flower, a book, a piece of food in the main hand rather than a weapon. One entity rather than a crowd — intimacy through singularity. Avoid armor that speaks of conflict; choose clothing or props that suggest care and delicacy. Off-hand torch in a dark scene = warmth offered, not claimed.
@@ -286,13 +305,22 @@ Color variety, warm palette, something held aloft. Mixed sheep colors, bright ca
 **"Wonder"**
 Objects made strange and present: a book floating at altar height, an ender pearl drifting alone, an impossible relic in space. Wonder in Wardrobe is often about a single well-chosen item that shouldn't be there — or shouldn't be moving on its own. The invisible-body technique combined with one carefully chosen held item is Wardrobe's most powerful wonder instrument. Less is more: one wonderful object > a full costume.
 
-**Signaling back to the Director:** When a tone phrase is ambiguous for Wardrobe, the clarifying question is: *"Is this about the figure's relationship to their costume — are they a person wearing something — or is this about an object's independent presence?"* That distinction determines whether to focus on character equipment or the invisible-body technique.
+**"Arrival / threshold"**
+Wardrobe marks arrival as a costume change: the entity the player meets at the threshold is not the same as the entity they find once inside. A figure waiting at the entrance holds something formal — a banner, a staff, a book — and may change what it holds once the player crosses. The ENTITY_EQUIP event is the welcome: something new placed in the hand, or something heavy removed. Warm materials (gold, warm leather) signal welcome; neutral materials (iron) signal formality and the boundary. The welcoming committee for showcase.03 should have coordinated equipment that reads as unified without being identical — each figure holds something slightly different but within the same warm palette.
+
+**"Nocturnal / belonging to the night"**
+Wardrobe does not try to dress night creatures in darkness — that's Lighting's work. Instead, nocturnal wardrobe reads as *belonging*: these entities look right where they are, as if the night is their home. Materials that read as neutral or muted at dusk — dark leather, unlit stone tools, bare hands — work better than armor that catches the light. A Wolf's natural coat is already correct; don't dress it away from itself. For creatures that glow (Allays have emissive texture in newer Minecraft versions), Wardrobe can lean into that: no equipment needed, the creature itself is the costume. Restraint is the nocturnal principle — let the set and lighting carry the tone; Wardrobe stays quiet.
+
+**"Intimacy / stillness"**
+Wardrobe reads intimacy as proximity and specificity. A single entity. One item in one slot. Nothing that makes noise visually — no enchantment glow unless it's the point, no banners, nothing that demands the player look at it from a distance. The costume reads at close range: a specific held item, a particular helmet choice, a material that only reveals its character when you're near it. Armor Stands used for intimacy purposes hold one thing — a flower, a book, a single tool — not a full suit. The item IS the moment; the rest of the slots are deliberately empty.
 
 ---
 
 ## Department Principles
 
 **What Wardrobe is ultimately for:** Wardrobe answers the question of identity before movement begins. What a performer wears and carries has already told the audience who they are, what world they inhabit, and whether they belong — before Choreography moves them a single block.
+
+**The object theater principle:** Any item placed in the performance frame — a show-spawned entity's main hand, a relic on an Armor Stand, a floating torch — is no longer just that item. It is what the show makes it. Margaret's restraint comes from this: an item placed deliberately carries all the weight the show needs. Add a second item only when the first isn't enough, which it usually is.
 
 **What Wardrobe decides independently:**
 - All equipment choices within a character brief

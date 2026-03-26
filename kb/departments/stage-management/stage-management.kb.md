@@ -1,39 +1,106 @@
 ---
-department: Stage Manager
+department: Stage Management & Production
 owner: Kendra
-kb_version: 2.0
-updated: 2026-03-25
+kb_version: 3.0
+updated: 2026-03-26
+notes: >
+  Full KB for the Stage Management & Production department. Covers both layers:
+  Stage Manager proper (prompt book, cleanup, beat collision, ops-inbox, run sheets)
+  and Production Manager (show creation workflow, dept briefing coordination, YAML authorship).
+  Show creation process document: kb/departments/stage-management/show-creation-process.md
 ---
 
-# Stage Manager — Technical Knowledgebase
+# Stage Management & Production — Technical Knowledgebase
 
-> Technical reference for the Stage Manager department. Documents what the ScaenaShows Java plugin
-> tracks and cleans up automatically, what it does not, the operational discipline required to
-> keep every show safe for interrupted rehearsals, and Stage Management's ownership of the show
-> YAML's running order, cue naming and numbering, the Java capability registry, and the ops-inbox workflow.
+> This department carries two integrated roles: **Stage Manager** (structural show integrity,
+> prompt book, cleanup contract, beat collision, run sheets, ops-inbox) and **Production Manager**
+> (pre-production workflow, department briefing coordination, YAML authorship, pre-flight sequencing).
 >
-> Creative direction for this role lives in `kb/production-team.md §9. Stage Manager`.
+> Creative direction: `kb/production-team.md §9. Stage Management & Production`
 
 ---
 
 ## Kendra
 
-**Kendra is the Stage Manager.** This is an operational authority role, not a coordination role. Kendra owns the structural integrity of every show — the running order, the cue script, the cleanup contract, and the capability registry. She resolves problems she has the authority and knowledge to resolve. She escalates when she doesn't.
+**Kendra runs Stage Management & Production.** This is an operational authority role that spans the full production arc — from the moment a show concept is accepted through post-show debrief. Pre-production, Kendra coordinates the production team: she distributes the Show Director's brief, tracks department decisions, sequences YAML authorship, and owns the show creation process. During production, she owns the prompt book, the cleanup contract, beat collision detection, and the run sheet. She is the single source of truth on what the plugin can do right now.
 
-The escalation bar is specific: Kendra only brings something to the team when the resolution would require a creative decision above her scope, or would require another department to change something in a way that alters what their work was intended to do. A timing problem she can fix by offsetting two events — she fixes it. A beat collision where Sound and Camera are genuinely competing for the same moment, and resolving it means one of them changes what the beat *is* — that goes to the Show Director, and Kendra brings it with her analysis and the options as she sees them.
+Her disposition: she resolves what she can resolve and escalates only when she genuinely can't. The escalation bar is high and specific — she goes to the Show Director only when a resolution requires a creative decision above her scope, or requires a department to change what a beat fundamentally *is*. She never arrives empty-handed: she brings resolved problems, or problems with proposed resolutions attached.
 
-She does not bring problems. She brings resolved problems, or problems with proposed resolutions attached.
+**Production Manager hat:** When wearing it, Kendra is less the show's structural caretaker and more its project coordinator. She knows what's blocking each department, what's been decided and what hasn't, and what needs to happen before YAML authorship can begin. She is not a creative voice in the production — she's the person who makes sure the creative voices all have what they need.
 
 ---
 
 ## Role Summary
 
-Kendra owns four things:
+Kendra owns five things:
 
 1. **The prompt book** — the running order, cue naming, cue numbering, and section structure of the show YAML. The YAML timeline is the call script. Kendra owns its internal organization.
 2. **The cleanup contract** — the guarantee that every show, at every tick of interruption, leaves the world exactly as it found it.
 3. **The Java capability registry** — the authoritative, current picture of what the plugin can do, what it cannot do, what is in development, and what is filed for future work. Stage Management is the single source of truth on this. All departments have *awareness* of capabilities; only Stage Management *owns* the state.
 4. **The ops-inbox workflow** — Stage Management maintains `ops-inbox.md`, contributes items on behalf of any production team member who identifies a gap, and coordinates communication with the Java review team.
+5. **The show creation workflow** — pre-production sequencing, department briefing coordination, YAML authorship ownership, and the intake-to-build process. Kendra is the Production Manager from concept acceptance to in-game test.
+
+---
+
+## Production Manager Role
+
+The Production Manager layer is everything that happens before YAML is written — and the discipline around YAML authorship itself.
+
+### Show Creation Sequence
+
+The full process is documented in `kb/departments/stage-management/show-creation-process.md`. The spine:
+
+```
+1. Concept accepted by Show Director
+2. Show folder scaffolded (from _template)
+3. Intake brief written by Show Director → filed in direction/intake.md
+4. Show Director brief written → filed in brief.md
+5. Department briefings distributed → each dept receives brief + their specific brief
+6. Department decisions filed → departments/[dept].md for each dept
+7. Kendra confirms all blocking departments have filed decisions
+8. YAML authoring begins (Kendra owns the YAML, building from dept decisions)
+9. Run sheet written alongside YAML
+10. Build → in-game test → debrief
+11. Each department files revision notes → Kendra synthesizes → next revision cycle
+```
+
+**Kendra's gates:** Steps 7 and 8 are Kendra's formal checkpoints. She does not allow YAML authoring to begin until the departments whose decisions block the YAML are filed. She signals readiness explicitly: "YAML authoring can begin — Set, Effects, and Sound have filed decisions; Voice and Wardrobe decisions are pending but non-blocking for first pass."
+
+### Department Briefing Coordination
+
+When the Show Director issues a brief:
+
+- Kendra reads it for structural implications before distributing: is there anything in the brief that creates an immediate blocking constraint for any department? (e.g., "we need a 6-block stage" is a Set decision that blocks Choreography)
+- She distributes the brief to departments with their specific briefing questions attached (see Show Director KB for the standing per-department brief format)
+- She tracks which departments have filed decisions in `departments/[dept].md`
+- She flags to the Show Director when a department's decision is absent but needed to proceed
+
+**Blocking vs. non-blocking departments by pass type:**
+
+| Pass | Blocking departments | Non-blocking |
+|------|---------------------|--------------|
+| P1 (Set) | Set | All others |
+| P2 (Effects + Choreography) | Effects, Choreography | Sound, Camera, Voice, Wardrobe, Fireworks |
+| P3 (Sound + Lighting) | Sound, Lighting | Camera, Voice, Fireworks |
+| P4 (Voice + Wardrobe) | Voice, Wardrobe | Fireworks, Camera |
+| P5 (Fireworks + Camera) | Fireworks, Camera | — |
+| P6 (Dress) | All departments | — |
+
+### YAML Authorship Ownership
+
+Kendra owns the YAML authoring process — not as creative author but as the person responsible for translating department decisions into valid, correctly structured YAML and assembling it into the show file.
+
+**What this means in practice:**
+- Kendra writes the YAML from department decision files, not from interpreting the brief directly
+- If a department decision is ambiguous or incomplete, Kendra flags it back to that department before authoring — she does not interpret gaps into YAML
+- She owns the structural integrity of the assembled YAML: section labels, tick placement, event ordering, REST events, cue numbers
+- She owns the version bump decision: every build gets a new version number per the versioning policy, or an explicit "no bump needed" statement
+- She writes the run sheet in parallel with the YAML — they are not separate tasks; they are two representations of the same show authored simultaneously
+
+**Who writes what in a Claude session:**
+- Claude-as-Stage-Management authors the YAML when in a show authoring mode
+- Claude-as-department-heads author their respective department decisions first
+- Kendra then assembles those decisions into the YAML — this is the structural distinction between "department decision" and "YAML event"
 
 ---
 
@@ -62,7 +129,7 @@ Stage Management owns the naming and numbering standards for cues, both in the l
 
 Library cue files follow the convention: `[category].[archetype].[variant].yml`
 
-- **category** — the functional family: `atmos`, `fx`, `mood`, `ramp`, `coda`, `grief`, `world`, etc.
+- **category** — the functional family: `atmos`, `fx`, `mood`, `ramp`, `coda`, `world`, `gracie`, `motif`, etc.
 - **archetype** — the core behavior within that family: `ambient`, `lift`, `arrival`, `pulse`, etc.
 - **variant** — an optional differentiator when multiple versions of the same archetype exist: `v2`, `slow`, `high`, `brief`, etc.
 
@@ -71,6 +138,8 @@ Examples: `atmos.ambient.ember_drift`, `fx.levitate_pulse`, `mood.arrival`
 Kendra enforces this convention. If a new cue is authored without a conforming name, it gets renamed before it enters the library. The naming decision is not aesthetic — it is operational: it determines how cues are found, sorted, and discussed across shows.
 
 **Naming authority:** Departments propose names. Stage Management approves or adjusts for consistency with the existing taxonomy.
+
+> **Note on `grief.*` cue family:** The existing cue library includes 4 cues named `grief.*` (cold bloom, still message, particle ash, cave sound). These predate the current creative direction. Cue family rename is a pending decision — flagged for the next cue library review session. Do not author new cues in the `grief.*` family until renamed. Use `atmos.*` or `world.*` alternatives for similar atmospheric purposes.
 
 ### Show-Internal Cue Numbers (in the run sheet and in briefings)
 
@@ -173,7 +242,7 @@ If the diff is small (a few events adjusted within a single section), this is a 
 The run sheet (`run-sheet.md` in the show folder) is Kendra's document. She writes it, maintains it, and updates it after every revision.
 
 **What the run sheet is:**
-The run sheet is the parallel record to the YAML — written for the person running the show in the room, not for the plugin. Where the YAML is the machine-readable call script, the run sheet is the human-readable one. Alan uses it on a second screen during in-game tests. Zara uses it to take notes by cue number. Kendra uses it to write her revision continuity check.
+The run sheet is the parallel record to the YAML — written for the person running the show in the room, not for the plugin. Where the YAML is the machine-readable call script, the run sheet is the human-readable one. Alan uses it on a second screen during in-game tests. Zarathale uses it to take notes by cue number. Kendra uses it to write her revision continuity check.
 
 **Run sheet format:**
 
@@ -186,11 +255,37 @@ Each entry covers one numbered cue (C1, C2, …). Minimum fields:
 **Intention:** [What this section should feel like — one sentence from the brief]
 **Function:** [What it does mechanically — departments involved, key events]
 **Watch:** [What to observe during this run — what's being tested]
-**Notes:** [Field for Alan/Zara to fill in during the run]
+**Notes:** [Field for Alan/Zarathale to fill in during the run]
 ```
 
 **Updating the run sheet:**
 After each revision, Kendra updates the run sheet to reflect changes in tick positions, new or removed sections, and updated watch questions based on the Director's revision priority. The watch question is the most important field — it should reflect what the *current* revision is trying to answer, not what was asked in a previous run.
+
+---
+
+## Tone Translation
+
+How Stage Management's structural decisions serve the arc. Kendra doesn't author emotional content — but the timeline she builds is itself an emotional argument. REST placement, tick density, and beat spacing are structural tone.
+
+**"Tender" / "intimate"**
+Kendra builds sparse timelines. Generous REST events between beats. Low tick-density — nothing stacked, nothing rushing. Each section has room to breathe before the next event fires. A tender section is one where the YAML almost looks unfinished — not because content is missing, but because the space between events IS the content.
+
+**"Overwhelming / accumulated"**
+Events compress. REST durations shorten progressively through the section. As the accumulation builds, the timeline tightens — multiple departments' events arrive in the same tick window. The structural compression IS the overwhelming. Kendra architects this consciously: the event density in the climactic section should look visibly denser than any prior section when you scroll the YAML.
+
+**"Strange / uncanny"**
+Irregular REST lengths. An asymmetric section duration — one section is 3 seconds, the next is 11. Events that don't land where the rhythm predicts them. Kendra introduces structural unpredictability that mirrors the emotional unease. The timeline feels "off" in the same register the show is trying to produce.
+
+**"Building / ascending"**
+REST durations progressively shorten. Tick density increases steadily. Kendra architects a visible structural arc: the section at T=0 has long gaps; the section at T=300 has almost none. The shape of the timeline IS the shape of the ascent.
+
+**"Joy / abundant"**
+Dense, overlapping event clusters. Multiple departments arriving in tight windows. REST events that are short but present — brief breaths between beats rather than long pauses. Joy in the YAML is busy in a way that feels alive rather than cluttered. Kendra distinguishes: cluttered is events colliding without intention; alive is events clustering with shared purpose.
+
+**"Wonder"**
+Isolated events with long sustained REST after. One moment per section. The timeline breathes — a single event fires and then the world is still. Wonder in the YAML is spacious. Kendra's structural principle for wonder: one well-placed event at the right tick, followed by enough silence that the player has time to find it.
+
+**Signaling back to the Director:** When a structural decision feels ambiguous, Kendra's clarifying question is: *"Does this moment need to accumulate or arrive? Accumulation requires a longer approach. Arrival can be point-in-time."* That distinction usually resolves tick density questions.
 
 ---
 
@@ -300,7 +395,7 @@ These items require explicit cleanup authored in the show YAML or documented in 
 
 ## Block Modification Protocol
 
-No BLOCK_PLACE or BLOCK_REMOVE event type exists. All block modifications go through COMMAND. COMMAND-placed blocks are not tracked by the show and are not restored by stop-safety.
+No BLOCK_PLACE or BLOCK_REMOVE event type exists (gap filed in ops-inbox). All block modifications go through COMMAND. COMMAND-placed blocks are not tracked by the show and are not restored by stop-safety.
 
 **Required protocol for any COMMAND block modification:**
 
@@ -334,7 +429,7 @@ Before every in-game test, Kendra runs a tech check — distinct from the rehear
 □ Plugin is loaded and current version: /show list shows the expected show ID
 □ Show loads without errors: no missing cue IDs, no unresolved CUE references
 □ Run sheet is current: cue numbers match the revision being tested
-□ Alan / Zara have the correct run sheet open (current revision, not a previous one)
+□ Alan / Zarathale have the correct run sheet open (current revision, not a previous one)
 ```
 
 If any tech check item fails, Kendra notes it before the show runs — not after. A failed tech check can invalidate the test results.
@@ -359,32 +454,9 @@ Run this checklist before any in-game test. Mark each item in the run sheet.
 
 ---
 
-## Java Gap Escalation Protocol
-
-When any role identifies a gap in show control surface — a thing Minecraft can do that ScaenaShows cannot author via YAML — the Stage Manager escalates it to `ops-inbox.md`.
-
-**Filing format for `ops-inbox.md`:**
-
-```markdown
-### [java-gap] Short description of the gap
-
-**Area:** Department(s) affected
-**Event:** Event type affected (or "new — does not exist")
-
-Description of what's missing or broken. Be specific about the Java method, YAML field, or behavior.
-
-**Impact:** What authoring is blocked or requires workaround.
-
-**Fix scope:** (optional) Suggested Java change with enough detail for the review team.
-```
-
-**Who can file:** Claude, Zara, Smitty2020 — any show authoring role. The Stage Manager is responsible for making sure gaps are filed, not for fixing them.
-
----
-
 ## Utility Events — Stage Manager Domain
 
-The Stage Manager owns the operational use of these utility events:
+Stage Management owns the operational use of these utility events:
 
 ### REST
 
@@ -433,6 +505,17 @@ Stage Management maintains this registry. All open items are in `ops-inbox.md` w
 | No BLOCK_PLACE/BLOCK_REMOVE | Set Director, Stage Manager | **High** — COMMAND blocks not covered by stop-safety | Open |
 | No TITLE_CLEAR | Voice | None — cosmetic workaround available | Open |
 | No smooth ROTATE | Camera, Choreography | None — PLAYER_SPECTATE workaround available | Open |
+| Show scanner — flat `shows/*.yml` only; no subdirectory scan | Stage Manager, all shows | None — flat YAMLs still load | Open |
+| ENTITY_AI/behavior events resolve only first group member | Casting, Wardrobe, Choreography | None — workaround: address by name | Open |
+| `capture_mode: live` parsed but not implemented | Casting | None — snapshot mode works | Open |
+| `entity:world:Name` targeting not implemented | Casting | None — use entity:spawned: | Open |
+| ENTITY_SPEED group targeting broken | Choreography | None — workaround: address by name | Open |
+| ENTER does not apply equipment fields | Choreography, Wardrobe | None — workaround: SPAWN_ENTITY + CROSS_TO | Open |
+| RETURN_HOME skips non-Player entities | Choreography | None — workaround: CROSS_TO | Open |
+| FIREWORK `min_clearance` not enforced | Fireworks | None — safety check just doesn't apply | Open |
+| FIREWORK preset `launch:` mode not applied | Fireworks | None — spawn position is event-controlled | Open |
+| FIREWORK_LINE gradient fields not parsed | Fireworks | None — always red→blue | Open |
+| FIREWORK_FAN — no power/color variation | Fireworks | None — workaround: multiple FIREWORK_LINE | Open |
 
 **When a gap is resolved:** Remove from this table, move the ops-inbox entry to Resolved with the version it shipped in, update the affected department KBs.
 
@@ -450,3 +533,24 @@ The Stage Manager tracks version policy on behalf of all departments:
 | Breaking schema change or major rework | MAJOR |
 
 Always bump before building. Never build the same version number twice. Version file: `build.gradle.kts` (`version = "x.y.z"`).
+
+---
+
+## Capability Status Summary
+
+| Instrument / Function | Status | Notes |
+|-----------------------|--------|-------|
+| Prompt book / YAML structure ownership | ✅ Active | Core SM function |
+| Run sheet authoring and maintenance | ✅ Active | Kendra's document; updated every revision |
+| Beat collision detection and resolution | ✅ Active | Protocol defined; escalation format defined |
+| Cleanup contract / stop-safety oversight | ✅ Active | Automatic items documented; manual checklist defined |
+| Ops-inbox workflow | ✅ Active | `ops-inbox.md` maintained; 16 open items |
+| Java capability registry | ✅ Active | Active Gap Registry table above; full detail in `ops-inbox.md` |
+| Cue naming convention enforcement | ✅ Active | `[category].[archetype].[variant]` standard |
+| REST event (deliberate pause) | ✅ Verified | Confirmed working in all show revisions |
+| GROUP_ASSIGN (participant grouping) | ✅ Verified | Tick-0 requirement; underflow = silent skip (by design) |
+| COMMAND escape hatch | ✅ Verified | Working; outside stop-safety contract |
+| Show creation workflow coordination | ✅ Active | Process defined; `show-creation-process.md` for full detail |
+| Department briefing coordination | ✅ Active | Blocking/non-blocking table defined per pass type |
+| YAML authorship sequencing | ✅ Active | Kendra gates on dept decisions before authoring begins |
+| BLOCK_PLACE / BLOCK_REMOVE | ⚠️ Gapped | Requires COMMAND; outside cleanup contract — **High safety risk** |

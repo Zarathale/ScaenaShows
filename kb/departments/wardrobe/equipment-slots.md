@@ -179,7 +179,7 @@ Boots complete the armor set. A figure in helmet + chestplate + leggings + boots
 | Item | Register | Tone | Use |
 |------|----------|------|-----|
 | BANNER | Herald, announcement, ceremony | Announcement, heraldry, ceremony, declaration | Heralds, ceremonial figures, declarations |
-| DEAD_BUSH | Withering, sorrow, desolation | Sorrow, withering, desolation, death | Figures of mourning, death, loss |
+| DEAD_BUSH | Absurdist, strange, theatrical dry wit | Wrongness, the unexpected, comic strangeness | Eccentric figures, uncanny moments, deliberate visual jokes |
 | APPLE | Innocence, simplicity, sustenance | Innocence, temptation, sustenance | Innocents, temptresses, nurturers |
 | EGG | Fragility, beginning, potential | Fragility, new beginnings, potential | Figures of hope, mothers, builders |
 | SNOWBALL | Playfulness, winter, innocence | Playfulness, childishness, winter | Children, playful spirits |
