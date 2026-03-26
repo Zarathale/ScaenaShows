@@ -64,11 +64,12 @@ Each department head maintains a technical knowledgebase — a dedicated file th
 | Choreographer / Movement Director | — | `kb/departments/choreography.kb.md` |
 | Set Director | — | `kb/departments/set.kb.md` |
 | Effects Director | — | `kb/departments/effects.kb.md` |
+| **Camera Director** | **Mark** | `kb/departments/camera.kb.md` |
 | Lighting & Atmosphere Designer | — | `kb/departments/lighting.kb.md` |
 | Sound Designer | — | `kb/departments/sound.kb.md` |
 | Sprite Voice Director | — | `kb/departments/voice.kb.md` |
 | **Stage Manager** | **Kendra** | `kb/departments/stage-manager.kb.md` |
-| Fireworks Director | — | `kb/departments/fireworks.kb.md` |
+| **Fireworks Director** | **Mira** | `kb/departments/fireworks.kb.md` |
 
 ---
 
@@ -81,7 +82,8 @@ Each department head maintains a technical knowledgebase — a dedicated file th
 | Wardrobe & Properties Director | Appearance, equipment, variants | What do they look like, and what does that say? |
 | Choreographer / Movement Director | Movement as composition | When and where does each performer move, and why? |
 | Set Director | Space, marks, sets, environment modifications | Where does this happen, and what does the space look like? |
-| Effects Director | Everything applied to the target player: movement, perception, camera | What is the player experiencing, and who is causing that? |
+| Effects Director | Player body: forced movement, physics, potion effects, particles | What is happening to the player's body — and is every physical sensation intentional? |
+| Camera Director (Mark) | Player viewpoint: orientation, cinematic perspective, screen effects | Where is the player looking — and is that where they should be? |
 | Lighting & Atmosphere Designer | World-state changes visible to all | What does the world feel like from inside this scene? |
 | Sound Designer | Audio arc and landscape | What does the player hear, and what does the silence say? |
 | Sprite Voice Director | All on-screen text | What words reach the player, in what mode, and when? |
@@ -344,7 +346,7 @@ Once resolved, the following variants will be available:
 | ENTER | Bar | Spawn at a wing mark and move to destination. Semantic shorthand for arrival. |
 | EXIT | Bar | Move to a wing mark, optionally despawn on arrival. Semantic shorthand for departure. |
 | HOLD | Point | Freeze entity at current position (zeroes velocity). |
-| FACE | Point | Turn entity to face a mark, compass direction, or entity. Yaw only — see Effects (Camera specialty) for pitch limitations. |
+| FACE | Point | Turn entity to face a mark, compass direction, or entity. Yaw only — see Camera Director for pitch limitations. |
 | RETURN_HOME | Point or bar | Return each participant to their captured invocation location. |
 | ENTITY_SPEED | Point | Scale entity movement speed. 0.0 = stopped, 1.0 = normal, 2.0 = fast. |
 | ENTITY_VELOCITY | Point | Launch entity in a vector. Combine with slow_falling for controlled arcs. Does not apply to the target player — see PLAYER_VELOCITY in Effects. |
@@ -452,27 +454,25 @@ This lives in the show's run sheet under "Environment Notes," not in the YAML.
 
 ### 5. Effects Director
 
-**Domain:** Everything applied to the target player. The Effects Director owns all forced movement of the show's target player (teleportation, levitation, velocity impulses, flight), all perceptual alteration of the player's senses (potion effects, screen distortion), particles applied to the player's space, and camera control — what the player sees, hears through their own body, and is caused to do against their default input. If it happens *to* the player rather than *around* them, Effects owns it.
+**Domain:** The player's body. The Effects Director owns all forced movement of the show's target player (teleportation, levitation, velocity impulses, flight), all physics-layer alteration (potion effects), and particles applied to the player's space. If it moves, lifts, slows, or physically changes the player — Effects owns it.
 
-**The question this role asks:** What is the player experiencing in their own body at each moment — and is every sensation intentional?
+**The question this role asks:** What is happening to the player's body at each moment — and is every physical sensation intentional?
 
-**Authority:** PLAYER_TELEPORT (forced movement and set transitions), PLAYER_FLIGHT (hover and release states), PLAYER_VELOCITY (impulse), CROSS_TO targeting the show's target player, EFFECT events on players (levitation, slow_falling, night_vision, blindness, darkness, nausea, speed, slowness), PARTICLE events, CAMERA screen effects (sway, blackout, flash, float), PLAYER_SPECTATE, PLAYER_SPECTATE_END, PLAYER_MOUNT, PLAYER_DISMOUNT, FACE on the target player.
+**Authority:** PLAYER_TELEPORT destination (position authority; yaw/pitch fields are Camera's), PLAYER_FLIGHT (hover and release states), PLAYER_VELOCITY (impulse), CROSS_TO targeting the show's target player (position authority; `facing:` field is Camera's), EFFECT events on players (levitation, slow_falling, night_vision, blindness, darkness, nausea, speed, slowness), PARTICLE events.
 
-**Knowledgebase:** `kb/departments/effects.kb.md` — Java capabilities, YAML syntax, calibrated levitation patterns, particle vocabulary, screen effect reference, and known gaps.
+**Relationship to Camera:** Effects and Camera are the closest coordination pair. Effects decides where the player's body is; Camera decides which direction their eyes are pointing. Every PLAYER_TELEPORT with facing fields and every levitation sequence is a joint production. See `kb/departments/camera.kb.md`.
 
-**Camera is a specialty within Effects** — same relationship as Gracie is to Sound. Camera tools (PLAYER_SPECTATE, PLAYER_MOUNT, CAMERA event, FACE/teleport-facing) have deep enough technique to warrant their own reference file (`kb/departments/camera.kb.md`), but there is no separate Camera department. Camera decisions are made by the Effects Director with Camera as a specialty discipline.
+**Knowledgebase:** `kb/departments/effects.kb.md` — Java capabilities, YAML syntax, calibrated levitation patterns, particle vocabulary, and known gaps.
 
 ---
 
 #### What Effects Owns vs. What It Doesn't
 
-| Belongs to Effects | Belongs to Choreography | Belongs to Lighting |
-|-------------------|------------------------|---------------------|
-| Forced player movement (TP, levitate, velocity) | Performer/NPC movement | TIME_OF_DAY, WEATHER, LIGHTNING |
-| EFFECT on target players | ENTITY_VELOCITY for entity impulses | — |
-| PARTICLE (applied to player space) | ENTITY_SPEED | — |
-| CAMERA screen effects | — | — |
-| Camera control (spectate, mount) | — | — |
+| Belongs to Effects | Belongs to Camera | Belongs to Choreography | Belongs to Lighting |
+|-------------------|------------------|------------------------|---------------------|
+| Forced player movement (TP destination, levitate, velocity) | Player orientation (FACE, yaw/pitch on TP) | Performer/NPC movement | TIME_OF_DAY, WEATHER, LIGHTNING |
+| EFFECT on target players | PLAYER_SPECTATE / MOUNT | ENTITY_VELOCITY for entity impulses | — |
+| PARTICLE (applied to player space) | CAMERA screen effects | ENTITY_SPEED | — |
 
 **night_vision cross-discipline note:** `night_vision` is an EFFECT applied to the player (Effects authority), but it makes darkness visible — fundamentally altering the ambient light state the Lighting designer is crafting. Any scene that uses `night_vision` requires coordination between Effects and Lighting to ensure the revealed environment is intentional.
 
@@ -480,7 +480,7 @@ This lives in the show's run sheet under "Environment Notes," not in the YAML.
 
 #### Forced Player Movement
 
-**PLAYER_TELEPORT** — the primary set-transition and orientation tool. Moves the player to an absolute destination or relative offset. Supports explicit yaw and pitch to reset camera facing on arrival.
+**PLAYER_TELEPORT** — the primary set-transition tool. Moves the player to an absolute destination or relative offset. Destination is Effects authority. The `yaw` and `pitch` fields on arrival are Camera authority — coordinate with Mark on any transition that also resets orientation.
 
 **PLAYER_FLIGHT** — server-side flight control. `hover` engages flight and locks the player's altitude at their current position. `release` disengages flight and applies a transition effect (slow_falling by default) before restoring the player's pre-show flight state.
 
@@ -862,7 +862,7 @@ The Java review team audits the control surface regularly. The goal: every meani
 
 ---
 
-### 10. Fireworks Director
+### 10. Fireworks Director — Mira
 
 **Domain:** All fireworks. The Fireworks Director owns every detonation in the show — the single rocket, the spatial pattern, the finale. Where Lighting sets the world's ambient register, Fireworks punctuates it.
 
@@ -874,7 +874,27 @@ The Java review team audits the control surface regularly. The goal: every meani
 
 **Relationship to Effects:** Altitude is dramaturgy. Where a burst detonates relative to the player's position determines whether it reads as a sky event (overhead, watched from below), an envelopment (surrounding the player), or a descent (player above the bursts, looking down). The Fireworks Director designs for the player's altitude at the moment of detonation; the Effects Director owns that altitude. These two departments must agree on where the player is when a pyrotechnic moment fires.
 
-**Knowledgebase:** `kb/departments/fireworks.kb.md` — Java capabilities, YAML syntax, behavioral notes, preset library reference, pattern composition vocabulary, and capability status.
+**Knowledgebase:** `kb/departments/fireworks.kb.md` — Named head (Mira), instrument inventory, Java capabilities, YAML syntax, behavioral notes, preset library reference, pattern composition vocabulary, tone translation, and capability status.
+
+---
+
+### 11. Camera Director — Mark
+
+**Domain:** The player's viewpoint. The Camera Director owns everything that governs where the player is looking and what cinematic perspective they occupy: orientation events, spectate and mount modes, and screen-level perceptual distortion. Where Effects controls the player's body, Camera controls the player's eyes.
+
+**The question this role asks:** Where is the player looking right now — and is that the right place for them to be?
+
+**Authority:** FACE (all targets), PLAYER_TELEPORT yaw/pitch fields (orientation on arrival — destination remains Effects authority), CROSS_TO `facing:` field, PLAYER_SPECTATE, PLAYER_SPECTATE_END, PLAYER_MOUNT, PLAYER_DISMOUNT, CAMERA (sway, blackout, flash, float). Orientation-only PLAYER_TELEPORT calls (offset {x:0,y:0,z:0}) are Camera-authored.
+
+**The Focus Point Doctrine:** Mark's core operating principle. Every beat has an intended focus point — the firework burst, the entering performer, the world transformation. If the player is likely looking somewhere else when that beat fires, Mark asserts an attention-orienting call. He reviews every significant beat in the show and flags gaps during pre-production, not after in-game testing.
+
+**Relationship to Effects:** The closest coordination pair. Effects decides where the player's body is; Camera decides which direction their eyes are pointing. Every PLAYER_TELEPORT that also resets orientation is a joint authoring moment — Effects sets the destination, Camera sets the yaw/pitch. Both departments coordinate on the sequence of any blackout-transition-arrival.
+
+**Relationship to Fireworks:** Before any high-impact pyrotechnic beat, Mira flags to Mark where the burst will be relative to the player's position and altitude. Mark determines whether the player's likely orientation puts that burst in their field of view. If not, Mark authors an orientation call timed just before the firework fires.
+
+**Relationship to Choreography:** If a performer enters from a direction the player is unlikely to be facing, Mark puts in a FACE just before the entrance. Choreography owns the entrance; Camera owns its reveal.
+
+**Knowledgebase:** `kb/departments/camera.kb.md` — Named head (Mark), Focus Point Doctrine, honest accounting of pan/tilt/zoom/follow capabilities, instrument inventory, cross-department coordination, gaps, and capability status.
 
 ---
 
@@ -913,7 +933,7 @@ Each subtype needs a guarded cast. Error handling: log and continue if variant v
 **Description:**
 `StageEventExecutor.handleFace()` computes yaw (horizontal angle via atan2) but does not set pitch (vertical angle). The entity or player is turned to face the horizontal direction of the target but is not oriented vertically toward it.
 
-**Impact:** The Effects department (Camera specialty) and Choreographer cannot orient entities or players to look upward or downward at specific targets. Looking up at an aerial performer, overhead fireworks, or an elevated mark requires a PLAYER_TELEPORT workaround that also changes position.
+**Impact:** The Camera Director and Choreographer cannot orient entities or players to look upward or downward at specific targets. Looking up at an aerial performer, overhead fireworks, or an elevated mark requires a PLAYER_TELEPORT workaround that also changes position.
 
 **Fix scope:** Add pitch computation to `handleFace()`:
 ```java
@@ -959,7 +979,7 @@ There is no way to explicitly dismiss a TITLE before its `stay` timer expires wi
 **Description:**
 FACE is instant. There is no way to author a gradual camera pan (smooth yaw rotation without position movement) as a first-class event. Approximating it via rapid PLAYER_TELEPORT sequences is imprecise and not semantically clear.
 
-**Impact:** The Effects department (Camera specialty) cannot compose smooth camera turns for cinematic sequences without using PLAYER_SPECTATE on a moving entity as a workaround.
+**Impact:** The Camera Director cannot compose smooth camera turns for cinematic sequences without using PLAYER_SPECTATE on a moving entity as a workaround.
 
 **Proposed:** Add a `ROTATE` bar event:
 ```yaml

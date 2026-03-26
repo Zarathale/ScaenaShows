@@ -10,6 +10,92 @@ Items here are queued for the Java review team. Each entry has enough context to
 
 ---
 
+### [java-gap] FIREWORK: `min_clearance` field parsed but not enforced
+
+**Area:** Fireworks Director
+**Schema field:** `min_clearance:` on `FIREWORK`
+**Filed:** 2026-03-26 (Fireworks KB build)
+
+`FireworkEvent` parses `min_clearance` (stored as `int minClearance`, default −1), but
+`FireworkEventExecutor.handleFirework()` never reads `e.minClearance`. The value is silently
+ignored at runtime — rockets will launch even if the overhead clearance is below the minimum.
+
+**Impact:** The field cannot be used to prevent rockets from detonating inside a ceiling or
+low overhang. Authors may include it in YAML expecting a safety check that doesn't happen.
+
+**Fix scope:** In `handleFirework()`, after resolving `loc`, check the world's highest
+non-air block at `loc.getX(), loc.getZ()` against `anchor.getY() + minClearance`. If
+clearance is insufficient, skip the launch (optionally log a debug warning). Only enforce
+when `minClearance > 0` (the default −1 is the "not set" sentinel).
+
+---
+
+### [java-gap] FIREWORK preset `launch:` mode not applied by executor
+
+**Area:** Fireworks Director
+**Schema field:** `launch:` block in `fireworks.yml` presets
+**Filed:** 2026-03-26 (Fireworks KB build)
+
+`FireworkPreset` fully parses the `launch:` block (mode: above/random/feet, y_offset, spread)
+and stores it in `FireworkLaunch`. However, `FireworkEventExecutor.spawnFirework()` receives
+a pre-computed `Location` and never reads `preset.launch()`. The launch mode has no runtime
+effect — rockets always spawn at the position determined by the event's `offset` and `y_mode`.
+
+**Impact:** Authors adding `launch: mode: feet` or `launch: mode: random` to a preset expect
+the rocket to spawn relative to the player's feet or at a random XZ spread, but the spawn
+position is entirely controlled by the event's coordinate fields. The preset's `launch:` block
+is a convincing-looking no-op.
+
+**Fix scope:** Decision required: (a) remove `launch:` from the preset schema and document that
+spawn position is always event-controlled, or (b) apply `launch.mode` in `spawnFirework()` as
+a secondary adjustment — e.g., `mode: feet` overrides the Y of the resolved Location to the
+anchor's foot Y + `launch.y_offset`, `mode: random` adds a random XZ spread using `launch.spread`.
+Option (a) is simpler; option (b) enables preset-level spawn personality. Bring to Show Director
+for a design decision before implementing.
+
+---
+
+### [java-gap] FIREWORK_LINE: `gradient_from` / `gradient_to` not parsed; GRADIENT always red→blue
+
+**Area:** Fireworks Director
+**Schema field:** `color_variation: GRADIENT` on `FIREWORK_LINE`
+**Filed:** 2026-03-26 (Fireworks KB build)
+
+`FireworkLineEvent` does not parse `gradient_from` or `gradient_to` fields. The executor calls
+`launchWithChase()` with hardcoded `null, null` for these arguments. Inside `interpolateGradient()`,
+`null` inputs fall back to `"FF0000"` (red) and `"0000FF"` (blue). `color_variation: GRADIENT`
+on a LINE event always produces a red-to-blue gradient regardless of the YAML.
+
+**Impact:** Authors who author `color_variation: GRADIENT` with `gradient_from`/`gradient_to`
+on a FIREWORK_LINE see red→blue instead of their intended palette.
+
+**Fix scope:** Add `gradientFrom` and `gradientTo` fields to `FireworkLineEvent` (matching the
+existing pattern in `FireworkCircleEvent`). Pass them through to `launchWithChase()` instead of
+`null, null`. Verify the YAML parser reads them from the top-level map, not nested.
+
+---
+
+### [java-gap] FIREWORK_FAN: no `power_variation` or `color_variation`
+
+**Area:** Fireworks Director
+**Schema field:** (fields do not exist on `FIREWORK_FAN`)
+**Filed:** 2026-03-26 (Fireworks KB build)
+
+`FireworkFanEvent` has no `powerVariation` or `colorVariation` fields. The fan executor does not
+call `launchWithChase()` — it builds its own position loop and always fires `preset.power()` with
+no color override. There is no way to add an energy arc or color shift across a fan's positions.
+
+**Impact:** A fan with RAMP_UP intent must be approximated with multiple FIREWORK_LINE events.
+Fans cannot use RAINBOW, GRADIENT, or ALTERNATE color schemes. Every arm position fires at its
+preset's base power and colors.
+
+**Fix scope:** Add `powerVariation` and `colorVariation` (+ `gradientFrom`/`gradientTo`) to
+`FireworkFanEvent`. Refactor the fan executor to call `launchWithChase()` for the full cross-arm
+position list (same as CIRCLE/LINE), passing the variation parameters. Confirm behavior: variation
+runs across all positions combined (consistent with how chase already works across all arms).
+
+---
+
 ### [java-gap] SPAWN_ENTITY: `variant` and `profession` fields parsed but not applied
 
 **Area:** Wardrobe, Casting Director

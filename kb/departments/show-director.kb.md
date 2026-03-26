@@ -234,14 +234,23 @@ What marks are needed? (standard 9-grid, or custom layout?)
 Are any block modifications required?
 ```
 
-### Effects Director briefing (Camera specialty)
+### Effects Director briefing
 ```
-EFFECTS / CAMERA BRIEF
-What is the camera mode for this show? (full control / partial / player-free)
-Are there cinematic sequences (PLAYER_SPECTATE)?
-Key orientation beats — when should the player's view be directed?
+EFFECTS BRIEF
 Are there levitation or flight sequences? What is the altitude arc?
-Key perceptual moments — night_vision, darkness, blackout transitions?
+Are there velocity impulses or forced movement moments?
+Key perceptual effects — night_vision, nausea, slowness, speed?
+Are particles used as atmospheric layer or burst effects?
+```
+
+### Camera Director briefing
+```
+CAMERA BRIEF
+What is the camera mode for this show? (full control / partial / player-free)
+Are there cinematic sequences (PLAYER_SPECTATE / drone pattern)?
+Key focus-point beats — when must the player's view be asserted to a specific direction?
+Key orientation moments — FACE snaps, orientation-only teleports, pre-lift pitch resets?
+Are there blackout transitions? Camera and Effects will coordinate on the timing.
 ```
 
 ### Lighting & Atmosphere Designer briefing

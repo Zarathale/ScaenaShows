@@ -1,20 +1,20 @@
 ---
 department: Effects Director
 owner: Effects Director
-kb_version: 1.0
-updated: 2026-03-25
+kb_version: 1.1
+updated: 2026-03-26
 ---
 
 # Effects Director — Technical Knowledgebase
 
 > Technical reference for the Effects department. Documents what the ScaenaShows Java plugin
-> can do to the target player: forced movement, perceptual alteration, particles, and camera
-> control — and how to access those capabilities through YAML.
+> can do to the target player: forced movement, perceptual alteration, and particles — and how
+> to access those capabilities through YAML.
 >
 > Creative direction for this role lives in `kb/production-team.md §5. Effects Director`.
 >
-> Camera is a specialty within this department. Full camera technique reference:
-> `kb/departments/camera.kb.md`.
+> Camera is a peer department. Orientation, cinematic perspective, and screen distortion
+> reference: `kb/departments/camera.kb.md`.
 
 ---
 
@@ -22,18 +22,14 @@ updated: 2026-03-25
 
 | Event | Type | What it does |
 |-------|------|--------------|
-| PLAYER_TELEPORT | Point | Move target player to an absolute destination or relative offset; set yaw and pitch |
+| PLAYER_TELEPORT | Point | Move target player to an absolute destination or relative offset. Destination is Effects authority; yaw/pitch fields are Camera authority — coordinate on any teleport that also resets orientation. |
 | PLAYER_FLIGHT | Point | Engage hover (lock altitude) or release (transition to descent) for target player |
 | PLAYER_VELOCITY | Point | Apply one-time vector impulse to target player |
-| CROSS_TO (target player) | Bar | Smooth scripted movement of the target player to a mark (Effects authority when the *subject* is the target player) |
+| CROSS_TO (target player) | Bar | Smooth scripted movement of the target player to a mark (Effects authority when the *subject* is the target player). The `facing:` field on arrival is Camera authority. |
 | EFFECT | Bar | Apply potion effect to players: levitation, slow_falling, night_vision, blindness, darkness, nausea, speed, slowness |
 | PARTICLE | Point or Bar | Spawn particles at an offset from the anchor; repeating or single burst |
-| CAMERA | Bar | Apply screen-level perceptual distortion: sway, blackout, flash, float |
-| PLAYER_SPECTATE | Bar | Attach target player's camera to a named entity |
-| PLAYER_SPECTATE_END | Point | Return camera to player's own body |
-| PLAYER_MOUNT | Point | Put target player in riding perspective on an entity |
-| PLAYER_DISMOUNT | Point | End riding perspective |
-| FACE (target player) | Point | Rotate target player to face a mark or compass direction (yaw only) |
+
+**Boundary with Camera:** If the event concerns where the player's *body* is (position, altitude, physics) → Effects. If the event concerns where the player's *eyes* are pointing, or their cinematic perspective → Camera. PLAYER_TELEPORT is the key joint event: Effects owns the destination; Camera owns the facing. See `kb/departments/camera.kb.md`.
 
 **Boundary with Choreography:** If the subject being moved is the show's target player → Effects. If the subject is a performer, NPC, or cast entity → Choreography.
 
@@ -45,23 +41,21 @@ updated: 2026-03-25
 
 ---
 
-### PLAYER_TELEPORT — forced movement and camera reset
+### PLAYER_TELEPORT — forced movement
 
-The primary tool for set transitions and precise camera orientation. Moves the player to a destination and optionally sets their facing direction.
+The primary tool for set transitions and positional resets. Moves the player to a destination. The `yaw` and `pitch` fields are Camera department authority — coordinate with Mark on any teleport that also resets orientation.
 
 ```yaml
 type: PLAYER_TELEPORT
 audience: participants
 destination: set:main_stage   # named set
 # OR
-offset: {x: 0, y: 0, z: 0}   # relative offset (use {x:0,y:0,z:0} for orientation-only)
-yaw: 180.0                     # 0=south, 90=west, 180=north, 270=east
-pitch: -30.0                   # -90=straight up, 0=horizontal, 90=straight down
+offset: {x: 0, y: 0, z: 0}   # relative offset
+yaw: 180.0                     # Camera authority: 0=south, 90=west, 180=north, 270=east
+pitch: -30.0                   # Camera authority: -90=straight up, 0=horizontal, 90=straight down
 ```
 
-**Orientation-only teleport:** set `offset: {x:0, y:0, z:0}` with the desired yaw/pitch to rotate the camera without changing the player's position. This is the primary workaround for the FACE pitch gap.
-
-**Scene transition pattern:** fire CAMERA `blackout` 10 ticks before the teleport, teleport during the dark, player returns to find themselves somewhere new.
+**Scene transition pattern:** Camera fires `CAMERA blackout` to cover the seam; Effects authors the `PLAYER_TELEPORT` during the dark; Camera sets the `yaw`/`pitch` on arrival. Both departments coordinate on the sequence.
 
 ---
 
@@ -216,24 +210,11 @@ Fire `blackout` 10 ticks before a teleport. During the black: run PLAYER_TELEPOR
 
 ---
 
-### Camera Specialty — Orientation and Perspective
-
-Full reference: `kb/departments/camera.kb.md`.
-
-**PLAYER_SPECTATE** attaches the player's camera to a named entity for the duration. The player sees from that entity's perspective — this is the cinematic drone pattern.
-
-**PLAYER_MOUNT** puts the player in first-person riding perspective on an entity. More visceral than spectate — the player is inside the experience.
-
-**Drone pattern (smooth traveling shot):**
-1. `SPAWN_ENTITY` an invisible entity at the desired camera position
-2. `ENTITY_INVISIBLE` on it immediately
-3. `CROSS_TO` the entity along the desired camera path
-4. `PLAYER_SPECTATE` targeting the entity while it moves
-5. `PLAYER_SPECTATE_END` to return camera to the player's body
-
 ---
 
 ## Cross-Department Coordination
+
+**Effects + Camera:** The closest working partnership. Effects decides where the player's body is; Camera decides where their eyes are pointing. On every PLAYER_TELEPORT that also resets orientation, both departments coordinate — Effects sets the destination, Camera sets the yaw/pitch. On every levitation or flight sequence, Camera asserts the player's pitch before liftoff so they see the intended horizon as they rise.
 
 **Effects + Fireworks:** The Effects Director owns the player's altitude when fireworks detonate. The Fireworks Director designs the burst altitude to match where the player will be. Agree upfront on player height at each pyrotechnic moment.
 
@@ -251,10 +232,9 @@ Full reference: `kb/departments/camera.kb.md`.
 
 **Limitations to be aware of:**
 - PLAYER_FLIGHT hover freezes at *current* altitude — must lift first, then hover.
-- FACE is yaw-only — no pitch. Use PLAYER_TELEPORT with explicit pitch for up/down orientation.
-- No smooth yaw rotation primitive (no ROTATE event) — use PLAYER_SPECTATE on a moving entity as the smooth-pan workaround.
-- `night_vision` requires coordination with Lighting to ensure the revealed environment is intentional.
 - PLAYER_VELOCITY impulse can be partially counteracted by the player — for a scripted arc, follow with PLAYER_FLIGHT hover to lock altitude.
+- `night_vision` requires coordination with Lighting to ensure the revealed environment is intentional.
+- Camera orientation gaps (FACE pitch, no ROTATE) are Camera department concerns — see `kb/departments/camera.kb.md §Gaps and Limitations`.
 
 ---
 
@@ -273,8 +253,8 @@ Full reference: `kb/departments/camera.kb.md`.
 | EFFECT speed / slowness | ✅ Verified | |
 | PARTICLE (single burst) | ✅ Verified | |
 | PARTICLE (repeating bar with interval) | ✅ Verified | force: true bypasses client particle settings |
-| CAMERA blackout / sway / flash / float | ✅ Verified | |
-| PLAYER_SPECTATE + drone pattern | ✅ Verified | Requires SPECTATOR mode; stop-safety restores gamemode |
-| PLAYER_MOUNT / PLAYER_DISMOUNT | ✅ Verified | Entity must be rideable type |
 | GIVE_ITEM to player | 📋 Aspirational | Not yet implemented or filed |
 | GIVE_XP to player | 📋 Aspirational | Not yet implemented or filed |
+
+> Camera department events (CAMERA, PLAYER_SPECTATE, PLAYER_MOUNT, FACE) are tracked in
+> `kb/departments/camera.kb.md §Capability Status Summary`.

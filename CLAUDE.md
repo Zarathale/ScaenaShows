@@ -25,7 +25,27 @@
 | **Phase 7** | 🟢 Active | ShowSprite — AI-driven show generation (no UI required) |
 | **Phase 8** | 🟢 Active | Cue library + tags — seeded starter set |
 
-## Session State — 2026-03-24
+## Session State — 2026-03-26
+
+**Where we stopped:** Mid-conversation roadmap planning. R7 (v2.9.0) is built and ready to run but has NOT been tested in-game yet. This session pivoted to a strategic roadmap discussion before the R7 test happened. Pick up the R7 test first, then return to roadmap work.
+
+**What was accomplished this session (2026-03-26):**
+- Full KB depth audit across all 12 department KBs
+- Roadmap gap analysis — current ROADMAP.md predates the production team framework entirely and needs major restructuring
+- Began designing new phase structure (Phases 9–11) — see `kb/roadmap-planning-2026-03-26.md` for full context
+- Confirmed strategic direction: team calibration loop → production show pipeline
+- **Two open questions before ROADMAP.md can be rewritten** — see planning doc for details
+
+**Immediate next step (other machine):**
+Build 2.9.0 and run `demo.archetype_sampler` (R7). `/show play demo.archetype_sampler`
+Key observations: Does the C2 hover feel like "gentle bubbling" near the ground? Does C3 climb feel like gradual separation from earth? Does C7 lift feel EARNED — like the arrival takes you? Is C9 inside the fireworks?
+
+**After R7 debrief:**
+Return to roadmap planning conversation. Read `kb/roadmap-planning-2026-03-26.md` to restore context. Two open questions need Alan's answers before the roadmap can be written.
+
+---
+
+## Session State — 2026-03-24 (archived)
 
 **Where we stopped:** Archetype sampler R7 complete. Ready to build 2.9.0 and run R7.
 
@@ -128,7 +148,7 @@ This means:
 
 Without ScaenaComposer, the authoring workflow is:
 1. Alan describes a show concept (mood, occasion, duration, tone)
-2. **Claude convenes the production team** — before any YAML is written, Claude brings each of the eleven roles to the table. The Show Director writes the brief and per-department briefings. Casting, Wardrobe, Choreography, Set, Effects (includes Camera as a specialty), Lighting, Sound, Fireworks, Voice, and Stage Management each have questions to ask and decisions to make. These decisions shape the YAML that follows. Each department's decisions are tracked in the show folder under `departments/`.
+2. **Claude convenes the production team** — before any YAML is written, Claude brings each of the twelve roles to the table. The Show Director writes the brief and per-department briefings. Casting, Wardrobe, Choreography, Set, Effects, Camera, Lighting, Sound, Fireworks, Voice, and Stage Management each have questions to ask and decisions to make. These decisions shape the YAML that follows. Each department's decisions are tracked in the show folder under `departments/`.
 3. Claude authors the full YAML directly — cues + show file
 4. Alan deploys, plays in-game, gives feedback
 5. Claude revises
@@ -162,7 +182,8 @@ ScaenaShows/
 │   │   ├── wardrobe.kb.md         (+ wardrobe/ subfolder with extended references)
 │   │   ├── choreography.kb.md
 │   │   ├── set.kb.md
-│   │   ├── effects.kb.md          (+ camera.kb.md — Camera is a specialty within Effects, not a standalone department)
+│   │   ├── effects.kb.md
+│   │   ├── camera.kb.md           ← Camera Director (Mark) — full peer department
 │   │   ├── lighting.kb.md
 │   │   ├── sound.kb.md
 │   │   ├── fireworks.kb.md
