@@ -11,8 +11,8 @@ updated: 2026-03-25
 > can do for text delivery — chat, titles, action bar, bossbar — and how to access those capabilities
 > through YAML.
 >
-> Creative direction for this role lives in `docs/production-team.md §8. Sprite Voice Director`.
-> ShowSprite voice characteristics are defined in `docs/showsprite.context.md`.
+> Creative direction for this role lives in `kb/production-team.md §8. Sprite Voice Director`.
+> ShowSprite voice characteristics are defined in `kb/departments/voice/showsprite.context.md`.
 
 ---
 
@@ -209,7 +209,7 @@ Chat stream:
 
 > Stage Management owns the full gap registry and ops-inbox workflow. This section documents what
 > the Voice department needs to know for show authoring. File new gaps via Stage Management.
-> Full registry: `docs/departments/stage-manager.kb.md` → Active Gap Registry.
+> Full registry: `kb/departments/stage-manager.kb.md` → Active Gap Registry.
 
 ---
 

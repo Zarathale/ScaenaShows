@@ -31,28 +31,57 @@ what this department is capable of — and trust that it's accurate.
 
 Read these before writing or updating any KB:
 
-1. **`kb/departments/README.md`** — The master department index. Know which department you're
-   building for, whether it has a named head, and how the top-level KB relates to the per-show
-   template file. This is the entry point for the entire KB system.
+1. **`kb/production-team.md §[department section]`** — The authoritative definition of the
+   department: its domain, "the question this role asks," its authority, and its relationship
+   to other departments. This is required reading before writing any KB.
 
-2. **`kb/production-team.md §[department section]`** — Creative direction and context for the
-   department. The KB is a technical companion to this; know the creative role first. Note whether
-   the department has a **named head** (e.g., Kendra for Stage Manager) — named heads get
-   introduced in the KB's opening section and their perspective should inform the KB's voice.
+   **Important:** `production-team.md` now carries both the creative/directorial layer AND
+   substantial operational content for each department — mob registers, equipment tables, YAML
+   event vocabulary, sound ID libraries, etc. The department KB is the *extension* layer, not
+   a parallel document. Read the production-team.md section first to know what already exists
+   before adding anything to the KB. Do not duplicate content that lives in production-team.md.
 
-3. **`docs/spec.md §4`** — The YAML event types and fields the plugin accepts. This is the
+   Note whether the department has a **named head** — if so, the name is introduced briefly in
+   the KB's opening section to give the role a voice and working style. The name is personality,
+   not authority. All ownership and authority language uses the role title, not the name.
+
+2. **`kb/system/spec.md §4`** — The YAML event types and fields the plugin accepts. This is the
    input surface, not the full capability picture, but it tells you what events exist.
 
-4. **The existing KB file** (if you're updating one) — Know what's already there. Don't
-   duplicate, but do verify that existing content is still accurate.
+3. **The existing KB file** (if you're updating one) — Know what's already there. Don't
+   duplicate, but do verify that existing content is still accurate. Also check whether the
+   content properly extends production-team.md or unintentionally duplicates it.
 
-5. **Relevant Java source** — For any capability you're marking as verified, trace it to
+4. **Relevant Java source** — For any capability you're marking as verified, trace it to
    the code. The executor classes in `src/main/java/com/scaena/shows/` are the ultimate
    source of truth. If you can't open the file, say so rather than guessing.
 
-6. **`kb/departments/approved-sources.md`** — Before fetching any external documentation
+5. **`kb/departments/approved-sources.md`** — Before fetching any external documentation
    (Minecraft Wiki, PaperMC Javadoc), read this file. Only approved sources may be used
    for research.
+
+---
+
+## Division of labor: production-team.md vs. department KBs
+
+These two documents do different jobs. Keeping them clean requires understanding the boundary.
+
+**`kb/production-team.md`** is the common brain. It defines:
+- Creative domain, authority, and "the question this role asks"
+- Directorial vocabulary and tone language
+- Key operational patterns for each department (event tables, mob registers, sound IDs, etc.)
+- Shared knowledge the whole team needs: spatial hierarchy, camera modes, puppet vs. performer, etc.
+
+**Department KB** (`kb/departments/[dept].kb.md`) is the extension layer. It adds:
+- Capability status table (Verified / Gapped / Aspirational) — this does NOT live in production-team.md
+- Deeper YAML examples not already covered in production-team.md
+- Instrument naming and the department's own vocabulary for its tools
+- Edge cases, behavioral notes, and known quirks traced to Java source
+- Tone Translation methodology (how this department interprets the Director's tone language)
+- Brief introduction of a named head (if the department has one) — working style and disposition only; ownership stays with the role title
+- Cross-references to adjacent departments and their KBs
+
+**Rule of thumb:** If it answers "what tools does this department have and how exactly do they work?" → KB. If it answers "what is this department for and what does it do for the story?" → production-team.md. When both documents cover the same tool, production-team.md has the conceptual framing; the KB has the capability status and implementation detail.
 
 ---
 
@@ -84,19 +113,23 @@ Every department KB (except Show Director — see above) is organized around the
 
 ### 1. Named Head Introduction (if applicable)
 
-If this department has a named head, open the KB with a section introducing them:
+If this department has a named head, open the KB with a brief section introducing them.
+The name gives the role a voice and a working style — nothing more. All ownership and
+authority language that follows uses the role title, not the name.
 
 ```markdown
 ## [Name]
 
-**[Name] is the [Role].** [2–3 sentences on their disposition, working style, and authority.
-What is their primary orientation — what do they care most about getting right?]
+[2–3 sentences on their disposition and working style. What is their primary orientation —
+what do they care most about getting right? How do they approach their work?]
 
-[Their escalation posture: what they resolve on their own vs. what they bring to the team.]
+[One sentence on their escalation posture: what the [Role] resolves independently vs. what
+gets brought to the team — framed by role, not by name.]
 ```
 
-Named heads are not personas in the theatrical sense — they're a way of making a department's
-working style legible. The KB speaks in their voice: expert, opinionated, direct.
+Named heads are not personas in the theatrical sense — they're a way of making a role's
+working style legible. The KB may speak in their voice, but authority always belongs to
+the position.
 
 ### 2. Role Summary
 
@@ -199,8 +232,8 @@ than false confidence.
 
 ## Stage Manager KB — special considerations
 
-The Stage Manager KB has broader scope than other department KBs because **Kendra** owns
-structural elements that cut across the production. In addition to the standard structure
+The Stage Manager KB has broader scope than other department KBs because the **Stage Manager**
+owns structural elements that cut across the production. In addition to the standard structure
 above, the SM KB must include:
 
 - **The Prompt Book** — ownership of the show YAML's running order, section structure,
@@ -208,14 +241,14 @@ above, the SM KB must include:
 - **Cue Naming and Numbering Conventions** — the `[category].[archetype].[variant]`
   library standard, show-internal C1/C2/C3 numbering, naming authority and taxonomy
   enforcement; departments propose names, SM approves
-- **Beat Collision Detection and Resolution** — Kendra's protocol: identify → assess →
-  resolve if she can (offset, reorder, consolidate) → escalate with analysis and options
-  when she cannot. The escalation format: what's happening, why it can't both resolve,
-  options with effects, Kendra's read
-- **Revision Continuity** — how Kendra ensures the timeline holds together between
-  revision cycles; the revision diff read
-- **Run Sheet Ownership** — Kendra writes it, maintains it, updates after every revision;
-  the run sheet format and what the Watch question is for
+- **Beat Collision Detection and Resolution** — the Stage Manager's protocol: identify →
+  assess → resolve if within authority (offset, reorder, consolidate) → escalate with
+  analysis and options when not. The escalation format: what's happening, why it can't both
+  resolve, options with effects, the Stage Manager's read
+- **Revision Continuity** — how the Stage Manager ensures the timeline holds together
+  between revision cycles; the revision diff read
+- **Run Sheet Ownership** — the Stage Manager writes it, maintains it, updates after every
+  revision; the run sheet format and what the Watch question is for
 - **Pre-Show Tech Check** — "is the stage set?" check before each in-game test, distinct
   from the rehearsal safety checklist
 
@@ -252,6 +285,23 @@ work that isn't already in `ops-inbox.md`, flag it — the Stage Manager should 
 
 ---
 
+## Path conventions — never use docs/
+
+All KB files live under `kb/`. All cross-references between KB files must use `kb/` paths.
+**Never write `docs/departments/` or `docs/production-team.md` in a KB file.** The `docs/`
+tree is for legacy run sheets and deferred UI artifacts. The KB system lives entirely under `kb/`.
+
+Correct paths:
+- `kb/production-team.md` — not `docs/production-team.md`
+- `kb/departments/[dept].kb.md` — not `docs/departments/[dept].kb.md`
+- `kb/departments/wardrobe/` — not `docs/departments/wardrobe/`
+- `kb/system/spec.md` — not `docs/spec.md`
+- `kb/departments/voice/showsprite.context.md` — not `docs/showsprite.context.md`
+
+When editing any KB file, scan for `docs/` references and correct them before committing.
+
+---
+
 ## After building or updating a KB
 
 - If any instrument status changed, note it in the commit message
@@ -259,7 +309,72 @@ work that isn't already in `ops-inbox.md`, flag it — the Stage Manager should 
 - If a new instrument emerged that doesn't fit existing cue library categories, flag it to
   the Show Director as a candidate for a new cue family
 - If a named department head was introduced or updated:
-  1. Update `kb/departments/README.md` — the department roster table
-  2. Update `kb/production-team.md` — the department table
+  1. Update `kb/production-team.md` — the department table (the authoritative index)
+  2. Update the department KB frontmatter — set `owner: [Name]`
   3. Update the department's `_template/departments/[dept].md` — set `owner: [Name]` in frontmatter
-  All three must stay in sync. `kb/departments/README.md` is the authoritative index.
+  All three must stay in sync. `kb/production-team.md` is the authoritative index.
+
+---
+
+## Reconciliation with production-team.md — required at every KB session
+
+**This step is mandatory.** Every initial KB build and every strengthening session ends with
+a reconciliation pass against `kb/production-team.md §[department]`. The KB and the production
+team document are the two halves of a department's identity — they must stay aligned.
+
+### What to check
+
+**1. Does production-team.md reflect current capability reality?**
+
+The production-team.md section was written at a point in time. If the KB work uncovered
+new verified capabilities, confirmed gaps, or changed the status of something, the
+production-team.md section may be outdated. Update it — specifically:
+
+- Any capability table or vocabulary section that lists something as available that is
+  actually gapped (or vice versa)
+- The Knowledgebase line at the end of the department's section — confirm the KB path is
+  current and the description still accurately describes what the KB contains
+- Any named characters introduced in the KB who aren't yet mentioned in production-team.md
+
+**2. Is the right content in the right place?**
+
+Check the division of labor. Content that now exists in both documents should be resolved:
+
+- If production-team.md has deep operational detail (full YAML, full parameter tables)
+  that the KB also has, decide which is the authoritative home. Usually production-team.md
+  holds the conceptual framing; the KB holds capability status + edge cases. Remove
+  duplication — don't maintain two copies of the same table.
+- If the KB has creative/directorial language that belongs in production-team.md ("what
+  this department is for, what question it asks"), move it or add a reference.
+
+**3. Does production-team.md's description of the department still match how it actually works?**
+
+Read the domain statement, "the question this role asks," and the authority line for the
+department in production-team.md. Ask:
+
+- Has the department's actual scope expanded or contracted since this was written?
+- Has a new named head been established who isn't in the table yet?
+- Are there cross-department authority notes (e.g., Camera / Lighting joint ownership of
+  CAMERA effects) that are no longer accurate?
+
+**4. Are all cross-references bidirectional and consistent?**
+
+If the KB references another department's KB, check whether that department's KB or
+production-team.md section references back correctly. Also confirm:
+
+- The Knowledgebase entry in production-team.md for this department matches the KB's
+  actual file path and description
+- Any forward references in production-team.md to a specific KB section (e.g., "see
+  sound.kb.md §Sound Department Personnel") resolve to a section that actually exists
+
+### How to handle found discrepancies
+
+Minor language drift (wording is slightly off, description is outdated) — update
+production-team.md in the same session. Don't leave it for later.
+
+Content in the wrong place — surface it to Alan before moving. Say what you found,
+which document it should live in, and why. Alan signs off; then move it.
+
+Genuine capability disagreements (production-team.md says something works that the KB
+found is gapped) — update both documents to reflect reality, and file the gap in
+`ops-inbox.md` if it isn't already there.

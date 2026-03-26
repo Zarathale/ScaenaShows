@@ -10,7 +10,7 @@ updated: 2026-03-25
 > Technical reference for the Sound department. Documents what the ScaenaShows Java plugin
 > can do for audio playback and control — and how to access those capabilities through YAML.
 >
-> Creative direction for this role lives in `docs/production-team.md §7. Sound Designer`.
+> Creative direction for this role lives in `kb/production-team.md §7. Sound Designer`.
 
 ---
 

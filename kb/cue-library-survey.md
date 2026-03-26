@@ -399,7 +399,7 @@ These gaps are blocking show authoring most immediately:
 
 **Still needed to reach 30+ production:** 1+ more cue. Remaining families (peak, celebration, wonder, tension, breath) cover 19 planned cues — well beyond target.
 
-**Note on `gracie.*` cues:** These are sound-only gesture cues authored by Gracie the Harpist (Sound department). They are composable punctuation and accent tools — they do not belong to a show arc role in the traditional sense, but serve as gesture vocabulary for the live sound team. See `docs/departments/sound.kb.md §Sound Department Personnel` for Gracie's full gesture reference.
+**Note on `gracie.*` cues:** These are sound-only gesture cues authored by Gracie the Harpist (Sound department). They are composable punctuation and accent tools — they do not belong to a show arc role in the traditional sense, but serve as gesture vocabulary for the live sound team. See `kb/departments/sound.kb.md §Sound Department Personnel` for Gracie's full gesture reference.
 
 ---
 

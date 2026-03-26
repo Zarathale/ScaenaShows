@@ -120,6 +120,74 @@ migration process that depends on this fix.
 
 ---
 
+### [java-gap] ENTITY_AI and behavior events resolve only first group member
+
+**Area:** Casting Director, Wardrobe
+**Events affected:** `ENTITY_AI`, `ENTITY_SPEED`, `ENTITY_EFFECT`, `ENTITY_EQUIP`, `ENTITY_INVISIBLE`, `ENTITY_VELOCITY`
+**Filed:** 2026-03-25 (Casting KB build)
+
+`EntityEventExecutor.resolveEntity()` returns only `group.get(0)` — the first UUID — when the
+target is `entity_group:<name>`. All six behavior event handlers call this singular resolver, so
+any group-targeted behavior event silently skips all members except the first.
+
+By contrast, `StageEventExecutor.resolveEntities()` (plural) correctly iterates the full group
+list — `HOLD`, `FACE`, and `CROSS_TO` work correctly on groups.
+
+**Impact:** `ENTITY_AI enabled: false` on `entity_group:chorus` only puppets the first entity.
+Any choreography that relies on group-wide AI control is silently broken.
+
+**Fix scope:** In `EntityEventExecutor`, replace `resolveEntity()` calls in all six behavior
+handlers with a loop over `resolveEntities()` (matching the pattern in StageEventExecutor), or
+extract a shared group-resolution helper accessible to both executors.
+
+---
+
+### [java-gap] `capture_mode: live` parsed but not implemented
+
+**Area:** Casting Director
+**Event:** `CAPTURE_ENTITIES`
+**Filed:** 2026-03-25 (Casting KB build)
+
+`CaptureEntitiesEvent` stores `captureMode` as a string, but `EntityEventExecutor.handleCapture()`
+always performs a one-time snapshot sweep into a UUID list, regardless of the field value.
+There is no re-sweep logic for `live` mode.
+
+**Impact:** `capture_mode: live` behaves identically to `capture_mode: snapshot`. The field is
+a silent no-op.
+
+**Fix scope:** Add a runtime mechanism for live-mode groups: store the original sweep parameters
+(entityType, radius, anchor) alongside the group in `RunningShow`. When a live-mode group is
+targeted, perform a fresh `getNearbyEntities()` sweep at the time of event execution rather than
+resolving from the stored UUID list.
+
+---
+
+### [java-gap] `entity:world:Name` targeting prefix not implemented
+
+**Area:** Casting Director
+**Events affected:** All events that use `EntityEventExecutor.resolveEntity()`
+**Filed:** 2026-03-25 (Casting KB build)
+
+`resolveEntity()` handles `entity:spawned:` and `entity_group:` prefixes. There is no branch
+for `entity:world:`. Any target string beginning with `entity:world:` returns null and all
+events against it silently skip. The targeting prefix is documented in the Casting KB as valid,
+but has never been implemented.
+
+**Fix scope:** Add a branch in `resolveEntity()`:
+```java
+if (target.startsWith("entity:world:")) {
+    String customName = target.substring("entity:world:".length());
+    for (Entity ent : anchor.getWorld().getEntities()) {
+        if (customName.equals(ent.getCustomName())) return ent;
+    }
+    return null;
+}
+```
+Note: this world scan should be bounded (or replaced with a tagged lookup) for performance on
+large worlds.
+
+---
+
 ## Resolved
 
 *(none yet)*

@@ -13,7 +13,7 @@ This document defines the ten creative and operational roles that form the Scaen
 
 The **Show Director** leads the team. Every show begins with a brief from the Show Director — a distillation of the creative intent into direction that each department can act on. The Show Director makes show-level decisions when departments face tradeoffs, holds the arc when individual scenes pull in different directions, and approves the show before any in-game test.
 
-**ShowSprite** (the future in-game AI show guide) draws its creative domain knowledge from this document. Its voice, persona, and player interaction style are defined separately in `docs/showsprite.context.md`. The knowledge is shared; the communication layer is not.
+**ShowSprite** (the future in-game AI show guide) draws its creative domain knowledge from this document. Its voice, persona, and player interaction style are defined separately in `kb/departments/voice/showsprite.context.md`. The knowledge is shared; the communication layer is not.
 
 ---
 
@@ -54,20 +54,21 @@ Each department head maintains a technical knowledgebase — a dedicated file th
 
 **When to read a KB:** Before authoring any cue or show section that involves a specific department's tools. The KB is the authoritative reference for YAML syntax, behavioral notes, and capability awareness for that department.
 
-**Java capabilities — ownership vs. awareness:** All departments need *awareness* of what the Java plugin can and cannot do. Only **Stage Management** *owns* the full current state of capabilities, limitations, and development priorities. Stage Management maintains the ops-inbox and coordinates all communication with the Java review team on behalf of the production team. Department KBs document capability awareness; `docs/departments/stage-manager.kb.md` is the authoritative source for what's implemented, what's not, and what's in the queue.
+**Java capabilities — ownership vs. awareness:** All departments need *awareness* of what the Java plugin can and cannot do. Only **Stage Management** *owns* the full current state of capabilities, limitations, and development priorities. Stage Management maintains the ops-inbox and coordinates all communication with the Java review team on behalf of the production team. Department KBs document capability awareness; `kb/departments/stage-manager.kb.md` is the authoritative source for what's implemented, what's not, and what's in the queue.
 
 | Department | Head | Knowledgebase |
 |------------|------|---------------|
-| **Show Director** | Claude | `docs/departments/show-director.kb.md` |
-| Casting Director | — | `docs/departments/casting.kb.md` |
-| Wardrobe & Properties Director | — | `docs/departments/wardrobe.kb.md` |
-| Choreographer / Movement Director | — | `docs/departments/choreography.kb.md` |
-| Set Director | — | `docs/departments/set.kb.md` |
-| Camera Director | — | `docs/departments/camera.kb.md` |
-| Lighting & Atmosphere Designer | — | `docs/departments/lighting.kb.md` |
-| Sound Designer | — | `docs/departments/sound.kb.md` |
-| Sprite Voice Director | — | `docs/departments/voice.kb.md` |
-| **Stage Manager** | **Kendra** | `docs/departments/stage-manager.kb.md` |
+| **Show Director** | Claude | `kb/departments/show-director.kb.md` |
+| Casting Director | — | `kb/departments/casting.kb.md` |
+| Wardrobe & Properties Director | — | `kb/departments/wardrobe.kb.md` |
+| Choreographer / Movement Director | — | `kb/departments/choreography.kb.md` |
+| Set Director | — | `kb/departments/set.kb.md` |
+| Effects Director | — | `kb/departments/effects.kb.md` |
+| Lighting & Atmosphere Designer | — | `kb/departments/lighting.kb.md` |
+| Sound Designer | — | `kb/departments/sound.kb.md` |
+| Sprite Voice Director | — | `kb/departments/voice.kb.md` |
+| **Stage Manager** | **Kendra** | `kb/departments/stage-manager.kb.md` |
+| Fireworks Director | — | `kb/departments/fireworks.kb.md` |
 
 ---
 
@@ -80,11 +81,12 @@ Each department head maintains a technical knowledgebase — a dedicated file th
 | Wardrobe & Properties Director | Appearance, equipment, variants | What do they look like, and what does that say? |
 | Choreographer / Movement Director | Movement as composition | When and where does each performer move, and why? |
 | Set Director | Space, marks, sets, environment modifications | Where does this happen, and what does the space look like? |
-| Camera Director | Player orientation, visual perspective | What is the player looking at, and who controls that? |
-| Lighting & Atmosphere Designer | Environmental mood layer | What does the world feel like from inside this scene? |
+| Effects Director | Everything applied to the target player: movement, perception, camera | What is the player experiencing, and who is causing that? |
+| Lighting & Atmosphere Designer | World-state changes visible to all | What does the world feel like from inside this scene? |
 | Sound Designer | Audio arc and landscape | What does the player hear, and what does the silence say? |
 | Sprite Voice Director | All on-screen text | What words reach the player, in what mode, and when? |
 | Stage Manager (Kendra) | Prompt book, running order, cue naming, cleanup contract, capability registry | Is the show structurally sound and safe — and is every beat in the right place? |
+| Fireworks Director | Fireworks — every detonation in the show | What detonates, where, at what altitude, and what does that moment mean? |
 
 ---
 
@@ -102,7 +104,7 @@ Each department head maintains a technical knowledgebase — a dedicated file th
 
 **Alan's role:** Concept originator and creative vision holder. Alan's stated intentions and feedback are non-negotiables that enter the brief directly. The Director's job is to serve Alan's vision, not substitute for it.
 
-**Knowledgebase:** `docs/departments/show-director.kb.md` — Director authority, Show Direction concept, tone language and feedback style, brief templates, standing department asks (intake + revision accountability), revision cycle guidance, arc evaluation questions, and the pre-flight checklist.
+**Knowledgebase:** `kb/departments/show-director.kb.md` — Director authority, Show Direction concept, tone language and feedback style, brief templates, standing department asks (intake + revision accountability), revision cycle guidance, arc evaluation questions, and the pre-flight checklist.
 
 ---
 
@@ -153,7 +155,7 @@ The Show Director's answer always traces back to the brief and the Show Directio
 
 **Authority:** Entity type decisions in SPAWN_ENTITY and ENTER events. AI state decisions (puppet vs. performer). The choice of whether to use world-resident entities (CAPTURE_ENTITIES) or spawn new ones.
 
-**Knowledgebase:** `docs/departments/casting.kb.md` — Java capabilities, YAML syntax, and known gaps for entity spawning, AI control, and group capture.
+**Knowledgebase:** `kb/departments/casting.kb.md` — Java capabilities, YAML syntax, and known gaps for entity spawning, AI control, and group capture.
 
 ---
 
@@ -235,7 +237,7 @@ Natural behavior as a creative tool: an Allay that genuinely follows and collect
 
 **Authority:** All `equipment:` fields on SPAWN_ENTITY and ENTITY_EQUIP events. `variant:` and `profession:` fields on SPAWN_ENTITY. Armor Stand design and placement. Custom name visibility.
 
-**Knowledgebase:** `docs/departments/wardrobe.kb.md` — Java capabilities, YAML syntax, and known gaps for equipment, variants, invisibility, and Armor Stands.
+**Knowledgebase:** `kb/departments/wardrobe.kb.md` — Java capabilities, YAML syntax, and known gaps for equipment, variants, invisibility, and Armor Stands.
 
 ---
 
@@ -320,13 +322,17 @@ Once resolved, the following variants will be available:
 
 ### 3. Choreographer / Movement Director
 
-**Domain:** Movement as composition. The Choreographer owns the movement score: when each performer moves, where they go, how they move relative to each other, and what the spatial story looks like tick by tick. Casting Director chose *who* — Choreographer decides *where and when*.
+**Domain:** Performer movement. The Choreographer owns the movement score for cast members and NPCs in the show — when each performer moves, where they go, how they move relative to each other, and what the spatial story looks like tick by tick. Casting Director chose *who* — Choreographer decides *where and when*.
 
-**The question this role asks:** What does the movement say, and does every cross serve the story?
+**This department does not own the target player's movement.** Levitation, teleportation, velocity impulses, and any other forced movement applied *to the show's target player* belongs to the Effects department. The Choreographer designs for entities and participant cast members; Effects designs what the audience experiences in their own body.
 
-**Authority:** CROSS_TO, ENTER, EXIT, RETURN_HOME, HOLD, FACE events targeting entities and players. ENTITY_SPEED. ENTITY_VELOCITY for launches and impacts. The timing and sequence of movement events across the show timeline.
+**The question this role asks:** What does the movement say, and does every performer cross serve the story?
 
-**Knowledgebase:** `docs/departments/choreography.kb.md` — Java capabilities, YAML syntax, and known gaps for movement, pathfinding, player flight, and velocity.
+**Authority:** CROSS_TO, ENTER, EXIT, RETURN_HOME, HOLD, FACE events targeting entities and non-target players. ENTITY_SPEED. ENTITY_VELOCITY for entity launches and impacts. The timing and sequence of movement events for cast and chorus members across the show timeline.
+
+**CROSS_TO boundary note:** When a CROSS_TO targets a performer crossing *toward* the target player's location, that is Choreography. When a CROSS_TO is applied *to the target player themselves* as forced movement, that is Effects.
+
+**Knowledgebase:** `kb/departments/choreography.kb.md` — Java capabilities, YAML syntax, and known gaps for entity movement, pathfinding, and velocity.
 
 ---
 
@@ -334,14 +340,14 @@ Once resolved, the following variants will be available:
 
 | Event | Type | Notes |
 |-------|------|-------|
-| CROSS_TO | Point or bar | Move to a mark. `duration_ticks` > 0 = gradual (smoothMovePlayer for players, pathfinder for mobs). `facing:` sets orientation on arrival. |
+| CROSS_TO | Point or bar | Move entity to a mark. `duration_ticks` > 0 = gradual (pathfinder for mobs). `facing:` sets orientation on arrival. When applied to the target player as forced movement, see Effects. |
 | ENTER | Bar | Spawn at a wing mark and move to destination. Semantic shorthand for arrival. |
 | EXIT | Bar | Move to a wing mark, optionally despawn on arrival. Semantic shorthand for departure. |
-| HOLD | Point | Freeze at current position (zeroes velocity). |
-| FACE | Point | Turn to face a mark, compass direction, or entity. Yaw only — see Camera Director for pitch limitations. |
+| HOLD | Point | Freeze entity at current position (zeroes velocity). |
+| FACE | Point | Turn entity to face a mark, compass direction, or entity. Yaw only — see Effects (Camera specialty) for pitch limitations. |
 | RETURN_HOME | Point or bar | Return each participant to their captured invocation location. |
-| ENTITY_SPEED | Point | Scale movement speed. 0.0 = stopped, 1.0 = normal, 2.0 = fast. |
-| ENTITY_VELOCITY | Point | Launch entity in a vector. Combine with slow_falling for controlled arcs. |
+| ENTITY_SPEED | Point | Scale entity movement speed. 0.0 = stopped, 1.0 = normal, 2.0 = fast. |
+| ENTITY_VELOCITY | Point | Launch entity in a vector. Combine with slow_falling for controlled arcs. Does not apply to the target player — see PLAYER_VELOCITY in Effects. |
 
 **Pathfinder note:** CROSS_TO for mobs uses Bukkit's pathfinder API — arrival is not guaranteed on complex terrain. Pathfinding mobs will navigate around obstacles but may get stuck. Design mob crosses for open space or use shorter distances. Puppet (AI disabled) mobs do not pathfind at all.
 
@@ -382,7 +388,7 @@ Player smooth movement (smoothMovePlayer) is tick-exact. Mob pathfinding timing 
 
 **Authority:** `marks:` and `sets:` in show YAML. PLAYER_TELEPORT for set transitions. The `front:` orientation of the show. Block modification planning and cleanup. Spatial documentation of the show environment.
 
-**Knowledgebase:** `docs/departments/set.kb.md` — Java capabilities, YAML syntax, and known gaps for marks, sets, teleportation, and block modification.
+**Knowledgebase:** `kb/departments/set.kb.md` — Java capabilities, YAML syntax, and known gaps for marks, sets, teleportation, and block modification.
 
 ---
 
@@ -444,88 +450,107 @@ This lives in the show's run sheet under "Environment Notes," not in the YAML.
 
 ---
 
-### 5. Camera Director
+### 5. Effects Director
 
-**Domain:** The player's visual orientation throughout the show. Controls where the player is looking, when that control is taken and returned, and how the cinematic camera tools are used. Some shows hand camera control to this role for the entire duration; others use it for individual scenes only. That decision is made at the show design phase and documented upfront.
+**Domain:** Everything applied to the target player. The Effects Director owns all forced movement of the show's target player (teleportation, levitation, velocity impulses, flight), all perceptual alteration of the player's senses (potion effects, screen distortion), particles applied to the player's space, and camera control — what the player sees, hears through their own body, and is caused to do against their default input. If it happens *to* the player rather than *around* them, Effects owns it.
 
-**The question this role asks:** What is the player seeing at each moment, and is it intentional?
+**The question this role asks:** What is the player experiencing in their own body at each moment — and is every sensation intentional?
 
-**Authority:** FACE (player orientation), PLAYER_TELEPORT facing (yaw/pitch on arrival), CROSS_TO `facing:` parameter, PLAYER_SPECTATE and PLAYER_SPECTATE_END (cinematic camera), PLAYER_MOUNT (riding perspective), CAMERA event (screen distortion effects).
+**Authority:** PLAYER_TELEPORT (forced movement and set transitions), PLAYER_FLIGHT (hover and release states), PLAYER_VELOCITY (impulse), CROSS_TO targeting the show's target player, EFFECT events on players (levitation, slow_falling, night_vision, blindness, darkness, nausea, speed, slowness), PARTICLE events, CAMERA screen effects (sway, blackout, flash, float), PLAYER_SPECTATE, PLAYER_SPECTATE_END, PLAYER_MOUNT, PLAYER_DISMOUNT, FACE on the target player.
 
-**Knowledgebase:** `docs/departments/camera.kb.md` — Java capabilities, YAML syntax, and known gaps for player orientation, cinematic camera, and screen distortion effects.
+**Knowledgebase:** `kb/departments/effects.kb.md` — Java capabilities, YAML syntax, calibrated levitation patterns, particle vocabulary, screen effect reference, and known gaps.
 
----
-
-#### Camera Modes
-
-| Mode | Description | Tools |
-|------|-------------|-------|
-| **Full control** | Camera managed throughout the show | FACE, PLAYER_SPECTATE, teleport facing |
-| **Partial control** | Camera handed to director for specific scenes only | Same tools, limited to defined sections |
-| **Player-free** | Player moves their own camera; show may set initial facing only | Facing on initial PLAYER_TELEPORT |
-
-Establish the camera mode during show design, before authoring begins. A full-control show makes different demands on every other creative department than a player-free show.
+**Camera is a specialty within Effects** — same relationship as Gracie is to Sound. Camera tools (PLAYER_SPECTATE, PLAYER_MOUNT, CAMERA event, FACE/teleport-facing) have deep enough technique to warrant their own reference file (`kb/departments/camera.kb.md`), but there is no separate Camera department. Camera decisions are made by the Effects Director with Camera as a specialty discipline.
 
 ---
 
-#### Orientation Tools
+#### What Effects Owns vs. What It Doesn't
 
-**FACE** — turns the player (or any entity) to look toward a mark, compass direction, spawned entity, or the player. Yaw only (horizontal). Works on players and mobs. Instant — no duration.
+| Belongs to Effects | Belongs to Choreography | Belongs to Lighting |
+|-------------------|------------------------|---------------------|
+| Forced player movement (TP, levitate, velocity) | Performer/NPC movement | TIME_OF_DAY, WEATHER, LIGHTNING |
+| EFFECT on target players | ENTITY_VELOCITY for entity impulses | — |
+| PARTICLE (applied to player space) | ENTITY_SPEED | — |
+| CAMERA screen effects | — | — |
+| Camera control (spectate, mount) | — | — |
 
-> ⚠️ **Java Gap — see Issue #[face-pitch-gap]:** FACE only computes yaw. Pitch (looking up or down) is not set. To orient the player to look upward toward an elevated firework or aerial performer, use PLAYER_TELEPORT with explicit pitch value, or use PLAYER_SPECTATE attached to an entity positioned above.
-
-**PLAYER_TELEPORT with facing** — the most reliable way to set both yaw and pitch precisely. Sets the player's camera at the exact angle defined in the YAML. Best used when a scene transition and a camera reset happen together.
-
-**CROSS_TO `facing:`** — sets player yaw on arrival at a mark. Use this when the player is moving to a position and should land oriented toward the stage focus of that position.
-
----
-
-#### Cinematic Camera — The Drone Pattern
-
-PLAYER_SPECTATE attaches the player's camera to any named entity for a defined duration (or until PLAYER_SPECTATE_END). This is how cinematic camera angles are achieved.
-
-**The drone pattern:**
-1. SPAWN_ENTITY an invisible entity at the desired camera position (ENTITY_INVISIBLE applied at spawn or immediately after)
-2. Optionally script its movement with CROSS_TO to create a traveling shot
-3. PLAYER_SPECTATE targeting that entity
-4. PLAYER_SPECTATE_END to return camera to the player's body
-
-**Known constraint:** PLAYER_SPECTATE requires the player to be in SPECTATOR mode. While spectating: the player passes through blocks, cannot interact with the world, and their HUD clears. Plan surrounding events accordingly — avoid requiring player interaction during a spectate sequence.
-
-**PLAYER_MOUNT** puts the player in the first-person riding perspective of an entity. As long as the entity moves, the player's camera tracks with it. More visceral than spectate — the player is inside the experience rather than observing it.
+**night_vision cross-discipline note:** `night_vision` is an EFFECT applied to the player (Effects authority), but it makes darkness visible — fundamentally altering the ambient light state the Lighting designer is crafting. Any scene that uses `night_vision` requires coordination between Effects and Lighting to ensure the revealed environment is intentional.
 
 ---
 
-#### CAMERA Event — Screen Distortion (Not Orientation)
+#### Forced Player Movement
 
-The CAMERA event is named misleadingly. It does not control camera direction. It applies potion effects that cause perceptual distortion:
+**PLAYER_TELEPORT** — the primary set-transition and orientation tool. Moves the player to an absolute destination or relative offset. Supports explicit yaw and pitch to reset camera facing on arrival.
 
-| Effect name | Potion applied | Visual result |
-|------------|----------------|---------------|
-| `sway` | Nausea | Screen wobble/spiral |
-| `blackout` | Darkness | Vignette closing to black |
-| `flash` | Blindness | Brief white flash |
-| `float` | Levitation + Slow Falling | Upward drift sensation |
+**PLAYER_FLIGHT** — server-side flight control. `hover` engages flight and locks the player's altitude at their current position. `release` disengages flight and applies a transition effect (slow_falling by default) before restoring the player's pre-show flight state.
 
-These are atmospheric tools, not orientation tools. The Lighting & Atmosphere Designer has joint authority over CAMERA effects. Camera Director owns their use when they relate to perspective shift (e.g., `blackout` as a scene transition).
+**PLAYER_VELOCITY** — one-time vector impulse to the player. Combine with EFFECT `slow_falling` immediately after for a controlled float arc. The player can partially counteract the impulse by moving.
+
+**Calibrated levitation patterns** (derived from in-game calibration sessions):
+
+| Pattern | Configuration | Effect |
+|---------|--------------|--------|
+| HOVER | levitation amp 0, lev=20t gap=8t cycle=28t | Clean altitude hold |
+| CLIMB | levitation amp 0, lev=24t per cycle | Gradual upward drift |
+| RELEASE | levitation amp 0, lev=20t gap=24t cycle=44t | Slow controlled descent |
+
+Always use a lift event (EFFECT levitation or PLAYER_VELOCITY) before PLAYER_FLIGHT hover — hover freezes at *current* altitude. Get the player to the right height first, then lock with hover.
 
 ---
 
-#### Smooth Camera Rotation
+#### Perceptual Effects on Players
 
-> ⚠️ **Java Gap — see Issue #[smooth-rotate-gap]:** There is no gradual yaw rotation event. FACE is instant. Simulating a slow camera pan requires rapid PLAYER_TELEPORT sequences, which is imprecise and not available as a first-class authoring primitive. Until resolved, use PLAYER_SPECTATE on a moving entity as a workaround for smooth camera movement.
+These EFFECT events alter how the player perceives the world:
+
+| Effect | Impact | Use |
+|--------|--------|-----|
+| `night_vision` | Sees in darkness at full brightness | Reveal a dark space without lighting it — coordinate with Lighting |
+| `blindness` | Severe vignette, short sight distance | Disorientation, transition, fog of experience |
+| `darkness` | Pulsing dark vignette | Dread, weight, the Warden's domain |
+| `nausea` | Screen wobble | Disorientation (same as CAMERA sway) |
+| `levitation` | Upward drift; amp 0 = gentle, amp 9 = surge | Aerial staging; primary levitation instrument |
+| `slow_falling` | Gravity reduced | Transition from flight; prevents hard landing after levitation |
+| `speed` | Movement faster | Chase, urgency, tension |
+| `slowness` | Movement slower | Weight, grief, time stretching |
+
+---
+
+#### Camera Specialty — Orientation and Perspective
+
+Full YAML reference lives in `kb/departments/camera.kb.md`. Summary of what Camera brings to Effects:
+
+**Camera modes** (establish at show design time, before authoring):
+- **Full control** — camera managed throughout: FACE, PLAYER_SPECTATE, teleport facing
+- **Partial control** — camera handed over for specific scenes only
+- **Player-free** — player controls their own camera; show sets initial facing only
+
+**FACE** — instant yaw rotation toward a target. Yaw only (no pitch). For pitch control, use PLAYER_TELEPORT with explicit pitch value.
+
+**PLAYER_TELEPORT with facing** — most reliable way to set both yaw and pitch at once.
+
+**PLAYER_SPECTATE + drone pattern** — attach the player's camera to an invisible entity, move the entity with CROSS_TO, achieve a smooth cinematic traveling shot. The established technique for smooth camera pans.
+
+**CAMERA event** — screen-level perceptual distortion: `blackout` (scene transition), `sway` (vertigo), `flash` (revelation), `float` (weightlessness sensation).
+
+> ⚠️ **Java Gap — see Issue #[face-pitch-gap]:** FACE only computes yaw. Pitch is not set. Use PLAYER_TELEPORT with explicit pitch as the workaround.
+
+> ⚠️ **Java Gap — see Issue #[smooth-rotate-gap]:** No gradual yaw rotation primitive. Use PLAYER_SPECTATE on a moving entity for smooth pans.
 
 ---
 
 ### 6. Lighting & Atmosphere Designer
 
-**Domain:** The environmental mood layer. Controls time of day, weather, atmospheric particles, perceptual effects, and screen-level distortion to shape how the world feels from inside a scene. Lighting is not decoration — it is the emotional context that everything else lives inside.
+**Domain:** World-state changes visible to everyone. The Lighting & Atmosphere Designer controls the time of day, weather, and lightning — the environmental conditions that form the backdrop of the entire scene. Lighting is not decoration — it is the emotional context that everything else lives inside.
 
 **The question this role asks:** What does the world feel like from inside this scene, and is the lighting arc serving the emotional arc?
 
-**Authority:** TIME_OF_DAY, WEATHER, LIGHTNING events. atmos.* cue family. PARTICLE events used for environmental atmosphere. CAMERA effects (sway/blackout/flash/float) as atmospheric tools. EFFECT events applied to players for perceptual alteration (night_vision, blindness, darkness).
+**Authority:** TIME_OF_DAY, WEATHER, and LIGHTNING events. These are server-wide events that affect all players, not just show participants. Firework color palette as a lighting consideration (joint awareness with Fireworks — the Lighting Designer does not author firework events but is consulted on palette choices that affect the ambient scene register).
 
-**Knowledgebase:** `docs/departments/lighting.kb.md` — Java capabilities, YAML syntax, and behavioral notes for time, weather, particles, screen effects, and perceptual alteration.
+**What does NOT belong here:** Particles applied to the player's space, perceptual effects on the player (night_vision, blindness, darkness), and CAMERA screen distortion all belong to the Effects department. The boundary is: if it changes the world state visible to all players, it's Lighting. If it's applied onto a specific player, it's Effects.
+
+**night_vision coordination:** `night_vision` is an Effects instrument, but it reveals the environment that Lighting is crafting. Any scene that uses `night_vision` requires joint awareness — Effects applies it; Lighting ensures the revealed environment is intentional.
+
+**Knowledgebase:** `kb/departments/lighting.kb.md` — Java capabilities, YAML syntax, and behavioral notes for time of day, weather, and lightning.
 
 ---
 
@@ -561,33 +586,7 @@ Weather changes the ambient sound layer significantly even before any scripted s
 
 #### LIGHTNING
 
-Cosmetic-only lightning strike at an offset from the anchor. No damage, no fire (per spec §15). Uses: a single dramatic flash at a specific location, multiple simultaneous strikes for chaos, a slow sequence for ominous punctuation. LIGHTNING is a joint tool with the Sound Designer — thunder is tied to the visual strike and cannot be separated.
-
----
-
-#### Atmospheric Particles
-
-The atmos.* cue family provides reusable atmospheric layers. Key entries:
-
-- `atmos.ambient.ember_drift` — slow upward particle drift, warmth register
-- (See `cue-library-survey.md` for full current inventory)
-
-PARTICLE events can also be authored inline for custom atmospheric effects. Duration + interval creates a continuous layer that runs alongside other events.
-
----
-
-#### Perceptual Effects on Players
-
-These EFFECT events alter how the player perceives the world:
-
-| Effect | Impact | Use |
-|--------|--------|-----|
-| `night_vision` | Sees in darkness at full brightness | Reveal a dark space without lighting it |
-| `blindness` | Severe vignette, short sight distance | Disorientation, transition, fog of experience |
-| `darkness` | Pulsing dark vignette | Dread, weight, the Warden's domain |
-| `nausea` | Screen wobble | Disorientation (same as CAMERA sway) |
-
-**CAMERA screen effects as atmosphere:** `blackout` (DARKNESS potion) is the Lighting Designer's scene-transition tool — fade the world to black, teleport/change the environment, fade back. This is the standard "scene change in the dark" technique.
+Cosmetic-only lightning strike at an offset from the anchor. No damage, no fire (per spec §15). Uses: a single dramatic flash at a specific location, multiple simultaneous strikes for chaos, a slow sequence for ominous punctuation. LIGHTNING lives here because it is an atmospheric event — a change to the sky and world register. The thunder is tied to the visual strike and cannot be separated; coordinate with the Sound Designer on any scene that uses LIGHTNING.
 
 ---
 
@@ -611,11 +610,11 @@ As with all other creative dimensions, the Lighting Designer should establish th
 
 **Authority:** SOUND and STOP_SOUND events throughout the show timeline. The audio arc — decisions about layering, sequencing, and deliberate silence.
 
-**Knowledgebase:** `docs/departments/sound.kb.md` — Java capabilities, YAML syntax, behavioral notes, sound ID reference, known limitations of the Minecraft sound system, and the full roster of named instrumentalists with their gesture vocabularies.
+**Knowledgebase:** `kb/departments/sound.kb.md` — Java capabilities, YAML syntax, behavioral notes, sound ID reference, known limitations of the Minecraft sound system, and the full roster of named instrumentalists with their gesture vocabularies.
 
 **The ensemble:** The Sound department is staffed by named theatrical musicians who stand by throughout every production. They respond live to the show's needs — punctuating moments, supporting transitions, providing live musical texture beneath scripted SOUND events. Their gestures are available as named cues and can be summoned by the Show Director or Sound Designer at any point in the show.
 
-- **Gracie the Harpist** — the resident harpist. Always in the wings. Her vocabulary: high-register whole-tone glissandi (dreamy swirl or sharp accent), a low ominous sustained whole-note, and a two-note percussive plink in ascending fourth or fifth. See `docs/departments/sound.kb.md §Sound Department Personnel` for full gesture reference and YAML patterns. Her cues are in the library under the `gracie.*` namespace.
+- **Gracie the Harpist** — the resident harpist. Always in the wings. Her vocabulary: high-register whole-tone glissandi (dreamy swirl or sharp accent), a low ominous sustained whole-note, and a two-note percussive plink in ascending fourth or fifth. See `kb/departments/sound.kb.md §Sound Department Personnel` for full gesture reference and YAML patterns. Her cues are in the library under the `gracie.*` namespace.
 
 ---
 
@@ -718,7 +717,7 @@ Before authoring SOUND events, establish:
 
 **Authority:** MESSAGE, TITLE, ACTION_BAR, BOSSBAR events throughout the show timeline. Audience targeting decisions for text. The timing of text including deliberate silent passages.
 
-**Knowledgebase:** `docs/departments/voice.kb.md` — Java capabilities, YAML syntax, behavioral notes, audience targeting reference, and known gaps for all text delivery modes.
+**Knowledgebase:** `kb/departments/voice.kb.md` — Java capabilities, YAML syntax, behavioral notes, audience targeting reference, and known gaps for all text delivery modes.
 
 ---
 
@@ -801,7 +800,7 @@ When designing a show's text arc, mark the silences: "No text from T=240 to T=38
 
 **Kendra does not bring problems — she brings resolved problems, or problems with proposed resolutions attached.** Escalation to the Show Director happens only when a resolution requires a creative decision she isn't authorized to make, or requires a department to change what a beat *is*.
 
-**Knowledgebase:** `docs/departments/stage-manager.kb.md` — Prompt book ownership, cue naming conventions, beat collision protocol, revision continuity, run sheet format, what stop-safety covers, what it does not, pre-show tech check, rehearsal safety checklist, and the ops-inbox workflow.
+**Knowledgebase:** `kb/departments/stage-manager.kb.md` — Prompt book ownership, cue naming conventions, beat collision protocol, revision continuity, run sheet format, what stop-safety covers, what it does not, pre-show tech check, rehearsal safety checklist, and the ops-inbox workflow.
 
 ---
 
@@ -862,6 +861,22 @@ The Java review team audits the control surface regularly. The goal: every meani
 
 ---
 
+### 10. Fireworks Director
+
+**Domain:** All fireworks. The Fireworks Director owns every detonation in the show — the single rocket, the spatial pattern, the finale. Where Lighting sets the world's ambient register, Fireworks punctuates it.
+
+**The question this role asks:** What detonates, where, at what altitude, and what does that moment mean for the player?
+
+**Authority:** All FIREWORK_* events (FIREWORK, FIREWORK_CIRCLE, FIREWORK_LINE, FIREWORK_FAN, FIREWORK_RANDOM). The fireworks.yml preset library — authoring, naming, and curation of all rocket definitions. Pyrotechnic composition decisions: which pattern type, at what density, with what color palette, at which altitude relative to the player.
+
+**Relationship to Lighting & Atmosphere:** Fireworks are light sources. Every burst illuminates the player's world for a moment. The Fireworks Director designs the burst; the Lighting Designer designs the ambient world the burst lives inside. They coordinate on color register and on LIGHTNING timing — strikes that accompany pyrotechnic moments need both departments to agree on what that beat is doing. Neither overrides the other — they agree.
+
+**Relationship to Effects:** Altitude is dramaturgy. Where a burst detonates relative to the player's position determines whether it reads as a sky event (overhead, watched from below), an envelopment (surrounding the player), or a descent (player above the bursts, looking down). The Fireworks Director designs for the player's altitude at the moment of detonation; the Effects Director owns that altitude. These two departments must agree on where the player is when a pyrotechnic moment fires.
+
+**Knowledgebase:** `kb/departments/fireworks.kb.md` — Java capabilities, YAML syntax, behavioral notes, preset library reference, pattern composition vocabulary, and capability status.
+
+---
+
 ## Appendix A — Java Control Surface Gaps
 
 Known gaps in show control surface are tracked in `ops-inbox.md` at the repo root. When a role identifies a new gap, add it there with sufficient context for the Java review team to pick it up.
@@ -897,7 +912,7 @@ Each subtype needs a guarded cast. Error handling: log and continue if variant v
 **Description:**
 `StageEventExecutor.handleFace()` computes yaw (horizontal angle via atan2) but does not set pitch (vertical angle). The entity or player is turned to face the horizontal direction of the target but is not oriented vertically toward it.
 
-**Impact:** Camera Director and Choreographer cannot orient entities or players to look upward or downward at specific targets. Looking up at an aerial performer, overhead fireworks, or an elevated mark requires a PLAYER_TELEPORT workaround that also changes position.
+**Impact:** The Effects department (Camera specialty) and Choreographer cannot orient entities or players to look upward or downward at specific targets. Looking up at an aerial performer, overhead fireworks, or an elevated mark requires a PLAYER_TELEPORT workaround that also changes position.
 
 **Fix scope:** Add pitch computation to `handleFace()`:
 ```java
@@ -943,7 +958,7 @@ There is no way to explicitly dismiss a TITLE before its `stay` timer expires wi
 **Description:**
 FACE is instant. There is no way to author a gradual camera pan (smooth yaw rotation without position movement) as a first-class event. Approximating it via rapid PLAYER_TELEPORT sequences is imprecise and not semantically clear.
 
-**Impact:** The Camera Director cannot compose smooth camera turns for cinematic sequences without using PLAYER_SPECTATE on a moving entity as a workaround.
+**Impact:** The Effects department (Camera specialty) cannot compose smooth camera turns for cinematic sequences without using PLAYER_SPECTATE on a moving entity as a workaround.
 
 **Proposed:** Add a `ROTATE` bar event:
 ```yaml

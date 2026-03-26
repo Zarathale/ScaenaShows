@@ -1,17 +1,21 @@
 ---
-department: Camera Director
-owner: Camera Director
-kb_version: 1.0
+department: Camera Specialty (Effects)
+owner: Effects Director
+kb_version: 1.1
 updated: 2026-03-25
 ---
 
-# Camera Director — Technical Knowledgebase
+# Camera — Technical Reference
 
-> Technical reference for the Camera department. Documents what the ScaenaShows Java plugin
-> can do for player orientation, cinematic camera control, riding perspective, and screen
-> distortion effects — and how to access those capabilities through YAML.
+> Technical reference for the Camera specialty within the Effects department. Documents what the
+> ScaenaShows Java plugin can do for player orientation, cinematic camera control, riding
+> perspective, and screen distortion effects — and how to access those capabilities through YAML.
 >
-> Creative direction for this role lives in `docs/production-team.md §5. Camera Director`.
+> Camera is not a top-level department. It is a specialty discipline within Effects — same
+> relationship as Gracie is to Sound. The Effects Director holds Camera authority; this file
+> exists to develop Camera technique in depth.
+>
+> Effects department overview: `kb/production-team.md §5. Effects Director`.
 
 ---
 
@@ -28,7 +32,7 @@ updated: 2026-03-25
 | PLAYER_DISMOUNT | Point | End riding perspective |
 | CAMERA | Bar | Apply screen-level perceptual distortion (sway, blackout, flash, float) |
 
-CAMERA effects are a joint tool with the **Lighting & Atmosphere Designer** — Camera Director owns their use when they serve perspective shift; Lighting Designer owns them when they serve atmospheric transition.
+CAMERA effects are fully owned by Effects. The Lighting & Atmosphere Designer is aware of them as tone tools, but does not author them — they are applied to the player's perceptual experience, not to the world state.
 
 ---
 
@@ -264,15 +268,15 @@ audience: participants | group_1 | group_2 | invoker
 **Behavioral notes:**
 - Effects can be stacked: a DARKNESS followed immediately by a MESSAGE creates a dramatic text-in-darkness reveal.
 - `float` combines LEVITATION amp 0 with SLOW_FALLING. It gives a brief sensation of rising without significantly altering altitude. Duration 20–40t is subtle; 80t+ becomes a full float arc.
-- Camera Director owns `blackout` / `flash` when used for perspective transitions. Lighting Designer owns them when used for atmospheric tone (e.g., blackout during a storm climax that isn't a scene change).
+- All CAMERA effects are Effects department authority. Lighting coordinates on tone intent when a screen effect accompanies a world-state moment (e.g., blackout during a storm climax), but Effects authors the CAMERA event.
 
 ---
 
 ## Capability Awareness — Limitations & Gaps
 
 > Stage Management owns the full gap registry and ops-inbox workflow. This section documents what
-> the Camera department needs to know for show authoring. File new gaps via Stage Management.
-> Full registry: `docs/departments/stage-manager.kb.md` → Active Gap Registry.
+> the Camera specialty within Effects needs to know for show authoring. File new gaps via Stage Management.
+> Full registry: `kb/departments/stage-manager.kb.md` → Active Gap Registry.
 
 ---
 

@@ -11,7 +11,7 @@ updated: 2026-03-25
 > can do for spatial structure, player teleportation, marks, sets, and block modification —
 > and how to access those capabilities through YAML.
 >
-> Creative direction for this role lives in `docs/production-team.md §4. Set Director`.
+> Creative direction for this role lives in `kb/production-team.md §4. Set Director`.
 
 ---
 
@@ -119,7 +119,7 @@ pitch: 0.0
 **Behavioral notes:**
 - `destination: set:Name` teleports to the set's absolute world coordinates and facing.
 - `offset:` teleports relative to the player's current position. Portable — works regardless of where the show is invoked.
-- `yaw:` and `pitch:` are the Camera Director's tools within this event. The Set Director uses PLAYER_TELEPORT for location; Camera Director uses it for orientation. Coordinate these at show design time.
+- `yaw:` and `pitch:` are the Effects department's tools within this event. The Set Director uses PLAYER_TELEPORT for location; Effects uses it for orientation. Coordinate these at show design time.
 - `audience` targets: `participants` moves all players in the show; `group_1` / `group_2` moves only that group; `private` / `target` moves only the invoker.
 
 **Using PLAYER_TELEPORT for vertical staging:**
@@ -218,7 +218,7 @@ World
 
 > Stage Management owns the full gap registry and ops-inbox workflow. This section documents what
 > the Set department needs to know for show authoring. File new gaps via Stage Management.
-> Full registry: `docs/departments/stage-manager.kb.md` → Active Gap Registry.
+> Full registry: `kb/departments/stage-manager.kb.md` → Active Gap Registry.
 
 ---
 

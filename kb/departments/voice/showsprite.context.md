@@ -5,7 +5,7 @@ owner: Alan
 notes: >
   Foundation knowledge compiled from scaenacraft-ops voice corpus and server identity docs.
   Promoted from draft 2026-03-24 (SCENA-003 resolved). This document is the modification layer
-  over docs/production-team.md — it defines how ShowSprite communicates the production team's
+  over kb/production-team.md — it defines how ShowSprite communicates the production team's
   shared knowledge. Expand with authoring examples as shows mature.
 ---
 
@@ -15,7 +15,7 @@ This document is the authoritative reference for ShowSprite: who it is, how it s
 it knows about the world it lives in, and what makes a show feel right rather than mechanical.
 
 Read this before authoring any show or adding any Sprite narration. Also read
-`docs/production-team.md` — this document is the voice layer over that knowledge base, not a
+`kb/production-team.md` — this document is the voice layer over that knowledge base, not a
 replacement for it.
 
 ---
@@ -24,7 +24,7 @@ replacement for it.
 
 ShowSprite's domain knowledge — the nine production roles, the mob register, the equipment
 system, the text modes, the lighting arc, the sound landscape — lives in
-`docs/production-team.md`. That document is the **common brain** shared by Claude (when
+`kb/production-team.md`. That document is the **common brain** shared by Claude (when
 authoring shows) and ShowSprite (when guiding players in-game).
 
 This document defines how ShowSprite **expresses** that knowledge: the voice, the frame,
@@ -241,7 +241,7 @@ The authoring workflow:
 ShowSprite is not producing software. It is writing for the stage.
 
 The production team's domain knowledge is the creative vocabulary ShowSprite uses. That
-vocabulary lives in `docs/production-team.md`.
+vocabulary lives in `kb/production-team.md`.
 
 ---
 

@@ -1,17 +1,21 @@
 ---
 department: Choreographer / Movement Director
 owner: Choreographer / Movement Director
-kb_version: 1.0
+kb_version: 1.1
 updated: 2026-03-25
 ---
 
 # Choreographer / Movement Director — Technical Knowledgebase
 
 > Technical reference for the Choreography department. Documents what the ScaenaShows Java plugin
-> can do for movement — entities, players, velocity, flight — and how to access those capabilities
-> through YAML.
+> can do for cast and performer movement — entities, NPCs, participant cast members — and how to
+> access those capabilities through YAML.
 >
-> Creative direction for this role lives in `docs/production-team.md §3. Choreographer / Movement Director`.
+> **Scope:** This department owns movement of performers and cast entities. It does NOT own forced
+> movement of the show's target player (levitation, teleportation, velocity impulses applied to
+> the target) — those belong to the Effects department. See `kb/departments/effects.kb.md`.
+>
+> Creative direction for this role lives in `kb/production-team.md §3. Choreographer / Movement Director`.
 
 ---
 
@@ -19,16 +23,21 @@ updated: 2026-03-25
 
 | Event | Type | What it does |
 |-------|------|--------------|
-| CROSS_TO | Bar | Move entity or player to a mark or offset |
+| CROSS_TO (entities and cast) | Bar | Move entity or participant cast member to a mark or offset |
 | ENTER | Bar | Spawn entity at wing mark and move to destination (semantic shorthand) |
 | EXIT | Bar | Move entity to wing mark, optionally despawn (semantic shorthand) |
-| HOLD | Point | Freeze entity/player at current position |
-| FACE | Point | Turn entity/player to face a mark, entity, or compass direction (yaw only — see Gaps) |
+| HOLD | Point | Freeze entity at current position |
+| FACE (entities and cast) | Point | Turn entity to face a mark, entity, or compass direction (yaw only — see Gaps) |
 | RETURN_HOME | Bar | Return participants to their pre-show captured location |
 | ENTITY_SPEED | Point | Scale an entity's movement speed |
 | ENTITY_VELOCITY | Point | Apply a vector impulse to an entity |
-| PLAYER_VELOCITY | Point | Apply a vector impulse to players |
-| PLAYER_FLIGHT | Point | Engage or release server-side flight (hover / release states) |
+
+**Not owned by this department:**
+- `PLAYER_VELOCITY` (impulse to the target player) → Effects
+- `PLAYER_FLIGHT` (hover / release on the target player) → Effects
+- `CROSS_TO` when the subject is the show's target player being forced to move → Effects
+
+**CROSS_TO boundary:** A performer crossing *toward* the player's position = Choreography. The player being forced to cross *to* a mark = Effects.
 
 ---
 
@@ -80,7 +89,7 @@ target: entity:spawned:Herald   # or entity_group:chorus | group_1 | player
 
 **Behavioral notes:**
 - HOLD zeroes velocity at the moment it fires. For entities, it also disables AI briefly to prevent the pathfinder from resuming immediately. For persistent freezing, use ENTITY_AI enabled: false instead.
-- For players in flight, HOLD does not prevent horizontal drift. Use PLAYER_FLIGHT hover instead to genuinely lock altitude.
+- When used on a player cast member, HOLD does not prevent horizontal drift. For locking the target player's altitude, use PLAYER_FLIGHT hover (Effects department).
 
 ---
 
@@ -162,70 +171,11 @@ vector: {x: 0.0, y: 0.8, z: 0.0}   # velocity vector in blocks/tick; y > 0 = upw
 
 ---
 
-### PLAYER_VELOCITY
-
-Applies a one-time vector impulse to players.
-
-```yaml
-type: PLAYER_VELOCITY
-audience: private | group_1 | group_2 | participants
-vector: {x: 0.0, y: 1.2, z: 0.0}
-```
-
-**Behavioral notes:**
-- Same physics model as ENTITY_VELOCITY. Combine with EFFECT `slow_falling` for a controlled float.
-- `y: 1.2` is a noticeable upward push. At `y: 0.4`, it reads as a gentle lift.
-- The player can counteract the impulse by jumping or moving. For a purely scripted arc, follow immediately with PLAYER_FLIGHT hover to lock altitude after the impulse.
-
----
-
-### PLAYER_FLIGHT
-
-Server-side flight control. Two states: `hover` (engage flight, lock altitude) and `release` (disengage, apply transition effect).
-
-```yaml
-# Engage hover — locks player at current altitude
-type: PLAYER_FLIGHT
-state: hover          # hover | release
-audience: participants
-
-# Release with transition — applies release_effect before disabling flight
-type: PLAYER_FLIGHT
-state: release
-release_effect: slow_falling     # slow_falling (default) | levitate | none
-release_duration_ticks: 300      # duration of the release effect
-audience: participants
-```
-
-**Hover state — behavioral notes:**
-- Records each participant's pre-show flight state (once, via `putIfAbsent`) before enabling flight.
-- Calls `setAllowFlight(true)` + `setFlying(true)`. The player is locked vertically at their current Y.
-- Players can still move horizontally while hovering. Use `EFFECT slowness` alongside hover to discourage wandering if the show requires vertical-only constraint.
-- **Always use a lift event (EFFECT levitation) before hover** — hover freezes at *current* altitude, not a target altitude. Get the player to the right height first, then lock it with hover.
-
-**Release state — behavioral notes:**
-- Applies `release_effect` first (so the player doesn't free-fall when flight drops), then restores the participant's pre-show flight state.
-- `slow_falling` (default): gentle descent. `levitate`: brief upward drift before transition. `none`: immediate drop — only safe if the player is already near the ground.
-- **Always use `state: release` before show end** rather than relying on stop-safety — this gives authoring control over when the player starts descending and what the transition feels like.
-- Stop-safety does handle PLAYER_FLIGHT cleanup if the show is interrupted, but the transition won't be choreographed.
-
-**Calibrated flight patterns (from levitation calibration sessions):**
-
-| Pattern | YAML | Effect |
-|---------|------|--------|
-| HOVER | lev=20t gap=8t cycle=28t | Clean hover — altitude holds |
-| CLIMB | lev=24t per cycle | Gradual upward drift |
-| RELEASE | lev=20t gap=24t cycle=44t | Slow controlled descent — "blood pressure release" feel |
-
-These use `ENTITY_EFFECT levitation` (amp 0) applied to the player in a repeating pattern. The cycle timing was derived from in-game calibration (see session notes 2026-03-24).
-
----
-
 ## Capability Awareness — Limitations & Gaps
 
 > Stage Management owns the full gap registry and ops-inbox workflow. This section documents what
 > the Choreography department needs to know for show authoring. File new gaps via Stage Management.
-> Full registry: `docs/departments/stage-manager.kb.md` → Active Gap Registry.
+> Full registry: `kb/departments/stage-manager.kb.md` → Active Gap Registry.
 
 ---
 

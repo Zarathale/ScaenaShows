@@ -12,7 +12,7 @@ updated: 2026-03-25
 > leading a show from concept to in-game test: how to write a brief, how to brief the departments,
 > how to evaluate the arc, and how to know when a show is ready.
 >
-> Creative direction for this role lives in `docs/production-team.md §0. Show Director`.
+> Creative direction for this role lives in `kb/production-team.md §0. Show Director`.
 
 ---
 
@@ -235,12 +235,14 @@ What marks are needed? (standard 9-grid, or custom layout?)
 Are any block modifications required?
 ```
 
-### Camera Director briefing
+### Effects Director briefing (Camera specialty)
 ```
-CAMERA BRIEF
+EFFECTS / CAMERA BRIEF
 What is the camera mode for this show? (full control / partial / player-free)
 Are there cinematic sequences (PLAYER_SPECTATE)?
 Key orientation beats — when should the player's view be directed?
+Are there levitation or flight sequences? What is the altitude arc?
+Key perceptual moments — night_vision, darkness, blackout transitions?
 ```
 
 ### Lighting & Atmosphere Designer briefing

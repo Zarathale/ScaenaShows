@@ -3,22 +3,22 @@ department: Wardrobe & Properties Director
 owner: Wardrobe & Properties Director
 kb_version: 2.0
 updated: 2026-03-25
-notes: High-level technical reference. Detailed guides and catalogues live in docs/departments/wardrobe/ subfolder.
+notes: High-level technical reference. Detailed guides and catalogues live in kb/departments/wardrobe/ subfolder.
 ---
 
 # Wardrobe & Properties Director — Technical Knowledgebase
 
 **Quick reference:** What the ScaenaShows Java plugin can do for equipment, appearance, variants, and the invisible-body technique.
 
-**Emotional palette:** See `docs/departments/wardrobe/emotional-register.md` — what Wardrobe contributes to each emotional arc in a show.
+**Emotional palette:** See `kb/departments/wardrobe/emotional-register.md` — what Wardrobe contributes to each emotional arc in a show.
 
-**Creative direction:** `docs/production-team.md §2. Wardrobe & Properties Director`
+**Creative direction:** `kb/production-team.md §2. Wardrobe & Properties Director`
 
 ---
 
 ## Detailed References
 
-For complete catalogues and in-depth guides, see the `docs/departments/wardrobe/` folder:
+For complete catalogues and in-depth guides, see the `kb/departments/wardrobe/` folder:
 
 | File | Purpose |
 |------|---------|
@@ -203,7 +203,7 @@ equipment:
 
 > Stage Management owns the full gap registry and ops-inbox workflow. This section documents what
 > the Wardrobe department needs to know for show authoring. File new gaps via Stage Management.
-> Full registry: `docs/departments/stage-manager.kb.md` → Active Gap Registry.
+> Full registry: `kb/departments/stage-manager.kb.md` → Active Gap Registry.
 
 | Gap | Status | Workaround |
 |-----|--------|-----------|

@@ -12,7 +12,7 @@ updated: 2026-03-25
 > keep every show safe for interrupted rehearsals, and Stage Management's ownership of the show
 > YAML's running order, cue naming and numbering, the Java capability registry, and the ops-inbox workflow.
 >
-> Creative direction for this role lives in `docs/production-team.md §9. Stage Manager`.
+> Creative direction for this role lives in `kb/production-team.md §9. Stage Manager`.
 
 ---
 
@@ -199,7 +199,7 @@ After each revision, Kendra updates the run sheet to reflect changes in tick pos
 Stage Management is the production team's facility manager. In a physical theatre, the Stage Manager knows every piece of equipment in the building, what works, what doesn't, and what's on the repair list. In ScaenaShows, that means:
 
 **What Stage Management tracks:**
-- Every event type currently implemented and working (the full YAML surface — see `docs/spec.md §6` for the authoritative list)
+- Every event type currently implemented and working (the full YAML surface — see `kb/system/spec.md §6` for the authoritative list)
 - Every known gap: features the team wants to author but cannot yet express in YAML
 - Every gap's current status: open, in development, or resolved
 - The development priority of each gap (informed by show authoring needs)
