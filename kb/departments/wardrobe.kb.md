@@ -1,9 +1,11 @@
 ---
 department: Wardrobe & Properties Director
 owner: Wardrobe & Properties Director
-kb_version: 2.0
+kb_version: 3.0
 updated: 2026-03-25
-notes: High-level technical reference. Detailed guides and catalogues live in kb/departments/wardrobe/ subfolder.
+notes: >
+  Full department KB — role summary, instruments, tone translation, department principles,
+  and capability status table. Detailed technical catalogues live in kb/departments/wardrobe/ subfolder.
 ---
 
 # Wardrobe & Properties Director — Technical Knowledgebase
@@ -13,6 +15,16 @@ notes: High-level technical reference. Detailed guides and catalogues live in kb
 **Emotional palette:** See `kb/departments/wardrobe/emotional-register.md` — what Wardrobe contributes to each emotional arc in a show.
 
 **Creative direction:** `kb/production-team.md §2. Wardrobe & Properties Director`
+
+---
+
+## Role Summary
+
+- **Appearance before movement.** Wardrobe sets visual identity at spawn — what a character wears and holds tells the audience who they are before they take a single step.
+- **Six equipment slots** on any LivingEntity, set at spawn (`SPAWN_ENTITY equipment:`) or changed mid-show (`ENTITY_EQUIP`). A wardrobe change mid-scene is a character transformation moment.
+- **The invisible-body technique** (`ENTITY_INVISIBLE`) makes a living entity's body disappear while keeping armor and held items visible — floating weapons, ghostly presences, relics in space.
+- **Armor Stand displays** as static costume-on-wire surfaces: memorials, silent witnesses, items held at altar height.
+- **Mob variants and professions** (`variant:`, `profession:` on SPAWN_ENTITY) extend the visual palette enormously — villager professions, cat coats, horse colors, sheep wool, wolf variants — currently blocked by a Java gap but designed in advance.
 
 ---
 
@@ -249,3 +261,87 @@ The following cue families are **candidates for development** once Wardrobe KB i
 5. **`appearance.animals.*`** — Once variant gap fixed: animal color palettes organized by tone (`appearance.animals.festive`, `appearance.animals.melancholic`, etc.).
 
 **Note:** Do not write cue YAML for capabilities blocked by Java gaps. Flag proposed cues as "pending gap resolution" instead.
+
+---
+
+## Tone Translation
+
+How the Wardrobe department interprets the Show Director's experiential tone language.
+
+**"Tender"**
+Wardrobe reads tender as: soft materials, small items, nothing heavy. Leather over iron. A flower, a book, a piece of food in the main hand rather than a weapon. One entity rather than a crowd — intimacy through singularity. Avoid armor that speaks of conflict; choose clothing or props that suggest care and delicacy. Off-hand torch in a dark scene = warmth offered, not claimed.
+
+**"Overwhelming / earned"**
+Wardrobe reads this as material weight that *arrives* — not present from the start but revealed through a costume change. Begin spare (leather, plain hands). The ENTITY_EQUIP moment IS the overwhelming beat: the full suit of armor appearing, the banner dropping into hand, the transformation visible. Multiple entities arriving in stages with increasingly formal or heavy dress reinforce the accumulation.
+
+**"Strange / uncanny"**
+The invisible-body technique is Wardrobe's primary tool for strange. A torch moving with no bearer. A sword floating in an empty passage. Mismatched helmet choices — a carved pumpkin on a villager, a mob head where a crown should be. Wrong-biome villagers in wrong settings (once gap resolved). Equipment combinations that don't resolve into a legible "person." The stranger the equipment read, the more otherworldly the presence.
+
+**"Delight / surprise"**
+Wardrobe reads delight as: the unexpected item in exactly the right place. A flower in a Zombie's main hand. A carved pumpkin where a helmet should be. A golden armor piece on an entity that has no business being regal. The surprise is in the costume mismatch that resolves into charm rather than wrongness. Small, bright things read as delight — a single glowing item, a warm torch, a cheerful food item held aloft. Delight in Wardrobe is about the costume doing something the player didn't see coming and being glad they saw it.
+
+**"Joy / abundant"**
+Color variety, warm palette, something held aloft. Mixed sheep colors, bright cat variants (once gap resolved), gold armor in sunlight. A banner or torch carried actively. A crowd reads as life; individual joyful figures benefit from warm single items (a pumpkin helmet, a flower, a bright food item). Avoid heavy or dark materials; lean toward gold and warm materials.
+
+**"Wonder"**
+Objects made strange and present: a book floating at altar height, an ender pearl drifting alone, an impossible relic in space. Wonder in Wardrobe is often about a single well-chosen item that shouldn't be there — or shouldn't be moving on its own. The invisible-body technique combined with one carefully chosen held item is Wardrobe's most powerful wonder instrument. Less is more: one wonderful object > a full costume.
+
+**Signaling back to the Director:** When a tone phrase is ambiguous for Wardrobe, the clarifying question is: *"Is this about the figure's relationship to their costume — are they a person wearing something — or is this about an object's independent presence?"* That distinction determines whether to focus on character equipment or the invisible-body technique.
+
+---
+
+## Department Principles
+
+**What Wardrobe is ultimately for:** Wardrobe answers the question of identity before movement begins. What a performer wears and carries has already told the audience who they are, what world they inhabit, and whether they belong — before Choreography moves them a single block.
+
+**What Wardrobe decides independently:**
+- All equipment choices within a character brief
+- Whether and when to use ENTITY_EQUIP for a mid-show change (Wardrobe designs the transformation moment)
+- Application of the invisible-body technique for atmospheric or ethereal purposes
+- Armor Stand placement and design
+- Equipment-based workarounds for gapped variant capabilities
+
+**What requires Show Director sign-off:**
+- A costume change that also changes a character's narrative role (this is a story call, not an equipment call)
+- Using the invisible-body technique as a major show beat — it carries weight, and the Director should choose when to spend it
+- A significant departure from the agreed character visual register in a brief
+
+**Cross-department coordination:**
+
+*With Casting Director:* Casting decides who appears and what entity type to spawn; Wardrobe decides what they look like when they appear. These are jointly filed decisions on the SPAWN_ENTITY event — Casting owns the entity type and name, Wardrobe owns the equipment block. Flag early if the entity type chosen can't support the intended visual register (a Zombie can't wear a profession outfit until the variant gap closes; an Armor Stand can't pathfind). Align before YAML is written.
+
+*With Choreographer:* Movement and costume are inseparable — a figure in full plate armor reads differently than one carrying only a torch, before either moves. Wardrobe and Choreography should review each other's decisions at the brief stage. Movement confirms costume; costume shapes how movement reads. When the invisible-body technique is used on a moving entity, Choreography owns the movement path; Wardrobe owns what is visible during it.
+
+*With Set Designer:* Wardrobe palette must read against the set. Gold armor in a golden-hour world disappears; iron armor in snow reads cold in a useful way. Review set and costume material palettes together during production design — conflicts should surface before YAML, not after.
+
+*With Effects:* The invisible-body technique combined with entity movement is a joint Wardrobe/Effects moment. Wardrobe designs what floats; Effects (via CROSS_TO targeting the entity) designs where it goes. Coordinate at the design stage on any floating-object sequence.
+
+*With Lighting:* Torch-bearing entities — especially invisible-body figures carrying torches — cast real Minecraft block light. When designing floating torches or torch-lit sequences, Wardrobe coordinates with Lighting on whether the light output is intentional or needs to be designed around.
+
+*With Voice Director:* Floating objects and invisible presences are natural Sprite reaction moments. When Wardrobe designs a major invisible-body beat, flag it to Voice so the Sprite has a line or reaction cue ready. Silence works too — but it should be a deliberate Voice decision, not an oversight.
+
+*With Stage Manager:* All gapped capabilities (variant, profession, armor pose) are filed and tracked through Stage Management. Don't author YAML against a gapped capability without confirming current gap status with Stage Management. Document any designed-around decisions in the show's `departments/wardrobe.md` file so a future session can upgrade when the gap closes.
+
+**Handling capability gaps:** When a variant gap prevents a needed visual effect, Wardrobe designs around it with equipment — main-hand props, helmet choices, and material palette are the workaround toolkit. A Villager with a Book in main hand and golden helmet reads as scholar without requiring the LIBRARIAN profession skin. Document the designed-around decision; it should be revisited when the gap closes.
+
+**Escalation discipline:** Wardrobe resolves equipment, appearance, and invisible-body decisions independently. Wardrobe escalates when: (1) a costume choice conflicts with how a character is written in the brief — this is a story call for the Director; (2) a visual effect requires a Java capability that isn't available — flag to Stage Management; (3) a costume change creates a timing conflict with another department's cue — coordinate through Stage Manager.
+
+---
+
+## Capability Status Summary
+
+| Instrument | Status | Notes |
+|------------|--------|-------|
+| Equipment at spawn — all 6 slots, any LivingEntity | ✅ Verified | All slots applied in `EntityEventExecutor.handleSpawn()` |
+| ENTITY_EQUIP — mid-show equipment change | ✅ Verified | All 6 slots; confirmed in `EntityEventExecutor.handleEntityEquip()` |
+| ENTITY_EQUIP on entity groups | ✅ Verified | Applies to all group members simultaneously |
+| ENTITY_INVISIBLE — invisible body technique | ✅ Verified | INVISIBILITY potion, hide_particles=true; LivingEntity only; confirmed in `EntityEventExecutor.handleEntityInvisible()` |
+| Armor Stand as display surface (costume on a wire) | ✅ Verified | Accepts all equipment; no invisibility needed; static by default |
+| Non-standard helmet items (carved pumpkin, mob heads) | ✅ Verified | Bukkit `Material` enum accepts any item in the helmet slot |
+| ENTITY_EQUIP on player inventory | ⚠️ Gapped | Players manage own inventory; no stop-safety; use COMMAND escape hatch only |
+| `variant:` on SPAWN_ENTITY — cat, sheep, horse, wolf, parrot colors | ⚠️ Gapped | Parsed but silently ignored at runtime — filed in `ops-inbox.md` |
+| `profession:` on SPAWN_ENTITY — villager professions | ⚠️ Gapped | Parsed but silently ignored at runtime — filed in `ops-inbox.md` |
+| Armor Stand pose control | ⚠️ Gapped | Requires COMMAND event; outside show cleanup contract; low priority |
+| Tropical fish variant YAML syntax | ⚠️ Gapped | Not yet documented; exact YAML syntax unknown; flag to Stage Manager if needed |
+| Parrot perch on shoulder | 📋 Aspirational | Not implemented; would require a custom event or mount mechanic |
+| Custom textures / resource pack skins | 📋 Aspirational | Vanilla Minecraft only; no resource pack integration in current plugin |

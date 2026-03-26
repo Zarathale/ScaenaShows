@@ -1,8 +1,13 @@
 ---
 department: Set Director
 owner: Set Director
-kb_version: 1.0
+kb_version: 2.0
 updated: 2026-03-25
+notes: >
+  v2.0: added Role Summary, Tone Translation, Department Principles, and Capability Status Summary.
+  Java verification: PLAYER_TELEPORT (PlayerEventExecutor), REDSTONE Powerable.setPowered()
+  (WorldEventExecutor), CROSS_TO/HOLD/FACE/ENTER/EXIT (StageEventExecutor). BLOCK_PLACE/BLOCK_REMOVE
+  gap confirmed open. REDSTONE stop-safety gap confirmed — not inside cleanup contract.
 ---
 
 # Set Director — Technical Knowledgebase
@@ -12,6 +17,16 @@ updated: 2026-03-25
 > and how to access those capabilities through YAML.
 >
 > Creative direction for this role lives in `kb/production-team.md §4. Set Director`.
+
+---
+
+## Role Summary
+
+- **Spatial infrastructure.** Owns the mark grid (`marks:`), world-specific named locations (`sets:`), downstage orientation (`front:`), and player home capture — the entire coordinate vocabulary that other departments navigate within.
+- **Set transitions.** Authors PLAYER_TELEPORT events for moving players between locations. Destination authority; Effects owns orientation (yaw/pitch on arrival). Coordinates at brief time.
+- **Block modification discipline.** The only department that makes persistent world-state changes via COMMAND. Owns the full cleanup protocol: every block placed must be documented and every COMMAND modification must have a paired restore command — both at show end and in a manually-invocable cleanup cue.
+- **REDSTONE state management.** Owns REDSTONE events for triggering in-world circuits. Not inside stop-safety — every REDSTONE on must have a paired REDSTONE off explicitly authored.
+- **Environment documentation.** Files spatial notes before other departments write their work: sky visibility, ceiling height, ambient light level, biome, sight lines. Lighting cannot arc without knowing the sky; Sound cannot score without knowing the enclosure.
 
 ---
 
@@ -214,30 +229,81 @@ World
 
 ---
 
-## Capability Awareness — Limitations & Gaps
+## Tone Translation
 
-> Stage Management owns the full gap registry and ops-inbox workflow. This section documents what
-> the Set department needs to know for show authoring. File new gaps via Stage Management.
-> Full registry: `kb/departments/stage-manager.kb.md` → Active Gap Registry.
+How the Set Director interprets the Show Director's tone language.
+
+**"Tender"**
+Set reads tender as close and contained. Small mark spread — 4–6 blocks between marks rather than the full 9-position grid. No dramatic set transitions: the audience stays in one place through the scene. Set dressing kept sparse — at most one entity-based prop at center. The space should ask the player to stay, not look outward. Ceiling height low enough to feel intimate; open sky works when it reads as shared rather than vast.
+
+**"Overwhelming / earned"**
+A set-reveal call. Begin the scene in a constrained or unmarked position — no expansive crosses, no introduced width. The earned moment is a set transition or a sudden PLAYER_TELEPORT that delivers the player into a space they couldn't see coming. Alternatively: the marks are laid out wider than the player expects, and the first cross across the full stage reveals how much room there is. The space is withheld, then given. Coordinate the reveal timing with the Show Director — the spatial arrival should land at the same tick as the lighting and sound arrivals.
+
+**"Strange / uncanny"**
+Spatial wrongness. An underground set where the show begins at Y < 20. An outdoor set at an altitude that makes the horizon wrong. Marks laid asymmetrically — upstage_left much farther from center than upstage_right. A set that uses `front: north` when the player naturally faces south, inverting left and right. REDSTONE firing with no visible circuit context. The space should make the player feel slightly displaced before they understand why.
+
+**"Delight / surprise"**
+The space doing something unexpected and charming. A sudden PLAYER_TELEPORT mid-show that moves the audience sideways without warning. A mark at an offset the player didn't know was there. A set transition that moves players to a dramatically different biome for one scene and returns them. Set dressing that appears suddenly — an Armor Stand that wasn't there a moment ago. The spatial surprise should land with a smile, not a flinch: the world is playing along, not threatening.
+
+**"Joy / abundant"**
+Open, high-ceiling space. Wide mark spread. Full sky visible. Room to breathe in every direction. If the show has been building toward this, the set for the joy section should feel expansive compared to what came before — even if it's the same location, a TIME_OF_DAY change to full noon in an open space changes the spatial register. The space should feel like a gift arriving.
+
+**"Wonder"**
+Threshold environments. A set at the water's surface, just where the air begins. A mark at the edge of two biomes. A set at the underside of the cloud layer (Y ~160 in vanilla). The space between underground and sky — a show that begins below the surface and arrives there at the wonder moment. The spatial register for wonder is the edge: the player should feel like they are at the boundary of something.
+
+**Signaling back to the Director:** When a tone phrase is ambiguous for Set, the clarifying question is: *"Does this scene want the player to feel contained, placed, or at threshold?"* That single answer resolves most spatial tonal ambiguity — tender and uncanny can both feel tight, but tender holds the player gently while uncanny makes the space feel wrong.
 
 ---
 
-### Gap: No BLOCK_PLACE / BLOCK_REMOVE event type
+## Department Principles
 
-**Status:** Open. Filed in `ops-inbox.md`.
+**What Set is ultimately for:** Set is the stage itself — the operating environment that determines whether everyone else's work lands. A Lighting arc designed for open sky has no effect in an enclosed underground set. A Sound bed scored for outdoor ambience reads incorrectly underground. Set is not decoration: it is the container. File the Environment Notes before other departments begin.
 
-Block modifications currently require the COMMAND escape hatch. COMMAND-placed blocks are not tracked by the show and are not restored on show interruption.
+**What Set decides independently:**
+- Mark layout and naming for each show (grid spread, custom marks beyond the 9-position standard)
+- Set count and the spatial arc of set transitions through the show
+- `front:` orientation — or the conscious choice to defer to player facing
+- Entity-based set dressing: Armor Stands, Display Entities (inside cleanup contract via `despawn_on_end: true`)
+- REDSTONE state management and cleanup pairing
+- Environment Notes documentation for the show space
 
-**Impact:** Block-based set dressing carries permanent-world risk in any show that might be interrupted. Block modification cannot be safely used in rehearsal without extra manual cleanup planning.
+**What requires Show Director sign-off:**
+- Block modifications via COMMAND — permanent-world risk in any interrupted rehearsal; Director must know before any COMMAND block modification is authored
+- Set transitions that cross into different worlds during a show — multi-world navigation is production-level complexity
+- Any set design that places players in an environment they cannot exit without show intervention (enclosed chamber, underwater, high altitude with no safe landing) — the Director must be aware the player is committed to the space
 
-**Workaround:** Use Armor Stands and entity-based set pieces wherever possible. For unavoidable block changes, follow the COMMAND cleanup protocol above.
+**Cross-department coordination:**
 
-**Proposed fix (when resolved):** `BLOCK_PLACE` and `BLOCK_REMOVE` event types that record changes in `RunningShow` and restore them via `applyStopSafety`.
+*With Choreography:* Mark names are spatial vocabulary shared by both departments. Choreography authors CROSS_TO destinations using mark references; Set defines what those marks mean and where they are. Coordinate mark layout before Choreography writes movement sequences — a mark repositioned after movement is authored breaks all the crosses. File the mark grid in the show brief before the Choreography department begins.
+
+*With Effects:* PLAYER_TELEPORT is jointly operated: Set controls destination (`set:Name` or `offset:`), Effects controls orientation (`yaw:` / `pitch:` on arrival). When authoring a PLAYER_TELEPORT, agree at brief time whether this is primarily a spatial delivery (Set driving) or a perceptual placement (Effects driving) — both departments should know which one owns the event's intent.
+
+*With Lighting:* Sky visibility is Set's site report to Lighting — the most important single fact the Lighting Designer needs. Open sky = TIME_OF_DAY fully visible. Enclosed or underground = TIME_OF_DAY has no effect; block light level governs ambient brightness instead. File the show's sky access status in the Environment Notes before Lighting begins arc design.
+
+*With Sound:* Biome and enclosure determine the ambient audio baseline. Outdoor open space has different ambient than underground cave, ocean surface, or forest. Sound must know the set environment to score against the existing ambient bed — not against what they imagine the space sounds like. File biome and enclosure type in the Environment Notes.
+
+*With Stage Manager:* Every world-state change Set makes that falls outside the cleanup contract must be documented in the stop-safety checklist. COMMAND block modifications and REDSTONE state changes both require run sheet documentation and paired cleanup events. Stage Manager audits stop-safety at brief close — Set delivers Environment Notes and the full modification registry at that point.
+
+**Handling capability gaps:** The two active gaps (BLOCK_PLACE/BLOCK_REMOVE and REDSTONE stop-safety) both require manual compliance by the Set Director. Do not assume the plugin covers cleanup for block modifications or redstone state — it does not. Follow the COMMAND cleanup protocol and REDSTONE pairing discipline on every show that uses either instrument.
+
+**Escalation discipline:** Set resolves spatial infrastructure decisions independently. Escalates to Director when: (1) a block modification is required that carries permanent-world risk in rehearsal; (2) a set transition will confine the player in a way they cannot self-exit; (3) Environment Notes reveal a constraint that will break another department's planned work (e.g., an enclosed ceiling that makes TIME_OF_DAY invisible) — this must be resolved before the show arc is finalized, not after.
 
 ---
 
-### Limitation: Marks carry no Y coordinate
+## Capability Status Summary
 
-Y-axis staging cannot be expressed in the mark system. Any vertical positioning requires hardcoded Y values in PLAYER_TELEPORT, CROSS_TO, or SPAWN_ENTITY offset fields.
-
-**Best practice:** Document vertical positions in the show's run sheet Environment Notes section. When authoring a show with aerial staging, list the key altitude levels explicitly (e.g., "ground = Y 68, mid-air = Y 80, peak = Y 95").
+| Instrument | Status | Notes |
+|------------|--------|-------|
+| marks: — portable XZ grid | ✅ Verified | Defined in show YAML; anchor-relative offsets; used via `mark:Name` prefix in CROSS_TO, FACE, ENTER, EXIT; XZ only (no Y) |
+| sets: — world-specific named locations | ✅ Verified | Absolute XYZ + yaw/pitch; `return_on_end: true` for player return on show end/stop; teleport via PLAYER_TELEPORT |
+| front: — downstage orientation | ✅ Verified | Compass direction or numeric degrees; defaults to player facing at invocation |
+| home — player start capture | ✅ Verified | Runtime value captured at invocation; available as `destination: home` in CROSS_TO, RETURN_HOME, PLAYER_TELEPORT; not a YAML field |
+| PLAYER_TELEPORT — set:Name destination | ✅ Verified | `PlayerEventExecutor.handleTeleport()`; resolves set by name from show YAML; constructs Location from set's world/xyz/yaw/pitch |
+| PLAYER_TELEPORT — offset: teleport | ✅ Verified | Offset from player's current position; portable; no set registration required |
+| REDSTONE — Powerable block toggle | ✅ Verified | `WorldEventExecutor.handleRedstone()` → `Powerable.setPowered()`; absolute target XYZ; logs warning if block not Powerable |
+| REDSTONE — stop-safety | ⚠️ Gapped | Not inside cleanup contract; every `state: on` must have an explicit `state: off` authored at show end; filed in ops-inbox.md |
+| COMMAND — block modification (escape hatch) | ✅ Verified | Functional for any server command (`/fill`, `/setblock`, etc.); no cleanup contract coverage |
+| BLOCK_PLACE / BLOCK_REMOVE (native events) | ⚠️ Gapped | Not implemented; all block modifications require COMMAND + manual cleanup protocol; filed in ops-inbox.md |
+| SPAWN_ENTITY (Armor Stand as set piece) | ✅ Verified | `despawn_on_end: true` brings entity-based set dressing inside cleanup contract; preferred over block modification |
+| Mark Y-axis coordinates | 📋 Aspirational | Marks are XZ only — vertical staging requires hardcoded Y values in PLAYER_TELEPORT/CROSS_TO offset fields |
+| Per-player set isolation | 📋 Aspirational | PLAYER_TELEPORT is audience-scoped; all targeted players go to the same destination — per-player-distinct environments not available |

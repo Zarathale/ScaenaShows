@@ -188,6 +188,69 @@ large worlds.
 
 ---
 
+### [java-gap] ENTITY_SPEED does not address entity groups
+
+**Area:** Choreography
+**Event:** `ENTITY_SPEED`
+**Filed:** 2026-03-25 (Choreography KB build)
+
+`EntityEventExecutor.handleEntitySpeed()` calls `resolveEntity()`, which returns only the first
+member of an entity group (UUID list position 0). When `target: entity_group:Name` is used,
+only the first captured entity receives the speed change. All other group members are silently
+unaffected.
+
+**Impact:** Choreographers cannot apply a unified speed change to a chorus group with a single
+ENTITY_SPEED event. Each member must be addressed individually by name, or the group speed
+must be managed through ENTITY_AI + pathfinder behavior.
+
+**Fix scope:** In `handleEntitySpeed()`, resolve the full entity list (same pattern as
+`StageEventExecutor.resolveEntities()` which handles groups correctly) and apply the speed
+attribute to each member.
+
+---
+
+### [java-gap] ENTER does not apply equipment fields
+
+**Area:** Choreography, Wardrobe
+**Event:** `ENTER`
+**Filed:** 2026-03-25 (Choreography KB build)
+
+`StageEventExecutor.handleEnter()` spawns the entity and sets name/baby variant, but does not
+apply any equipment fields. The spec implies ENTER should behave like SPAWN_ENTITY for
+equipment purposes, but the executor is missing the equipment-apply block that exists in
+`EntityEventExecutor.handleSpawn()`.
+
+**Impact:** A performer who enters via ENTER always appears unequipped. If equipment is needed
+at entry, the workaround is SPAWN_ENTITY at the wing mark offset + CROSS_TO to destination.
+
+**Fix scope:** After spawning in `handleEnter()`, add the same equipment-apply block as in
+`handleSpawn()` — cast to LivingEntity, get EntityEquipment, apply all six slots if non-null.
+The EnterEvent model class may need equipment fields added if they aren't already parsed.
+
+---
+
+### [java-gap] RETURN_HOME silently skips non-Player entities
+
+**Area:** Choreography
+**Event:** `RETURN_HOME`
+**Filed:** 2026-03-25 (Choreography KB build)
+
+`StageEventExecutor.handleReturnHome()` iterates `resolveEntities()` but immediately continues
+on any target that is not a Player: `if (!(entity instanceof Player player)) continue;`
+
+A `RETURN_HOME` targeting a spawned entity or entity group silently does nothing. The spec does
+not document this restriction.
+
+**Impact:** Choreographers cannot return spawned entities to a home position using RETURN_HOME.
+The workaround is CROSS_TO (back to spawn offset) or DESPAWN_ENTITY.
+
+**Fix scope:** Implement entity home tracking in RunningShow — record each spawned entity's
+spawn location as its home at SPAWN_ENTITY time. In handleReturnHome(), add a branch for
+non-Player entities that CROSS_TO's or teleports them to the recorded spawn location when
+`return_home` is called.
+
+---
+
 ## Resolved
 
 *(none yet)*

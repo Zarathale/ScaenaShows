@@ -1,7 +1,7 @@
 ---
 department: Show Director
 owner: Show Director
-kb_version: 2.0
+kb_version: 2.1
 updated: 2026-03-25
 ---
 
@@ -150,7 +150,7 @@ The `direction/` folder is the Show Director's working space — the same relati
 **Keeping direction/ files current:**
 `direction/show-direction.md` should be updated any time the arc changes significantly — before re-briefing departments, not after. `direction/revision-log.md` gets a new entry after every in-game test. `direction/intake.md` is a record of the initial intake; it doesn't change after authoring begins (it documents what was decided before the show was written).
 
-**On the plugin scanner:** The plugin currently reads flat `shows/*.yml` files. Until the scanner is updated (see `ops-inbox.md`), keep the YAML accessible as a flat file. The folder serves as production team documentation now; it becomes the canonical plugin path after the scanner ships. See `docs/show-import-process.md` for migration guidance.
+**On the plugin scanner:** The plugin currently reads flat `shows/*.yml` files. Until the scanner is updated (see `ops-inbox.md`), keep the YAML accessible as a flat file. The folder serves as production team documentation now; it becomes the canonical plugin path after the scanner ships. See `skills/show-import-process/SKILL.md` for migration guidance.
 
 ---
 
@@ -178,7 +178,7 @@ Who is the player in this show?
 TONE
 What is the emotional register?
 [2–3 words or a short phrase. Not genre. Examples: "Tender and a little strange."
-"Overwhelming and earned." "Quiet devastation." "Uncomplicated joy with a shadow."]
+"Overwhelming and earned." "Bright and slightly absurd." "Exhilarating from the first tick."]
 
 WHAT THEY CARRY AWAY
 The one thing the player should feel or understand after this show ends.
@@ -220,10 +220,9 @@ Any set pieces (Armor Stands, visual objects)?
 ### Choreographer / Movement Director briefing
 ```
 CHOREOGRAPHY BRIEF
-Is the player moving through this show, or stationary?
 Are performers moving? What is the spatial story?
 Key movement beats — when and why does each cross happen?
-Are flight / levitation / velocity effects in scope?
+Any specific entity types, group choreography, or chorus sequences?
 ```
 
 ### Set Director briefing
@@ -306,10 +305,10 @@ The intake record is a snapshot of what each department committed to before writ
 - Are appearance transitions planned? When and why?
 
 ### Choreography — Intake
-- Is the player stationary, moving through the world, or aloft during this show?
-- What is the player's altitude arc? (ground / hover / graduated lift / full aerial / mixed) — sketch the shape if known.
-- Are performers moving independently of the player? Key movement beats?
-- Are flight/levitation effects in scope? If yes, which calibrated patterns apply?
+- Are performers (entities/NPCs) moving independently? Key movement beats?
+- Are groups or chorus sequences in scope? How many entities, and what is their collective role?
+- Are any performers transitioning between puppet and performer (AI) mode during the show?
+- Does any cast member need a specific relationship to the player's position at a key beat?
 
 ### Set — Intake
 - Where does this show take place? (world, rough coordinates, space type)
@@ -318,11 +317,14 @@ The intake record is a snapshot of what each department committed to before writ
 - Are any block modifications in scope?
 - What is the spatial container? (outdoor open sky, arena, cave, underwater, elevated platform)
 
-### Camera — Intake
+### Effects / Camera — Intake
+- Is the player stationary, moving through the world, or aloft during this show?
+- What is the player's altitude arc? (ground / hover / graduated lift / full aerial / mixed) — sketch the shape if known.
+- Are flight / levitation / velocity effects in scope? If yes, which calibrated patterns apply? (HOVER=28t, CLIMB=24t, RELEASE=44t)
 - What is the camera philosophy for this show? (Director-directed / player-free / cinematic sequences / mixed)
-- Is the player's view oriented at the start?
 - Are there key beats where the Director needs the player looking at something specific?
 - Any PLAYER_SPECTATE or cinematic transitions planned?
+- Key perceptual moments — night_vision, darkness, blackout transitions?
 
 ### Lighting — Intake
 - What is the environmental state at first tick? (time of day, weather, particle atmosphere)
@@ -438,11 +440,11 @@ When two departments need the same moment to do different things, the Show Direc
 
 Common conflict patterns and resolution approaches:
 
-**Camera vs. Choreography** — player position and player orientation conflict.
-Ask: which is doing more work for the arc right now? If the visual (what they see) is the beat, Camera wins. If the spatial (where they are in relation to the performers) is the beat, Choreography wins.
+**Effects vs. Choreography** — where the player is physically (Effects: levitation, teleport) conflicts with where the performers need to be relative to them (Choreography: blocking, spatial story).
+Ask: which is doing more work for the arc right now? If the player's *experience of their own body* is the beat (they are being lifted, moved, altered), Effects owns it. If the player's *spatial relationship to a performer* is the beat (they should feel surrounded, followed, witnessed), Choreography owns it. When both are happening simultaneously, agree on the priority in the brief — don't let them collide in the YAML.
 
 **Lighting vs. Voice** — darkness and legible text conflict.
-Ask: what is the player supposed to feel in this moment? If it's isolation or dread, let the darkness win and find text that works in dark (short, white, high-contrast). If the text is the beat, adjust the lighting (ACTION_BAR reads better in darkness than chat; TITLE is the most visible in all conditions).
+Ask: what is the player supposed to feel in this moment? If darkness is the point, find text that works in dark (short, white, high-contrast). If the text is the beat, adjust the lighting (ACTION_BAR reads better in darkness than chat; TITLE is the most visible in all conditions).
 
 **Sound vs. Voice** — a sound hit and a chat message land at the same tick.
 Ask: is the sound announcing the text, or competing with it? If announcing: simultaneous is correct. If competing: offset by 5–10 ticks so the player hears the sound, then reads the message.

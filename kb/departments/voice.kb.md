@@ -1,7 +1,7 @@
 ---
 department: Sprite Voice Director
 owner: Sprite Voice Director
-kb_version: 1.0
+kb_version: 2.0
 updated: 2026-03-25
 ---
 
@@ -13,6 +13,26 @@ updated: 2026-03-25
 >
 > Creative direction for this role lives in `kb/production-team.md §8. Sprite Voice Director`.
 > ShowSprite voice characteristics are defined in `kb/departments/voice/showsprite.context.md`.
+
+---
+
+## ShowSprite
+
+ShowSprite is the entity-in-residence who delivers the show's voice — a stage manager who already knows every cue and is simply here, holding the room. ShowSprite's primary orientation is toward the space between words: the silence after a line lands, the breath before a title fades, the gap that lets the player feel rather than be told. It authors from inside the experience, never from outside it.
+
+Voice decisions that change how Sprite is heard — its degree of presence, its relationship to the player, how much it speaks vs. stays silent — are brought to the Show Director. Technical text-mode decisions (which channel, which audience, what timing) belong to Voice.
+
+**Full persona reference:** `kb/departments/voice/showsprite.context.md` — voice characteristics, grammar rules, established reference lines, world context, rhythm patterns, and what to avoid. Read this before authoring any Sprite narration.
+
+---
+
+## Role Summary
+
+- **All text that reaches the player's screen.** MESSAGE, TITLE, ACTION_BAR, and BOSSBAR — owned entirely by Voice from first word to final fade.
+- **Four modes, four registers.** Chat (intimate, persistent), Title (cinematic, reserved), Action Bar (ambient whisper, peripheral), Bossbar (structural, chapter-marking). Each has a role; none substitutes for another.
+- **Silence is a Voice instrument.** A 120-tick gap with no MESSAGE events is either a deliberate breath or an oversight — the difference is whether Voice authored it. Silence must be as intentional as any line.
+- **ShowSprite is the creative voice,** not a neutral narrator. Every line of Sprite narration carries a specific voice, grammar, and presence. The persona document defines it.
+- **Two-layer rule:** BOSSBAR + MESSAGE is the standard pair. TITLE is reserved for peak moments. All four layers simultaneously is noise.
 
 ---
 
@@ -138,7 +158,7 @@ fade_out_ticks: 20  # plugin animates progress 1 → 0 over this many ticks
 | `BLUE` | Quiet, sky, distance |
 | `PURPLE` | Mystery, power, the liminal |
 | `PINK` | Tenderness, wonder |
-| `RED` | Grief, urgency, intensity |
+| `RED` | Urgency, intensity, heat |
 
 **`overlay:` reference:**
 - `PROGRESS` — clean fill bar. Standard for most sections.
@@ -234,3 +254,81 @@ There is no way to cleanly dismiss a TITLE before its `stay` timer expires. Firi
 ### Limitation: No per-player distinct TITLE text in the same event
 
 A single TITLE event sends the same text to its entire audience. To show different titles to different groups simultaneously, fire two TITLE events with `audience: group_1` and `audience: group_2` respectively.
+
+---
+
+## Tone Translation
+
+How the Sprite Voice department interprets the Show Director's tone language into text choices.
+
+**"Tender"**
+Tender in Voice is restraint. Shorter lines with deliberate space between them. White or gray text, never gold or bold. Direct address: "you," not "one" or "the player." Voice enters the scene after the world has already established the mood — Sprite doesn't announce tenderness, it arrives inside it. If the Sound Designer has a soft ambient bed running, Voice matches that register: one sentence, then silence. More silence than words.
+
+**"Overwhelming / earned"**
+Voice is withheld through the build, then given at the peak. The overwhelming beat should not have chat messages leading up to it — the accumulation happens in other departments. When the moment arrives, Voice delivers it large: TITLE, gold or white, one strong sentence. Nothing before. Then a pause after, long enough that the title fades in silence. The earned quality means the words land because the player was ready for them, not because Sprite announced that something big was coming.
+
+**"Strange / uncanny"**
+Sprite becomes slightly wrong. Fragments that don't fully resolve. Dark gray text (`<dark_gray>`). Lines that reference something the player wasn't told. A pause that's too long. The syntax of the sentences themselves can carry strangeness: short clauses that end before the thought finishes. Do not explain the strangeness — the moment Sprite names what's odd, the uncanny dissipates. Let the gap do the work.
+
+**"Delight / surprise"**
+Quick, light, wry. Aqua or yellow text. The observation that arrives without announcing itself — the line that makes the player smile because they weren't expecting it to be funny. Short. Sprite in delight doesn't linger; it makes its observation and gets out of the way. ACTION_BAR works well here: a whispered aside that vanishes before the player can overthink it.
+
+**"Joy / abundant"**
+Warmth and presence. Gold text, active voice, multiple messages at closer intervals than usual — 15-20t between lines instead of 40-80t. The world addressed directly: "The world remembers." Sprite is more present in joy than in any other register, because joy wants company. BOSSBAR color: YELLOW or GOLD.
+
+**"Wonder"**
+Very spare. One line, then a long silence. White text. Often: no words at all — just let the world do it. When Sprite does speak in wonder, it names what the player is already feeling, not what they should be feeling: *"Something opens."* not *"Feel the wonder of this moment."* A single word as a TITLE (white, slow fade) is Voice's most powerful wonder instrument.
+
+**Signaling back to the Director:** When a tone phrase is ambiguous for Voice, the clarifying question is: *"How much does Sprite speak in this tone — is this a talkative show or a listening show?"* That single answer determines text density, which then determines mode and timing.
+
+---
+
+## Department Principles
+
+**What Voice is ultimately for:** Voice is the most legible layer of the show — it's the only instrument the player processes in explicit language. That legibility is both its power and its primary risk. Every word can over-explain, over-announce, or crowd out what other departments are doing. Voice uses that legibility sparingly and precisely.
+
+**What Voice decides independently:**
+- Which text mode to use for any given moment (MESSAGE / TITLE / ACTION_BAR / BOSSBAR)
+- Audience targeting for all text events
+- The exact wording of all Sprite narration
+- The pacing and spacing between lines — including authored silences
+- BOSSBAR color and timing for section structure
+
+**What requires Show Director sign-off:**
+- A show that is unusually dialogue-heavy or unusually silent — a significant departure from the brief's tone should be surfaced
+- Any text that directly addresses a specific player by name (this is a story-level decision)
+- A TITLE used for the peak beat — that's often the single highest-impact word in the show; the Director should know what it is
+
+**Cross-department coordination:**
+
+*With Lighting:* Dark scenes reduce chat legibility. When the show holds at midnight (18000), MESSAGE text competes with the dark. ACTION_BAR survives darkness better than chat; TITLE is the most legible in all conditions. Voice and Lighting should agree on which text modes are in use for any dark-scene section — not as a compromise, but as a deliberate design decision.
+
+*With Sound:* Sound events and chat messages that fire at the same tick compete for the player's attention — the player hears the sound, looks up, and may miss the chat. Standard offset: 5–10 ticks between a significant sound hit and the chat message that should be read after it. If the sound is *announcing* the text (a chime before a line), simultaneous is correct. If they're independent, stagger them.
+
+*With Effects:* Any moment where the player's view changes dramatically (levitation peak, PLAYER_TELEPORT, PLAYER_SPECTATE transition) creates a disorientation window of ~40–80 ticks where text will be missed. Voice goes quiet during those windows. The player is orienting; they are not reading. Resume voice after the player has settled.
+
+*With Wardrobe:* Floating objects, invisible presences, and major costume transformations are natural Sprite reaction moments. Voice decides whether to name them, let them be silent, or react obliquely. The naming can anchor the moment or deflate it — coordinate with Wardrobe on which it should be.
+
+*With Stage Manager:* BOSSBAR events register with the show's active bossbar list and are cleaned up on `/show stop` via stop-safety. No extra cleanup needed. TITLE cannot be stopped mid-show without the TITLE_CLEAR workaround — keep this in mind when the Stage Manager asks about stop-safety for any scene with an active TITLE.
+
+**Handling capability gaps:** The TITLE_CLEAR gap is the primary constraint. Design TITLE timing so early dismissal is never required — the `stay` + `fade_out` should match the scene beat naturally. If a scene absolutely requires early title dismissal, use the workaround (`title: " "`, `fade_in: 0, stay: 0, fade_out: 10`) and document it in the run sheet.
+
+**Escalation discipline:** Voice resolves text mode, timing, and narration choices independently. Voice escalates when: (1) the tone phrase in the brief is unclear enough that Sprite's degree of presence is genuinely ambiguous — ask the Director before writing any lines; (2) a text moment conflicts with another department's key beat and neither can easily move — bring to Stage Manager; (3) a line of narration implies a story decision that wasn't in the brief — surface it to the Director before authoring it in.
+
+---
+
+## Capability Status Summary
+
+| Instrument | Status | Notes |
+|------------|--------|-------|
+| MESSAGE — chat text with MiniMessage | ✅ Verified | `TextEventExecutor.handleMessage()`; full MiniMessage support confirmed |
+| TITLE — fullscreen title + subtitle with timing | ✅ Verified | `TextEventExecutor.handleTitle()`; all three timing params applied via `Duration.ofMillis(ticks * 50L)` |
+| ACTION_BAR — above-hotbar line with auto-refresh | ✅ Verified | `TextEventExecutor.handleActionBar()`; refreshes every 20t for `duration_ticks`; no refresh if ≤ 20t |
+| BOSSBAR — persistent top-of-screen bar with progress animation | ✅ Verified | `TextEventExecutor.handleBossbar()`; progress 0→1 over `fade_in_ticks`, hold, 1→0 over `fade_out_ticks` |
+| Show-level BOSSBAR (in show YAML) | ✅ Verified | Separate from inline BOSSBAR event; persists for full show duration |
+| Audience targeting (broadcast / participants / private / group_1–4) | ✅ Verified | `AudienceResolver.resolve()` handles all targeting modes |
+| Entity-targeted MESSAGE | ✅ Verified | Available; text routed to entity's name target; rare use case |
+| BOSSBAR stop-safety cleanup | ✅ Verified | `show.addActiveBossBar()` registers bar for cleanup on `/show stop` |
+| TITLE_CLEAR — dismissing a TITLE early cleanly | ⚠️ Gapped | No native event; workaround: `title: " "` with `fade_in: 0, stay: 0, fade_out: 10` — filed in `ops-inbox.md` |
+| Per-player distinct ACTION_BAR in a single event | 📋 Aspirational | One text per event; use separate events with `audience: group_N` to target subsets |
+| Scrolling / paginated text | 📋 Aspirational | No multi-page text event; not implemented or filed |

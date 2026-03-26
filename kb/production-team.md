@@ -104,7 +104,7 @@ Each department head maintains a technical knowledgebase — a dedicated file th
 
 **Alan's role:** Concept originator and creative vision holder. Alan's stated intentions and feedback are non-negotiables that enter the brief directly. The Director's job is to serve Alan's vision, not substitute for it.
 
-**Knowledgebase:** `kb/departments/show-director.kb.md` — Director authority, Show Direction concept, tone language and feedback style, brief templates, standing department asks (intake + revision accountability), revision cycle guidance, arc evaluation questions, and the pre-flight checklist.
+**Knowledgebase:** `kb/departments/show-director.kb.md` (v2.1) — Director authority, Show Direction concept, tone language and feedback style, brief templates, standing department asks per department (intake + revision accountability), revision cycle guidance, arc evaluation questions, cross-department conflict protocol, and the pre-flight checklist. Effects / Camera intake and conflict patterns reflect current department structure.
 
 ---
 
@@ -237,7 +237,7 @@ Natural behavior as a creative tool: an Allay that genuinely follows and collect
 
 **Authority:** All `equipment:` fields on SPAWN_ENTITY and ENTITY_EQUIP events. `variant:` and `profession:` fields on SPAWN_ENTITY. Armor Stand design and placement. Custom name visibility.
 
-**Knowledgebase:** `kb/departments/wardrobe.kb.md` — Java capabilities, YAML syntax, and known gaps for equipment, variants, invisibility, and Armor Stands.
+**Knowledgebase:** `kb/departments/wardrobe.kb.md` (v3.0) — Role summary, instrument inventory, tone translation, department principles, cross-department coordination, and capability status table. Detailed technical catalogues in `kb/departments/wardrobe/` subfolder: `equipment-slots.md`, `invisible-body.md`, `mob-variants.md`, `emotional-register.md`.
 
 ---
 
@@ -328,11 +328,11 @@ Once resolved, the following variants will be available:
 
 **The question this role asks:** What does the movement say, and does every performer cross serve the story?
 
-**Authority:** CROSS_TO, ENTER, EXIT, RETURN_HOME, HOLD, FACE events targeting entities and non-target players. ENTITY_SPEED. ENTITY_VELOCITY for entity launches and impacts. The timing and sequence of movement events for cast and chorus members across the show timeline.
+**Authority:** SPAWN_ENTITY and DESPAWN_ENTITY for cast member lifecycle. ENTITY_AI (puppet vs. performer decision). CAPTURE_ENTITIES and RELEASE_ENTITIES for chorus groups. CROSS_TO, ENTER, EXIT, RETURN_HOME, HOLD, FACE events targeting entities and non-target players. ENTITY_SPEED and ENTITY_VELOCITY for movement dynamics. The full NPC lifecycle and the timing and sequence of movement events for cast and chorus members across the show timeline.
 
 **CROSS_TO boundary note:** When a CROSS_TO targets a performer crossing *toward* the target player's location, that is Choreography. When a CROSS_TO is applied *to the target player themselves* as forced movement, that is Effects.
 
-**Knowledgebase:** `kb/departments/choreography.kb.md` — Java capabilities, YAML syntax, and known gaps for entity movement, pathfinding, and velocity.
+**Knowledgebase:** `kb/departments/choreography.kb.md` — Full NPC lifecycle (spawn, AI state, movement, despawn), instrument inventory with Java verification, NPC type movement notes by entity type, cue library naming structure and design process, tone translation methodology, cross-department collaboration points, and all known gaps with workarounds.
 
 ---
 
@@ -388,7 +388,7 @@ Player smooth movement (smoothMovePlayer) is tick-exact. Mob pathfinding timing 
 
 **Authority:** `marks:` and `sets:` in show YAML. PLAYER_TELEPORT for set transitions. The `front:` orientation of the show. Block modification planning and cleanup. Spatial documentation of the show environment.
 
-**Knowledgebase:** `kb/departments/set.kb.md` — Java capabilities, YAML syntax, and known gaps for marks, sets, teleportation, and block modification.
+**Knowledgebase:** `kb/departments/set.kb.md` (v2.0) — Role Summary, full instrument reference with Java verification (PLAYER_TELEPORT, REDSTONE, COMMAND, marks, sets), Tone Translation, Department Principles, Capability Status Summary. Active gaps: BLOCK_PLACE/BLOCK_REMOVE (filed), REDSTONE stop-safety (filed).
 
 ---
 
@@ -550,7 +550,7 @@ Full YAML reference lives in `kb/departments/camera.kb.md`. Summary of what Came
 
 **night_vision coordination:** `night_vision` is an Effects instrument, but it reveals the environment that Lighting is crafting. Any scene that uses `night_vision` requires joint awareness — Effects applies it; Lighting ensures the revealed environment is intentional.
 
-**Knowledgebase:** `kb/departments/lighting.kb.md` — Java capabilities, YAML syntax, and behavioral notes for time of day, weather, and lightning.
+**Knowledgebase:** `kb/departments/lighting.kb.md` (v2.0) — Role summary, instrument inventory with Java verification (TIME_OF_DAY, WEATHER, LIGHTNING), tone translation, department principles, cross-department coordination, and capability status table. Note: LIGHTNING uses `offset: {x, y, z}` (all relative to anchor) — not absolute coordinates.
 
 ---
 
@@ -717,7 +717,7 @@ Before authoring SOUND events, establish:
 
 **Authority:** MESSAGE, TITLE, ACTION_BAR, BOSSBAR events throughout the show timeline. Audience targeting decisions for text. The timing of text including deliberate silent passages.
 
-**Knowledgebase:** `kb/departments/voice.kb.md` — Java capabilities, YAML syntax, behavioral notes, audience targeting reference, and known gaps for all text delivery modes.
+**Knowledgebase:** `kb/departments/voice.kb.md` (v2.0) — ShowSprite named head introduction, role summary, instrument inventory with Java verification (MESSAGE, TITLE, ACTION_BAR, BOSSBAR), audience targeting reference, tone translation, department principles, cross-department coordination, and capability status table. ShowSprite persona: `kb/departments/voice/showsprite.context.md`.
 
 ---
 
