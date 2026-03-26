@@ -1,10 +1,11 @@
 ---
-status: active
+status: out-of-date
 created: 2026-03-24
 owner: Alan
 notes: >
-  Baseline survey for SCENA-004. Maps all existing cues against the §10 tag taxonomy,
-  identifies coverage gaps, and plans the 30-cue expansion set.
+  Baseline survey from SCENA-004. Mapped existing cues against the §10 tag taxonomy
+  and identified coverage gaps. Superseded by ongoing cue library growth — use as
+  historical reference only; not current inventory.
 ---
 
 # Cue Library Survey — Phase 8 Baseline

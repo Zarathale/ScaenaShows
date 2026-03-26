@@ -1,9 +1,18 @@
+---
+name: show-import-process
+description: >
+  Use this skill when migrating an existing flat-YAML show into the full folder structure.
+  Triggers when Alan asks to "import", "migrate", or "bring [show] into the folder structure",
+  or when a show is ready to move from a flat .yml file to a show folder with brief, run sheet,
+  and per-department files. Also use when scaffolding a new show folder from the template.
+---
+
 # Show Import Process — Migrating a Flat Show into the Folder Structure
 
-> This document describes how to migrate an existing flat-YAML show into the full
-> folder structure introduced in 2026-03-25. Follow this process when you want to
-> bring an older show under the production team model — with a proper show folder,
-> brief, run sheet, and per-department files.
+> This skill describes how to migrate an existing flat-YAML show into the full
+> folder structure. Follow this process when you want to bring an older show
+> under the production team model — with a proper show folder, brief, run sheet,
+> and per-department files.
 >
 > Do not apply this process to a show unless you are actively working on it.
 > Migrating a show mid-revision creates a moving target. Complete the revision first,

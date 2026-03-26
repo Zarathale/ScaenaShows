@@ -11,8 +11,8 @@
 **Owner:** Alan (alytle@thearcoregon.org)
 **Repo:** ScaenaShows (this repo)
 **Branch:** `feature/ai-show-generation` ← active development branch
-**Design spec:** `docs/spec.md` — the authoritative source of truth for YAML schema.
-**Build readiness audit:** `docs/preview-audit.md` — pre-build gaps (Phase 1 era, mostly resolved).
+**YAML schema:** `kb/system/spec.md` — authoritative source of truth for all Cue/Show/event-type syntax.
+**Build readiness audit:** `kb/audits/2026-03-24_phase1-preview-audit.md` — Phase 1 era audit (historical reference).
 
 ---
 
@@ -135,27 +135,17 @@ Without ScaenaComposer, the authoring workflow is:
 
 Claude's role is a **creative collaborator and show author** — not a developer tool.
 
-The production team knowledge base lives in `docs/production-team.md`. ShowSprite (the future in-game AI assistant) draws its creative domain knowledge from the same document. The voice and persona ShowSprite uses to communicate that knowledge to players is defined in `docs/showsprite.context.md`.
+The production team knowledge base lives in `kb/production-team.md`. ShowSprite's voice and persona are defined in `kb/departments/voice/showsprite.context.md`.
 
-Each department head also maintains a **technical knowledgebase** in `docs/departments/` — one file per department covering Java capabilities, YAML syntax, known gaps, and workarounds. When authoring show content for a specific department's tools, read the relevant KB file before writing YAML. Files: `show-director.kb.md`, `casting.kb.md`, `wardrobe.kb.md`, `choreography.kb.md`, `set.kb.md`, `camera.kb.md`, `lighting.kb.md`, `sound.kb.md`, `voice.kb.md`, `stage-manager.kb.md`.
-
-### ShowSprite Voice
-
-ShowSprite speaks in `[Sprite]` chat messages throughout shows. Voice characteristics:
-- Poetic, theatrical, not technical
-- Uses white space (short messages, deliberate pauses)
-- Earned wit — not jokes, but moments of wry observation
-- Never lists features; always evokes experience
-- Present tense, direct address: "You are standing in..." not "This show will demonstrate..."
+Each department maintains a **technical knowledgebase** in `kb/departments/` — one file per department. Read the relevant KB before writing YAML for that department's tools.
 
 ### What "done" looks like for Phase 7/8
 
-- [x] `docs/showsprite.context.md` — ShowSprite persona document — **complete 2026-03-24**
+- [x] ShowSprite persona document — **complete 2026-03-24** (`kb/departments/voice/showsprite.context.md`)
 - [x] Cue tagging: spec §10 taxonomy applied; each cue has `tags:` array — **complete 2026-03-24**
 - [ ] Cue library: 30+ cues organized by emotional function (at 25 — 5 more to reach target)
 - [ ] At least 3 production-quality shows authored (not demos — actual experiences)
 - [ ] `intro.young_persons_guide` rewritten as a genuine artistic piece, not a capability tour
-- [ ] Show authoring guide: how to write for Scaena — see `docs/showsprite.context.md §Authoring Workflow`
 
 ---
 
@@ -163,28 +153,34 @@ ShowSprite speaks in `[Sprite]` chat messages throughout shows. Voice characteri
 
 ```
 ScaenaShows/
-├── _archive/
-│   └── v1/                        ← v1 plugin source (scenes/sequences model)
-├── docs/
-│   ├── spec.md                    ← v2 YAML schema (authoritative)
-│   ├── production-team.md         ← Virtual production team — common brain for show authoring + ShowSprite
-│   ├── departments/               ← Technical KBs — one per department (Java capabilities + YAML syntax)
+├── kb/                            ← Plugin-wide knowledge base
+│   ├── system/
+│   │   └── spec.md                ← Authoritative YAML schema (Cue/Show/event-type syntax)
+│   ├── departments/               ← Technical KBs — one per department
 │   │   ├── show-director.kb.md
 │   │   ├── casting.kb.md
-│   │   ├── wardrobe.kb.md
+│   │   ├── wardrobe.kb.md         (+ wardrobe/ subfolder with extended references)
 │   │   ├── choreography.kb.md
 │   │   ├── set.kb.md
 │   │   ├── camera.kb.md
 │   │   ├── lighting.kb.md
 │   │   ├── sound.kb.md
-│   │   ├── voice.kb.md
-│   │   └── stage-manager.kb.md
-│   ├── showsprite.context.md      ← ShowSprite persona + voice guide (modification layer over production-team.md)
-│   ├── cue-library-survey.md      ← Current cue inventory and gap analysis
-│   ├── show-import-process.md     ← How to migrate a flat show into the folder structure
-│   ├── preview-audit.md           ← Phase 1 era audit (mostly resolved)
-│   ├── style-guide.html           ← ScaenaComposer design (deferred)
-│   └── ui-mockup.html             ← ScaenaComposer UI (deferred)
+│   │   ├── voice.kb.md            (+ voice/ subfolder: showsprite.context.md)
+│   │   ├── stage-manager.kb.md
+│   │   └── approved-sources.md
+│   ├── production-team.md         ← Virtual production team — common brain
+│   ├── cue-library-survey.md      ← Historical cue survey (out-of-date; reference only)
+│   ├── audits/                    ← Audit outputs, date-stamped
+│   │   └── 2026-03-24_phase1-preview-audit.md
+│   └── artifacts/                 ← Historical/unaccepted files
+│       ├── style-guide.html       ← ScaenaComposer UI draft (unaccepted, deferred)
+│       └── ui-mockup.html         ← ScaenaComposer UI draft (unaccepted, deferred)
+├── skills/                        ← Claude working skills (plain markdown)
+│   ├── dept-kb-builder/SKILL.md   ← Build/update a department KB
+│   ├── production-review/SKILL.md ← Full production team show review
+│   └── show-import-process/SKILL.md ← Migrate a flat show to folder structure
+├── docs/                          ← Legacy run sheets (migration debt — move to show folders)
+│   └── *.runsheet.md
 ├── src/
 │   └── main/
 │       ├── java/com/scaena/shows/  ← v2 plugin source
@@ -196,17 +192,19 @@ ScaenaShows/
 │           └── shows/              ← Shows (growing)
 │               ├── *.yml           ← Existing flat shows (plugin-loadable)
 │               ├── _template/      ← Scaffold for new show folders
-│               └── [show_id]/      ← Show folder (one per show using folder structure)
+│               └── [show_id]/      ← Show folder
 │                   ├── [show_id].yml
 │                   ├── brief.md
 │                   ├── run-sheet.md
-│                   ├── direction/  ← Show Director's working files
+│                   ├── direction/
 │                   │   ├── show-direction.md
 │                   │   ├── tone.md
 │                   │   ├── intake.md
 │                   │   └── revision-log.md
 │                   └── departments/
 │                       └── *.md    ← One file per department
+├── _archive/
+│   └── v1/                        ← v1 plugin source (scenes/sequences model)
 ├── CLAUDE.md                       ← this file
 ├── ROADMAP.md                      ← phase tracker
 ├── README.md                       ← public-facing description
@@ -241,7 +239,7 @@ Do not reopen these without Alan.
 
 | # | Priority | Question |
 |---|----------|----------|
-| 5 | ~~High~~ | ~~showsprite.context.md~~ — **Resolved 2026-03-24.** Document is stable. |
+| 5 | ~~High~~ | ~~showsprite.context.md~~ — **Resolved 2026-03-24.** Stable at `kb/departments/voice/showsprite.context.md`. |
 | 6 | Low | GLOW + TAB API coordination (TAB 5.x) — deferred to when GLOW events are needed in production |
 | 7 | **High** | demo.archetype_sampler in-game test — which archetypes land, which need revision? Unblock before expanding library further. |
 | 8 | Medium | `intro.young_persons_guide` voice pass (SCENA-006) — structure is sound, narration needs rewrite. Do after archetype baselines are confirmed. |
@@ -295,17 +293,17 @@ The startup banner reads from `plugin.yml`, so it stays in sync with no extra st
 ### Starting a session
 1. Read `CLAUDE.md` (this file) — current phase, session state, and what's next
 2. Read `ROADMAP.md` — Phase 7/8 priorities and open issues
-3. **If writing shows or cues (any show work):** Read `docs/production-team.md` — the full production team is at the table for all show work. Read `docs/departments/show-director.kb.md` and write the show brief before any YAML is authored. The brief, Show Direction, intake record, and all department decisions live in the show folder (`src/main/resources/shows/[show_id]/`) — the Director's working files under `direction/`, department files under `departments/`. Then read `docs/spec.md §4` for schema; read `docs/showsprite.context.md` for voice. For any specific department's tools, read the relevant KB file from `docs/departments/` before writing YAML (e.g., `camera.kb.md` before any camera work, `sound.kb.md` before any audio authoring). For a new show, scaffold the folder from `src/main/resources/shows/_template/`.
-4. If creating cues: read `docs/cue-library-survey.md` for current inventory and gaps; follow naming `[category].[archetype].[variant]` per spec §9; add `tags:` per taxonomy spec §10
-5. If writing Java: re-skim the relevant spec section first. If a Java control surface gap is identified, bring it to Stage Management — see `docs/departments/stage-manager.kb.md §Ops-Inbox Workflow`. Stage Management files to ops-inbox.md and coordinates with the Java review team.
+3. **If writing shows or cues (any show work):** Read `kb/production-team.md` — the full production team is at the table for all show work. Read `kb/departments/show-director.kb.md` and write the show brief before any YAML is authored. The brief, Show Direction, intake record, and all department decisions live in the show folder (`src/main/resources/shows/[show_id]/`) — the Director's working files under `direction/`, department files under `departments/`. Then read `kb/system/spec.md §4` for schema; read `kb/departments/voice/showsprite.context.md` for voice. For any specific department's tools, read the relevant KB file from `kb/departments/` before writing YAML. For a new show, scaffold from `src/main/resources/shows/_template/`.
+4. If creating cues: follow naming `[category].[archetype].[variant]` per spec §9; add `tags:` per taxonomy spec §10. The cue-library-survey in `kb/` is out-of-date — assess current inventory directly from `src/main/resources/cues/`.
+5. If writing Java: re-skim the relevant spec section first. If a Java control surface gap is identified, bring it to Stage Management — see `kb/departments/stage-manager.kb.md §Ops-Inbox Workflow`. Stage Management files to ops-inbox.md and coordinates with the Java review team.
 
 ### Cue Authoring — How Alan Collaborates
 
-Before building new cues, Claude proposes a short list of archetypes and waits for alignment. Do not build until Alan confirms the list. See `docs/showsprite.context.md §Cue Library Authoring` for the full methodology.
+Before building new cues, Claude proposes a short list of archetypes and waits for alignment. Do not build until Alan confirms the list. See `kb/departments/voice/showsprite.context.md §Cue Library Authoring` for the full methodology.
 
 When building new cues for review:
 1. Build a **demo show** that introduces each archetype: quiet Sprite intro → cue fires → labeled in chat
-2. **Always generate a run sheet** alongside the demo show (`docs/[show-id].runsheet.md`)
+2. **Always generate a run sheet** alongside the demo show — save inside the show folder at `[show_id]/run-sheet.md`
 3. Each run sheet entry has: Intention, Function, Mechanics, Watch question, Notes field
 4. Number every cue in the run sheet so Alan can take notes by number (C3, C7, etc.)
 5. Alan reviews in-game on one screen, run sheet on another; debriefs with Claude by cue number
@@ -315,7 +313,7 @@ When building new cues for review:
 - Show YAML files: `src/main/resources/shows/[show_id].yml` (flat, plugin-loadable) OR `src/main/resources/shows/[show_id]/[show_id].yml` (folder structure — see note below)
 - Show folder structure: `src/main/resources/shows/[show_id]/` — contains YAML, `brief.md`, `run-sheet.md`, Show Director's `direction/` subfolder, and `departments/*.md`
 - **Note on show folders:** The plugin scanner currently reads only flat `shows/*.yml` files. Show folder YAMLs are not loaded by the plugin until the scanner is updated (see `ops-inbox.md`). Keep flat YAMLs for plugin compatibility during transition; use the folder for all production team documentation.
-- To migrate an existing show into folder structure: follow `docs/show-import-process.md`
+- To migrate an existing show into folder structure: use `skills/show-import-process/SKILL.md`
 - Naming: `[category].[archetype].[variant]` per spec §9
 - Tags: free-form strings per spec §10 (not namespaced — `warm` not `tone:warm`)
 - CUE references in show timelines: `type: CUE` with `cue_id:` field (not `cue:`)

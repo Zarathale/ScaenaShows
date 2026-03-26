@@ -1,13 +1,16 @@
 ---
-status: in-development
-started: 2026-03-23
+status: active
 owner: Alan
-notes: Authoritative design spec for ScaenaShows v2 plugin and ScaenaComposer authoring tool
+notes: >
+  Authoritative YAML schema and plugin design reference for ScaenaShows v2.
+  ScaenaComposer sections are deferred (Phases 2–6 skipped) but the YAML schema
+  remains current and accurate. This is the definitive source of truth for all
+  Cue, Show, and event-type YAML syntax.
 ---
 
 # ScaenaShows v2 — Design Specification
 
-This document is the authoritative design reference for the ScaenaShows v2 rewrite and the ScaenaComposer authoring tool. Build sessions begin here.
+This document is the authoritative YAML schema reference for the ScaenaShows v2 plugin. All Cue authoring, Show authoring, and event-type syntax derives from this document.
 
 ---
 
