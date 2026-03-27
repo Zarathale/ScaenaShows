@@ -1,8 +1,15 @@
 ---
 department: Casting Director
 owner: Casting Director
-kb_version: 2.0
-updated: 2026-03-25
+kb_version: 2.1
+updated: 2026-03-27
+notes: >
+  v2.0: Full instrument inventory (Fresh Spawn, Company Sweep, Theatrical Entrance/Exit,
+  Puppet/Performer toggle), Dramatis Personae mob register, entity targeting reference,
+  capability gaps, tone translation, department principles, capability status table.
+  v2.1: Reconciliation pass against production-team.md. Gaps 2/3/4 status corrected from
+  "not yet filed" to "Filed in ops-inbox.md" — all three were already filed. Folder
+  migration to kb/departments/casting/casting.kb.md.
 ---
 
 # Casting Director — Technical Knowledgebase
@@ -447,7 +454,7 @@ default appearance serves the role without variant control.
 ---
 
 ### Gap 2: `ENTITY_AI` and behavior events resolve only first group member
-**Status:** Open. **Not yet filed — flag to Stage Management.**
+**Status:** Open. Filed in `ops-inbox.md`.
 **Affected events:** `ENTITY_AI`, `ENTITY_SPEED`, `ENTITY_EFFECT`, `ENTITY_EQUIP`,
 `ENTITY_INVISIBLE`, `ENTITY_VELOCITY`
 **Root cause:** `EntityEventExecutor.resolveEntity()` returns only the first UUID from the group
@@ -462,7 +469,7 @@ the run sheet that AI/behavior events are unreliable against groups.
 ---
 
 ### Gap 3: `capture_mode: live` parsed but not implemented
-**Status:** Open. **Not yet filed — flag to Stage Management.**
+**Status:** Open. Filed in `ops-inbox.md`.
 **Root cause:** `CaptureEntitiesEvent` stores `captureMode` but `handleCapture()` always performs
 a one-time UUID snapshot regardless of the value. There is no re-sweep logic.
 **Impact:** `capture_mode: live` behaves identically to `capture_mode: snapshot`. The field is
@@ -473,7 +480,7 @@ if the group needs updating. Document the expected world state in the run sheet.
 ---
 
 ### Gap 4: `entity:world:Name` targeting not implemented
-**Status:** Open. **Not yet filed — flag to Stage Management.**
+**Status:** Open. Filed in `ops-inbox.md`.
 **Root cause:** `EntityEventExecutor.resolveEntity()` handles `entity:spawned:` and
 `entity_group:` prefixes only. No handler exists for `entity:world:`. The method returns null for
 any `entity:world:` target, and all events against it silently skip.
@@ -571,15 +578,15 @@ a capability that is currently gapped and no workaround serves the creative inte
 | DESPAWN_ENTITY — silent | ✅ Verified | entity.remove(); traced to EntityEventExecutor.java |
 | DESPAWN_ENTITY — particle_burst | ✅ Verified | EXPLOSION particle; traced to EntityEventExecutor.java |
 | CAPTURE_ENTITIES — snapshot sweep | ✅ Verified | UUID list built from getNearbyEntities(); traced to EntityEventExecutor.java |
-| CAPTURE_ENTITIES — live re-sweep | ⚠️ Gapped | Parsed, not implemented. Not yet filed. |
+| CAPTURE_ENTITIES — live re-sweep | ⚠️ Gapped | Parsed, not implemented. Filed in ops-inbox.md. |
 | RELEASE_ENTITIES — restore_ai | ✅ Verified | Iterates all group UUIDs; traced to EntityEventExecutor.java |
 | ENTITY_AI — named entity | ✅ Verified | mob.setAI(enabled); traced to EntityEventExecutor.java |
-| ENTITY_AI — entity_group (all members) | ⚠️ Gapped | resolveEntity() returns only first member. Not yet filed. |
+| ENTITY_AI — entity_group (all members) | ⚠️ Gapped | resolveEntity() returns only first member. Filed in ops-inbox.md. |
 | ENTER — spawn + pathfinder move | ✅ Verified | Spawns at mark, pathfinder.moveTo destination; traced to StageEventExecutor.java |
 | ENTER — duration_ticks honored | ⚠️ Gapped | Parsed; pathfinder moveTo ignores duration. Use ENTITY_SPEED to tune. |
 | ENTER — equipment at entrance | 📋 Aspirational | Not in model — use SPAWN_ENTITY + CROSS_TO for equipped entrances |
 | EXIT — pathfinder move + despawn | ✅ Verified | distanceSquared < 4 proximity check; traced to StageEventExecutor.java |
 | EXIT — Armor Stand / non-mob | ⚠️ Gapped | EXIT only works on Mob subclass |
-| entity:world:Name targeting | ⚠️ Gapped | No handler in resolveEntity(). Not yet filed. Use CAPTURE_ENTITIES workaround. |
+| entity:world:Name targeting | ⚠️ Gapped | No handler in resolveEntity(). Filed in ops-inbox.md. Use CAPTURE_ENTITIES workaround. |
 | Slime / Magma Cube size control | 📋 Aspirational | Not YAML-controllable |
 | Armor Stand pose control | 📋 Aspirational | Requires COMMAND escape hatch (Set's domain) |

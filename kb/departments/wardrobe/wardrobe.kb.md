@@ -230,7 +230,7 @@ equipment:
 
 > Stage Management owns the full gap registry and ops-inbox workflow. This section documents what
 > the Wardrobe department needs to know for show authoring. File new gaps via Stage Management.
-> Full registry: `kb/departments/stage-manager.kb.md` → Active Gap Registry.
+> Full registry: `kb/departments/stage-management/stage-management.kb.md` → Active Gap Registry.
 
 | Gap | Status | Workaround |
 |-----|--------|-----------|

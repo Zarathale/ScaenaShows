@@ -1,8 +1,17 @@
 ---
 department: Sprite Voice Director
-owner: Sprite Voice Director
-kb_version: 2.0
-updated: 2026-03-25
+owner: ShowSprite
+kb_version: 2.2
+updated: 2026-03-27
+notes: >
+  v2.0: Full instrument inventory (MESSAGE, TITLE, ACTION_BAR, BOSSBAR), audience targeting,
+  text layering, tone translation, department principles, capability status table.
+  v2.1: owner corrected to ShowSprite. Broken stage-manager.kb.md path fixed.
+  Folder migration to kb/departments/voice/voice.kb.md.
+  v2.2: Reconciliation pass against production-team.md and showsprite.context.md.
+  [Sprite] prefix color corrected — tag is light_purple, text is white (was: full message in
+  white, contradicting showsprite.context.md §What ShowSprite Is). Production-team.md §8
+  MiniMessage reference updated in same pass.
 ---
 
 # Sprite Voice Director — Technical Knowledgebase
@@ -75,9 +84,9 @@ message: "<white>[Sprite] Something quiet this way comes.</white>"
 | `<aqua>` | Cyan/aqua |
 | `<light_purple>` | Lavender |
 
-**ShowSprite convention:** Prefix all ShowSprite dialogue with `[Sprite]` in white. This is the established in-game voice pattern:
+**ShowSprite convention:** The `[Sprite]` tag appears in `<light_purple>`; the line text follows in `<white>`. This is the canonical two-color format established in `showsprite.context.md §What ShowSprite Is`:
 ```yaml
-message: "<white>[Sprite] The ceiling opens.</white>"
+message: "<light_purple>[Sprite]</light_purple><white> The ceiling opens.</white>"
 ```
 
 **Behavioral notes:**
@@ -229,7 +238,7 @@ Chat stream:
 
 > Stage Management owns the full gap registry and ops-inbox workflow. This section documents what
 > the Voice department needs to know for show authoring. File new gaps via Stage Management.
-> Full registry: `kb/departments/stage-manager.kb.md` → Active Gap Registry.
+> Full registry: `kb/departments/stage-management/stage-management.kb.md` → Active Gap Registry.
 
 ---
 

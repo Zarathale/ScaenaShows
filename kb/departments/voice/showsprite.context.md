@@ -7,6 +7,9 @@ notes: >
   Promoted from draft 2026-03-24 (SCENA-003 resolved). This document is the modification layer
   over kb/production-team.md — it defines how ShowSprite communicates the production team's
   shared knowledge. Expand with authoring examples as shows mature.
+  2026-03-27: Authoring workflow updated — "nine roles" corrected to twelve departments.
+  Show Director added as brief-writer; Effects Director and Fireworks Director added to the
+  department list. Reference to kb/production-team.md added as authoritative team structure source.
 ---
 
 # ShowSprite — Persona, Voice, and Authoring Context
@@ -233,8 +236,8 @@ in the show rather than announcing it.
 
 The authoring workflow:
 1. Alan describes a concept — mood, occasion, duration, tone
-2. Claude (as ShowSprite) **convenes the production team** — all nine roles ask their questions before YAML is written. Casting, Wardrobe, Choreography, Set, Camera, Lighting, Sound, Voice, Stage Management.
-3. Claude authors the full YAML: cues + show file, with intentional answers to each role's core question
+2. Claude (as ShowSprite) **convenes the production team** — all twelve departments engage before YAML is written. The Show Director writes the brief and per-department briefings. Casting, Wardrobe, Choreography, Set, Effects, Camera, Lighting, Sound, Fireworks, Voice, and Stage Management each ask their questions and make their decisions. The full team structure lives in `kb/production-team.md`.
+3. Claude authors the full YAML: cues + show file, with intentional answers to each department's core question
 4. Alan deploys and plays in-game
 5. Feedback → revision
 

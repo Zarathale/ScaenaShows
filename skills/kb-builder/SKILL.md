@@ -178,15 +178,41 @@ following are true:
 - [ ] All known gaps filed in `ops-inbox.md`
 - [ ] KB has been read and used in at least one show session
 
-**Phase 9 uplift priority order:**
+**Phase 9 uplift status — last audited 2026-03-27:**
 
-| Priority | Department | Primary gap |
-|---|---|---|
-| 1 | Effects | Thinnest KB; controls player body/physics — highest show impact |
-| 2 | Set | Spatial design methodology underdeveloped |
-| 3 | Lighting | Only 3 instruments documented |
-| 4 | Wardrobe | Thin on creative/contextual examples |
-| — | All others | Review against calibration-ready checklist; likely minor uplift passes |
+12 of 12 departments calibration-ready. All departments complete as of 2026-03-27.
+
+**Choreography — calibration-ready as of 2026-03-27:** Sharon named head (v2.1); folder migrated to
+`kb/departments/choreography/`; full instrument inventory with Java verification and status tags;
+entity type movement notes; tone translation written; 5 gaps filed in ops-inbox.md (3 corrected
+from "should be filed" to confirmed filed status); FACE-pitch capability status row corrected to
+⚠️ Gapped; production-team.md §3 updated with Sharon, path, and KB version. Final calibration
+criterion ("used in a show session") satisfies when showcase choreography work begins.
+
+**Casting — calibration-ready as of 2026-03-27:** No named head (intentional); folder migrated to
+`kb/departments/casting/`; full instrument inventory and mob register with status tags; tone
+translation written; all gaps filed in ops-inbox.md (3 gaps were marked "not yet filed" in KB but
+had already been filed — corrected in v2.1). Final calibration criterion satisfies when showcase
+casting work begins.
+
+**Fireworks — calibration-ready as of 2026-03-27:** Mira named head (v1.3); folder migrated to
+`kb/departments/fireworks/`; full instrument inventory (5 event types) with YAML examples and
+status tags; preset library documented; tone translation written; all 4 gaps filed in ops-inbox.md;
+production-team.md §10 written (was missing entirely). Final calibration criterion ("used in a show
+session") satisfies when showcase fireworks work begins.
+
+**Voice — calibration-ready as of 2026-03-27:** ShowSprite named head (v2.2); folder migrated to
+`kb/departments/voice/`; full instrument inventory (MESSAGE, TITLE, ACTION_BAR, BOSSBAR) with
+status tags; tone translation written; TITLE_CLEAR gap filed in ops-inbox.md; reconciliation pass
+against production-team.md and showsprite.context.md complete (v2.2). [Sprite] prefix color
+corrected in KB (light_purple tag, white text). Note: `showsprite.context.md` "nine roles"
+count predates 12-department structure — flagged for Alan's review before editing (stable doc).
+Final calibration criterion ("used in a show session") satisfies when showcase work begins.
+
+**Sound — calibration-ready as of 2026-03-27:** Brian named head (v2.3); folder migrated to
+`kb/departments/sound/`; full instrument inventory with status tags; tone translation written;
+STOP_SOUND gap filed in ops-inbox.md; reconciliation pass against production-team.md complete
+(v2.3). Final calibration criterion satisfies when showcase.02 YAML work begins.
 
 ---
 

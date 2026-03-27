@@ -337,6 +337,28 @@ non-Player entities that CROSS_TO's or teleports them to the recorded spawn loca
 
 ---
 
+### [java-gap] STOP_SOUND: cannot stop by specific sound_id
+
+**Area:** Sound Designer
+**Event:** `STOP_SOUND`
+**Filed:** 2026-03-27 (Sound KB calibration session)
+
+`StopSoundEvent` in the YAML model has no `sound_id` field. The executor calls
+`p.stopSound(SoundStop.source(src))` — stopping everything on the given channel — with no
+mechanism to stop a single named sound independently. If a `sound_id:` key is present in the
+YAML, it is silently ignored.
+
+**Impact:** Sound Designer cannot stop a specific ambient loop without also stopping all other
+sounds on the same channel. The established workaround is routing sounds intended for independent
+stop control onto separate categories (e.g., one bed on `ambient`, the other on `hostile`).
+This constrains sound architecture — the number of independently stoppable beds is limited to
+the available categories.
+
+**Proposed:** Add a `sound_id:` field to `StopSoundEvent`. When set, the executor calls
+`p.stopSound(soundId, SoundCategory.valueOf(source.toUpperCase()))` instead of the channel-wide
+stop. When omitted, behavior is unchanged (channel-wide clear). This gives Sound Designer
+per-sound-ID stop control without breaking existing usage.
+
 ---
 
 ### [future-idea] Human as Designer — preamble layer for department KBs

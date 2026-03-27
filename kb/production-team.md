@@ -59,17 +59,17 @@ Each department head maintains a technical knowledgebase — a dedicated file th
 | Department | Head | Knowledgebase |
 |------------|------|---------------|
 | **Show Director** | Claude | `kb/departments/show-director/show-director.kb.md` |
-| Casting Director | — | `kb/departments/casting.kb.md` |
+| Casting Director | — | `kb/departments/casting/casting.kb.md` |
 | **Wardrobe & Properties Director** | **Margaret** | `kb/departments/wardrobe/wardrobe.kb.md` |
-| Choreographer / Movement Director | — | `kb/departments/choreography.kb.md` |
+| **Choreographer / Movement Director** | **Sharon** | `kb/departments/choreography/choreography.kb.md` |
 | **Set Director** | **Michael C.** | `kb/departments/set/set.kb.md` |
 | **Effects Director** | **Felix** | `kb/departments/effects/effects.kb.md` |
-| **Camera Director** | **Mark** | `kb/departments/camera.kb.md` |
+| **Camera Director** | **Mark** | `kb/departments/camera/camera.kb.md` |
 | **Lighting & Atmosphere Designer** | **Steve N.** | `kb/departments/lighting/lighting.kb.md` |
-| Sound Designer | — | `kb/departments/sound.kb.md` |
-| Sprite Voice Director | — | `kb/departments/voice.kb.md` |
+| **Sound Designer** | **Brian** | `kb/departments/sound/sound.kb.md` |
+| **Sprite Voice Director** | **ShowSprite** | `kb/departments/voice/voice.kb.md` |
 | **Stage Management & Production** | **Kendra** | `kb/departments/stage-management/stage-management.kb.md` |
-| **Fireworks Director** | **Mira** | `kb/departments/fireworks.kb.md` |
+| **Fireworks Director** | **Mira** | `kb/departments/fireworks/fireworks.kb.md` |
 
 ---
 
@@ -157,7 +157,7 @@ The Show Director's answer always traces back to the brief and the Show Directio
 
 **Authority:** Entity type decisions in SPAWN_ENTITY and ENTER events. AI state decisions (puppet vs. performer). The choice of whether to use world-resident entities (CAPTURE_ENTITIES) or spawn new ones.
 
-**Knowledgebase:** `kb/departments/casting.kb.md` — Java capabilities, YAML syntax, and known gaps for entity spawning, AI control, and group capture.
+**Knowledgebase:** `kb/departments/casting/casting.kb.md` (v2.1) — Dramatis Personae mob register (organized by dramatic category), full instrument inventory (Fresh Spawn, Company Sweep, Theatrical Entrance/Exit, Puppet/Performer toggle), entity targeting reference, capability gaps with ops-inbox status, tone translation, department principles, and capability status table.
 
 ---
 
@@ -336,7 +336,7 @@ Once resolved, the following variants will be available:
 
 **CROSS_TO boundary note:** When a CROSS_TO targets a performer crossing *toward* the target player's location, that is Choreography. When a CROSS_TO is applied *to the target player themselves* as forced movement, that is Effects.
 
-**Knowledgebase:** `kb/departments/choreography.kb.md` — Full NPC lifecycle (spawn, AI state, movement, despawn), instrument inventory with Java verification, NPC type movement notes by entity type, cue library naming structure and design process, tone translation methodology, cross-department collaboration points, and all known gaps with workarounds.
+**Knowledgebase:** `kb/departments/choreography/choreography.kb.md` (v2.1, Sharon named head) — Full NPC lifecycle (spawn, AI state, movement, despawn), instrument inventory with Java verification, NPC type movement notes by entity type, cue library naming structure and design process, tone translation methodology, cross-department collaboration points, and all known gaps with workarounds.
 
 ---
 
@@ -464,7 +464,7 @@ This lives in the show's run sheet under "Environment Notes," not in the YAML.
 
 **Authority:** PLAYER_TELEPORT destination (position authority; yaw/pitch fields are Camera's), PLAYER_FLIGHT (hover and release states), PLAYER_VELOCITY (impulse), CROSS_TO targeting the show's target player (position authority; `facing:` field is Camera's), EFFECT events on players (levitation, slow_falling, night_vision, blindness, darkness, nausea, speed, slowness), PARTICLE events.
 
-**Relationship to Camera:** Effects and Camera are the closest coordination pair. Effects decides where the player's body is; Camera decides which direction their eyes are pointing. Every PLAYER_TELEPORT with facing fields and every levitation sequence is a joint production. See `kb/departments/camera.kb.md`.
+**Relationship to Camera:** Effects and Camera are the closest coordination pair. Effects decides where the player's body is; Camera decides which direction their eyes are pointing. Every PLAYER_TELEPORT with facing fields and every levitation sequence is a joint production. See `kb/departments/camera/camera.kb.md`.
 
 **Named head:** Felix. See `kb/departments/effects/effects.kb.md §Felix` for working style and escalation posture.
 
@@ -525,7 +525,7 @@ These EFFECT events alter how the player perceives the world:
 
 #### Camera Specialty — Orientation and Perspective
 
-Full YAML reference lives in `kb/departments/camera.kb.md`. Summary of what Camera brings to Effects:
+Full YAML reference lives in `kb/departments/camera/camera.kb.md`. Summary of what Camera brings to Effects:
 
 **Camera modes** (establish at show design time, before authoring):
 - **Full control** — camera managed throughout: FACE, PLAYER_SPECTATE, teleport facing
@@ -620,13 +620,15 @@ As with all other creative dimensions, the Lighting Designer should establish th
 
 **Authority:** SOUND and STOP_SOUND events throughout the show timeline. The audio arc — decisions about layering, sequencing, and deliberate silence.
 
-**Knowledgebase:** `kb/departments/sound.kb.md` — Java capabilities, YAML syntax, behavioral notes, sound ID reference, known limitations of the Minecraft sound system, and the full roster of named instrumentalists with their gesture vocabularies. Extended reference: `kb/departments/sound/music-director.md`.
+**Named head:** Brian. See `kb/departments/sound/sound.kb.md §Brian` for working style and escalation posture.
+
+**Knowledgebase:** `kb/departments/sound/sound.kb.md` (v2.2) — Brian introduction, Java capabilities, YAML syntax, behavioral notes, sound ID reference, known limitations of the Minecraft sound system, and the full roster of named instrumentalists with their gesture vocabularies. Extended reference: `kb/departments/sound/music-director.md`.
 
 **The Music Director** is a specialist within the Sound department who advises on and authors the musical layer specifically — note block arrangements, motifs, riffs, and ensemble deployment. The Sound Designer owns the audio arc; the Music Director is called when a scene needs something with pitch, rhythm, and musical identity. The Music Director calls the ensemble. See `kb/departments/sound/music-director.md` for the note block instrument palette, pitch/harmony reference, world-built redstone arrangement workflow, and starter motif library (`motif.*` namespace, 5 cues).
 
 **The ensemble:** The Sound department is staffed by named theatrical musicians who stand by throughout every production. They respond live to the show's needs — punctuating moments, supporting transitions, providing live musical texture beneath scripted SOUND events. Their gestures are available as named cues and can be summoned by the Show Director, Sound Designer, or Music Director at any point in the show.
 
-- **Gracie the Harpist** — the resident harpist. Always in the wings. Her vocabulary: high-register whole-tone glissandi (dreamy swirl or sharp accent), a low ominous sustained whole-note, and a two-note percussive plink in ascending fourth or fifth. See `kb/departments/sound.kb.md §Sound Department Personnel` for full gesture reference and YAML patterns. Her cues are in the library under the `gracie.*` namespace.
+- **Gracie the Harpist** — the resident harpist. Always in the wings. Her vocabulary: high-register whole-tone glissandi (dreamy swirl or sharp accent), a low ominous sustained whole-note, and a two-note percussive plink in ascending fourth or fifth. See `kb/departments/sound/sound.kb.md §Sound Department Personnel` for full gesture reference and YAML patterns. Her cues are in the library under the `gracie.*` namespace.
 
 ---
 
@@ -728,7 +730,7 @@ Before authoring SOUND events, establish:
 
 **Authority:** MESSAGE, TITLE, ACTION_BAR, BOSSBAR events throughout the show timeline. Audience targeting decisions for text. The timing of text including deliberate silent passages.
 
-**Knowledgebase:** `kb/departments/voice.kb.md` (v2.0) — ShowSprite named head introduction, role summary, instrument inventory with Java verification (MESSAGE, TITLE, ACTION_BAR, BOSSBAR), audience targeting reference, tone translation, department principles, cross-department coordination, and capability status table. ShowSprite persona: `kb/departments/voice/showsprite.context.md`.
+**Knowledgebase:** `kb/departments/voice/voice.kb.md` (v2.2) — ShowSprite named head introduction, role summary, instrument inventory with Java verification (MESSAGE, TITLE, ACTION_BAR, BOSSBAR), audience targeting reference, tone translation, department principles, cross-department coordination, and capability status table. ShowSprite persona: `kb/departments/voice/showsprite.context.md`.
 
 ---
 
@@ -737,7 +739,7 @@ Before authoring SOUND events, establish:
 **MESSAGE — Chat**
 - Persists in chat history; the player can scroll back
 - Intimate register — reads as something said, not proclaimed
-- Supports color codes and formatting (legacy `§` codes; JSON components where supported)
+- Supports MiniMessage format (`<white>`, `<gold>`, `<dark_gray>`, `<italic>`, etc.) — this is the authoring standard for all show text
 - Audience targeting: full range including `private`, `target`, `group_1` — private text is a storytelling tool
 - Cannot be dismissed mid-show; it exists in the log
 
@@ -869,3 +871,79 @@ Every show must be safe to interrupt at any tick during rehearsal. This means:
 When any role identifies a gap in show control surface — a thing Minecraft can do that ScaenaShows cannot author via YAML — the Stage Manager escalates it as a GitHub issue on the ScaenaShows repo. Issue format: see Appendix A.
 
 The Java review team audits the control surface regularly. The goal: every meaningful Minecraft API knob should be reacha
+
+---
+
+### 10. Fireworks Director
+
+**Mira runs the Fireworks department.** She thinks about a burst the way a painter thinks about negative space — as much about what surrounds it as what it is. Her primary orientation is altitude and timing: where the player is standing relative to a detonation is the most consequential decision in the show.
+
+**Domain:** Every firework detonation in the show. Owns single launches, spatial patterns, the preset library, and pyrotechnic composition — which pattern serves the beat, at what density, at what altitude. Fireworks are punctuation: they launch, burst, and are gone. The department does not build sustained texture or set ambient world state. It owns specific moments.
+
+**The question this role asks:** What detonates, where, at what altitude — and what does that moment mean?
+
+**Authority:** FIREWORK, FIREWORK_CIRCLE, FIREWORK_LINE, FIREWORK_FAN, FIREWORK_RANDOM events throughout the show timeline. The fireworks.yml preset library: authoring, naming, and curation of all reusable rocket definitions.
+
+**Named head:** Mira. See `kb/departments/fireworks/fireworks.kb.md §Mira` for working style and escalation posture.
+
+**Knowledgebase:** `kb/departments/fireworks/fireworks.kb.md` (v1.3) — Mira introduction, full instrument inventory with YAML syntax for all five event types, power and color variation reference, preset library structure and current preset families, tone translation, department principles, and capability status table with all known gaps filed.
+
+---
+
+#### Firework Event Types — Overview
+
+Five event types, each with a distinct spatial and compositional role:
+
+| Event | Pattern | Chase available? | Power/color variation? |
+|---|---|---|---|
+| `FIREWORK` | Single rocket at a point | No | No |
+| `FIREWORK_CIRCLE` | N rockets in a ring around origin | Yes | Yes (full) |
+| `FIREWORK_LINE` | N rockets along a directional line | Yes | Yes (GRADIENT gapped — see KB) |
+| `FIREWORK_FAN` | Multi-arm, each arm its own preset | Yes (cross-arm) | No (gapped — see KB) |
+| `FIREWORK_RANDOM` | N rockets at random XZ within radius | No | No |
+
+All event types share `y_mode: relative` (offset from anchor Y) or `y_mode: surface` (offset from highest block at XZ). Power in the preset drives burst altitude — power 1 ≈ 8–12 blocks, power 2 ≈ 16–20 blocks, power 3 = high overhead.
+
+> **Note on single FIREWORK offset:** Single FIREWORK uses a **nested `offset: {x, y, z}` map**, not flat fields. Pattern events (CIRCLE, LINE, FAN, RANDOM) use top-level `y_offset` + `y_mode`. These structures differ — check the KB before authoring.
+
+---
+
+#### The Preset Library
+
+Presets live in `src/main/resources/fireworks.yml`. Each is a named rocket definition: power, star shape(s), colors, trail, and flicker. All FIREWORK_* events reference a preset by ID.
+
+**Current preset families:**
+
+| Family | Register |
+|--------|----------|
+| `scae_*` (4 presets) | Brand / ceremonial — gold, green, white |
+| `bday_*` (4 presets) | Celebration / warmth — soft pastels |
+| `pride_*` (4 presets) | Pride / joy / community — rainbow and trans palette |
+
+**Star shapes:** BALL (workhorse, legible at any distance), LARGE_BALL (finale energy), STAR (ceremonial, sharp), BURST (wild, scattering), CREEPER (novelty).
+
+Add a preset when a color identity needs to be named and reusable. Use `color_variation` on a pattern event when color is a composition choice within a single scene beat.
+
+---
+
+#### Altitude is Dramaturgy
+
+Where a burst detonates relative to the player is the Fireworks Director's most consequential decision:
+
+- **Player below the burst** — audience perspective. They are watching. Ceremonial, observed.
+- **Player inside the burst** — participant. Surrounded. Overwhelming or intimate depending on radius.
+- **Player above the burst** — elevated observer. Looking down at fire. Rare and powerful.
+
+The **Effects department owns the player's altitude** at any given moment. The **Fireworks Director designs burst altitude relative to that position.** These two departments must agree before YAML is authored for any pyrotechnic moment.
+
+---
+
+#### Key Coordination
+
+**With Effects:** Confirm where the player is (altitude, position) when any pyrotechnic moment fires. A burst at y+20 is invisible if the player is on the ground. A burst at y+0 is overwhelming if the player is hovering at y+25 looking down.
+
+**With Lighting:** Every burst illuminates the world at player-eye for a fraction of a second. The color palette of a firework IS the lighting for that beat. A warm gold burst in a cool-lit scene makes a statement. Coordinate on color register — presets should complement or deliberately contrast the ambient palette Lighting has established.
+
+**With Sound:** Fireworks have no built-in sound event — the rocket launch and burst are client-side effects and their audio varies by client distance. For shows where the pyrotechnic moment must land with a specific sound, Sound authors a SOUND event at the same tick or offset. Coordinate when a burst needs an authored audio hit.
+
+**Known gaps in this department:** See `kb/departments/fireworks/fireworks.kb.md §Capability Status Summary` — four gapped items currently in ops-inbox.md: `min_clearance` not enforced, preset `launch:` mode not applied, FIREWORK_LINE GRADIENT defaults to red→blue, and FIREWORK_FAN has no power/color variation.

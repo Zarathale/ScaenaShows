@@ -1,8 +1,16 @@
 ---
 department: Choreographer / Movement Director
-owner: Choreographer / Movement Director
-kb_version: 2.0
-updated: 2026-03-25
+owner: Sharon
+kb_version: 2.1
+updated: 2026-03-27
+notes: >
+  v2.0: Full instrument inventory with Java verification. NPC lifecycle (spawn, AI state,
+  movement, despawn), entity type movement notes, cue naming convention, tone translation,
+  cross-department collaboration, and capability gaps with workarounds.
+  v2.1: Sharon named head introduction added. Three gap statuses corrected from "should be filed"
+  to "Filed in ops-inbox.md" (ENTITY_SPEED group, ENTER equipment, RETURN_HOME non-player).
+  ENTER gap inline note updated. Capability status FACE-pitch row corrected to Gapped.
+  Folder migration to kb/departments/choreography/choreography.kb.md.
 ---
 
 # Choreographer / Movement Director — Technical Knowledgebase
@@ -17,6 +25,26 @@ updated: 2026-03-25
 > the target) — those belong to the Effects department. See `kb/departments/effects.kb.md`.
 >
 > Creative direction for this role lives in `kb/production-team.md §3. Choreographer / Movement Director`.
+
+---
+
+## Sharon
+
+Sharon runs the Choreography department with a director's eye for spatial composition and a stager's
+precision about timing. Before she places a single performer, she knows the full cast list from
+Casting and each entity type's natural movement behavior — she never fights the creature's nature
+when she can work with it. Her first question on any show is: at tick 120, where is everyone on
+stage? The answer to that question, repeated at every major beat, is her movement score.
+
+Sharon thinks in puppets by default and earns every moment of performer freedom. She enables AI
+selectively — a wolf that actually runs is more compelling than a scripted imitation of one, but
+only when the show is designed to hold the wildness. She writes movement for open terrain and named
+marks, never inline offsets.
+
+The Choreographer coordinates and escalates through the Show Director when a cross decision requires
+another department to fundamentally change their beat — for example, when a performer's arrival at
+a key moment requires Sound to shift a climax cue. She brings the analysis: what the conflict is,
+what the options are, and which one Choreography prefers.
 
 ---
 
@@ -70,8 +98,7 @@ despawn_on_end: true
 > ⚠️ **ENTER gap:** Equipment fields are not applied in ENTER (unlike SPAWN_ENTITY). If a
 > performer needs to enter with equipment, use SPAWN_ENTITY at the wing mark + CROSS_TO
 > instead. This is not documented in spec.md — confirmed by reading EntityEventExecutor.java
-> vs. StageEventExecutor.handleEnter(). File to Stage Management for ops-inbox if this
-> becomes a production blocker.
+> vs. StageEventExecutor.handleEnter(). Filed in ops-inbox.md (2026-03-25).
 
 **Choosing between SPAWN_ENTITY and ENTER:**
 - Use SPAWN_ENTITY when you need equipment at spawn, need precise spawn Y, or when the entity starts on stage rather than arriving from a wing
@@ -525,7 +552,7 @@ When the Show Director gives a tone phrase, the Choreographer translates it into
 
 > Stage Management owns the full gap registry and ops-inbox workflow. This section documents what
 > the Choreography department needs to know for show authoring. File new gaps via Stage Management.
-> Full registry: `kb/departments/stage-manager.kb.md` → Active Gap Registry.
+> Full registry: `kb/departments/stage-management/stage-management.kb.md` → Active Gap Registry.
 
 ---
 
@@ -551,7 +578,7 @@ FACE is instant. No first-class event for gradual horizontal rotation without po
 
 ### Gap: ENTITY_SPEED does not address entity groups
 
-**Status:** Undocumented — identified in this KB session. Should be filed in ops-inbox.md.
+**Status:** Open. Filed in ops-inbox.md (2026-03-25, Choreography KB build).
 
 `EntityEventExecutor.resolveEntity()` returns only the first member of an entity group. ENTITY_SPEED on `entity_group:Name` silently affects only one entity.
 
@@ -561,7 +588,7 @@ FACE is instant. No first-class event for gradual horizontal rotation without po
 
 ### Gap: ENTER does not apply equipment
 
-**Status:** Undocumented — identified in this KB session. Should be filed in ops-inbox.md.
+**Status:** Open. Filed in ops-inbox.md (2026-03-25, Choreography KB build).
 
 StageEventExecutor.handleEnter() does not apply equipment fields, unlike EntityEventExecutor.handleSpawn(). The ENTER event in spec.md implies equipment should work, but it doesn't.
 
@@ -571,7 +598,7 @@ StageEventExecutor.handleEnter() does not apply equipment fields, unlike EntityE
 
 ### Gap: RETURN_HOME — players only
 
-**Status:** Undocumented — identified in this KB session.
+**Status:** Open. Filed in ops-inbox.md (2026-03-25, Choreography KB build).
 
 StageEventExecutor.handleReturnHome() skips any target that is not a Player. Spawned entities cannot be returned to a home position.
 
@@ -614,4 +641,4 @@ Smooth continuous circular movement is not a first-class event. Compose orbits f
 | ENTITY_VELOCITY | ✅ Verified | Any Entity subtype; one-time impulse |
 | DESPAWN_ENTITY + particle_burst | ✅ Verified | Confirmed in EntityEventExecutor |
 | ORBIT (multi-step cross approximation) | 📋 Aspirational | No first-class primitive; compose from CROSS_TO sequence |
-| FACE with pitch (vertical) | 📋 Aspirational | Not yet filed as own gap; covered under face-pitch-gap |
+| FACE with pitch (vertical) | ⚠️ Gapped | Filed in ops-inbox.md under FACE gap entry |

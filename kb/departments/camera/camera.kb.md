@@ -1,8 +1,12 @@
 ---
 department: Camera Director
 owner: Mark
-kb_version: 1.3
-updated: 2026-03-26
+kb_version: 2.0
+updated: 2026-03-27
+notes: >
+  v1.3: Mark named head. Focus Point Doctrine, honest camera accounting, 6 instruments,
+  cross-department coordination, gaps/limitations, capability status table.
+  v2.0: Tone Translation written. Folder migration to kb/departments/camera/camera.kb.md.
 ---
 
 # Camera Director — Technical Knowledgebase
@@ -501,6 +505,225 @@ read it), Camera coordinates with Voice to ensure the orientation is set before 
 (Lighting's tool) are often authored at the same moment — the lights go out, the world resets,
 the lights come back up. Camera and Lighting agree on the sequence and timing so the player
 returns from black into the world Lighting has prepared.
+
+---
+
+## Tone Translation
+
+How the Camera Director interprets the Show Director's tone language into camera choices.
+
+### Mark's Default Interpretive Instinct
+
+Mark's first question for any tone phrase is: **what is the intended focus point of this scene,
+and is the camera currently pointing at it?** Every camera decision traces back to that question.
+A camera that has the player looking at the wrong thing during a key beat — or forces attention
+on something the director doesn't care about — is worse than a camera that does nothing.
+
+Mark's second instinct is restraint. An over-managed camera feels like being held by the head.
+Players should feel like they're discovering the show, not being told where to look. Mark asserts
+attention at key beats and releases between them. The discipline is knowing which is which.
+
+Camera operates in three modes across a show:
+
+- **Full control** — orientation actively managed throughout: FACE calls, orientation-only
+  teleports, drone spectate sequences
+- **Partial control** — camera hands off between key beats; player looks freely in between;
+  the default mode for most shows
+- **Player-free** — show sets initial facing only; player controls camera for the rest; used
+  when wandering attention is part of the design
+
+The default mode is partial control. Mark doesn't hold the camera for the full duration — he
+holds it at the moments that count.
+
+---
+
+### Worked Examples
+
+**"Tender" / "intimate" / "held"**
+> The world is close and gentle. The player should feel free in a scene, not managed.
+
+Camera reach: A single orientation call at the scene's opening — face the player toward the
+intimate focus point (a performer at center, a small set piece, the horizon in the distance).
+Then hands off. No further assertions during the scene. No CAMERA effects (no sway, no blackout).
+No spectate drone unless it is extremely slow and unhurried.
+
+Mark's rule: a tender scene with an active camera is a contradiction. Give the player the right
+starting view and trust them with it.
+
+---
+
+**"Weight" / "earthbound" / "tension"**
+> The world is pressing down. Nothing is rising yet.
+
+Camera reach: Ground-level pitch (0° horizontal, or slightly downward at pitch 5–10°). Mark does
+not orient the player upward in a weighted scene — looking up implies possibility and lift that the
+section is refusing. If the player's prior orientation tilted skyward from an aerial section, Mark
+authors a pitch reset at the weighted section's opening: `pitch: 0.0`. The camera agrees with gravity.
+
+```yaml
+# Opening of a weighted section — ground the player's view:
+- {at: section_start, type: PLAYER_TELEPORT, audience: participants,
+   offset: {x:0,y:0,z:0}, yaw: 180.0, pitch: 5.0}
+```
+
+No spectate drone. No blackouts. Camera holds and is still — parallel to the weight of the world.
+
+---
+
+**"Building" / "rising" / "ascending"**
+> Something is quietly pulling upward. The player hasn't been told yet.
+
+Camera reach: A gradual upward pitch progression — unannounced, not dramatic. Mark authors
+orientation-only teleports at section intervals, walking pitch from 0° toward -15° or -20° across
+the build. The player's view tilts slightly skyward without being instructed to. This is the camera
+agreeing with the world: something is happening up there. The build doesn't announce itself.
+
+```yaml
+# Quiet pitch walkup across a building section — 3 nudges over the arc:
+- {at: section_start,       type: PLAYER_TELEPORT, audience: participants,
+   offset: {x:0,y:0,z:0}, yaw: 180.0, pitch:   0.0}
+- {at: section_start + 100, type: PLAYER_TELEPORT, audience: participants,
+   offset: {x:0,y:0,z:0}, yaw: 180.0, pitch:  -8.0}
+- {at: section_start + 200, type: PLAYER_TELEPORT, audience: participants,
+   offset: {x:0,y:0,z:0}, yaw: 180.0, pitch: -15.0}
+```
+
+Do not announce the build with text, blackouts, or camera effects. The pitch walkup is quiet.
+
+---
+
+**"Arrival" / "earned transcendence" / "the ceiling opens"**
+> The amp-9 moment. The camera must be ready.
+
+Camera reach: The pre-lift orientation is Mark's most critical contribution to the arrival. 10–15
+ticks before the amp-9 levitation fires, Mark authors a pitch of -20° to -30° — the player is
+already looking slightly upward when the lift begins. As the player rises, the world fills their
+view from below rather than receding behind them.
+
+At altitude lock (PLAYER_FLIGHT hover), Mark fires a second orientation — the elevated observer's
+position: pitch -10° to -15°, yaw facing the show's designed horizon. The player, now aloft,
+sees the world as an observer.
+
+```yaml
+# Pre-lift orientation — fires 10 ticks before the amp-9 levitation:
+- {at: lift_tick - 10, type: PLAYER_TELEPORT, audience: participants,
+   offset: {x:0,y:0,z:0}, yaw: 180.0, pitch: -25.0}
+
+# Elevated observer position — fires a few ticks after PLAYER_FLIGHT hover locks:
+- {at: hover_tick + 5, type: PLAYER_TELEPORT, audience: participants,
+   offset: {x:0,y:0,z:0}, yaw: 180.0, pitch: -12.0}
+```
+
+This is the one moment in a show where the camera is fully assertive. The lift earned it.
+
+---
+
+**"Joy" / "celebration" / "abundant"**
+> The player is aloft. Joy is below them.
+
+Camera reach: At altitude, Mark sets pitch slightly downward or horizontal (0° to +15°) — looking
+out at the world, not up at empty sky. The player's elevated perspective IS the instrument; they
+need to see the world beneath them to experience themselves as observers above it.
+
+For firework-adjacent joy beats: coordinate with Mira on burst altitude. If bursts are at 10 blocks
+below the player's 25-block position, pitch of at least 15° down is needed — otherwise the player
+looks at the horizon and misses the burst entirely.
+
+---
+
+**"Wonder"**
+> The threshold. The edge. The world becoming something else.
+
+Camera reach: Wonder gets a reveal orientation. Point the player slightly wrong before the wonder
+beat — at the horizon, or at something earthbound. At the wonder moment, fire a precise orientation
+that places the threshold element (a biome boundary, the underside of the cloud layer, the edge
+of night becoming dawn) at the center of the player's view. Wonder should arrive as the show
+places it, not as the player finds it by accident.
+
+The spectate drone is appropriate here — a slow, gentle pan that reveals the threshold environment
+rather than snapping to it. The traveling camera is itself an act of wonder.
+
+---
+
+**"Pressure release" / "return" / "descent"**
+> The player is coming back down. The return is as intentional as the ascent.
+
+Camera reach: As the altitude arc descends, Mark walks pitch back toward 0° (horizontal) — the
+camera agreeing with the descent. Looking at the world ahead, not at sky above or ground below.
+The return should feel like arriving, not falling.
+
+If the descent passes through fireworks or particles (the archetype sampler C9 pattern), coordinate
+with Fireworks on burst altitude and set pitch to place those bursts within the player's field of
+view during the fall.
+
+```yaml
+# Pitch return during descent — two stages:
+- {at: descent_start,       type: PLAYER_TELEPORT, audience: participants,
+   offset: {x:0,y:0,z:0}, yaw: 180.0, pitch: -12.0}  # still slightly elevated view
+- {at: descent_start + 80,  type: PLAYER_TELEPORT, audience: participants,
+   offset: {x:0,y:0,z:0}, yaw: 180.0, pitch:   0.0}  # back to horizontal
+```
+
+---
+
+**"Strange" / "uncanny"**
+> The world is wrong. The camera should be slightly wrong too.
+
+Camera reach: Subtle mismatch. Yaw set 15° off the expected facing, so the player is looking
+just past where the scene is centered. Or an unexpected pitch that places the scene low in the
+player's view rather than at center. The camera behaves as if it almost knows where to look.
+
+Do not over-engineer the wrongness — a single off-axis orientation at the scene opening is enough.
+CAMERA `sway` can contribute (40–60t, low intensity), but only if Effects is not already applying
+EFFECT `nausea`. One wobble source at a time.
+
+---
+
+**"Disorientation" / "fog" / "unreality"**
+> The player's grip on space is loosening.
+
+Camera reach: CAMERA `blackout` briefly (10–15t) then return — a rupture in perception, not a
+transition. CAMERA `flash` at a moment of revelation or break. CAMERA `sway` for sustained wobble.
+
+Unlike the uncanny (which is subtle), disorientation is more pronounced — the camera is actively
+untrustworthy. Mark does NOT author a stable, settled orientation here. If orientation calls appear
+in a disorientation section, they fire at inconsistent yaws so the player never fully settles.
+
+---
+
+**"Intimacy" / "stillness" / "held"**
+> Nothing is happening. This is the quiet.
+
+Camera reach: Nothing. Restraint is Mark's contribution. Whatever orientation placed the player
+well entering this section — hold. If an orientation call is needed at all, it fires at the
+section's first tick and is the last camera event until the scene ends. The camera's silence is
+part of the scene's silence.
+
+---
+
+### When to Ask the Director for Clarification
+
+Mark's clarifying question is always: **"What is the intended focus point at this moment?"**
+
+If that doesn't resolve the ambiguity, the secondary question is: **"Is the player stationary
+or in motion in this section?"** — a stationary player needs a camera call to redirect attention;
+a player in a CROSS_TO sequence already has their gaze in motion.
+
+Mark asks before writing any camera calls for: a wide-open scene with no dominant subject, a
+dual-performer scene with no hierarchy, or any section where the Director's tone phrase implies
+a specific mood without indicating what the player should be looking at.
+
+---
+
+### What Camera Cannot Do Alone
+
+- Cannot manufacture **wonder** if Set has placed the player in an enclosed space with no threshold
+  visible — the environment must exist before the camera can reveal it
+- Cannot cover **altitude mismatches** — if fireworks burst 30 blocks below the player at altitude,
+  no camera orientation places that burst naturally in frame
+- Cannot smooth **instant teleport seams** without Effects providing blackout cover — Camera covers
+  the cut, but only inside the darkness Effects gives it
+- Cannot serve both **disorientation** and **clarity** in the same section — the camera must choose
 
 ---
 

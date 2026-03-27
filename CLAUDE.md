@@ -27,6 +27,53 @@
 | **Phase 9** | 🟢 Active | Department readiness + show creation workflow |
 | **Phase 10** | 🟢 Active | Showcase Series — team calibration (3 shows scaffolded, 0 passes complete) |
 
+## Session State — 2026-03-27
+
+**Where we stopped:** Phase 9 Track A complete (12/12 departments calibration-ready). Opened a brainstorm on the show creation process / intake skill. Did not act — discussion only. No files written this session beyond KB work.
+
+**What was accomplished this session (2026-03-27):**
+
+Phase 9 Track A — all 12 department KBs now calibration-ready:
+
+- **Sound** (v2.3): Reconciliation pass — STOP_SOUND source table expanded; ensemble caller language corrected. Brian named head already in place. Folder migration confirmed.
+- **Voice** (v2.2): `[Sprite]` prefix color corrected to `<light_purple>` tag (was `<white>` — showsprite.context.md is authoritative). Folder migration confirmed.
+- **showsprite.context.md**: Authoring workflow step 2 updated — "nine roles" → "twelve departments," full team structure reference added.
+- **production-team.md §8**: MiniMessage format named as the authoring standard for all show text (was: legacy § codes).
+- **production-team.md §10 (Fireworks)**: Written from scratch — was completely missing from role definitions.
+- **Fireworks** (v1.3): Folder migration. KB header cross-reference corrected. Notes frontmatter added.
+- **Casting** (v2.1): Folder migration. Three gap statuses corrected ("Not yet filed" → "Filed in ops-inbox.md").
+- **Choreography** (v2.1): Sharon named as department head. Four gap status corrections. FACE-pitch capability status row corrected to ⚠️ Gapped. Folder migration. production-team.md §3 updated.
+- **kb-builder SKILL.md**: Updated to 12/12 calibration-ready throughout.
+
+**Brainstorm — Show Creation Process / Intake Skill:**
+
+We discussed what gap exists between "Alan has a show concept" and "YAML authoring can begin." The gap is real and is in three distinct layers:
+
+1. **Intake conversation** — concept → Show Director's brief. Currently requires Alan to know to ask for it. This is the actual bottleneck — the process is documented (`show-creation-process.md`) but not executable.
+2. **Department scoping** — given the brief, which departments have heavy involvement and which are light? Determines which need full briefing sessions vs. a quick standing-questions pass.
+3. **Session sequencing** — Kendra's pass-blocking logic made interactive. Already documented; less of a gap.
+
+**Conclusion from brainstorm:** The real problem is Problem 1 — the intake conversation itself. A future skill (`show-intake` or similar) would manage: concept gathering → brief generation → department scoping → first working session handoff. Possibly with modes as it matures (Mode 1: new show intake; Mode 2: department briefing session; Mode 3: cross-department alignment).
+
+**Not acted on — design work only. No skill written yet.**
+
+**Also noted:** `kb-builder` SKILL.md description is now partially stale. It was written to build department KBs from scratch; all 12 now exist. The skill's primary future value is auditing and quick summary. Description needs a reframe (not a major rewrite) — a 20-minute fix for a future session.
+
+**Phase 9 status:** Track A complete. Track B criterion (`show-creation-process.md` drafted) is satisfied — file exists at `kb/departments/stage-management/show-creation-process.md` and is substantive. Remaining Track B criterion: "show creation workflow exercised at least once" — this happens naturally with first Showcase pass.
+
+**Immediate next step (unchanged from 2026-03-26):**
+R7 still needs in-game test on the other machine. `/show play demo.archetype_sampler`
+
+**After R7 debrief:**
+All three showcases await P1 (Set). P1 requires in-world scouting by Zarathale. Pick one show, open P1 (Set), begin the scouting brief.
+
+**Deferred for a future session:**
+- Design and write `show-intake` skill (or equivalent) — manages concept → brief → department scoping
+- Reframe `kb-builder` SKILL.md description to reflect Track A completion
+- Consider whether Phase 9 can be formally closed and Phase 10 marked as primary active phase
+
+---
+
 ## Session State — 2026-03-26
 
 **Where we stopped:** Repo audit complete and all changes applied. R7 (`demo.archetype_sampler` v2.9.0) is built but has NOT been tested in-game. All three showcases are at Brief stage, P1 (Set) not started for any of them.
@@ -192,11 +239,16 @@ ScaenaShows/
 │   │   ├── choreography.kb.md
 │   │   ├── set.kb.md
 │   │   ├── effects.kb.md
-│   │   ├── camera.kb.md           ← Camera Director (Mark) — full peer department
+│   │   ├── camera/                ← Camera Director (Mark) — full peer department
+│   │   │   └── camera.kb.md
 │   │   ├── lighting.kb.md
-│   │   ├── sound.kb.md
+│   │   ├── sound/                 ← Sound Designer (Brian)
+│   │   │   ├── sound.kb.md
+│   │   │   └── music-director.md
 │   │   ├── fireworks.kb.md
-│   │   ├── voice.kb.md            (+ voice/ subfolder: showsprite.context.md)
+│   │   ├── voice/                 ← Sprite Voice Director (ShowSprite)
+│   │   │   ├── voice.kb.md
+│   │   │   └── showsprite.context.md
 │   │   ├── stage-manager.kb.md
 │   │   └── approved-sources.md
 │   ├── production-team.md         ← Virtual production team — common brain

@@ -131,7 +131,7 @@ Note blocks placed in the world, tuned to specific pitches, wired to a redstone 
 
 5. **Run sheet documents the circuit** — what it plays, what coordinates it's at, what state it needs to be in pre-show, and what the Music Director's design intent was (so Stage Manager can troubleshoot if something sounds wrong).
 
-**Critical: every REDSTONE `state: on` requires a paired `state: off` in the timeline.** The REDSTONE event is not inside the plugin's stop-safety contract — if the show is interrupted, the circuit stays on. The Music Director designs the off; Stage Manager verifies it exists before the show runs. See `kb/departments/stage-manager.kb.md` for the full stop-safety protocol.
+**Critical: every REDSTONE `state: on` requires a paired `state: off` in the timeline.** The REDSTONE event is not inside the plugin's stop-safety contract — if the show is interrupted, the circuit stays on. The Music Director designs the off; Stage Manager verifies it exists before the show runs. See `kb/departments/stage-management/stage-management.kb.md` for the full stop-safety protocol.
 
 ---
 

@@ -1,8 +1,18 @@
 ---
 department: Sound Designer
-owner: Sound Designer
-kb_version: 2.1
-updated: 2026-03-25
+owner: Brian
+kb_version: 2.3
+updated: 2026-03-27
+notes: >
+  v2.1: Full instrument inventory, ambient bed technique, channel cut, simulated fade, Sound
+  Ensemble / Gracie gesture vocabulary, pitch reference, sound ID library, tone translation,
+  department principles, capability status table.
+  v2.2: Brian named head introduction added. STOP_SOUND gap filed in ops-inbox.md.
+  Folder migration to kb/departments/sound/sound.kb.md.
+  v2.3: Reconciliation pass against production-team.md. Instrument 3 STOP_SOUND source table
+  expanded to include record, weather, and voice channels (previously missing). Instrument 5
+  ensemble caller language corrected — Show Director, Sound Designer, and Music Director
+  may all summon ensemble gestures (was: Show Director only).
 ---
 
 # Sound Designer — Technical Knowledgebase
@@ -11,6 +21,26 @@ updated: 2026-03-25
 > can do for audio playback and control — and how to access those capabilities through YAML.
 >
 > Creative direction for this role lives in `kb/production-team.md §7. Sound Designer`.
+
+## Brian
+
+Brian runs the Sound department with a composer's sense of structure and a recording engineer's
+respect for channel discipline. Before writing a single SOUND event, he maps the full audio
+architecture: which beds go on which categories, when each opens, when each closes. He thinks in
+layers and arcs — what the player is hearing before the show starts, how that changes, and what
+silence means when it arrives. He treats a deliberate cut to nothing as one of his strongest
+instruments. He does not fill silences by default.
+
+Brian is Gracie's artistic collaborator, not just her director. They have a shared vocabulary —
+he knows which gesture she'll reach for before he asks, and she knows not to play anything that
+would step on a voice line. He manages the ensemble as a creative resource, not a sound effects
+library.
+
+The Sound Designer coordinates and escalates through the Show Director when a sound competes
+with a Voice Director text moment and the tradeoff requires a creative call, or when a scene
+requires a capability currently gapped with no acceptable workaround.
+
+---
 
 ## Sound Department Subfolder
 
@@ -212,10 +242,13 @@ The silence instrument. Clears all sounds on a channel (or all channels) instant
 |-------|---------------|
 | `ambient` | Ambient/cave sounds |
 | `music` | Music disc / background music |
+| `record` | Record/jukebox sounds |
+| `weather` | Weather sounds (rain, thunder) — note: WEATHER-event storm rain cannot be stopped this way; see §Department Principles |
+| `block` | Block sounds |
 | `hostile` | Hostile mob sounds |
 | `neutral` | Neutral mob sounds |
-| `block` | Block sounds |
 | `player` | Player sounds |
+| `voice` | Voice channel sounds |
 | `master` | Master channel sounds |
 | `all` | Every channel simultaneously |
 
@@ -296,7 +329,7 @@ Minecraft has no native audio fade. This instrument simulates one by playing the
 ### Instrument 5: The Sound Ensemble
 **Java grounding:** `SOUND` (via `minecraft:block.note_block.*` instruments), deployed as named cues
 
-The Sound department maintains a resident ensemble of theatrical musicians who stand by throughout every production. Their gestures are scripted as named cues in the library (`gracie.*` namespace) and can be summoned by the Show Director at any point in the show. See §Sound Department Personnel for the full roster and gesture reference.
+The Sound department maintains a resident ensemble of theatrical musicians who stand by throughout every production. Their gestures are scripted as named cues in the library (`gracie.*` namespace) and can be summoned by the Show Director, Sound Designer, or Music Director at any point in the show. See §Sound Department Personnel for the full roster and gesture reference.
 
 **What it does:** Ensemble cues are pre-authored `SOUND` events in specific pitch and volume combinations, packaged as reusable cues and referenced in the show timeline via `type: CUE`. The musician's identity gives each gesture a legible tone and working style.
 
@@ -582,7 +615,7 @@ Signal back to the Director with a specific question: "What is the sound *doing*
 | SOUND — max_duration_ticks | ✅ Verified | Hard cut via BukkitRunnable; no fade |
 | SOUND — play from anchor offset | 📋 Aspirational | No offset field in model; would require YAML model enhancement |
 | STOP_SOUND — stop by channel (`source:`) | ✅ Verified | source: ambient \| hostile \| music \| neutral \| block \| player \| master \| all |
-| STOP_SOUND — stop by specific sound_id | ⚠️ Gapped | `StopSoundEvent` model has no `sound_id` field; a `sound_id:` key in YAML is silently ignored. Not yet filed — hold for ops-inbox review. |
+| STOP_SOUND — stop by specific sound_id | ⚠️ Gapped | `StopSoundEvent` model has no `sound_id` field; a `sound_id:` key in YAML is silently ignored. Filed in ops-inbox.md (2026-03-27). |
 | STOP_SOUND — default source | ⚠️ Note | Defaults to `"music"` if `source:` is omitted. Always specify explicitly. |
 | SOUND — audience targeting | ⚠️ Note | No `audience:` field; executor hardcodes participants. `audience: participants` in YAML is silently ignored. |
 | Simulated fade (multi-SOUND descending) | ✅ Verified | Works via sequential SOUND events; ear accepts as fade at low volumes |

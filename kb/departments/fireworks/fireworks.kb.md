@@ -1,8 +1,13 @@
 ---
 department: Fireworks Director
 owner: Mira
-kb_version: 1.2
-updated: 2026-03-26
+kb_version: 1.3
+updated: 2026-03-27
+notes: >
+  v1.2: Full instrument inventory (5 event types), preset library, tone translation, department
+  principles, capability status table; all four known gaps filed in ops-inbox.md.
+  v1.3: Folder migration to kb/departments/fireworks/fireworks.kb.md. production-team.md §10
+  Fireworks Director section written (was missing entirely). KB header reference corrected.
 ---
 
 # Fireworks Director — Technical Knowledgebase
