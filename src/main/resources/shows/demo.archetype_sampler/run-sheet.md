@@ -7,6 +7,8 @@ updated: 2026-03-25
 # Archetype Sampler — Run Sheet · Revision 7
 ## `/show play demo.archetype_sampler`  ·  ~3500 ticks (~2m55s)  ·  13 cues
 
+> **Status: Calibration / diagnostic show.** This is not a gold standard reference for any department. It exists to surface what works, what doesn't, and what needs further development. Findings inform department KBs and calibration backlogs — not to be treated as production patterns until explicitly promoted.
+
 > Open this on a second screen while running the show in-game.
 > Take notes by cue number (C1–C13). Debrief with Claude after.
 > **R7 core change:** altitude arc rewritten — height withheld until C7, then earned.
@@ -46,7 +48,7 @@ Voice timing vs. sky dimming: not explicitly evaluated in R7 debrief — watch q
 
 ### C2 — The Ground Beneath You
 
-**Tick range:** T=440 – T=680
+**Tick range:** T=440 – T=900 (460 ticks / ~23s)
 **Altitude:** 0–2 blocks (HOVER near ground)
 **Intention:** The first lift — barely perceptible. Something has changed, but the player isn't sure what.
 **Function:** Introduce levitation at body level. No drama. Embers surround the player, not below them. This section must feel like gentle bubbling, not a reveal. The reveal is C7.
@@ -55,13 +57,15 @@ Voice timing vs. sky dimming: not explicitly evaluated in R7 debrief — watch q
 
 **Notes (R7):** Generally effective — minimum levitation function. Accomplishes the cue's intention. Baseline is confirmed.
 Next-step-up: initial burst to get player slightly off ground, then rapid-tempo hover pulses — as quick as possible while maintaining approximate Y (not ascending or descending). Goal: player stays airborne between pulses rather than touching ground. That continuous-airborne-near-ground feel is the true "bubbling." Filed to Effects calibration backlog.
-Additional finding: levitation sensation perceived as continuing through approximately C7 with no change or motivation. The "bubbling" texture carried across multiple sections (C2–C6) without perceptual variation. Seasick-feeling if sustained too long. Needs sectional stop or clear perceptible variation at the C2→C3 boundary. YAML tick structure should be verified to confirm levitation effect is not bleeding past its section.
+Additional finding: levitation sensation perceived as continuing through approximately C7 with no change or motivation. The "bubbling" texture carried across multiple sections (C2–C6) without perceptual variation. Seasick-feeling if sustained too long. Needs clear perceptible variation at section boundaries — or explicit sectional contrast in levitation parameters (amplitude, gap, pattern) rather than uniform amp=0/28t across C2–C6.
+
+YAML verified (2026-03-28): C2 is genuinely 460 ticks / ~23s. The 24s stopwatch reading is correct — not a bug. The identical amp=0 / lev=20t / gap=8t pattern runs continuously from T=440 (C2) through T=1708 (last C6 pulse) = ~64 seconds of undifferentiated levitation texture before C7 fires. This is the root of the seasick observation, not C2 alone.
 
 ---
 
 ### C3 — Separation
 
-**Tick range:** T=680 – T=920
+**Tick range:** T=900 – T=1120 (220 ticks / ~11s)
 **Altitude:** 2–6 blocks (CLIMB begins)
 **Intention:** The ground is leaving. Warmth is below you now.
 **Function:** First real vertical movement. Warm bloom fires at/below player — the player is now *above* the warmth, not inside it. This is the first moment where altitude has spatial consequence.
@@ -74,7 +78,7 @@ Additional finding: levitation sensation perceived as continuing through approxi
 
 ### C4 — The Cool Shift
 
-**Tick range:** T=920 – T=1160
+**Tick range:** T=1120 – T=1340 (220 ticks / ~11s)
 **Altitude:** ~6 blocks (HOVER)
 **Intention:** A tonal change, not a spatial one. Same height; different mood.
 **Function:** Cool bloom enters at player level — the emotional register shifts from warm to something quieter. This is mood, not movement. The player holds altitude while the atmosphere changes around them.
@@ -87,7 +91,7 @@ Additional finding: levitation sensation perceived as continuing through approxi
 
 ### C5 — What Rises From Below
 
-**Tick range:** T=1160 – T=1400
+**Tick range:** T=1340 – T=1540 (200 ticks / ~10s)
 **Altitude:** ~7–9 blocks (HOVER, slight drift up)
 **Intention:** Sound arrives from below — the cave, the deep, something underneath.
 **Function:** Cave ambient sound ascends toward the player from below. The player is positioned above the source of the sound. The spatial relationship (player above, sound rising) is the storytelling.
@@ -100,7 +104,7 @@ Additional finding: levitation sensation perceived as continuing through approxi
 
 ### C6 — Silent Foreshadowing
 
-**Tick range:** T=1400 – T=1640
+**Tick range:** T=1540 – T=1720 (180 ticks / ~9s)
 **Altitude:** 9–14 blocks (CLIMB, unannounced)
 **Intention:** The show is rising, but hasn't said so. No dialogue. No announcement. The player just notices they're higher.
 **Function:** Silent climb from 9 to 14 blocks. No ShowSprite lines. No new cues announced. This section withholds — the player should feel something preparing without knowing what. The silence is the foreshadowing.
@@ -113,7 +117,7 @@ Additional finding: levitation sensation perceived as continuing through approxi
 
 ### C7 — The Arrival  ←  *The Moment*
 
-**Tick range:** T=1640 – T=1880
+**Tick range:** T=1720 – T=1940 (220 ticks / ~11s)
 **Altitude:** 14 → 25 blocks (AMP-9 LIFT EARNED)
 **Intention:** The show's fulcrum. The player has been brought here — now they are *taken*.
 **Function:** First amp-9 burst. Player lifts from 14 to 25 blocks in a single dramatic movement. Thunder lands *with* the lift — not before, not after. This is the moment every preceding section has been building toward. The player should know something has happened to them.
@@ -126,7 +130,7 @@ Additional finding: levitation sensation perceived as continuing through approxi
 
 ### C8 — Elevated Observer
 
-**Tick range:** T=1880 – T=2120
+**Tick range:** T=1940 – T=2160 (220 ticks / ~11s)
 **Altitude:** ~25 blocks (HOVER)
 **Intention:** Joy from above. The player watches the celebration below them.
 **Function:** Joy/confetti cue fires *below* the player — the player observes from altitude. This is the payoff of the elevation: the player is above the spectacle, not inside it. Allay sounds, warmth, celebration — all happening below.
@@ -139,7 +143,7 @@ Additional finding: levitation sensation perceived as continuing through approxi
 
 ### C9 — Through the Fireworks
 
-**Tick range:** T=2120 – T=2360
+**Tick range:** T=2160 – T=2420 (260 ticks / ~13s)
 **Altitude:** 25 → 18 blocks (RELEASE — descent through fireworks)
 **Intention:** Controlled descent through the spectacle. The player passes *through*, not *past*.
 **Function:** Pressure-release descent pattern. Fireworks fire at y_offsets 26/20/12/24/16 — bracketing the player's descent path from 25 to 18 blocks. Player should be inside the firework volume, not watching from outside.
@@ -152,7 +156,7 @@ Additional finding: levitation sensation perceived as continuing through approxi
 
 ### C10 — Building  ←  *Reference section from R6*
 
-**Tick range:** T=2360 – T=2600
+**Tick range:** T=2420 – T=2740 (320 ticks / ~16s)
 **Altitude:** 18 → 8 blocks (RELEASE continuing)
 **Intention:** The descent continues while something builds below. Return to the ground is not simple.
 **Function:** Pressure-release descent continues from 18 to 8 blocks. Ramp cue fires — tension or anticipation building. This was the strongest section in R6. Model for spatial clarity: player descending, build happening below/around them.
@@ -165,7 +169,7 @@ Additional finding: levitation sensation perceived as continuing through approxi
 
 ### C11 — Pre-Finale Rise
 
-**Tick range:** T=2600 – T=2840
+**Tick range:** T=2740 – T=2960 (220 ticks / ~11s)
 **Altitude:** 8 → 14 blocks (CLIMB)
 **Intention:** A second rise — not the same as C7, but an echo of it. The player is going up again.
 **Function:** Climb from 8 to 14 blocks. Wonder cue. The player is being repositioned for the finale. ShowSprite narrates from inside the ascent.
@@ -178,7 +182,7 @@ Additional finding: levitation sensation perceived as continuing through approxi
 
 ### C12 — The Finale
 
-**Tick range:** T=2840 – T=3200
+**Tick range:** T=2960 – T=3100 (140 ticks / ~7s)
 **Altitude:** 14 → 35+ blocks (AMP-9 LIFT — highest point in show)
 **Intention:** The full release. Everything at once, from the highest point in the show.
 **Function:** Second amp-9 lift — takes the player to 35+ blocks. Full coda cue, finale fireworks, ShowSprite final lines. Largest gesture in the show.
@@ -191,7 +195,7 @@ Additional finding: levitation sensation perceived as continuing through approxi
 
 ### C13 — Coda
 
-**Tick range:** T=3200 – T=3500
+**Tick range:** T=3100 – T=3500 (400 ticks / ~20s)
 **Altitude:** Drifting down (slow_falling — show ends in the air)
 **Intention:** The show ends while you are still airborne. There is no clean landing.
 **Function:** Persistent `slow_falling` (set at T=380, duration 3200t) carries the player down gently as the show closes. ShowSprite final message. BOSSBAR fades. The player is left mid-air, show gone quiet. They land on their own.
@@ -204,51 +208,6 @@ Additional finding: levitation sensation perceived as continuing through approxi
 
 ---
 
-## General Findings — R7 (2026-03-28)
-
-**Voice pacing:** Sprite needs per-show directorial guidance on timing mode for each major effect:
-- **Early** (telegraphing / announcing) — voice before the effect; risk: deflates the moment
-- **With** (accompanying) — voice simultaneous with effect; works when words reinforce the physical
-- **After** (commenting) — voice after effect; player has the experience first, language follows
-- **Silent** — nothing; often the right choice, but must be authored, not defaulted to
-
-R7 demonstrated the full range, but without intentional placement. The show "accomplished what it set out to do" — demonstrate timing modes — but suffered for lack of directorial guidance on which mode belongs where. Direction must specify timing intent in the department brief, not leave it to Voice to improvise.
-
-**Lighting:** Two TIME_OF_DAY step-downs at C1 read as mechanical bumps, not atmosphere. Direction principle locked: let natural transitions do the work; bump once and motivate it.
-
-**Mob spawning:** Running the show in a dark unlit location caused hostile mobs to spawn and accumulate on the ground below the airborne player during the show. When the player descended at C13, mobs were waiting. Mitigation: run shows in pre-lit locations, or use COMMAND to toggle `doMobSpawning`. Filed to Stage Management.
-
-**C9–end:** Levitation + fireworks section was "very effective, fun, engaging." Descent-through-fireworks pattern confirmed. Fireworks: no notes, working well. A little slow at the very end (C13) — voice editing or additional elements could help.
-
-**Lightning:** A lightning strike at some point during levitation in darkness was "effective — disorienting, fully pulls focus to the moment." Verify YAML for LIGHTNING event location.
-
-**Pacing analysis (stopwatch data):**
-
-Total run: 2:57.24 | 14 laps recorded (13 cues + 1 final tap)
-
-| Lap | Cue | Duration | Expected | Status |
-|-----|-----|----------|----------|--------|
-| 1 | C1 | 22.45s | ~22s | ✅ On target |
-| 2 | C2 | 24.04s | ~12s | 🔴 2× expected — longest section; seasick finding explained |
-| 3 | C3 | 10.00s | ~12s | ✅ |
-| 4 | C4 | 10.98s | ~12s | ✅ |
-| 5 | C5 | 9.99s | ~12s | ✅ |
-| 6 | C6 | 8.93s | ~12s | ✅ slightly short |
-| 7 | C7 | 11.06s | ~12s | ✅ |
-| 8 | C8 | 11.00s | ~12s | ✅ |
-| 9 | C9 | 13.47s | ~12s | ✅ |
-| 10 | C10 | 16.19s | ~12s | ⚠️ ~4s over; accounts for "awkward lag" region |
-| 11 | C11 | 11.08s | ~12s | ✅ |
-| 12 | C12 | 7.01s | ~18s | 🔴 Finale is shortest timed cue — needs more room |
-| 13 | C13 | 19.70s | ~15s | ⚠️ Long coda confirms "slow at the end" |
-| 14 | — | 1.28s | — | Show-end tap |
-
-**Key pacing notes:**
-- C1+C2 together = 46.5s = 26% of total runtime. Setup is heavyweight.
-- C2 at 24s is the dominant pacing problem. YAML should be verified — is the C2 section genuinely 480 ticks, or is the BOSSBAR duration mismatched?
-- C12 (The Finale) at 7s is the shortest timed section in the show. The biggest moment has the least time.
-- C13 coda at 19.7s runs longer than most sections — confirms "slow at the end."
-
 ---
 
 ## Revision Log
@@ -256,7 +215,7 @@ Total run: 2:57.24 | 14 laps recorded (13 cues + 1 final tap)
 | Version | Date | Changes |
 |---------|------|---------|
 | 2.9.0 (R7) | 2026-03-25 | Altitude dramaturgy rewrite. Height withheld until C7. C2 hovers near ground (0–2b). C3–C6 climb slowly. C7 is the earned amp-9 lift. C8 joy burst fires below elevated player. C9 descent through fireworks. |
-| 2.9.0 (R7 test) | 2026-03-28 | In-game test completed. C9 y_offset confirmed. C9–end section "very effective." Major issues: C2 section too long (24s actual vs ~12s expected), levitation texture continuous through C7 (seasick), C12 finale too short (7s), C1 lighting bumps jarring. Mob spawning risk identified. Voice timing undirected. Full analysis in General Findings above. |
+| 2.9.0 (R7 test) | 2026-03-28 | In-game test completed. Total runtime 2:57. C9 y_offset confirmed — inside fireworks, C9–end "very effective." Issues: C2 23s actual (460t by design — levitation texture continuous C2–C6 = ~64s undifferentiated); C12 only 7s for the finale; C13 coda long at ~20s; C1 TIME_OF_DAY multi-step bumpy; mob spawning risk in dark. Voice timing undirected. Findings filed: Effects KB (hover calibration), Voice KB (timing modes), Lighting KB (houselights-down principle), Stage Mgmt KB (mob spawning checklist). |
 | 2.8.1 (R6) | 2026-03-25 | Full aerial rewrite — player aloft from C2. 68 inline levitation events. C9 redesigned: descent through fireworks from above. |
 | 2.7.0 (R5) | 2026-03-24 | Per-cue BOSSBAR events (C1–C13). WEATHER clear at T=0. Levitation as primary staging. dragon growl → thunder. |
 
@@ -264,16 +223,15 @@ Total run: 2:57.24 | 14 laps recorded (13 cues + 1 final tap)
 
 ## Known Issues
 
-*Issues observed in in-game tests that are not yet resolved.*
+*Open items for R8 attention. Closed items removed — see revision log.*
 
 | Issue | Observed in | Status |
 |-------|-------------|--------|
-| Tick ranges are approximate — verify against YAML for precision | R7 pre-test | Open — verify C2 actual section length (stopwatch shows 24s vs ~12s expected) |
-| C9 firework y_offset direction vs. player altitude to confirm in-game | R7 pre-test | ✅ **Closed** — confirmed working in R7 |
-| C2 levitation texture persists through ~C7 with no change — seasick | R7 debrief | Open |
-| C2 actual section length appears to be ~480 ticks (24s) not ~240 (12s) — verify YAML | R7 stopwatch | Open |
-| C12 (Finale) section appears to be only ~7s — too short for peak moment | R7 stopwatch | Open |
-| C10 running ~16s (4s over expected) — pacing lag region | R7 stopwatch | Open |
-| Mob spawning in dark location: hostile mobs accumulate below airborne player | R7 debrief | Open — mitigation: COMMAND doMobSpawning |
-| Voice timing not directed per-section — early/with/after/silent not specified | R7 debrief | Open — Direction to specify in next voice brief |
-| C1 TIME_OF_DAY multi-step reads as mechanical bumps not atmosphere | R7 debrief | Open — redesign in next Lighting pass |
+| C2–C6 levitation texture undifferentiated (~64s of same amp=0/28t pattern) — seasick | R7 debrief | Open — Effects dept; needs sectional variation or contrast at boundaries |
+| C12 (Finale) is only 7s — too short for peak moment | R7 stopwatch | Open — section needs more room |
+| C10 running ~16s — pacing lag region | R7 stopwatch | Open — watch in R8 |
+| C13 coda ~20s — long; slight drag at end | R7 stopwatch | Open — voice edit or additional element could help |
+| C1 TIME_OF_DAY multi-step reads as mechanical bumps | R7 debrief | Open — Lighting redesign pass |
+| Voice timing not directed per-section — early/with/after/silent unspecified | R7 debrief | Open — Direction to specify in next voice brief |
+| C7 EARNED question not explicitly evaluated | R7 debrief | Open — confirm in R8 |
+| LIGHTNING event location not verified — which cue fires it? | R7 debrief | Open — verify YAML |

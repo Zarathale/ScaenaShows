@@ -261,6 +261,11 @@ Each entry covers one numbered cue (C1, C2, …). Minimum fields:
 **Updating the run sheet:**
 After each revision, Kendra updates the run sheet to reflect changes in tick positions, new or removed sections, and updated watch questions based on the Director's revision priority. The watch question is the most important field — it should reflect what the *current* revision is trying to answer, not what was asked in a previous run.
 
+**General Findings — accumulation and graduation:**
+During active work, the run sheet is the right place for findings to land. A General Findings section (or inline cue notes) keeps observations from getting lost when there isn't time to file them to department KBs mid-session. This is intentional — the run sheet is the safe landing zone.
+
+Cleanup happens only after findings are *confirmed* filed to the appropriate KB. Until then, they stay in the run sheet. Once promoted, the run sheet entry can be trimmed to a pointer or removed entirely. Never clean the run sheet before the KB has received the finding.
+
 ---
 
 ## Tone Translation
