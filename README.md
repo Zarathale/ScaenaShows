@@ -1,10 +1,13 @@
 # ScaenaShows v2
 
-ScaenaShows is a data-driven choreography engine for Minecraft Paper servers. It plays "shows" — timelines of coordinated events — targeted at one or more players simultaneously.
+ScaenaShows is a data-driven choreography engine for Minecraft Paper servers. It plays "shows" — timelines of coordinated events — targeted at one or more players simultaneously. Think of it as a theatrical production system: a virtual team of directors, designers, and technicians collaborating to create experiences in a Minecraft world.
 
-**Version:** 2.0.0 (v2 rewrite, active development — see `ROADMAP.md`)
+This is a hobby project. It's also an ongoing experiment in creative collaboration with Claude — building something genuinely good while figuring out how to work together well. The process is part of the point.
+
 **Platform:** Paper 1.21.x / Java 21
 **Build:** Gradle Kotlin DSL (`build.gradle.kts`)
+
+See `ROADMAP.md` for where the project is and where it's going. See `CLAUDE.md` for session startup instructions.
 
 ---
 
@@ -18,7 +21,7 @@ cues/*.yml      → named Cue assets (reusable building blocks)
 shows/*.yml     → show definitions (top-level runtime entry points)
 ```
 
-For the full design specification, see [`docs/spec.md`](docs/spec.md).
+For the full design specification, see `kb/system/spec.md`.
 
 ---
 
@@ -32,7 +35,7 @@ For the full design specification, see [`docs/spec.md`](docs/spec.md).
 /show reload
 ```
 
-**Targeting:** Multiple targets in a single `/show play` command creates one shared show instance. All named targets are participants — simultaneously actors and audience. The first named target (or the invoker if a selector is used) is the spatial anchor.
+**Targeting:** Multiple targets in a single `/show play` creates one shared show instance. All named targets are participants — simultaneously actors and audience. The first named target (or the invoker if a selector is used) is the spatial anchor.
 
 **`--scenes`** — Director mode (admin-only): displays the current cue name in the action bar during playback.
 
@@ -65,8 +68,8 @@ resume_window_seconds: 900
 
 ## Install
 
-1. Build: `./gradlew build`
-2. Drop `build/libs/ScaenaShows-2.0.0.jar` into `plugins/`
+1. Build: `./gradlew shadowJar`
+2. Drop the JAR from `build/libs/` into `plugins/`
 3. Start the server — ScaenaShows creates:
 
 ```
@@ -86,13 +89,11 @@ Existing files are never overwritten on startup.
 | Directory | Contents |
 |---|---|
 | `src/main/java/` | Plugin Java source (v2) |
-| `src/main/resources/` | Default config, fireworks, cue seeds, show seeds |
-| `docs/` | Design spec, preview audit, style guide, UI mockup |
+| `src/main/resources/` | Default config, fireworks, bundled cues and shows |
+| `kb/` | Knowledge base — spec, department KBs, production team |
 | `_archive/v1/` | v1 plugin source (scenes/sequences model — retired) |
-| `CLAUDE.md` | Project management hub for Claude sessions |
-| `ROADMAP.md` | Phase tracker with acceptance criteria |
-
-See `CLAUDE.md` for session startup instructions and key architectural decisions.
+| `CLAUDE.md` | Session startup and project context for Claude |
+| `ROADMAP.md` | How the project is structured and where it's going |
 
 ---
 
