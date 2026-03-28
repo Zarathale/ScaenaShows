@@ -100,12 +100,14 @@ viewing position. Two entities will be spawned here; the player watches.
 - A space that reads as a stage — slightly elevated ground, a clearing in trees, a
   natural amphitheater shape, a flat area with something behind it (cliff face, tree line)
 - Clear sight line from player arrival point to the "stage" area (~10-15 blocks)
-- Enough room for 2 entities to move and interact
-- Enclosed enough that spawned entities won't wander out of frame
-- Natural walls or features on 3 sides; player approaches from the fourth
+- Enough room for 2 entities to move and interact and for their relationship to read clearly
+- Don't filter on natural enclosure — if containment is needed to keep entities in frame,
+  Set builds it (fence line, low wall, terrain modification). Scout for theatrical feel.
 
 **What to document:** Arrival coordinates + facing. Stage area coordinates (center).
-Approximate wing entry points (where entities can enter from). Any enclosure notes.
+Approximate wing positions (where entities could be placed off to the sides). Whether the
+space is naturally enclosed or open — Set designs containment either way, but knowing
+what's there helps Michael C. plan the build.
 
 ---
 

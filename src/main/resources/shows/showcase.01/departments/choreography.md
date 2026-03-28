@@ -54,11 +54,12 @@ Two creatures. Placed at the "stage" area (Set's designation). Initial positions
 
 After placement: AI on (if safe per Casting's recommendation). Let them interact.
 
-The one Choreography risk: if AI-on creatures wander fully out of the stage area before the
-vignette ends, the theater loses its frame. Set's location selection should account for this
-(enclosed enough that entities don't immediately wander off) — this is documented in the
-scouting task list. If early tests show wander-out-of-frame, Choreography can discuss puppet
-state with the Director as a fallback.
+The constraint of mob movement is a design question, not a scouting filter. If AI-on
+creatures wander out of the stage area, Set designs containment — a fence line, a low wall,
+terrain modification, whatever fits the space with least intrusion. Choreography raises the
+question at intake (does this pairing need containment?); Set answers it with construction.
+If early tests show wander-out-of-frame and containment isn't solving it, Choreography can
+discuss puppet state with the Director as a fallback.
 
 ### Vignette E — Aerial presence (if Casting decides yes)
 If Casting includes Phantoms or Bats in Vignette E:

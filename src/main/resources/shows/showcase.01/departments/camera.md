@@ -17,10 +17,18 @@ serves the opening image of each vignette, and then to step back.
 This is not a show that calls for dramatic camera sweeps or sustained reorientation. The player
 is an explorer. Let them explore. Camera gives them the right first view, then releases them.
 
-The one exception: Vignette E. The player is elevated into Mira's fireworks sequence. Mark has
-a specific question to answer for that moment: does the player face into the sky, or downward
-into the burst below them? This is a philosophy question, not a technical one, and Mark brings
-the answer to intake.
+**This is the baseline — not the ceiling.** The restrained footprint in the brief is Camera's
+conservative starting position. As the show develops through Watch Rounds, Mark is standing by
+to take more cues and suggest moments where a camera intervention would serve the show: a
+creature entrance that lands harder if the player is already facing left, a sound hit that pulls
+focus somewhere worth orienting toward, a moment in Vignette E: The Suspension that the
+orientation philosophy doesn't fully account for. The brief says "do less"; Watch Rounds are
+where "do more here" gets discovered.
+
+The one planned exception at brief stage: Vignette E: The Suspension. The player is elevated
+into Mira's fireworks sequence. Mark has a specific question to answer for that moment: does
+the player face into the sky, or downward into the burst below them? This is a philosophy
+question, not a technical one, and Mark brings the answer to intake.
 
 ---
 
@@ -118,7 +126,7 @@ and Casting at intake on whether this is needed.
 ---
 
 ## Decisions
-*Filled at intake — Vignette E philosophy answered first.*
+*Filled at intake — Vignette E: The Suspension orientation philosophy answered first.*
 
 ## Revision Notes
 *Added after each in-game test.*
