@@ -430,6 +430,7 @@ Before every in-game test, Kendra runs a tech check — distinct from the rehear
 □ Show loads without errors: no missing cue IDs, no unresolved CUE references
 □ Run sheet is current: cue numbers match the revision being tested
 □ Alan / Zarathale have the correct run sheet open (current revision, not a previous one)
+□ Mob spawning risk assessed: if the show runs in darkness (TIME_OF_DAY ≥ 14000) at or near ground level, hostile mobs may spawn and accumulate below an airborne player during the show. When the player descends at show end, mobs will be present. Mitigate with one of: (1) COMMAND `/gamerule doMobSpawning false` at show start + `/gamerule doMobSpawning true` at show end [document in run sheet as block-modification protocol applies]; (2) run the show in a pre-lit, mob-safe location (player spawn, torchlit area, etc.). *(Identified in demo.archetype_sampler R7, 2026-03-28)*
 ```
 
 If any tech check item fails, Kendra notes it before the show runs — not after. A failed tech check can invalidate the test results.

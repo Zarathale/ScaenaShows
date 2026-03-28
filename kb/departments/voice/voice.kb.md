@@ -326,6 +326,28 @@ Very spare. One line, then a long silence. White text. Often: no words at all �
 
 ---
 
+## Calibration Backlog
+
+---
+
+### Timing modes — early / with / after / silent
+**Source:** `demo.archetype_sampler` R7 debrief, 2026-03-28
+
+**Finding:** The archetype sampler showed the full range of voice timing approaches but without deliberate directorial placement. "Some timings are wonky." The show demonstrated timing modes effectively (that was its purpose), but suffered for lack of per-section timing direction.
+
+Sprite needs to internalize four timing modes and understand that the correct mode for any given effect is a **Show Director call**, not a Voice default:
+
+- **Early** — Sprite speaks before the effect happens. Announces or foreshadows. Risk: deflates the moment by naming it before it lands. Use sparingly and intentionally.
+- **With** — Sprite speaks simultaneously with the effect. The words and the physical event reinforce each other. Works best when language and sensation share the same emotional register.
+- **After** — Sprite speaks after the effect. The player has the experience first; language arrives as interpretation. Often the right choice for physical moments — let the body lead.
+- **Silent** — Nothing. The effect needs no commentary. Voice restraint here is a contribution, not an absence.
+
+**The Director's obligation:** Before any voice lines are authored for a show, the Show Director must specify the timing relationship between Sprite and each major physical event. "Voice before/with/after/silent the C7 lift" is a brief-level decision. If it's not in the brief, Voice must ask before writing.
+
+**Not every moment needs commentary.** The archetype sampler over-commented. Voice should default to less speech, not more, and add language only when it serves something the other departments can't do on their own.
+
+---
+
 ## Capability Status Summary
 
 | Instrument | Status | Notes |

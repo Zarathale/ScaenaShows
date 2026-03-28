@@ -20,10 +20,13 @@ This is a hobby project and a live experiment in working with Claude. The proces
 
 The engine is built and the production team is in place. We're in the Showcase Series — three shows in parallel development, each moving through its own arc toward opening. Alongside that, calibration practice runs through demo shows.
 
+All 12 department KBs are now in folder structure (`kb/departments/[dept-slug]/[dept-slug].kb.md`). Migration is complete.
+
 **Immediate pending (not show-specific):**
-- R7 in-game test: `/show play demo.archetype_sampler` on the other machine
-  - Watch: C2 hover (gentle bubbling near ground?), C3 climb (gradual separation from earth?), C7 lift (EARNED — does the arrival take you?), C9 (inside the fireworks?)
-- After R7 debrief: pick one Showcase, open P1 (Set), begin the scouting brief
+- R7 debrief ✅ complete (2026-03-28). Full findings in `demo.archetype_sampler/run-sheet.md §General Findings`. Key issues: C2 too long (24s actual), levitation texture continuous through C7, C12 finale too short (7s), C1 lighting bumps jarring, mob spawning risk identified, voice undirected. R8 not yet scheduled.
+- Next: pick one Showcase, open P1 (Set), begin the scouting brief for Zarathale
+
+*Last audit: 2026-03-28 — `kb/audits/2026-03-28_session-audit.md`*
 
 ---
 

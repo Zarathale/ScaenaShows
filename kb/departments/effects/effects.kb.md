@@ -593,6 +593,36 @@ conflict in the same space.
 
 ---
 
+## Calibration Backlog
+
+Items the Effects department wants to develop deeper mastery over, sourced from calibration sessions and in-game debriefs.
+
+---
+
+### Hover pattern — sectional containment and perceptual variation
+**Source:** `demo.archetype_sampler` R7 debrief, 2026-03-28
+
+**Finding:** The HOVER pattern (amp 0, 28t cycle) introduces levitation effectively at C2, but when held without perceptual variation from C2 through C6, the sensation becomes monotonous and can produce a seasick feeling. The player perceives the same levitation texture for 5+ consecutive sections. The "bubbling" intention was met at C2 baseline, but the effect needs to stop or clearly change at section boundaries.
+
+**R7 stopwatch data:** C2 was 24 seconds (2× expected ~12s). Either the YAML section is longer than documented or the BOSSBAR duration mismatches the section. Verify in YAML.
+
+**Open questions:**
+- Does levitation effect bleed past its section end tick, or is the YAML section itself longer than the run sheet states?
+- How do we produce a perceptible "texture change" when transitioning from HOVER (C2) to CLIMB (C3)? Currently indistinguishable to the player.
+
+**Next-step-up for C2 "bubbling":** Initial PLAYER_VELOCITY burst to get player ~3 blocks off ground, then highest-frequency HOVER pulses possible while maintaining Y — player stays airborne between pulses (no ground contact between them), no net ascent or descent. Target feel: continuous airborne-near-ground, not cycling up/down.
+
+---
+
+### Descent + fireworks — confirmed working pattern
+**Source:** `demo.archetype_sampler` R7, 2026-03-28
+
+**Status:** ✅ Confirmed. Player was inside the fireworks during C9 descent (25→18 blocks). y_offsets 26/20/12/24/16 relative to anchor successfully bracketed the descent path.
+
+**Named pattern:** `descent-through-fireworks` — RELEASE pattern (lev=20t gap=24t cycle=44t) paired with Fireworks at y_offsets bracketing the player's altitude range during descent. Player altitude and firework y_offsets must be agreed between Effects and Fireworks before authoring. Archetype sampler C9 is the reference implementation.
+
+---
+
 ## Capability Status Summary
 
 | Instrument | Status | Notes |

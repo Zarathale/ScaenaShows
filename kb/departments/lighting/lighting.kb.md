@@ -445,6 +445,8 @@ end. Flag restoration needs to Stage Manager at brief time.
 filed gaps for Lighting. If a future need arises (per-player lighting, fog, gradual fade), file
 with Stage Management before authoring any workaround.
 
+**Houselights-down principle (Alan feedback, R7 debrief 2026-03-28):** Avoid multiple TIME_OF_DAY step-downs in quick succession for the show's opening transition. Two visible bumps in a short span reads as mechanical — the world is clearly being controlled, not experiencing something. The principle: design transitions so they read as atmospheric rather than commanded. If steps are needed, spread them across more increments over more time so no individual snap is perceptible. If a single deliberate snap is needed, coordinate it with something else happening simultaneously — a sound hit, a levitation event, a voice line — so the light change is motivated and connected to the show, not administrative. *"Let the sky do the work."*
+
 **Escalation discipline:** Lighting resolves arc and instrument decisions independently.
 Escalates when: (1) a scene's light state conflicts with another department's authored work in
 a way timing adjustments can't resolve — bring to Director; (2) a weather event will have

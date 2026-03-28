@@ -106,7 +106,7 @@ Each department head maintains a technical knowledgebase — a dedicated file th
 
 **Alan's role:** Concept originator and creative vision holder. Alan's stated intentions and feedback are non-negotiables that enter the brief directly. The Director's job is to serve Alan's vision, not substitute for it.
 
-**Knowledgebase:** `kb/departments/show-director.kb.md` (v2.1) — Director authority, Show Direction concept, tone language and feedback style, brief templates, standing department asks per department (intake + revision accountability), revision cycle guidance, arc evaluation questions, cross-department conflict protocol, and the pre-flight checklist. Effects / Camera intake and conflict patterns reflect current department structure.
+**Knowledgebase:** `kb/departments/show-director/show-director.kb.md` (v2.1) — Director authority, Show Direction concept, tone language and feedback style, brief templates, standing department asks per department (intake + revision accountability), revision cycle guidance, arc evaluation questions, cross-department conflict protocol, and the pre-flight checklist. Effects / Camera intake and conflict patterns reflect current department structure.
 
 ---
 

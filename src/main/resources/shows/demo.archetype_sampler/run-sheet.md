@@ -38,7 +38,9 @@ updated: 2026-03-25
 **Mechanics:** WEATHER clear at T=0. Three TIME_OF_DAY steps dim the sky over ~280 ticks. ShowSprite messages fire while dimming is actively visible. BOSSBAR C1 (WHITE) tracks section.
 **Watch question:** Does dialogue land while the sky is visibly dimming — or does the sky snap to night before the first line, making the atmosphere feel redundant?
 
-**Notes:** *(filled in after in-game test)*
+**Notes (R7):** TIME_OF_DAY multi-step reads as two visible bumps — jarring for houselights-down. Direction note: let the sky do the work; if you must bump, bump once and coordinate it with something else happening simultaneously (sound hit, levitation, voice line) so the light change feels motivated rather than mechanical. More steps over longer intervals would read as atmospheric rather than commanded. Filed to Lighting calibration backlog.
+
+Voice timing vs. sky dimming: not explicitly evaluated in R7 debrief — watch question remains open for R8.
 
 ---
 
@@ -51,7 +53,9 @@ updated: 2026-03-25
 **Mechanics:** HOVER pattern (amp=0, lev=20t gap=8t, cycle=28t). `atmos.ambient.ember_drift` fires at body level. NO amp-9 burst. ShowSprite: 3 lines max. BOSSBAR C2.
 **Watch question:** Does C2 read as "gentle bubbling"? Or does it feel like levitation has been announced? If the player is clearly floating, the drama has been spent too early.
 
-**Notes:** *(filled in after in-game test)*
+**Notes (R7):** Generally effective — minimum levitation function. Accomplishes the cue's intention. Baseline is confirmed.
+Next-step-up: initial burst to get player slightly off ground, then rapid-tempo hover pulses — as quick as possible while maintaining approximate Y (not ascending or descending). Goal: player stays airborne between pulses rather than touching ground. That continuous-airborne-near-ground feel is the true "bubbling." Filed to Effects calibration backlog.
+Additional finding: levitation sensation perceived as continuing through approximately C7 with no change or motivation. The "bubbling" texture carried across multiple sections (C2–C6) without perceptual variation. Seasick-feeling if sustained too long. Needs sectional stop or clear perceptible variation at the C2→C3 boundary. YAML tick structure should be verified to confirm levitation effect is not bleeding past its section.
 
 ---
 
@@ -116,7 +120,7 @@ updated: 2026-03-25
 **Mechanics:** AMP-9 levitation event. Thunder/wind sound fires at the same tick as the lift. ShowSprite: one line, earned. BOSSBAR C7 (RED or peak color).
 **Watch question:** Does the lift feel EARNED — like an arrival, not a mechanism? Does the thunder land with the physical lift (same tick)? Is 25 blocks dramatically higher than 14 — does the player feel transported?
 
-**Notes:** *(filled in after in-game test)*
+**Notes (R7):** Lightning strike during levitation in the dark was noted as "effective — disorienting, fully pulls focus to the moment." This may correspond to C7 or the dark sections leading into it (C5–C6). Verify in YAML whether a LIGHTNING event fires at or near C7 tick, or whether this was the thunder sound event. Whether EARNED question was met not explicitly evaluated in R7 debrief — confirm in R8.
 
 ---
 
@@ -142,7 +146,7 @@ updated: 2026-03-25
 **Mechanics:** RELEASE pattern (amp=0, lev=20t gap=24t, cycle=44t). Fireworks with y_offsets 26/20/12/24/16 relative to anchor. ShowSprite: silent or single word. BOSSBAR C9.
 **Watch question:** Is the player inside the fireworks, or passing by them? Do the y_offsets place bursts around the player as they descend from 25 to 18 blocks?
 
-**Notes:** *(filled in after in-game test)*
+**Notes (R7):** ✅ Confirmed — player was inside the fireworks for at least a portion of the descent. y_offset placement validated. No change needed. C9–end overall noted as "very effective, fun, engaging." This is the reference pattern for descent-through-fireworks. *(Closes known issue: C9 firework y_offset direction.)*
 
 ---
 
@@ -198,11 +202,61 @@ updated: 2026-03-25
 
 ---
 
+---
+
+## General Findings — R7 (2026-03-28)
+
+**Voice pacing:** Sprite needs per-show directorial guidance on timing mode for each major effect:
+- **Early** (telegraphing / announcing) — voice before the effect; risk: deflates the moment
+- **With** (accompanying) — voice simultaneous with effect; works when words reinforce the physical
+- **After** (commenting) — voice after effect; player has the experience first, language follows
+- **Silent** — nothing; often the right choice, but must be authored, not defaulted to
+
+R7 demonstrated the full range, but without intentional placement. The show "accomplished what it set out to do" — demonstrate timing modes — but suffered for lack of directorial guidance on which mode belongs where. Direction must specify timing intent in the department brief, not leave it to Voice to improvise.
+
+**Lighting:** Two TIME_OF_DAY step-downs at C1 read as mechanical bumps, not atmosphere. Direction principle locked: let natural transitions do the work; bump once and motivate it.
+
+**Mob spawning:** Running the show in a dark unlit location caused hostile mobs to spawn and accumulate on the ground below the airborne player during the show. When the player descended at C13, mobs were waiting. Mitigation: run shows in pre-lit locations, or use COMMAND to toggle `doMobSpawning`. Filed to Stage Management.
+
+**C9–end:** Levitation + fireworks section was "very effective, fun, engaging." Descent-through-fireworks pattern confirmed. Fireworks: no notes, working well. A little slow at the very end (C13) — voice editing or additional elements could help.
+
+**Lightning:** A lightning strike at some point during levitation in darkness was "effective — disorienting, fully pulls focus to the moment." Verify YAML for LIGHTNING event location.
+
+**Pacing analysis (stopwatch data):**
+
+Total run: 2:57.24 | 14 laps recorded (13 cues + 1 final tap)
+
+| Lap | Cue | Duration | Expected | Status |
+|-----|-----|----------|----------|--------|
+| 1 | C1 | 22.45s | ~22s | ✅ On target |
+| 2 | C2 | 24.04s | ~12s | 🔴 2× expected — longest section; seasick finding explained |
+| 3 | C3 | 10.00s | ~12s | ✅ |
+| 4 | C4 | 10.98s | ~12s | ✅ |
+| 5 | C5 | 9.99s | ~12s | ✅ |
+| 6 | C6 | 8.93s | ~12s | ✅ slightly short |
+| 7 | C7 | 11.06s | ~12s | ✅ |
+| 8 | C8 | 11.00s | ~12s | ✅ |
+| 9 | C9 | 13.47s | ~12s | ✅ |
+| 10 | C10 | 16.19s | ~12s | ⚠️ ~4s over; accounts for "awkward lag" region |
+| 11 | C11 | 11.08s | ~12s | ✅ |
+| 12 | C12 | 7.01s | ~18s | 🔴 Finale is shortest timed cue — needs more room |
+| 13 | C13 | 19.70s | ~15s | ⚠️ Long coda confirms "slow at the end" |
+| 14 | — | 1.28s | — | Show-end tap |
+
+**Key pacing notes:**
+- C1+C2 together = 46.5s = 26% of total runtime. Setup is heavyweight.
+- C2 at 24s is the dominant pacing problem. YAML should be verified — is the C2 section genuinely 480 ticks, or is the BOSSBAR duration mismatched?
+- C12 (The Finale) at 7s is the shortest timed section in the show. The biggest moment has the least time.
+- C13 coda at 19.7s runs longer than most sections — confirms "slow at the end."
+
+---
+
 ## Revision Log
 
 | Version | Date | Changes |
 |---------|------|---------|
 | 2.9.0 (R7) | 2026-03-25 | Altitude dramaturgy rewrite. Height withheld until C7. C2 hovers near ground (0–2b). C3–C6 climb slowly. C7 is the earned amp-9 lift. C8 joy burst fires below elevated player. C9 descent through fireworks. |
+| 2.9.0 (R7 test) | 2026-03-28 | In-game test completed. C9 y_offset confirmed. C9–end section "very effective." Major issues: C2 section too long (24s actual vs ~12s expected), levitation texture continuous through C7 (seasick), C12 finale too short (7s), C1 lighting bumps jarring. Mob spawning risk identified. Voice timing undirected. Full analysis in General Findings above. |
 | 2.8.1 (R6) | 2026-03-25 | Full aerial rewrite — player aloft from C2. 68 inline levitation events. C9 redesigned: descent through fireworks from above. |
 | 2.7.0 (R5) | 2026-03-24 | Per-cue BOSSBAR events (C1–C13). WEATHER clear at T=0. Levitation as primary staging. dragon growl → thunder. |
 
@@ -214,5 +268,12 @@ updated: 2026-03-25
 
 | Issue | Observed in | Status |
 |-------|-------------|--------|
-| Tick ranges are approximate — verify against YAML for precision | R7 pre-test | Open |
-| C9 firework y_offset direction vs. player altitude to confirm in-game | R7 pre-test | Open |
+| Tick ranges are approximate — verify against YAML for precision | R7 pre-test | Open — verify C2 actual section length (stopwatch shows 24s vs ~12s expected) |
+| C9 firework y_offset direction vs. player altitude to confirm in-game | R7 pre-test | ✅ **Closed** — confirmed working in R7 |
+| C2 levitation texture persists through ~C7 with no change — seasick | R7 debrief | Open |
+| C2 actual section length appears to be ~480 ticks (24s) not ~240 (12s) — verify YAML | R7 stopwatch | Open |
+| C12 (Finale) section appears to be only ~7s — too short for peak moment | R7 stopwatch | Open |
+| C10 running ~16s (4s over expected) — pacing lag region | R7 stopwatch | Open |
+| Mob spawning in dark location: hostile mobs accumulate below airborne player | R7 debrief | Open — mitigation: COMMAND doMobSpawning |
+| Voice timing not directed per-section — early/with/after/silent not specified | R7 debrief | Open — Direction to specify in next voice brief |
+| C1 TIME_OF_DAY multi-step reads as mechanical bumps not atmosphere | R7 debrief | Open — redesign in next Lighting pass |
