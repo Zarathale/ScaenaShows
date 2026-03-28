@@ -83,24 +83,57 @@ This helps departments calibrate their investment.]*
 
 ---
 
+## Calibration Priorities
+
+> What does this show give each department to practice? Name one pattern from the calibration
+> backlog per department. See `kb/departments/show-director/direction-briefing.md` for the full
+> backlog per department.
+
+| Department | Calibration Goal This Show |
+|---|---|
+| Lighting | *[e.g., `atmosphere.hold.midnight` — sustained dark section]* |
+| Sound | *[e.g., `bed.dark` + `button.arrival`]* |
+| Choreography | *[e.g., `sequence.arrive.hold` — one performer, full section hold]* |
+| Effects | *[e.g., hover texture variation — sustained aerial with section distinction]* |
+| Camera | *[e.g., pre-lift orientation timing — tick offset test]* |
+| Fireworks | *[e.g., `arrangement.punctuation` — single close-range rocket]* |
+| Wardrobe | *[e.g., `costume.ethereal` — invisible-body technique]* |
+| Set | *[e.g., `space.stage.marked` — confirm 9-mark grid]* |
+| Voice | *[e.g., timing mode test — specify before/with/after/silent per major beat]* |
+| Casting | *[e.g., `figure.companion` — Wolf or Allay in companion register]* |
+
+---
+
+## Voice Timing Directions
+
+> For every major physical beat, specify the timing relationship. ShowSprite does not default
+> to a mode — this is a Director call. See `kb/departments/show-director/direction-briefing.md
+> §Voice — calibration priorities` for mode definitions.
+
+| Beat | Timing Mode | Notes |
+|---|---|---|
+| *[e.g., player lift at C7]* | *[before / with / after / silent]* | *[optional note]* |
+
+---
+
 ## Department Briefings
 
 Brief statements to each department head. Each department records their response and decisions in `departments/[dept].md`.
 
-**Casting:** *[Who is on stage, if anyone. Or: "No performers in this show."]*
+**Casting:** *[Who is on stage, if anyone. Or: "No performers in this show." Flag any AI safety risks (Phantom, Warden, Creeper, Elder Guardian).]*
 
-**Wardrobe:** *[Appearance direction, if applicable. Or: "No wardrobe work in this show."]*
+**Wardrobe:** *[Appearance direction, if applicable. Or: "No wardrobe work in this show." Note if visual read depends on gapped variant/profession fields.]*
 
-**Choreography:** *[Movement brief — player movement, performer movement, flight/aerial scope.]*
+**Choreography:** *[Movement brief — player movement, performer movement, flight/aerial scope. Specify puppet vs. performer intent per entity.]*
 
-**Set:** *[Where this happens, what marks are needed, any spatial constraints.]*
+**Set:** *[Where this happens, what marks are needed, any spatial constraints. P1 scouting required before other departments begin — Environment Notes are the gate.]*
 
-**Camera:** *[Camera mode: full control / partial / player-free. Key orientation beats.]*
+**Camera:** *[Camera mode: full control / partial / player-free. Key orientation beats. List any beats requiring a camera assertion.]*
 
-**Lighting:** *[Opening light state, arc, key lighting moments, closing state.]*
+**Lighting:** *[Opening light state, arc, key lighting moments, closing state. Note weather changes — Sound must plan around rain bed.]*
 
-**Sound:** *[Opening audio state, key sound moments, looping layers, closing audio state.]*
+**Sound:** *[Opening audio state, key sound moments, looping layers, closing audio state. Confirm any weather changes filed with Sound.]*
 
-**Voice:** *[Text arc — mostly silent / dialogue-heavy / single-word punctuation. Key lines.]*
+**Voice:** *[Text arc — mostly silent / dialogue-heavy / single-word punctuation. Key lines. Timing modes specified in the Voice Timing Directions table above.]*
 
-**Stage Manager:** *[Block modifications? World-resident entities? COMMAND use? Any stop-safety concerns?]*
+**Stage Manager:** *[Block modifications? World-resident entities? COMMAND use? REDSTONE? Any stop-safety concerns? AI safety risks confirmed above?]*
