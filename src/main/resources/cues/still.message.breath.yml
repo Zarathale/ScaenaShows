@@ -1,9 +1,9 @@
-# grief.message.still
+# still.message.breath
 # A deliberate silence — three dark dots in the chat, and nothing else.
 # Not ellipsis-for-drama. Actual emptiness. The stage is holding its breath.
-# Use between movements, after a loss, or before something begins again.
+# Use between movements, in the pause before something begins again.
 # (See showsprite.context.md: "Can be still. Some of the best Sprite moments are <dark_gray>...</dark_gray>.")
-id: grief.message.still
+id: still.message.breath
 tags: [melancholic, serene, low, still, breath, transition, text-forward, flash, centered, subtle]
 timeline:
   - type: MESSAGE

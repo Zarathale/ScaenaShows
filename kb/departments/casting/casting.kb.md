@@ -98,7 +98,7 @@ as almost meditative.
 ### Figures of Weight and Authority
 
 **Iron Golem**
-Large, slow, protector. Mourns dead villagers by placing poppies. Register: loyalty, grief as
+Large, slow, protector. Mourns dead villagers by placing poppies. Register: loyalty, weight as
 witness, the protector who outlived what it protected. A single Iron Golem standing motionless
 in a quiet scene carries enormous emotional weight without any YAML at all beyond the spawn.
 One of the most powerful solo casting choices available. Always use puppet state.
@@ -133,8 +133,8 @@ that the player is aware of. **AI-released Phantoms will actively swoop and deal
 Show Director sign-off.**
 
 **Vex**
-Tiny, phasing, ghost-form, sword-carrying. Register: sorrow made small, fragile grief with an
-edge. A chorus of Vex circling silently overhead reads as grief made visible. Phases through blocks
+Tiny, phasing, ghost-form, sword-carrying. Register: sorrow made small, fragile shadow with an
+edge. A chorus of Vex circling silently overhead reads as shadow made visible. Phases through blocks
 when AI is enabled, making pathfinding unreliable — use puppet state for anything requiring
 placement.
 
@@ -254,7 +254,7 @@ all subsequent targeting, and optionally removes it at show end.
 - No facing/yaw control at spawn — entity spawns with default orientation; use FACE immediately after if orientation matters
 
 **Storytelling contexts:**
-- An Iron Golem spawned at T=0 and never given another instruction — just standing there — can anchor a quiet grief scene without any other work
+- An Iron Golem spawned at T=0 and never given another instruction — just standing there — can anchor a still, weighted scene without any other work
 - Spawn a Wolf, immediately puppet it, have it sit facing the player's position: the devoted companion who was there before you arrived
 - Spawn multiple Allays with slight offset variance to create a small chorus of joy at a celebration moment
 
@@ -502,7 +502,7 @@ A small creature in puppet state, close to the player. Allay (stationary, near) 
 Wolf. The creature that chose to stay.
 
 **When the Director says "overwhelming":**
-A group — many entities, a chorus. Allays for overwhelming joy; Vex for overwhelming grief;
+A group — many entities, a chorus. Allays for overwhelming joy; Vex for overwhelming shadow;
 bats for overwhelming unease. Scale is the instrument.
 
 **When the Director says "ancient" or "heavy":**
@@ -533,7 +533,7 @@ this casting choice will land." Don't silently substitute.
 this?" but "what entity carries this meaning into the scene for free, before a single other event
 fires?"
 
-**The mob's nature is the first script.** An Iron Golem doesn't need choreography to read as grief.
+**The mob's nature is the first script.** An Iron Golem doesn't need choreography to read as weight.
 A sitting Wolf doesn't need dialogue to read as devotion. Cast the entity that already *is* what
 the scene needs, and then layer only what's necessary.
 
@@ -563,6 +563,20 @@ The director and Wardrobe both need to know.
 design independently. Escalate to the Show Director when: a casting choice conflicts with the arc
 established in the brief; a performer's natural behavior is a safety risk; or the scene requires
 a capability that is currently gapped and no workaround serves the creative intent.
+
+---
+
+## Dramatic Archetypes
+
+Casting's "patterns" are dramatic registers — what a mob communicates by its nature before any choreography fires. These are not configurations to calibrate; they are framing lenses to apply at casting time.
+
+**`figure.companion`** — Loyal presence. Devotion, proximity, the one who chose to stay. Wolf, Allay, Cat. Works best in intimate scenes and close placement. Reads as companion without any additional work when puppeted and still.
+
+**`figure.authority`** — Weight and permanence. Presence, protection, scale. Iron Golem, Villager elder. Most powerful when motionless — no choreography required. One standing Iron Golem at T=0 is a complete performance.
+
+**`figure.shadow`** — Strange, uncanny, edge-of-frame. Enderman, Vex, Phantom. Use at a distance or as chorus. Rarely solo — the register is peripheral unease, not confrontation. Puppet state essential for Enderman (teleports when AI is active).
+
+*No dedicated calibration rounds required for these archetypes — register is inherent to the mob type. Calibration for casting focuses on placement distance (near vs. far) and group scale, which are documented in Choreography.*
 
 ---
 

@@ -9,7 +9,7 @@ status: active
 ## Brief Received
 
 > Opening audio state: silence (music killed at T=0). Key sound moments: thunder for
-> arrival (C7), level-up for joy (C8), cave ambient for grief/mystery (C5). Looping layers:
+> arrival (C7), level-up for joy (C8), cave ambient for shadow/mystery (C5). Looping layers:
 > none held across sections. Closing audio state: coda resolves.
 
 ---

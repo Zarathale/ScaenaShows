@@ -117,8 +117,8 @@ Show ends while you're still airborne — you land on your own after the stage g
 
 ## C5  ·  1:04  ·  CAVE SOUND  *(near ground)*
 
-**Cue ID:** `grief.sound.cave`
-**Boss bar:** `C5 — Cave Sound · grief.sound.cave` (PURPLE, 200t / ~10s)
+**Cue ID:** `still.sound.cave`
+**Boss bar:** `C5 — Cave Sound · still.sound.cave` (PURPLE, 200t / ~10s)
 **Tags:** `sound-driven` `melancholic` `mysterious` `no visuals`
 
 **What happens:**

@@ -78,9 +78,9 @@ Last audit: 2026-03-26. Five changes were proposed.
 | coda.* | 4 | bloom_fade, curtain.quiet, ember_last, sound.resolve |
 | fx.* | 5 | confetti_burst, levitate_and_drift, levitate_pulse, levitate_surge, lift_to_height |
 | gracie.* | 5 | chord.low_ominous, glissando.accent, glissando.dreamy, plink.fifth, plink.fourth |
-| grief.* | 4 | bloom.cold, message.still, particle.ash, sound.cave |
+| still.* | 4 | bloom.cold, message.still, particle.ash, sound.cave |
 | mood.* | 2 | arrival, wonder.single — **thin** |
-| motif.* | 5 | arrival.bell, grief.chord, unease.descend, warmth.banjo, wonder.chime |
+| motif.* | 5 | arrival.bell, still.chord, unease.descend, warmth.banjo, wonder.chime |
 | overture.* | 1 | theme_teaser — **thin** |
 | ramp.* | 4 | particle.gather, pulse.cool, pulse.warm, sound.build |
 | world.* | 4 | time.dawn, time.golden, time.night, weather.rain |

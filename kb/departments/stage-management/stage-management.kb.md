@@ -139,7 +139,7 @@ Kendra enforces this convention. If a new cue is authored without a conforming n
 
 **Naming authority:** Departments propose names. Stage Management approves or adjusts for consistency with the existing taxonomy.
 
-> **Note on `grief.*` cue family:** The existing cue library includes 4 cues named `grief.*` (cold bloom, still message, particle ash, cave sound). These predate the current creative direction. Cue family rename is a pending decision — flagged for the next cue library review session. Do not author new cues in the `grief.*` family until renamed. Use `atmos.*` or `world.*` alternatives for similar atmospheric purposes.
+> **Note on `still.*` cue family:** Renamed from `grief.*` on 2026-03-28. Current family: `still.sound.cave`, `still.bloom.cold`, `still.particle.ash`, `still.message.breath`. Motif: `motif.still.chord`. Use for quiet weight, stillness, and depth registers.
 
 ### Show-Internal Cue Numbers (in the run sheet and in briefings)
 

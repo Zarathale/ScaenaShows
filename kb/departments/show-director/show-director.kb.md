@@ -540,7 +540,7 @@ it does not update after authoring begins.
 - What role do fireworks play in this show's arc? If absent, confirm explicitly.
 - Are there specific firework beats that need to land at a precise tick (e.g., tied to a movement peak, a voice line, a sound hit)?
 - What is the player's altitude during firework sequences? Mira needs this to set y_offset correctly.
-- Any color or shape language in the tone phrase that Fireworks should interpret? (e.g., "cold" → cool blues/whites; "grief" → slow singles rather than bursts)
+- Any color or shape language in the tone phrase that Fireworks should interpret? (e.g., "cold" → cool blues/whites; "shadow" → slow singles rather than bursts)
 - Does the fireworks arc interact with Effects' altitude plan? Coordinate before YAML.
 
 ### Voice — Intake

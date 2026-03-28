@@ -103,9 +103,9 @@ removed from `shows/` when convenient — or left as-is; they're not causing har
 | coda.* | 4 | Mid | bloom fade, quiet curtain, ember last, sound resolve |
 | fx.* | 5 | Mid | confetti burst, levitate drift/pulse/surge, lift to height |
 | gracie.* | 5 | Mid | Sound motifs — chord, glissando x2, plink x2 |
-| grief.* | 4 | Mid | cold bloom, still message, particle ash, cave sound |
+| still.* | 4 | Mid | cold bloom, still message, particle ash, cave sound |
 | mood.* | 2 | **Thin** | Only mood.arrival and mood.wonder.single |
-| motif.* | 5 | Mid | arrival bell, grief chord, unease descend, warmth banjo, wonder chime |
+| motif.* | 5 | Mid | arrival bell, still chord, unease descend, warmth banjo, wonder chime |
 | overture.* | 1 | **Thin** | Only overture.theme_teaser |
 | ramp.* | 4 | Mid | gather particle, cool pulse, warm pulse, sound build |
 | world.* | 4 | Mid | dawn/golden/night time, weather rain |

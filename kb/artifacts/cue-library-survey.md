@@ -204,7 +204,7 @@ into other shows.
 | `tension` | Moderate | Implicitly: `mood.arrival` | Missing: sustained tension (not a flash) |
 | `wonder` | Strong | `mood.wonder.single` | Understocked — needs scale variants |
 | `celebration` (sustained) | Moderate | `fx.confetti_burst` | Needs multi-beat celebration sequences |
-| `grief` / `melancholy` | Moderate | `atmos.lights.cool_bloom` (weak) | Near-total gap — the cave ambient line in showsprite.context.md has no cue yet |
+| `shadow` / `stillness` | Moderate | `atmos.lights.cool_bloom` (weak) | Near-total gap — the cave ambient line in showsprite.context.md has no cue yet |
 | World (time/weather) | Moderate | ❌ none | No TIME_OF_DAY or WEATHER cues at all |
 | Stage (movement) | Low | `fx.levitate_and_drift` | No FACE, CROSS_TO, RETURN_HOME cues |
 
@@ -214,7 +214,7 @@ into other shows.
 
 **Under-served:** `tense`, `melancholic`, `nostalgic`, `intimate`, `triumphant`, `serene`
 
-**Absent:** `grief`, `mysterious` (only barely), `reverent` (only one cue)
+**Absent:** `shadow`, `mysterious` (only barely), `reverent` (only one cue)
 
 **Added 2026-03-25:** `whimsical` now served by Gracie plink cues; `ominous` now served by `gracie.chord.low_ominous`
 
@@ -313,16 +313,16 @@ Wonder is quiet. The biggest mistake is to make it loud.
 
 ---
 
-### GRIEF — Melancholy (4 cues)
+### STILL — Melancholy (4 cues)
 
-Grief cues must earn their weight. These are the most demanding to author correctly.
+Still cues must earn their weight. These are the most demanding to author correctly.
 
 | ID | Description |
 |---|---|
-| `grief.sound.cave` | Cave ambient at 0.55 pitch, low volume — this is what melancholy sounds like here |
-| `grief.particle.ash` | Dark gray particles drifting down — the world is letting something go |
-| `grief.message.still` | `<dark_gray>...</dark_gray>` followed by silence — deliberate emptiness |
-| `grief.bloom.cold` | Minimal cool_bloom, single event, half the usual count — light in a dark room |
+| `still.sound.cave` | Cave ambient at 0.55 pitch, low volume — this is what melancholy sounds like here |
+| `still.particle.ash` | Dark gray particles drifting down — the world is letting something go |
+| `still.message.breath` | `<dark_gray>...</dark_gray>` followed by silence — deliberate emptiness |
+| `still.bloom.cold` | Minimal cool_bloom, single event, half the usual count — light in a dark room |
 
 ---
 
@@ -347,7 +347,7 @@ World cues change the stage itself. Use once per show, at a defining moment.
 | `world.time.night` | TIME_OF_DAY to midnight (18000) — darkness as a set change |
 | `world.time.dawn` | TIME_OF_DAY to dawn (23000) — the world wakes |
 | `world.time.golden` | TIME_OF_DAY to golden hour (~12000) — warmth and late afternoon |
-| `world.weather.rain` | WEATHER rain — the ceiling drops; intimacy or grief |
+| `world.weather.rain` | WEATHER rain — the ceiling drops; intimacy or shadow |
 
 ---
 
@@ -357,7 +357,7 @@ These gaps are blocking show authoring most immediately:
 
 1. **`coda.*` cues** — every show being written has no clean ending tool
 2. **`ramp.*` cues** — buildup is the most compositionally useful family; nothing exists
-3. **`grief.*` cues** — the cave-ambient line in the context doc has no cue; this is a named gap
+3. **`still.*` cues** — the cave-ambient line in the context doc has no cue; this is a named gap
 4. **`world.time.*` + `world.weather.rain`** — shows cannot shift the world's palette without these
 5. **Retroactive `tags:` on all 8 production cues** — needed before ShowSprite can surface them by function
 
@@ -368,7 +368,7 @@ These gaps are blocking show authoring most immediately:
 - [x] Add `tags:` to all 8 production cues (retroactive, non-breaking) — **done 2026-03-24**
 - [x] Write `coda.*` family (4 cues) — `coda.curtain.quiet`, `coda.ember_last`, `coda.sound.resolve`, `coda.bloom_fade` — **done 2026-03-24**
 - [x] Write `ramp.*` family (4 cues) — `ramp.pulse.warm`, `ramp.pulse.cool`, `ramp.sound.build`, `ramp.particle.gather` — **done 2026-03-24**
-- [x] Write `grief.*` family (4 cues) — `grief.sound.cave`, `grief.particle.ash`, `grief.message.still`, `grief.bloom.cold` — **done 2026-03-24**
+- [x] Write `still.*` family (4 cues) — `still.sound.cave`, `still.particle.ash`, `still.message.breath`, `still.bloom.cold` — **done 2026-03-24**
 - [x] Write `world.time.*` + `world.weather.rain` (4 cues) — **done 2026-03-24**
 - [ ] Write `peak.*` family (5 cues) — grand salvo, sky burst, lightning salvo, title moment, player ascent
 - [ ] Write `celebration.*` family (4 cues) — fanfare, shower, salvo, sound-only cheer
@@ -389,7 +389,7 @@ These gaps are blocking show authoring most immediately:
 | coda | 4 | curtain.quiet, ember_last, sound.resolve, bloom_fade |
 | fx | 2 | confetti_burst, levitate_and_drift |
 | gracie | 5 | glissando.dreamy, glissando.accent, chord.low_ominous, plink.fourth, plink.fifth |
-| grief | 4 | sound.cave, particle.ash, message.still, bloom.cold |
+| still | 4 | sound.cave, particle.ash, message.still, bloom.cold |
 | mood | 2 | arrival, wonder.single |
 | overture | 1 | theme_teaser |
 | ramp | 4 | pulse.warm, pulse.cool, sound.build, particle.gather |

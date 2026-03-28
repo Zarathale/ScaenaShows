@@ -165,7 +165,7 @@ Best for chords, sustained textures, and underscore. Can carry melody but shine 
 
 | Sound ID | Timbre | Emotional register | Best pitch range |
 |----------|--------|-------------------|-----------------|
-| `minecraft:block.note_block.pling` | Electric piano; warm, intimate | Contemplative, jazz, interior, grief | Mid (F#4–D5) |
+| `minecraft:block.note_block.pling` | Electric piano; warm, intimate | Contemplative, jazz, interior, shadow | Mid (F#4–D5) |
 | `minecraft:block.note_block.iron_xylophone` | Harder, colder; more mechanical than xylophone | Precision, structure, slightly unsettling | Mid |
 | `minecraft:block.note_block.guitar` | Warm strum with body | Earthiness, narrative, comfort, folk | Low-mid |
 | `minecraft:block.note_block.banjo` | Bright twang; character | Folk warmth, community, the ordinary world | Mid |
@@ -252,7 +252,7 @@ A melody is a sequence of SOUND events at different pitches, spaced across ticks
 | 4 ticks | 0.2s | Brisk — active, conversational |
 | 6 ticks | 0.3s | Moderate — walking pace, narrative |
 | 8 ticks | 0.4s | Deliberate — weight, ceremony |
-| 12–16 ticks | 0.6–0.8s | Slow — contemplative, grief, the deep |
+| 12–16 ticks | 0.6–0.8s | Slow — contemplative, still, the deep |
 
 For instruments with short decay (harp, chime, bell), notes spaced 3–4 ticks apart will slightly
 overlap in their decay, creating a sense of legato. Notes spaced 8+ ticks apart read as separate,
@@ -337,7 +337,7 @@ makes it recognizable and reusable.
 |---|---|---|
 | **Rising step** | Two or three ascending notes, stepwise | Arrival, warmth, opening |
 | **Rising leap** | Two notes with a large interval (fifth, octave) | Surprise, announcement, joy |
-| **Descending step** | Stepwise descent, usually chromatic | Unease, grief, weight, descent |
+| **Descending step** | Stepwise descent, usually chromatic | Unease, shadow, weight, descent |
 | **Arch** | Up then down (or down then up) | Journey, return, completion |
 | **Neighbor** | Root → one step up or down → return | Restlessness, questioning, unease |
 | **Pedal point** | Repeated same pitch with varying upper notes | Insistence, inevitability, tension |
@@ -397,17 +397,17 @@ Call them via `type: CUE` — do not re-author inline when the library version s
 
 ---
 
-### `motif.grief.chord`
+### `motif.still.chord`
 
 **Shape:** Sustained A minor chord (A4 + C5 + E5 simultaneously). Pling instrument.
-**Register:** Quiet devastation. The room's response to loss. Not loud — interior.
+**Register:** Quiet depth. The room's response to a weighted moment. Not loud — interior.
 **Duration:** `max_duration_ticks: 60` (3 seconds). A single color, held until it fades.
-**When to use:** After a grief peak, not during it. The chord is the room exhaling. Fire after the Voice Director's text has landed and silence has held for at least 20 ticks — the chord confirms the weight, it doesn't compete with it.
+**When to use:** After a still peak, not during it. The chord is the room exhaling. Fire after the Voice Director's text has landed and silence has held for at least 20 ticks — the chord confirms the weight, it doesn't compete with it.
 
 ```yaml
 - at: [T]
   type: CUE
-  cue_id: motif.grief.chord
+  cue_id: motif.still.chord
 ```
 
 ---
@@ -505,7 +505,33 @@ cycle — only at brief. YAML motifs can be revised freely between runs; circuit
 deployment, and arrangement design independently. Escalate to the Sound Designer when a musical
 decision conflicts with the established audio arc. Escalate to the Show Director when a musical
 moment requires a tone call that changes what a scene *means* (music can change a scene from
-grief to acceptance without a word of text changing — that is a directorial decision).
+shadow to light without a word of text changing — that is a directorial decision).
+
+---
+
+## Calibration Backlog — Motif Library
+
+**Existing confirmed motifs:** `motif.arrival.bell`, `motif.still.chord`, `motif.unease.descend`, `motif.warmth.banjo`, `motif.wonder.chime`
+
+**Proposed additions** — 📋 Proposed = named, not yet composed or tested:
+
+---
+
+### `motif.joy` — 📋 Proposed
+**Intent:** Quick, upward, celebratory phrase. The musical response to something working out. Short — 2–3 notes max. Pling or harp instrument.
+**Confirmed when:** Reads as joy, not wonder. Distinguishable from `motif.wonder.chime` (which is open and suspended — joy is resolved and bright).
+
+---
+
+### `motif.tension` — 📋 Proposed
+**Intent:** Irregular rhythm, unresolved. Something is wrong or building. Does not resolve. Adjacent to `motif.unease.descend` but distinct — tension is rhythmic instability, unease is melodic descent.
+**Confirmed when:** Player feels unresolved anticipation without the melodic "sinking" quality of unease.
+
+---
+
+### `motif.close` — 📋 Proposed
+**Intent:** Settling, breath-out phrase. The show coming to rest. Slow, low, resolves downward. Pairs with `button.close` from Sound.
+**Confirmed when:** Reads as a genuine ending, not a mid-show pause. Should feel like exhaling.
 
 ---
 

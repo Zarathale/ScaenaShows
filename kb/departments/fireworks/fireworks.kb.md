@@ -344,7 +344,7 @@ When the Show Director says a tone phrase, Mira translates it into detonation ch
 
 **"Rhythmic"** → ALTERNATE power_variation on a chase circle at short interval_ticks. The high/low alternation creates a pulse that the ear and eye track together.
 
-**"Warm" vs. "Cool"** → palette first. Warm gold presets (scae_*) for earned, ceremonial, homey moments. Pride palette or custom GRADIENT blue→cyan for wonder, strangeness, grief-adjacent.
+**"Warm" vs. "Cool"** → palette first. Warm gold presets (scae_*) for earned, ceremonial, homey moments. Pride palette or custom GRADIENT blue→cyan for wonder, strangeness, shadow-adjacent.
 
 ---
 
@@ -359,6 +359,50 @@ When the Show Director says a tone phrase, Mira translates it into detonation ch
 **Pattern choice is compositional, not structural.** A CIRCLE at radius 8 and a RANDOM with radius 8 fire the same number of rockets into roughly the same space — but CIRCLE is a ceremony and RANDOM is a celebration. The geometry of the pattern is an artistic choice, not a technical default.
 
 **Escalation discipline:** Mira resolves pattern design and preset selection independently. She escalates to the Show Director when a pyrotechnic choice requires another department to change what a beat is — for example, if the designed burst altitude requires Effects to change player position, or if the required color palette is outside the current preset library's range.
+
+---
+
+## Calibration Backlog
+
+Fireworks has five instrument types fully documented (SINGLE, CIRCLE, LINE, FAN, RANDOM). The calibration gap is named show-ready *arrangements* — specific configurations with tested parameters and storytelling intent. 📋 Proposed = named but not yet tested. ✅ Confirmed = tested, parameters known.
+
+The `descent-through-fireworks` arrangement is the one confirmed pattern to date, documented in the Effects KB.
+
+---
+
+### `arrangement.punctuation` — 📋 Proposed
+**Intent:** A single FIREWORK_RANDOM or FIREWORK (single), intimate use. One rocket, one moment. The most restrained tool in the department.
+**Confirmed when:** Tested at close range (radius 4–8 blocks) and distant range (radius 16–20). Parameters that produce "one punctuation mark" vs. "background event" are labeled.
+
+---
+
+### `arrangement.crown` — 📋 Proposed
+**Intent:** FIREWORK_CIRCLE with chase, radius 6–10 blocks, surrounding the player. The coronation feeling — the player at the center of something.
+**Confirmed when:** Chase direction (FL vs. LF) tested. Radius that reads as "surrounding" vs. "distant" confirmed. Optimal count and power for the register documented.
+
+---
+
+### `arrangement.sweep` — 📋 Proposed
+**Intent:** FIREWORK_LINE sweep across the stage — a moving wall or wave of fire crossing the scene. Direction, speed, and count calibrated for theatrical sweep vs. busy clutter.
+**Confirmed when:** At least two reference sweeps tested (fast/sparse vs. slow/dense). Angle convention confirmed against compass bearing.
+
+---
+
+### `arrangement.burst.joy` — 📋 Proposed
+**Intent:** FIREWORK_RANDOM scatter — celebration, abundance, the sky full of color. Not a directed pattern, a field. Archetype sampler C8 is the reference context.
+**Confirmed when:** Count and radius that reads as "joyful abundance" without performance lag identified. C9 of the archetype sampler is the closest existing reference.
+
+---
+
+### `arrangement.finale.intimate` — 📋 Proposed
+**Intent:** Layered close-range burst for a small but genuine culmination. Fewer than 15 total rockets. Designed for a scene where the moment is real but not overwhelming.
+**Confirmed when:** Player reads the burst as finale without it overshadowing a quieter narrative beat.
+
+---
+
+### `arrangement.finale.full` — 📋 Proposed
+**Intent:** The full climactic arrangement — multi-type, multi-event, all presets live at once. The archetype sampler C9 fireworks are a close reference; a confirmed "full finale" is larger and designed as a peak, not a descent sequence.
+**Confirmed when:** Full arrangement tested in-game without lag. Optimal tick spacing between event types to avoid server spike documented.
 
 ---
 

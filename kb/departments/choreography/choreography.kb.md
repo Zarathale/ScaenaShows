@@ -459,7 +459,7 @@ Not every entity type works equally well as a performer. These notes cover movem
 | VILLAGER | Good — reliable on flat terrain | Clean and still | Named performers, witness figures | Slow down with ENTITY_SPEED 0.3 for dignified crosses; profession set via SPAWN_ENTITY variant (⚠️ gapped) |
 | WOLF (tamed) | Good — follows, loyal AI | Still and attentive | Companion, devotion figure | AI performer mode: wolf turns to look at things genuinely; tame before show via COMMAND |
 | IRON_GOLEM | Slow, wide pathfinding | Massive, still presence | Guardian, monument | Hard to cross quickly; use for deliberate slow approaches (ENTITY_SPEED 0.15); rotate with FACE for orientation |
-| VEX | Phases through blocks — pathfinding unreliable | Floats in place | Aerial chorus, grief figures | Best as puppet; ENTITY_VELOCITY upward + slow_falling for floating arc; avoid crossing through walls |
+| VEX | Phases through blocks — pathfinding unreliable | Floats in place | Aerial chorus, shadow figures | Best as puppet; ENTITY_VELOCITY upward + slow_falling for floating arc; avoid crossing through walls |
 | ALLAY | Good — hovers, follows items | Hovers near spawn point | Joy chorus, guide | AI mode: genuine hovering curiosity; puppet: still floating presence; use group for swarming joy |
 | BAT | Erratic in AI mode | Still but twitches | Background atmosphere | Best as captured chorus (CAPTURE_ENTITIES); enable AI for genuine cave atmosphere; terrible as precision performer |
 | FOX | Sneaks, unpredictable | Still and watchful | Trickster, observer | ENTITY_SPEED 0.2 + AI enabled = slow stealthy approach; fast = bounding |
@@ -617,6 +617,56 @@ Bukkit pathfinder arrival is not guaranteed. On complex terrain, mobs may get st
 ### Limitation: No ORBIT primitive
 
 Smooth continuous circular movement is not a first-class event. Compose orbits from a sequence of CROSS_TO events targeting marks arranged around a circle (8–12 marks = one approximate orbit).
+
+---
+
+## Calibration Backlog
+
+📋 Proposed = named, not yet tested in a dedicated round. ✅ Confirmed = tested, parameters known.
+
+**Note on mob movement:** Mob pathfinding (CROSS_TO on mob targets) does not guarantee smooth arrival. Choreography patterns work with what the engine actually does well: placement, AI state, and timing — not transit choreography. Named patterns below reflect this constraint.
+
+---
+
+### `placement.near` — 📋 Proposed
+**Intent:** Entity spawns within 3–5 blocks of the player. Immediate presence. The performer is already there when the player notices them.
+**Confirmed when:** Entity spawns reliably at close range without clipping into the player. Presence registers before any other event fires.
+
+---
+
+### `placement.far` — 📋 Proposed
+**Intent:** Entity spawns 10–15 blocks away. Visible but distant — there, but not yet here.
+**Confirmed when:** Player sees the entity clearly. Distance reads as intentional separation, not just background.
+
+---
+
+### `placement.wing` — 📋 Proposed
+**Intent:** Entity spawns at a named wing mark (off the performance area), ready to enter. Not yet visible to the player or at the edge of visibility.
+**Confirmed when:** Entity at wing mark does not register as part of the scene until an ENTER event fires.
+
+---
+
+### `sequence.arrive.hold` — 📋 Proposed
+**Intent:** Entity spawns (at near or far placement) and holds position in puppet state. No movement. Presence only.
+**Confirmed when:** Entity does not drift or pathfind. Holds visually still for the full section.
+
+---
+
+### `sequence.arrive.wander` — 📋 Proposed
+**Intent:** Entity spawns, holds briefly (puppet), then AI is released. Begins wandering naturally with no further direction.
+**Confirmed when:** Transition from puppet to AI reads as the entity "coming alive." Wander feels organic, not erratic.
+
+---
+
+### `sequence.arrive.hold.exit` — 📋 Proposed
+**Intent:** Entity spawns, holds position throughout a section, then despawns on cue (DESPAWN_ENTITY with optional particle burst). The visitor who was there and is now gone.
+**Confirmed when:** Despawn timing is precise to the cue. Particle burst (if used) reads as exit, not destruction.
+
+---
+
+### `sequence.arrive.wander.exit` — 📋 Proposed
+**Intent:** The full arc. Entity spawns → brief hold → AI released → wanders freely for a section → despawns on cue. The complete performer lifecycle.
+**Confirmed when:** Each phase transition is readable. Wander phase feels purposeful, not aimless. Exit is clean.
 
 ---
 

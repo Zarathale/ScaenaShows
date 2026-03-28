@@ -455,6 +455,72 @@ conflicts with another show's expected start state — Stage Manager arbitrates.
 
 ---
 
+## Calibration Backlog
+
+Items the Lighting department wants to develop mastery over. 📋 Proposed = named but not yet tested in a dedicated calibration round. ✅ Confirmed = tested, parameters known, ready to use.
+
+---
+
+### `houselights.down.snap` — 📋 Proposed
+**Intent:** Single TIME_OF_DAY cut to full night. Deliberate darkness, reads as a choice.
+**Confirmed when:** Player perceives a clean houselights-down, not a jarring snap.
+
+---
+
+### `houselights.down.gradual` — 📋 Proposed
+**Intent:** Multi-step sky fade from afternoon to night — atmospheric not mechanical. Minimum steps and tick spacing so no individual bump is perceptible. The R7 C1 finding is the failure reference.
+**Confirmed when:** Player experiences dimming as atmosphere. No individual step registers as a discrete command.
+
+---
+
+### `houselights.up.dawn` — 📋 Proposed
+**Intent:** Night to full day — the earned dawn. Showcase.02 model. The culminating lighting beat of a long dark arc.
+**Confirmed when:** Dawn reads as earned resolution, not a time snap.
+
+---
+
+### `houselights.up.snap` — 📋 Proposed
+**Intent:** Instant daylight — shock/reveal. The world suddenly bright.
+**Confirmed when:** Player registers the snap as dramatic, not as a reset.
+
+---
+
+### `atmosphere.hold.dusk` — 📋 Proposed
+**Intent:** World locked at ~13000 (dusk). Liminal, permanently between states — uncanny register.
+**Confirmed when:** Player feels the world is suspended, not mid-transition.
+
+---
+
+### `atmosphere.hold.midnight` — 📋 Proposed
+**Intent:** World locked at 18000. Sustained deep night throughout the show.
+**Confirmed when:** Darkness reads as ambient condition, not event.
+
+---
+
+### `storm.in` — 📋 Proposed
+**Intent:** Clear to storm. Perceptual onset of weather — how long does the sound transition take? Does it read as weather arriving or just ambient noise changing?
+**Confirmed when:** Storm onset feels motivated, not mechanical. Time from event fire to player perception measured.
+
+---
+
+### `storm.out` — 📋 Proposed
+**Intent:** Storm to clear. Resolution. The ceiling lifts.
+**Confirmed when:** Clearing reads as relief, not just state reset.
+
+---
+
+### `lightning.strike` — 📋 Proposed
+**Intent:** Single cosmetic strike at a specific offset. No damage, no fire.
+**Confirmed when:** Strike fires at intended position. World unchanged. Player startles, does not take damage.
+
+---
+
+### `lightning.beat` — 📋 Proposed
+**Intent:** Strike timed to a specific dramatic beat — same tick as a levitation event, sound hit, or entrance. R7 observation: lightning "fully pulls focus to the moment." What tick offset makes the strike feel causal vs. coincidental?
+**Confirmed when:** Player attributes the lightning to what just arrived, not as weather noise.
+
+---
+
 ## Capability Status Summary
 
 | Instrument | Status | Notes |

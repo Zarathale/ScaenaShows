@@ -197,7 +197,7 @@ moods deliberately — from wonder to melancholy to joy — is an experience.
 Mood-setting tools in order of impact:
 1. **Time of day** — overnight, dawn, noon, dusk shift the entire world's palette
 2. **Weather** — rain drops the ceiling; clear lifts it
-3. **Sound** — pitch and volume change meaning; cave ambient at 0.55 pitch is grief
+3. **Sound** — pitch and volume change meaning; cave ambient at 0.55 pitch is the deep
 4. **Fireworks** — specific presets carry specific weight
 5. **Particle effects** — persistent vs. momentary; foreground vs. ambient
 

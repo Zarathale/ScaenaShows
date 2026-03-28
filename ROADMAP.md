@@ -62,11 +62,40 @@ Current demo shows:
 
 | Show | Purpose | Status |
 |------|---------|--------|
-| `demo.archetype_sampler` | 13-cue emotional arc archetypes | R7 built (v2.9.0); in-game test pending |
+| `demo.archetype_sampler` | 13-cue emotional arc archetypes | R7 tested 2026-03-28; findings filed to KBs; R8 not yet scheduled |
 | `demo.flight_modes` | Five-section flight test | Complete |
 | `demo.levitate_calibration` | Levitation physics — first pass | Complete; findings in Effects KB |
 | `demo.levitate_calibration_2` | Wide-range amplitude calibration | Complete; findings in Effects KB |
 | `demo.levitate_calibration_3` | Hover/climb/descent confirmation | Complete; hover at 28t cycle confirmed |
+
+---
+
+## Calibration Status — Pattern Library by Department
+
+*Last updated: 2026-03-28. Confirmed = tested in-game, parameters known. Proposed = named but not yet tested. Cal. rounds = dedicated demo shows run for this department.*
+
+| Department | Confirmed | Proposed | Cal. Rounds | Status |
+|------------|-----------|----------|-------------|--------|
+| Camera | 4 | 0 | 0 | 📋 Patterns confirmed; backlog written; no dedicated round yet |
+| Casting | — | — | 0 | ✅ Dramatic archetypes documented; no calibration queue needed |
+| Choreography | 0 | 7 | 0 | 📋 Backlog written; 7 sequences proposed; no round yet |
+| Effects | 2 | 0 | 3 | ✅ Most calibrated dept; hover cycle confirmed; backlog active |
+| Fireworks | 0 | 6 | 0 | 📋 Backlog written; 6 arrangements proposed; no round yet |
+| Lighting | 4 arc patterns | 10 | 0 | 📋 Arc vocabulary confirmed via R7; backlog written; 10 patterns proposed |
+| Set | 0 | 3 | 0 | 📋 Backlog written; 3 spatial configurations proposed |
+| Sound | 0 | 8† | 0 | 📋 Backlog written; beds/buttons/motifs proposed; no round yet |
+| Stage Mgmt | N/A | N/A | N/A | ✅ Operational; calibrates through show builds |
+| Voice | 1 framework | 5 line types | 0 dedicated | 📋 Timing modes confirmed (R7); line sequence types proposed |
+| Wardrobe | 0 | 4 | 0 | 📋 Backlog written; 4 costume configurations proposed |
+| Show Director | N/A | N/A | N/A | ✅ Meta/structural; calibrates through show direction |
+
+†Sound proposed patterns: 2 beds + 3 buttons (dept KB) + 3 motifs (music-director KB).
+
+**Reading the table:**
+- ✅ Active — confirmed patterns exist or no calibration queue needed
+- 📋 Proposed — backlog written, patterns named and waiting for a dedicated round
+- ⚠️ Partial — some work done, backlog incomplete
+- ❌ Not started — capability documented, no calibration work begun
 
 ---
 
@@ -145,5 +174,5 @@ This begins only when the Showcases have earned it. The high bar is the point �
 |----|------|----------|-------------|
 | SCENA-002 | Plugin | Low | `GLOW` + TAB 5.x API coordination — defer until GLOW needed in production |
 | SCENA-006 | YPG | High | `intro.young_persons_guide` Sprite narration rewrite — do before YPG pre-production |
-| SCENA-007 | Effects Dept | Medium | Calibration backlog + patterns section — Effects is the thinnest KB with highest player-body impact |
-| SCENA-008 | Stage Mgmt Dept | Medium | KB scope clarity: Stage Management = show execution, prompt book, run sheets, YAML authorship. Production Manager functions included. |
+| ~~SCENA-007~~ | ~~Effects Dept~~ | ~~Medium~~ | ~~Calibration backlog + patterns section~~ — ✅ Closed 2026-03-28. All 12 depts now have calibration backlogs or archetype documentation. |
+| ~~SCENA-008~~ | ~~Stage Mgmt Dept~~ | ~~Medium~~ | ~~KB scope clarity~~ — ✅ Closed 2026-03-28. Stage Management KB v3.0 covers both SM and Production Manager roles fully. |

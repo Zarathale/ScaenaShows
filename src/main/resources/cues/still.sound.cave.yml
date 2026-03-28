@@ -1,10 +1,10 @@
-# grief.sound.cave
-# Cave ambient at 0.55 pitch — this is what melancholy sounds like here.
+# still.sound.cave
+# Cave ambient at 0.55 pitch — the world breathing from below.
 # No visuals. The sound does all the work.
-# As noted in showsprite.context.md: "cave ambient at 0.55 pitch is grief."
+# As noted in showsprite.context.md: "cave ambient at 0.55 pitch is the deep."
 # v2: volume 0.35→0.60 — needs to be present enough to register without visual support.
 #     Pair with STOP_SOUND music earlier in the show so it has clear space.
-id: grief.sound.cave
+id: still.sound.cave
 tags: [melancholic, mysterious, tense, low, still, breath, transition, sound-driven, beat, centered, subtle, ambient]
 timeline:
   - type: SOUND

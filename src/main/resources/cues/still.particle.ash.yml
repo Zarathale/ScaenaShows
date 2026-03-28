@@ -1,8 +1,8 @@
-# grief.particle.ash
+# still.particle.ash
 # Ash particles drifting down — the world letting something go.
 # Continuous and slow. Does not call attention to itself; it accumulates.
 # Works as a sustained bed under narration or as a transition into silence.
-id: grief.particle.ash
+id: still.particle.ash
 tags: [melancholic, mysterious, serene, low, still, breath, coda, particle-bed, silent, scene, enveloping, subtle]
 timeline:
   - type: PARTICLE

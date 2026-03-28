@@ -95,7 +95,7 @@ YAML verified (2026-03-28): C2 is genuinely 460 ticks / ~23s. The 24s stopwatch 
 **Altitude:** ~7–9 blocks (HOVER, slight drift up)
 **Intention:** Sound arrives from below — the cave, the deep, something underneath.
 **Function:** Cave ambient sound ascends toward the player from below. The player is positioned above the source of the sound. The spatial relationship (player above, sound rising) is the storytelling.
-**Mechanics:** HOVER. Cave sound event (ascending from lower Y). ShowSprite: one or two lines about what's below. BOSSBAR C5.
+**Mechanics:** HOVER. `still.sound.cave` event. ShowSprite: one or two lines about what's below. BOSSBAR C5.
 **Watch question:** Does the cave sound feel like it's coming *up* toward the player, or just playing ambient? Is the player's position relative to the sound source legible?
 
 **Notes:** *(filled in after in-game test)*

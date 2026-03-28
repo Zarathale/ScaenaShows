@@ -458,11 +458,11 @@ timeline:
   # ═══════════════════════════════════════════════════════════════════
   #
   # HOVER at ~7 blocks. Cave sound comes from below — player is above it.
-  # The grief is underneath them now, not beside them.
+  # The deep is underneath them now, not beside them.
 
   - at: 1340
     type: BOSSBAR
-    title: "<light_purple>C5 — Cave Sound  ·  grief.sound.cave</light_purple>"
+    title: "<light_purple>C5 — Cave Sound  ·  still.sound.cave</light_purple>"
     color: PURPLE
     overlay: PROGRESS
     audience: broadcast
@@ -535,7 +535,7 @@ timeline:
     audience: participants
   - at: 1480
     type: CUE
-    cue_id: grief.sound.cave
+    cue_id: still.sound.cave
 
   # ═══════════════════════════════════════════════════════════════════
   # C6: PAUSE  (T1540–T1720)

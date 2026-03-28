@@ -1,8 +1,8 @@
-# grief.bloom.cold
+# still.bloom.cold
 # A single cool-toned firework, minimal count, close radius — light in a dark room.
 # Less than atmos.lights.cool_bloom. Quieter. More alone.
 # Use when something needs to be acknowledged but not celebrated.
-id: grief.bloom.cold
+id: still.bloom.cold
 tags: [melancholic, ethereal, icy, low, still, breath, coda, fireworks-light, flash, scatter, radial, subtle]
 timeline:
   - type: FIREWORK_RANDOM

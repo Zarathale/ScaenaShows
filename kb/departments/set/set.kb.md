@@ -476,6 +476,32 @@ this must be resolved before the show arc is finalized, not after.
 
 ---
 
+## Calibration Backlog
+
+📋 Proposed = named, not yet tested. ✅ Confirmed = tested, parameters known.
+
+Set calibration is less about in-game testing than about establishing reusable spatial configurations — named starting points that Michael C. can reference when designing a new show.
+
+---
+
+### `space.portable.open` — 📋 Proposed
+**Intent:** No set registered. Open sky, anchor-only. Show is fully portable — runs wherever the player is standing. All effects are anchor-relative. The world is the set.
+**Confirmed when:** Show runs correctly at three different player start locations without any positional artifacts. Confirmed that no `sets:` or `marks:` in the show YAML causes no errors.
+
+---
+
+### `space.stage.marked` — 📋 Proposed
+**Intent:** Standard 9-position mark grid established (front, left, right, upstage-center, downstage-left, etc.). The performance space is defined; performers and effects can be placed precisely.
+**Confirmed when:** All 9 marks resolve correctly in-game. CROSS_TO and FACE events targeting marks land at the expected positions. Grid diagram documented in show departments/set.md.
+
+---
+
+### `space.intimate` — 📋 Proposed
+**Intent:** Tight performance area — 6×6 block stage, player and performer(s) in close proximity. Designed for shows where closeness is the register. Mark grid tighter than standard.
+**Confirmed when:** Performer at closest mark registers as "in the room with the player." Distance calibrated so player can see facial/equipment details clearly.
+
+---
+
 ## Capability Status Summary
 
 | Instrument | Status | Notes |

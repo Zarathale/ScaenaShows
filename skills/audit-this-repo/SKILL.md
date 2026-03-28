@@ -136,7 +136,7 @@ Cues live in `src/main/resources/cues/`. The production target is 30+ tagged pro
 | coda.* | N | |
 | fx.* | N | |
 | gracie.* | N | |
-| grief.* | N | |
+| still.* | N | |
 | mood.* | N | |
 | motif.* | N | |
 | overture.* | N | |

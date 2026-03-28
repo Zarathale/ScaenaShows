@@ -190,7 +190,7 @@ Tall, teleports when looked at, stares back, carries blocks. Register: the uncan
 Sneaks, steals items, leaps at prey. Register: cunning, the trickster, something not quite trustworthy. Baby fox: softens the read considerably — innocence or mischief.
 
 **Iron Golem**
-Large, slow, protector. Spawns in villages when population is threatened. Mourns dead villagers by placing poppies. Register: loyalty, grief as witness, the protector who outlived what it protected. A single Iron Golem standing still in a quiet scene carries enormous emotional weight without any dialogue.
+Large, slow, protector. Spawns in villages when population is threatened. Mourns dead villagers by placing poppies. Register: loyalty, weight as witness, the protector who outlived what it protected. A single Iron Golem standing still in a quiet scene carries enormous emotional weight without any dialogue.
 
 **Phantom**
 Aerial, swoops players who haven't slept, distinctive screech. Register: consequence, anxiety, the cost of sleeplessness. Most effective as a sound + silhouette in a dark scene. AI-released Phantoms will actively swoop — a calculated risk for tension sequences.
@@ -202,7 +202,7 @@ Bouncing, splits on death, harmless in small sizes. Register: harmless individua
 Walks on lava, trembles in cold. Register: alien landscape, isolation, the creature that lives in a place you cannot. Best in an environment with actual lava. Saddled variant adds a riding implication.
 
 **Vex**
-Tiny, phasing, conjured by Evokers. Sword-carrying ghost-form. Register: sorrow, intrusion, fragility with an edge. A chorus of Vex circling silently overhead reads as grief made visible. Hard to control with pathfinding (phases through blocks).
+Tiny, phasing, conjured by Evokers. Sword-carrying ghost-form. Register: sorrow, intrusion, fragility with an edge. A chorus of Vex circling silently overhead reads as shadow made visible. Hard to control with pathfinding (phases through blocks).
 
 **Villager**
 Wandering, trading, schedule-following (work/sleep/wander). Register: community, labor, the ordinary world. *Profession is the primary expressive tool* — see Wardrobe section for profession visual register. Baby Villager: innocence, vulnerability. A crowd of Villagers with varied professions establishes a functioning society. A single Villager watching quietly is a witness.
@@ -241,7 +241,7 @@ Natural behavior as a creative tool: an Allay that genuinely follows and collect
 
 **Authority:** All `equipment:` fields on SPAWN_ENTITY and ENTITY_EQUIP events. `variant:` and `profession:` fields on SPAWN_ENTITY. Armor Stand design and placement. Custom name visibility.
 
-**Knowledgebase:** `kb/departments/wardrobe/wardrobe.kb.md` (v4.0) — Role summary, Margaret's voice and bias, instrument inventory, tone translation (10 entries including grief, arrival, nocturnal, intimacy), department principles, cross-department coordination, and capability status table. Detailed technical catalogues in `kb/departments/wardrobe/` subfolder: `equipment-slots.md`, `invisible-body.md`, `mob-variants.md`, `emotional-register.md`.
+**Knowledgebase:** `kb/departments/wardrobe/wardrobe.kb.md` (v4.0) — Role summary, Margaret's voice and bias, instrument inventory, tone translation (10 entries including shadow, arrival, nocturnal, intimacy), department principles, cross-department coordination, and capability status table. Detailed technical catalogues in `kb/departments/wardrobe/` subfolder: `equipment-slots.md`, `invisible-body.md`, `mob-variants.md`, `emotional-register.md`.
 
 ---
 
@@ -519,7 +519,7 @@ These EFFECT events alter how the player perceives the world:
 | `levitation` | Upward drift; amp 0 = gentle, amp 9 = surge | Aerial staging; primary levitation instrument |
 | `slow_falling` | Gravity reduced | Transition from flight; prevents hard landing after levitation |
 | `speed` | Movement faster | Chase, urgency, tension |
-| `slowness` | Movement slower | Weight, grief, time stretching |
+| `slowness` | Movement slower | Weight, stillness, time stretching |
 
 ---
 
@@ -560,7 +560,7 @@ Full YAML reference lives in `kb/departments/camera/camera.kb.md`. Summary of wh
 
 **Named head:** Steve N. See `kb/departments/lighting/lighting.kb.md §Steve N.` for working style and escalation posture.
 
-**Knowledgebase:** `kb/departments/lighting/lighting.kb.md` (v2.1) — Steve N. introduction, Arc Design methodology, full Sky Arc Reference (all TIME_OF_DAY values with sky quality descriptions), instrument inventory with Java verification (TIME_OF_DAY, WEATHER, LIGHTNING), tone translation including "Weight / grief", department principles, and capability status table. Note: LIGHTNING uses `offset: {x, y, z}` (all relative to anchor) — not absolute coordinates.
+**Knowledgebase:** `kb/departments/lighting/lighting.kb.md` (v2.1) — Steve N. introduction, Arc Design methodology, full Sky Arc Reference (all TIME_OF_DAY values with sky quality descriptions), instrument inventory with Java verification (TIME_OF_DAY, WEATHER, LIGHTNING), tone translation including "Weight / shadow", department principles, and capability status table. Note: LIGHTNING uses `offset: {x, y, z}` (all relative to anchor) — not absolute coordinates.
 
 ---
 

@@ -775,6 +775,24 @@ advance (drone path). Unscripted or emergent action cannot be reliably tracked b
 
 ---
 
+## Calibration Backlog
+
+Camera already has four named patterns in the KB body (snap, face-then-land, pre-lift orientation, gradual redirect via drone). The calibration backlog focuses on what needs measured in-game to confirm parameters.
+
+---
+
+### Drone pan speed calibration — 📋 Proposed
+**Question:** What `duration_ticks` on a drone CROSS_TO produces a pan that reads as cinematic (smooth, intentional) vs. mechanical (too fast, jarring) vs. invisible (too slow to register as movement)?
+**Confirmed when:** Three reference durations measured and labeled: fast/sharp, cinematic, slow-sweep. Each produces a reliably different perceptual result.
+
+---
+
+### Pre-lift orientation timing — 📋 Proposed
+**Question:** How many ticks before the levitation event fires should the FACE snap occur so the player is oriented to the right focus before the lift begins? R7 left this untested.
+**Confirmed when:** FACE → LIFT sequence tested at multiple tick offsets. The offset that feels motivated (the world telling you where to look before it takes you there) is named and documented.
+
+---
+
 ## Capability Status Summary
 
 | Instrument | Status | Notes |

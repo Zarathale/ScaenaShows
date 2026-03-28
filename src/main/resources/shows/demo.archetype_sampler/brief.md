@@ -17,7 +17,7 @@ builder: Zara             # primary in-game builder/tester
 
 ## The Arc
 
-The player begins at ground level in dusk, surrounded by the ordinary world. The show gently separates them from the ground — first barely, then more — until an earned lift at the midpoint carries them fully into the sky. From that height, the show moves through joy, grief, wonder, and a return. The player lands where they started, changed by the distance traveled.
+The player begins at ground level in dusk, surrounded by the ordinary world. The show gently separates them from the ground — first barely, then more — until an earned lift at the midpoint carries them fully into the sky. From that height, the show moves through joy, stillness, wonder, and a return. The player lands where they started, changed by the distance traveled.
 
 ---
 
@@ -61,7 +61,7 @@ Choreography carries the primary dramatic instrument (altitude arc). Sound is th
 
 - **Duration:** ~1300 ticks (~65 seconds at 20t/s)
 - **Setting:** Outdoor space, open sky, sufficient altitude clearance (40+ blocks)
-- **Cue library:** atmos.*, mood.*, ramp.*, grief.*, coda.*, fx.levitate_*, world.time.*
+- **Cue library:** atmos.*, mood.*, ramp.*, still.*, coda.*, fx.levitate_*, world.time.*
 - **Technical:** Calibrated levitation patterns in use (HOVER=28t, CLIMB=24t, RELEASE=44t)
 - **Alan notes:** Altitude arc must be earned — height withheld, then released. C2 hover near ground. C7 is the moment the player truly lifts.
 

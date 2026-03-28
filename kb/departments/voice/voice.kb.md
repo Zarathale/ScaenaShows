@@ -348,6 +348,19 @@ Sprite needs to internalize four timing modes and understand that the correct mo
 
 ---
 
+### Proposed line sequence types — 📋 Proposed
+**What these are:** Named line roles that the Show Director can reference in a brief ("I need an opening address and a transition line before C4"). Not templates — Sprite writes to these roles for each show. Having the vocabulary makes briefing easier.
+
+- **`line.opening`** — the show's first address to the player. Establishes register and presence. Can be early (before anything happens) or with (the world starting while Sprite speaks). Not an announcement — an arrival.
+- **`line.transition`** — bridge between major sections. Acknowledges the shift without explaining it. Usually short. Gives the player permission to change what they're feeling.
+- **`line.arrival`** — accompanies or follows a dramatic entrance (mob, effect, or the player themselves being moved). Depends on timing direction from the Director (before/with/after the entrance event).
+- **`line.silence`** — the authored nothing. `<dark_gray>...</dark_gray>`. See `still.message.breath`. Not used by default — only when the Director has specified silence and Sprite's restraint is the contribution.
+- **`line.close`** — the show's final address. Lands after all physical events have resolved. The room going quiet. Sprite's last word is never an explanation.
+
+**Confirmed when:** Each line type has at least one tested example per show, with Director's timing mode specified.
+
+---
+
 ## Capability Status Summary
 
 | Instrument | Status | Notes |

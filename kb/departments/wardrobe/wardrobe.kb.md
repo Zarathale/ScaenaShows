@@ -356,6 +356,38 @@ Wardrobe reads intimacy as proximity and specificity. A single entity. One item 
 
 ---
 
+## Calibration Backlog
+
+📋 Proposed = named, not yet tested in a dedicated round. ✅ Confirmed = tested, parameters known.
+
+Note: `variant:` and `profession:` on SPAWN_ENTITY are gapped (parsed but not applied). Costume configurations below work within current confirmed capabilities only.
+
+---
+
+### `costume.bare` — 📋 Proposed
+**Intent:** Entity with no equipment. Default mob appearance, nothing added. The performer as-is. Used when the mob's native look carries the register on its own.
+**Confirmed when:** Baseline appearance tested across three mob types (one companion, one authority, one shadow figure). No unexpected equipment artifacts from prior show state.
+
+---
+
+### `costume.weighted` — 📋 Proposed
+**Intent:** Entity equipped with armor or heavy items — iron/chainmail register. Authority, protection, permanence. Not ornate; present.
+**Confirmed when:** Slot configuration tested. Equipment appears correctly at spawn and persists without degrading. At least one mob type confirmed that reads as "authority" with this configuration.
+
+---
+
+### `costume.ethereal` — 📋 Proposed
+**Intent:** ENTITY_INVISIBLE applied, with a single significant item in the held slot. The body disappears; the object floats. The item is now a relic, a totem, a presence without a body.
+**Confirmed when:** Invisibility confirmed working (body gone, item visible). Item tested at close player range — readable at 3 blocks, 6 blocks, 10 blocks.
+
+---
+
+### `costume.relic` — 📋 Proposed
+**Intent:** Armor Stand as display surface — one significant object placed deliberately in the performance space. Not a character; a prop. The item holds all meaning.
+**Confirmed when:** Armor Stand spawns without natural armor stand appearance artifacts. Item in main hand slot is the visual focus. Stand is stable (no drift).
+
+---
+
 ## Capability Status Summary
 
 | Instrument | Status | Notes |

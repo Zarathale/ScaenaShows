@@ -6,7 +6,7 @@
 # Use: under a darkening reveal, before a dangerous entity appears, when a tone shifts to dread.
 # Let it land and hold before the next event fires.
 id: motif.unease.descend
-tags: [tension, dread, darkness, grief, weight, descend, slow, motif]
+tags: [tension, dread, darkness, shadow, weight, descend, slow, motif]
 timeline:
   - type: SOUND
     at: 0

@@ -199,7 +199,7 @@ Because STOP_SOUND clears by channel, not by individual sound ID, overlapping tw
 - A looping sound that is never stopped will continue playing past the show's end. Every bed opened must have a STOP_SOUND in the timeline, including at show end. This is structural, not optional.
 
 **Storytelling contexts:**
-- `ambient.cave` under an entire grief sequence: the world below acknowledging what is happening above
+- `ambient.cave` under an entire still sequence: the world below acknowledging what is happening above
 - `ambient.warped_forest.loop` at low pitch to set an alien register before a wonder cue fires — the world has already shifted before anything is said
 - Two overlapping ambient beds during a transition, one fading via simulated fade (Instrument 4) while the other opens, creating a sound crossfade
 
@@ -281,7 +281,7 @@ STOP_SOUND has no fade. An uncontextualized cut can feel like a technical failur
 
 **Storytelling contexts:**
 - Full cut (`source: all`) before the show's most important voice line — the text lands into complete silence
-- Ambient cut at a grief peak, leaving only the Voice Director's words in an empty room
+- Ambient cut at a weighted moment, leaving only the Voice Director's words in an empty room
 - Music cut on a specific beat to confirm an arrival — the player hears silence before the next sound layer opens, which makes the new layer feel earned
 
 ---
@@ -413,7 +413,7 @@ A curated selection organized by emotional function. For the full list, see `min
 
 ---
 
-### Grief — Weight, Loss, Quiet Devastation
+### Shadow — Weight, Stillness, Quiet Depth
 
 | Sound ID | Register |
 |----------|----------|
@@ -421,7 +421,7 @@ A curated selection organized by emotional function. For the full list, see `min
 | `minecraft:entity.iron_golem.death` | Devotion extinguished |
 | `minecraft:entity.wolf.whine` | Distress, loyalty through pain, the companion suffering |
 | `minecraft:entity.ghast.moan` | Something in anguish at great distance |
-| `minecraft:entity.ghast.scream` | Raw grief erupting |
+| `minecraft:entity.ghast.scream` | Raw weight erupting |
 | `minecraft:block.glass.break` | Fragility shattered — the irreversible small loss |
 
 ---
@@ -567,7 +567,7 @@ The sound was withheld. Silence first — a deliberate channel cut (STOP_SOUND `
 The room going quiet after something loud. STOP_SOUND on the ambient layer, then deliberate silence, then one thing: wolf.whine, iron_golem.hurt, or Gracie's low chord. Less is more. Do not fill the silence.
 
 **When the Director says "uncanny" or "strange":**
-Familiar sounds in wrong contexts. ambient.cave when the player is clearly outdoors. A note_block harp at a grief beat. Pitch-shifted familiar sounds. enderman.stare under a warm scene. The wrongness is the register.
+Familiar sounds in wrong contexts. ambient.cave when the player is clearly outdoors. A note_block harp at a still beat. Pitch-shifted familiar sounds. enderman.stare under a warm scene. The wrongness is the register.
 
 **When the Director says "intimate":**
 volume: 0.3–0.5, master channel, no ambient bed, no layering. One sound at a time. Gracie at low volume. The space between sounds is as long as, or longer than, the sounds themselves.
@@ -601,6 +601,44 @@ Signal back to the Director with a specific question: "What is the sound *doing*
 **The ensemble musicians are on call throughout every production.** Gracie and future instrumentalists are available on cue. Their gestures are named cues in the library — call them directly from the show timeline. They should not be re-authored inline in show YAMLs; always use the `gracie.*` cue reference.
 
 **Escalation:** Sound resolves audio arc, loop management, bed layering, and ensemble deployment independently. Escalate to the Show Director when: a sound would compete with a Voice Director text moment and the tradeoff requires a creative call; a tone phrase is ambiguous enough that guessing feels reckless; or a scene requires a capability (positional audio from offset, per-sound-ID stopping) that is currently gapped with no acceptable workaround.
+
+---
+
+## Calibration Backlog
+
+📋 Proposed = named, not yet tested in a dedicated round. ✅ Confirmed = tested, parameters known.
+
+Motif patterns live in `kb/departments/sound/music-director.md` — see that file for motif library and proposed additions.
+
+---
+
+### `bed.dark` — 📋 Proposed
+**Intent:** Sustained ambient underscoring for night, depth, and still registers. Loop-safe. Sets atmosphere without competing with voice or effects.
+**Confirmed when:** Bed runs under a full section without triggering stop-sound conflicts. Player registers atmosphere, not a specific sound event.
+
+---
+
+### `bed.wonder` — 📋 Proposed
+**Intent:** Open, lighter ambient underscoring for wonder and elevation registers. Distinct from `bed.dark` in register — brighter, more suspended.
+**Confirmed when:** Perceptible difference from `bed.dark`. Player feels suspended rather than grounded.
+
+---
+
+### `button.arrival` — 📋 Proposed
+**Intent:** Sharp single-hit punctuation for an entrance or arrival moment. Not a melody — one clean accent that confirms something just happened.
+**Confirmed when:** Hit reads as musical confirmation of the moment, not ambient noise.
+
+---
+
+### `button.reveal` — 📋 Proposed
+**Intent:** Sharp hit for a reveal — something exposed, a surprise, a threshold crossed.
+**Confirmed when:** Distinguishable from `button.arrival` in register. Reveal button should feel sharper or more upward than arrival.
+
+---
+
+### `button.close` — 📋 Proposed
+**Intent:** Show-end musical marker. The last sound before silence. Settling, final.
+**Confirmed when:** Reads as closing punctuation, not mid-show accent.
 
 ---
 
