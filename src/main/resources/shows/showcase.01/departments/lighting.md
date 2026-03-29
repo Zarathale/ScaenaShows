@@ -2,129 +2,114 @@
 show_id: showcase.01
 department: Lighting & Atmosphere Designer
 document: Department Brief
-updated: 2026-03-26
+updated: 2026-03-28
 ---
 
-# Lighting — showcase.01 "The Cabinet"
+# Lighting — showcase.01 "Preparing for Battle"
 
 ## What This Department Serves
 
-Lighting owns the atmospheric register of every space. In a rondo show that visits six distinct
-locations, Lighting's job is to make each space feel like itself — not to impose a unified
-lighting design across the show, but to *preserve* what each location is.
+Lighting establishes and preserves the atmosphere native to each location. The show
+visits six distinct spaces across very different biomes — each one should feel like
+where it actually is. Lighting does not impose a unified palette across the show;
+it preserves each location's own light logic.
 
-The tone brief says: "each vignette preserves its own atmosphere." Lighting is the department
-that makes this real. The Still Water at dusk is different from the Nether's amber glow is
-different from the near-dark void of the Suspension. Lighting holds those differences rather
-than flattening them.
-
-Three instruments: TIME_OF_DAY, WEATHER, and LIGHTNING. This show uses the first two. LIGHTNING
-is not called for here — that belongs to showcase.02. Lighting exercises TIME_OF_DAY and WEATHER
-across six distinct spaces.
+The one place where Lighting makes a consistent, authored choice: home base. Every
+A-section return, the player comes back to the same light. That constancy is part of
+what makes home base feel like home.
 
 ---
 
-## Per-Section Direction
+## Home Base
 
-### Show-wide time baseline
-The show needs a starting TIME_OF_DAY that works for Home Base and establishes a sensible
-beginning. The Home Base is visited 5–6 times. If time of day changes across vignettes (which
-it will), each A-return may require a TIME_OF_DAY reset back to Home Base's established register.
+A craftsperson's workshop has a specific quality of light: warm, directional, functional.
+Not a dramatic atmosphere — a working one. If natural light is in the set (an open sky,
+a window), Lighting documents the native time-of-day and whether to lock it.
 
-Decision for intake: **What is Home Base's canonical time of day?** Recommendation: early
-evening (TIME_OF_DAY ~13000) — warm, golden, the world still has color but knows something
-is coming. The Allay's hovering reads better in this light than in bright day. Confirm after
-Set provides the location.
-
-### Vignette B — "The Still Water"
-Set's scouting notes will specify what time of day looks best at this location. The brief
-asks for dusk — TIME_OF_DAY ~13000–14000. Lighting sets this on arrival at Vignette B.
-
-If dusk is confirmed: the water catches the light. The exploration has warmth but also the
-quality of ending-day. This is the emotional register for this vignette — the player in a
-beautiful place at a moment when you'd want to stay.
-
-On departure from Vignette B: if the A-section Home Base has a different TIME_OF_DAY than
-dusk, reset before or shortly after the Home Base teleport.
-
-### Vignette C — "The Theater"
-The creature theater is daylight or early afternoon — TIME_OF_DAY ~6000. The comedy reads
-better in clear light: nothing hidden, everything visible, the absurdity fully exposed.
-
-WEATHER: clear (no rain). The theater needs good sight lines and nothing atmospheric competing
-with the creature behavior.
-
-### Vignette D — "The Nether Valley"
-The nether has its own ambient light — TIME_OF_DAY events have no effect in the nether dimension.
-Lighting's contribution to this vignette is documentation of what the ambient light condition
-IS, so other departments can make decisions around it.
-
-Nether biome ambient light varies: basalt delta is darker, soul sand valley has its eerie blue
-tones, nether wastes is orange-amber at all times. After Set confirms the biome, Lighting
-documents the ambient register for this vignette. No events to author for this section.
-
-### Vignette E — "The Suspension"
-Near-dark. The fireworks must be visible — ambient light should be low enough that Mira's
-bursts pop against the sky.
-
-**If End islands:** The End has its own ambient light — perma-night equivalent. No TIME_OF_DAY
-work needed; Lighting documents the existing condition.
-
-**If high overworld:** TIME_OF_DAY must be set to night before or on arrival (TIME_OF_DAY ~18000
-or deeper). Coordinate with Mira on what darkness level makes the palette she's planning most
-visible. The fireworks' color palette and the ambient light level are coupled decisions.
-
-### Vignette F — "The Contraption"
-The comedy beat works in normal light — no special time of day required. Default to mid-day or
-whatever the Home Base canonical time is.
-
-WEATHER: clear. Nothing should obscure or dampen the reveal moment.
-
-### A-section returns
-Each return to Home Base after a vignette with a shifted TIME_OF_DAY requires a reset. Lighting
-owns this reset. The canonical Home Base time (established at intake) fires within 60 ticks of
-each A-section arrival.
-
-The A-sections should not each feel like a different time of day — this would make Home Base
-feel unstable. The reset is part of the A-section's "you're home" signal.
+The key requirement: **home base light must be identical on every return.** The player
+re-enters the same atmosphere six times and should recognize it each time without being
+told to. If the time-of-day or weather state risks drifting between scenes, Lighting
+must author a state-set event at each A-section arrival that restores the home baseline.
 
 ---
 
-## Show-Level Constraints
+## Expedition Sites
 
-- TIME_OF_DAY and WEATHER own the atmospheric register. No conflicts from other departments
-  without Director sign-off.
-- The nether (Vignette D) does not respond to TIME_OF_DAY. Lighting's contribution there is
-  documentation only.
-- LIGHTNING is not used in showcase.01 — that is showcase.02's primary instrument. Don't touch it.
-- Each vignette's time and weather resets cleanly. If a vignette ends in darkness (Vignette E)
-  and the next A-return is in warm evening light, the TIME_OF_DAY reset must fire before the
-  player arrives at Home Base (as part of the pre-teleport sequence), or within the first few
-  ticks after arrival — not delayed.
-- WEATHER clear may need to be explicitly maintained if the server's natural weather would
-  otherwise fire rain during the show. Consider whether a show-opening WEATHER clear event is
-  needed and sustained.
+### Site B — The Helmet (high ground)
+High altitude, exposed sky. Native light logic: bright, open, potentially windy (weather
+state consideration). If the location is above cloud cover or at significant altitude,
+the quality of light changes. Lighting documents what the site actually looks like and
+whether any authored adjustment serves the expedition or crowds it.
+
+Time of day: morning or midday lean — height and visibility should feel clear, not moody.
+A dramatic dusk at the helmet site would compete with the scene's identity (clarity,
+exposure, seeing what's coming). Lighting may set if needed; otherwise, hold native.
+
+### Site C — The Chestplate (the forge)
+Heat and depth. If this is a nether site, the ambient light is already warm and orange —
+Lighting documents it and does not interfere. The nether has its own glow; imposed
+lighting here is almost always unnecessary and often wrong.
+
+If this is a surface forge site: the environment may benefit from a slight warm push
+to capture the forge quality — but only if the native light is insufficient. Lighting
+proposes; Direction decides. The forge should feel like something was made here, not
+like it was lit for ambiance.
+
+### Site D — The Leggings (the long road)
+A traversal biome — plains, forest, river valley. Lighting documents the native
+time-of-day feel of the scouted location. This scene reads best in midday-to-late-afternoon
+light — the long road implies sustained effort, which reads better in working light than
+in dramatic shadow.
+
+No authored adjustment likely needed here unless the native time-of-day is actively
+wrong (deep night at a plains site, for instance). Lighting notes the condition and
+proposes a correction only if warranted.
+
+### Site E — The Boots (the terrain site)
+Terrain-specific. Magma fields have their own glow. Soul sand valleys have their own
+fog. Snow fields read differently than deserts. Lighting documents what the terrain's
+native atmosphere is and assesses whether it serves the scene.
+
+This scene is tactile, not dramatic. Lighting that tries to add drama here is misreading
+the scene. Trust the terrain.
+
+### Site F — The Weapon (the choice)
+The show's most emotionally weighted stop. Lighting has potential here — but the risk
+of overcooking is high. The scene needs the quality of stillness, not spectacle. If
+anything: late afternoon or early dusk at this location, if the native state allows
+for it, can add gravity without adding drama. Do not manufacture darkness. Do not add
+particle effects or unusual color shifts.
+
+If the native light at this site already has the right quality: hold it and do nothing.
+This is the correct choice more often than not.
+
+### Site G — The Shield (the threshold)
+Liminal location — a border, an edge, the mouth of something. Dusk or early dark is
+appropriate if Set scouts a location that carries it. Lighting may set time-of-day here
+if the site and the moment warrant it — this is the show's final expedition before the
+reveal, and the quality of light at the threshold is a real creative choice.
+
+Coordinate with Fireworks: if Mira is in this scene, Lighting should complement her
+palette rather than compete with it.
 
 ---
 
-## Intake Questions for Lighting
+## The Finale
 
-1. **Home Base canonical time:** Recommendation is ~13000 (early evening). Confirm after
-   Set provides location — what time of day looks best there?
-2. **Vignette B time:** Dusk is the brief's recommendation. Set's scouting notes should confirm
-   whether dusk is what looks best at the specific location. Confirm and lock.
-3. **Vignette E (if overworld):** What TIME_OF_DAY value produces sufficient darkness for
-   Mira's palette? Coordinate with Mira at intake.
-4. **A-section TIME_OF_DAY resets:** At what tick relative to the Home Base teleport does the
-   reset fire? Before the teleport (part of the vignette's outro) or after (part of the A
-   intro)? Establish a consistent pattern.
-5. **WEATHER baseline:** Should a WEATHER clear event fire at show start and be sustained?
-   Or managed per-vignette?
+The Hero arrives. Lighting has one optional moment: a single state shift as the Hero
+appears — not a fanfare, but the quality of something arriving into the light that was
+always meant for it. If Lighting can find that shift cleanly, deploy it. If it feels
+manufactured: hold the home base baseline and let the Hero visual do the work. The
+reveal does not require Lighting's help. But if Lighting can make the room feel like
+it recognized what just happened, that is worth doing.
 
 ---
 
-## Decisions
-*Filled at intake.*
+## What Lighting Does NOT Do
 
-## Revision Notes
-*Added after each in-game test.*
+- Does not impose a unified atmosphere across all expedition sites
+- Does not use lighting to signal emotional content ("this is sad, so it's blue")
+- Does not add drama to the weapon scene beyond what the native environment provides
+- Does not compete with Fireworks in any scene where Mira is present
+
+Lighting preserves. It does not impose.

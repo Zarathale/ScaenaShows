@@ -1,266 +1,315 @@
 ---
 show_id: showcase.01
 document: Scouting Brief
-author: Michael C. (Set Director)
+author: Set Director (Zarathale)
 updated: 2026-03-28
-status: open — scouting not yet started
+status: Active — v2, updated with confirmed casting/wardrobe/voice
 ---
 
-# Zarathale Scouting Brief — showcase.01 "The Cabinet"
+# Scouting Brief — showcase.01 "Preparing for Battle"
 
-> This is your in-game task list. Six locations. Take notes as you go — coordinates,
-> what you saw, what made the place feel right or wrong. Bring those back and Michael C.
-> will translate them into stage registry entries and Environment Notes.
->
-> **The lens for all six locations:** Every space in this show is something the Allay
-> found and thought worth keeping. Ask yourself, at each candidate: would a small,
-> eccentric creature collect this place? If yes, you're probably in the right spot.
+> Zarathale: this is your in-game task list. All six expedition sites are a fresh slate.
+> The question is always: *does this feel like where this piece was waiting?*
 
 ---
 
-## What to Record at Every Location
+## Before You Scout
 
-Use F3 screen. At the player arrival point, capture:
+Everything downstream is now confirmed. Read this section before going in-world.
 
-- **XYZ** (the exact coordinates where the player will arrive)
-- **Yaw** (facing direction — visible in F3 as "Facing")
-- **World name** (top of F3 screen — matters most for the nether and end)
-- **Biome** (shown in F3)
-- **Ceiling** — is the sky open? If not, how many blocks to the ceiling?
-- **Sight line** — what does the player actually see when they arrive facing that yaw?
-- **Any quirks** — lava nearby, mobs spawning, anything unexpected
+**The show:**
+An Armorer Villager equips a Vindicator across six expeditions — one armor slot per trip.
+The player travels with the Armorer, watches the armor stand fill, and in the finale the
+Vindicator arrives fully equipped.
 
-Then walk the space. Note anything worth flagging for other departments.
+**The secret (Zarathale knows this; the player does not until the finale):**
+The Armorer is preparing the Vindicator to fight the player. The player has been
+helping source the kit for their own opponent. Locations should feel like places a
+devoted professional would bring someone on a procurement errand — not sinister,
+not foreboding. The irony belongs to the finale, not to the locations.
 
----
+**The kit (Wardrobe confirmed):**
 
-## Task 1 — Home Base
+| Slot | Item | Character |
+|------|------|-----------|
+| Helmet | Chain helmet | Mobile, not ceremonial |
+| Chestplate | Iron chestplate | Weight and authority |
+| Leggings | Iron leggings | Matched to chestplate |
+| Boots | Dark leather boots | The Armorer's specific choice |
+| Weapon | Iron axe (Sharpness I) | One good edge |
+| Shield | Plain shield | No markings; the work speaks |
 
-**The premise:** This is where the Allay lives. The player arrives here first and returns
-here between every vignette — five or six times. It must feel genuinely inhabited, not
-scenic. The Allay is not in a nice place; it's in *its* place.
+Fill order: boots → leggings → chestplate → helmet → shield → axe (weapon last,
+right before the Vindicator arrives).
 
-**What to look for:**
-- Not a viewpoint or a landmark. A place where someone works and wanders.
-- Enough open space for: the Allay at center, 2–3 collected creatures nearby, and the
-  player at a comfortable arrival point roughly 8–12 blocks from center.
-- Sheltered but not enclosed — the sky visible, but edges that make it feel like a room,
-  not a field. Trees, rock formations, terrain dips — something that makes it feel bounded.
-- A single distinctive feature at close range. Something the Allay might have noticed and
-  decided to stay near. A peculiar tree, a patch of glowing moss, a small waterfall feeding
-  a pool, a cluster of flowers in an unexpected place.
-- Works in evening light (the show will set TIME_OF_DAY ~13000 here — golden, pre-dark).
-  Check that the space looks good in that register, not just at noon.
-
-**What to record:**
-- Player arrival point: XYZ + yaw (facing toward center)
-- Center of the usable space (where the Allay will stand): approximate XYZ
-- The distinctive feature in one sentence: "There's a ___ at ___, which ___."
-- Ceiling status: open sky? How open?
-- Any enclosure notes (trees, rock walls, terrain)
-
-**Slug proposal:** Name it based on what you find. `home_base_[feature]` — e.g.,
-`home_base_mossy_hollow`, `home_base_stone_ring`, `home_base_allay_pool`.
+**The voice (script v1 confirmed):**
+The Armorer speaks in ambiguous address — "you" throughout could be the Vindicator
+or the player. Voice lines are included per site below. These are your primary creative
+lens for each location. The location needs to earn the line that will be spoken in it.
 
 ---
 
-## Task 2 — "The Still Water" (Vignette B)
+## Scouting Report Format
 
-**The premise:** The player arrives here and is left alone. No events tell them where to
-look. The exhibit IS the place — the water, the light, the specific quality of being here.
-The Allay found this place and brings the player here to just... be in it for a while.
+For every location (home base + 6 expedition sites), file a report entry with:
 
-**What to look for:**
-- Something genuinely worth noticing — not built, found. A lake with an odd bank. A
-  waterfall falling into a cave entrance. A narrow river valley. A spring between rocks.
-- Water present and visible on arrival. It doesn't have to be the only thing, but it should
-  be the first thing.
-- Open enough to walk around in — the player has free exploration, so 15–20 block radius
-  at minimum.
-- Check it at dusk (TIME_OF_DAY ~13000–14000). The brief calls for dusk. Walk to the water's
-  edge and look around — does the light do something here? If the light is uninteresting, the
-  vignette has nothing.
-- Arrival sight line: the player should face into the most interesting part of the space.
-  Don't face a cliff wall.
+```
+Location: [Site letter and name]
+World: [overworld / nether / end]
+Coordinates: x=__, y=__, z=__
+Arrival facing: yaw=__, pitch=__
+Biome: __
+Sky clearance: __ blocks (or "obstructed by [material]")
+Terrain notes: [floor material, hazards, notable features]
+Hazard notes: [hostile mobs in range, fall risk, lava proximity, etc.]
+Theatrical read: [1–2 sentences — why this place fits the piece]
+Candidate status: [recommended / alternate / rejected with reason]
+```
 
-**Avoid:** Flooded caves (too enclosed for free exploration). Ocean biome (featureless at
-ground level). Flat plains with a puddle. The space should reward looking around.
+Provide at least one **recommended** candidate per site. Include an **alternate**
+if you found more than one strong option.
 
-**What to record:**
-- Arrival point: XYZ + yaw (facing into the interesting part)
-- Water type: lake / river / waterfall / spring
-- What the player sees on arrival (one sentence)
-- What it looks like at dusk — good or meh?
-- Exploration radius estimate
-
-**Slug proposal:** `still_water_[type]` — e.g., `still_water_falls`, `still_water_spring`.
+Every confirmed location enters the permanent stage registry at
+`kb/departments/set/stage-registry.md` before the show enters tech.
 
 ---
 
-## Task 3 — "The Theater" (Vignette C)
+## Site A — Home Base: "The Workshop"
 
-**The premise:** Two creatures are here when the player arrives. The player watches. The
-vignette is whatever the creatures do. This space is a stage — it should feel like something
-happens in it, not just near it.
+**Purpose:** The Armorer's workplace. The armor stand lives here. The player arrives
+seven times — at show open and after each of the six expeditions.
 
-**What to look for:**
-- A clear "stage" area: slightly elevated ground, a clearing with something behind it (cliff
-  face, tree line, boulder — a backdrop), a natural amphitheater dip, a flat area with
-  defined edges. The player should read "stage" without being told.
-- Clear sight line from the arrival point to the stage center (~10–15 blocks).
-- Enough room for 2 entities and the visual relationship between them to read clearly.
-- Daylight works well here — the comedy of the creature theater reads better in clear,
-  unambiguous light.
-- Don't reject a candidate because it's open or unenclosed. If the creatures need
-  containment to stay in frame, Set will design it — a fence line, a low wall, invisible
-  barrier blocks, whatever fits the space with least intrusion. Scout for theatrical feel;
-  containment is a Set design task, not a scouting filter.
+**The voice lines here:**
+> *"Six pieces. Everything I need is out there — I know where each one is."*
+> *"You'll want to be properly prepared. I've made sure of that."*
+> *"Helmet first. Keep up."*
 
-**What to record:**
-- Player arrival point: XYZ + yaw (facing toward the stage center)
-- Stage center: approximate XYZ
-- What's naturally behind the stage (backdrop note — cliff, trees, open air, etc.)
-- Approximate wing positions: where is there room for entities to be placed off to the
-  sides of the stage area? (Rough XYZ or a directional note)
-- Whether the space is naturally enclosed or open (Set will design containment either way,
-  but knowing what's there helps)
+The Armorer says these lines in this space. The space must make them feel earned —
+someone who actually works here saying things they actually mean. Not staged. Not
+atmospheric. A place where an Armorer Villager would live and work.
 
-**Slug proposal:** `theater_[feature]` — e.g., `theater_grove`, `theater_amphitheater`,
-`theater_cliff_face`.
+**What to find:** Functional, specific, slightly worn. A structure or enclosed space
+that reads as a craftsperson's workshop — stone floor, contained walls, a sense of
+purposeful occupation. The armor stand goes center-frame. When it's bare at show open
+it reads as absence; when it fills slot by slot on each return, the player needs to
+notice each change. Clear sightline to the stand is non-negotiable.
 
----
+**Requirements:**
+- Enclosed enough to feel like a specific place — not an open field
+- Flat surface for the armor stand entity, visible immediately on arrival
+- No hostile mob spawning in range
+- Safe for 7 repeated player TPs with identical arrival facing
+- Consider proximity to a village structure (the Armorer lives near one) or a
+  standalone smithy/forge building — something that has occupational identity
 
-## Task 4 — "The Nether Valley" (Vignette D)
-
-**The premise:** The Strider lives here. The player is the visitor. Lightly levitated
-(2–4 blocks off the safe floor), they float above the terrain and observe a creature that
-is completely at home in a place where the player is not. The nether's ambient register —
-its light, its sound, its specific wrongness — is the exhibit.
-
-**What to look for:**
-- A nether biome with texture: basalt delta, soul sand valley, or nether wastes. Not a
-  generic nether wastes flat. Something with visual interest — basalt columns, soul flame
-  lighting, irregular terrain.
-- Lava visible from the arrival point. It doesn't need to be directly underfoot; the Strider
-  needs lava in-frame or nearby. A lava lake in the midground is ideal.
-- Safe floor for player arrival — solid ground, not lava.
-- **Ceiling height is critical.** The player will be levitated 2–4 blocks. The nether
-  often has low ceilings. Stand at the arrival point and look up — how many blocks to the
-  ceiling? Need at least 6 blocks clear above the player arrival point. More is better.
-- Open enough in the foreground that a Strider wandering on lava will be visible.
-
-**What to record:**
-- Player arrival point: XYZ + yaw
-- **World name as it appears in F3** (not just "nether" — the plugin needs the exact name)
-- Biome: basalt delta / soul sand valley / nether wastes
-- Safe floor elevation (Y value where the player arrives)
-- Ceiling height: blocks from player arrival point to ceiling
-- Lava visible from arrival? Where? (Brief note)
-- Ambient light description: what does it look like?
-
-**Slug proposal:** `nether_[biome_short]` — e.g., `nether_basalt`, `nether_soul_valley`,
-`nether_wastes_valley`.
+**What to document:** Coordinates, arrival facing (yaw/pitch centered on armor stand
+position), proposed armor stand coordinates, enclosure type, biome/structure.
 
 ---
 
-## Task 5 — "The Suspension" (Vignette E)
+## Site B — The Helmet: "High Ground"
 
-**The premise:** The player is elevated 15–25 blocks above where they arrived. Mira's
-fireworks fire below and around them. The experience is being *inside* a firework display,
-not watching one from the ground. Near-dark. The world below is visible. This moment
-belongs to Mira.
+**Slot:** Chain helmet — mobile, light, built for a warrior who moves fast.
 
-**Two options — scout both if you can and bring back a recommendation:**
+**The voice lines here:**
+> *"I like this spot. High up. Everything below looks manageable from here."*
+> *"There it is. Chain. I thought about something heavier, but you move too fast for heavy."*
+> *"One. Let's get back — the forge is next."*
 
-**Option A — Outer End islands:**
-- Not the main island. The outer End — chorus trees, endstone, void below.
-- Find a flat island or near-flat area large enough for the player to stand.
-- Look down: how much void is there? Mira needs ~15–20 blocks of clear space below the
-  player's elevated position for fireworks to fire through. The void is ideal.
-- Perma-dark ambient (no TIME_OF_DAY needed). Fireworks will pop hard.
+"Everything below looks manageable" — that's the quality. The player arrives and
+looks out over something. The Armorer is already there, calm, in command of the view.
+The chain helmet belongs here because chain is for someone who stays moving — and
+this place, you can see everything coming. Find a location where that sentence lands
+as true rather than described.
 
-**Option B — High overworld:**
-- Mountain peak or built platform at Y > 160 with open sky below on at least one side.
-- The player arrives at the peak, then gets elevated another 15–20 blocks.
-- Must be dark enough that fireworks are visible — check at night (TIME_OF_DAY ~18000).
-- If there's a cliff edge, the player elevated over open air with ground visible below
-  is a strong image.
+**What to find:** A high point with a view. Not necessarily dramatic architecture —
+a natural peak with a commanding sightline is better than a grand tower if the tower
+isn't genuinely remarkable. The player should feel above things, not just technically
+elevated. The sky close, the ground visible below.
 
-**What to record (both options if applicable):**
-- Option chosen (A or B) and why
-- World name (if End)
-- Player arrival point: XYZ + yaw
-- Floor altitude (the Y at arrival — this is Mira and Effects' planning anchor)
-- Maximum safe elevation above that: how many blocks up before hitting ceiling or running
-  out of clear space?
-- Clear downward space: is there 15–20 blocks of open space below where the player will be
-  elevated? What's at the bottom (ground, void, water)?
-- Ambient light: what does it look like at the relevant time of day?
-
-**Slug proposal:** `suspension_end_[island]` or `suspension_peak_[feature]`.
+**Requirements:**
+- Player TP-in position is safe — no immediate fall risk on arrival
+- Arrival facing toward the view or the drop, not a wall
+- Biome: mountains, savanna plateau, mesa buttes, tall taiga, windswept hills
+- Sky clearance: document blocks above TP position
+- Document Y coordinate (altitude relative to sea level)
 
 ---
 
-## Task 6 — "The Contraption" (Vignette F)
+## Site C — The Chestplate: "The Forge"
 
-**The premise:** A redstone contraption already exists in this space. The show activates
-it. What it does is small, specific, and slightly absurd. The comedy is in the gap between
-the setup (Sprite and Lighting building mild expectation) and the scale of the reveal.
+**Slot:** Iron chestplate — the heaviest piece, widest at the shoulders, the center
+of the kit. The Armorer measured for this specifically.
 
-**This task requires building.** You're constructing the contraption, not finding it.
+**The voice lines here:**
+> *"This place knows what it's for. You can still feel the old work in it."*
+> *"Iron. Wide at the shoulders — I measured for this. You know I measured."*
+> *"Heavier than it looks. Come on."*
 
-**Design principle — scale DOWN:**
-The contraption should do exactly one small thing. The smaller the thing, the funnier the
-gap. A door opens to reveal one chicken. A piston places one flower. A note block plays
-once. A dispenser fires one egg. A sign becomes visible. The temptation is to build
-something impressive — resist it. The show's register is a natural history documentary.
-The joke is that the Allay made this.
+"This place knows what it's for." That's the test. Find a place that has residual
+purpose — somewhere that has been used for making, or that carries the quality of
+having been. A natural lava pool with basalt formations has it. An abandoned nether
+fortress section has it. An overgrown overworld smithy ruin might have it. The forge
+doesn't need a crafting table. It needs to feel like something was done here that
+mattered.
 
-**What to build:**
-- A clear "before" state visible from the player's arrival point. The player sees the
-  contraption in its initial state and understands something is there.
-- A trigger: one block that, when powered, causes the reveal. This block's XYZ is the
-  REDSTONE event's target — you must know this coordinate.
-- An "after" state that is immediately legible — the player understands what happened
-  without narration.
-- A creature (the punchline, if used) can be inside or behind the contraption in the
-  "before" state — visible only after the reveal. If so, it needs a space to be in.
+**What to find:** Heat and depth. Not dramatic spectacle — functional gravity. The
+place where iron gets worked. Nether is the strong preference (the chestplate's iron
+reads as forged in real heat, and netherite context makes the kit feel earned), but
+a compelling overworld forge site is worth considering if the atmosphere is right.
 
-**Design ideas (pick one or bring your own):**
-- A door (iron door, wooden door) at the end of a short path, with a single chicken behind
-  it. Setup: the door is closed, a button is nearby. Reveal: door opens, chicken looks at
-  the player.
-- A piston pointing toward a flower pot, with the flower not yet placed. Reveal: piston
-  activates, flower appears in the pot.
-- A dispenser aimed at a glass platform at knee height. Reveal: fires one egg (it may
-  hatch; it may not — either is funny).
-- A lectern with a book, behind a wall panel that retracts on REDSTONE.
-
-**What to record:**
-- Trigger coordinates: XYZ of the REDSTONE-powered block
-- Before-state description: what does the player see on arrival?
-- After-state description: what happens when the REDSTONE fires?
-- Is a REDSTONE OFF cleanup needed after the show? (Does the contraption reset, or does
-  it stay in the "after" state until manually reset?)
-- Any creature integration: what creature, where does it start, what does it do after?
-
-**Slug proposal:** `contraption_[what_it_does]` — e.g., `contraption_chicken_door`,
-`contraption_piston_flower`.
+**Requirements:**
+- Biome preference: Nether (basalt delta, nether wastes, nether fortress adjacent,
+  bastion remnant) or overworld with genuine heat-quality (badlands, lava-adjacent)
+- Lava proximity: document distance to nearest lava source — Effects assesses
+  fire resistance need based on this
+- Ceiling clearance: document blocks above TP position
+- No immediate fire/lava hazard at player TP-in position
+- Arrival facing INTO the space — the player enters the forge, not walks past it
 
 ---
 
-## Opportunistic: Task 7 — showcase.03 Welcome Stage
+## Site D — The Leggings: "The Long Road"
 
-If you have time and the scouting session is going well, the Welcome Stage for showcase.03
-is on the longer-term list. Brief is in `kb/departments/set/stage-registry.md §Task 8`.
-Not required for this session — but if a location presents itself, note it.
+**Slot:** Iron leggings — matched to the chestplate, built for movement, made to
+cover distance.
+
+**The voice lines here:**
+> *"You'd cover a lot of ground in a place like this. I thought about that."*
+> *"Iron. These were made to move. I want you moving — right until the end."*
+> *"Three. Boots next — I know exactly where."*
+
+"You'd cover a lot of ground in a place like this" — the location should make that
+sentence feel obvious. A place where ground-covering is the point. The Armorer
+thought about the Vindicator moving through this kind of terrain. The player is
+standing in that terrain right now.
+
+"Right until the end" is this scene's loaded line. Zarathale should find a place
+where the horizon implies continuation — somewhere that asks you to keep going.
+
+**What to find:** A traversal space with implied distance. A path through a biome.
+A river valley with a visible far bank. A plains stretch with something at its end.
+The middle beat of the show — honest, unspectacular, a place where someone walks.
+
+**Requirements:**
+- Arrival facing DOWN the path or TOWARD the horizon — never across or into a wall
+- Biome: plains, forest path, river valley, savanna road, open taiga
+- No competing dramatic terrain that fights the "road" quality
+- Hostile mob density: note spawners or mob-heavy patches in range
+- Sky clearance: document (lower priority, but file it)
 
 ---
 
-## When You're Done
+## Site E — The Boots: "The Burning Floor"
 
-Bring back your notes — coordinates, descriptions, what you found, what you built. Michael
-C. will take it from there: stage registry entries, Environment Notes, and the go signal
-for the rest of the departments.
+**Slot:** Dark leather boots, dyed by the Armorer — specific, personal, the piece
+that says someone paid attention.
 
-Don't worry about format. Raw notes are fine. The coordinates are what matters most.
+**The voice lines here:**
+> *"Feel that. This is why boots matter. Most people never think about the ground."*
+> *"Leather. Dark — I dyed these myself. I know what you walk toward."*
+> *"Four. The hard ones are still ahead."*
+
+"Feel that." — the terrain must be immediately legible underfoot. The player arrives
+and knows within seconds what kind of ground this is. Whatever the terrain type, it
+should be the thing you notice first. "I know what you walk toward" — the Armorer
+knows this warrior's path. Find ground that implies a path worth having boots for.
+
+**What to find:** Memorable, distinctive terrain. Magma field. Soul sand valley.
+Deep snowfield. Muddy swamp floor. Clay riverbed. The content of this scene is
+underfoot — not a skyline, not a structure.
+
+**Requirements:**
+- Terrain legibility: the ground type is obvious within 5 seconds of arrival
+- Safe player TP altitude: document blocks above the terrain floor
+  (Effects calibrates levitation from this — if applicable to terrain type)
+- Exact floor material (Effects needs this for the specific sensation type)
+- Terrain hazards: magma damage range, soul sand slowness, etc.
+- Sky clearance: document
+
+---
+
+## Site F — The Weapon: "The Choice"
+
+**Slot:** Iron axe, Sharpness I — one edge, made deliberate, the most charged piece.
+
+**The voice lines here:**
+> *"I kept coming back to this place. It answers something."*
+> *"Iron axe. I had it sharpened once. That's all you need — one good edge."*
+> *"Five. One left. The shield — it's the lightest piece. Not the easiest."*
+
+"I kept coming back to this place. It answers something." — this is the hardest site
+to find. It's not a landmark or a dramatic set. It's a place with a particular
+quality of stillness — the specific quiet of somewhere a decision was made, or where
+something ended. A ruin. A cleared site. A pillager outpost (claiming the axe from
+an adversary is its own statement). A broken wall with a crater behind it. Somewhere
+that has been through something and is still standing.
+
+The Armorer kept coming back. That means there's something here worth returning to.
+Find what that is.
+
+**What to find:** Stillness with weight. Not emptiness — a place that has earned its
+quiet. This is the show's most emotionally weighted stop. Everything in the scene
+should make the Armorer's line feel inevitable rather than described.
+
+**Requirements:**
+- Arrival facing toward the scene's visual anchor — the ruin, the relic, the
+  cleared site, whatever reads as the reason to be here
+- **Hostile mobs: must be clearly answered.** This scene holds the show's most
+  important silence. Active hostile mobs spawning in-frame break it. If a pillager
+  outpost: confirm patrol AI range and whether containment is needed. Michael C.
+  designs containment if so.
+- No particle effects, no lava glow, nothing that creates ambient spectacle —
+  this scene works through stillness
+- Biome: any where conflict or decision reads as native
+- Sky clearance: document
+- Note every notable structural or terrain feature at the site
+
+---
+
+## Site G — The Shield: "The Threshold"
+
+**Slot:** Plain shield — no markings, the work speaks, the last piece.
+
+**The voice lines here:**
+> *"There's something beyond this. You can't quite see it from here. That's where you're going."*
+> *"Plain shield. No markings. I thought about a sigil — decided the work should speak for itself."*
+> *"That's everything. Time to go home."*
+
+"There's something beyond this. You can't quite see it from here." — the location
+must have something beyond it that isn't fully visible. A clifftop over a drop. The
+mouth of a cave system. The border of a dark forest or badlands. A ravine lip where
+the far side disappears into shadow. The player arrives facing the edge. The Armorer
+is already there, looking into it.
+
+"That's where you're going" — the Armorer says this to the Vindicator. The player
+is standing at that edge right now, hearing it. Find a threshold that makes both
+readings feel true.
+
+**Requirements:**
+- Arrival facing TOWARD the edge — the player looks into the boundary, not away
+- Sky clearance: minimum 25 blocks above TP position — Mira may author a small
+  departure burst here and needs open sky
+- Drop depth below edge: document if applicable
+- Biome: any — the liminal quality matters more than the biome
+- Time-of-day notes: what time-of-day serves this site best? Dusk is the strong
+  candidate; document the native light quality and whether Lighting should author
+  a set
+- Note: this is the last expedition. The tone is finality, not dread. The Armorer
+  turns for home from here. The location should feel like the last necessary place,
+  not the most dangerous one.
+
+---
+
+## After Scouting
+
+File the scouting report to Michael C. (Set Director) and copy Direction.
+
+Once coordinates are confirmed for all seven locations:
+- Stage registry entries are completed for each site (`kb/departments/set/stage-registry.md`)
+- Gate 3 closes: department authoring can begin
+- Gate 4 is scheduled: intake conversation with all departments
+
+The four TBA flags in script-v1 (`direction/script-v1.md`) — departure lines
+referencing "the forge," "long road," and "threshold" — update to match the confirmed
+site character once scouting delivers. Voice will revise to v2 at that point.

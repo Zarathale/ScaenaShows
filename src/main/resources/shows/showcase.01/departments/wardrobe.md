@@ -1,100 +1,105 @@
 ---
 show_id: showcase.01
-department: Wardrobe
+department: Wardrobe & Properties Director
 document: Department Brief
-updated: 2026-03-26
+updated: 2026-03-28
+casting_locked: true
 ---
 
-# Wardrobe — showcase.01 "The Cabinet"
+# Wardrobe — showcase.01 "Preparing for Battle"
 
-## What This Department Serves
+## Status
 
-Wardrobe makes one decision for this show that has lasting impact: how does the Allay's
-collection read visually? The Allay is a collector. It has companions. Do those companions
-(the 2–3 collected creatures that arrive at Home Base) share any visual language that tells
-the player they belong to the same collection?
-
-The tone brief calls this the "collection visual language decision." Wardrobe answers it.
-
-This is not a high-intervention show for Wardrobe. The nether (Vignette D) and the End/
-high overworld (Vignette E) do not have wardrobe applications. The creature theater
-(Vignette C) is two entities whose appearance is determined by Casting's selection —
-Wardrobe notes but does not necessarily alter. The Contraption's punchline creature
-(Vignette F) is a single figure whose appearance is determined by species.
-
-The primary design question belongs entirely to Wardrobe: **the Allay's companions at Home
-Base — is there a visual coherence to this collection?**
+Casting is locked: Hero = Vindicator, Companion = Armorer Villager. Margaret now has
+a specific assignment. The kit design below is the active brief — not a proposal.
 
 ---
 
-## The Collection Visual Language Decision
+## The Hero's Kit — Vindicator
 
-The Allay collects things it likes. Its companions at Home Base have presumably been collected
-the same way. Three possible visual languages for the collection:
+The Vindicator is a medium-large biped with a standard humanoid rig and a strong forward
+stance. Armor reads clean and authoritative on them. The brief from Set, Voice, and the
+show's register all point in the same direction: **a practical soldier's kit, not a
+royal one.** Earned, not bestowed.
 
-**Option A — No imposed visual logic.** The companions are just what they are — a Parrot, a
-Cat, a Wolf — visually diverse, chosen by the Allay's eccentric taste. The collection reads
-as idiosyncratic, which is true to the Allay's nature. Wardrobe makes no alterations.
-The show's visual coherence comes from the Allay at center, not from visual matching.
+### Confirmed kit design
 
-**Option B — One shared attribute.** Not full matching, but one thing in common across the
-companions — all small, or all with a cool color, or all creatures that glow/have ambient
-luminance (Allay glows; companions chosen for similar ambient quality). This is visual
-rhyming, not costume design. Still low-intervention for Wardrobe, but intentional.
+| Slot | Item | Notes |
+|------|------|-------|
+| Helmet | `CHAINMAIL_HELMET` | Chain reads as mobile, not ceremonial |
+| Chestplate | `IRON_CHESTPLATE` | Weight and authority; the show's central piece |
+| Leggings | `IRON_LEGGINGS` | Matched to chestplate |
+| Boots | `LEATHER_BOOTS` (dyed dark — `#3B2A1A`) | Someone paid attention here |
+| Main hand | `IRON_AXE` + Sharpness I enchant | The Vindicator's native weapon, made deliberate |
+| Off hand | `SHIELD` | Plain shield — no banner pattern; function over sigil |
 
-**Option C — Named collection.** The companions represent a thematic category the Allay
-has been assembling. All creatures of a particular type, all from a particular biome, all
-with a specific behavior. Wardrobe names the collection's organizing principle and documents
-it. Voice can reference it; the show's premise deepens.
+**The logic of this kit:** Iron is earned material. Chain at the head says this warrior
+moves. The leather boots in a dark earthy tone are the Armorer's mark — they chose
+something specific where they could have chosen nothing. The Sharpness enchant on the
+axe is the kit's one glint; it tells you the Armorer took the weapon seriously. The
+plain shield says the point was not decoration.
 
-Wardrobe brings a recommendation to intake. Casting must know this decision before finalizing
-companion selections for Home Base.
+The player sees this kit in full on the Vindicator at the finale. It should read as
+coherent and intentional from across the room — not miscellaneous.
 
----
+### Slot fill order (recommendation to Stage Management)
 
-## Plugin Capability Notes
+The armor stand fills one slot per A-section return, in this sequence:
 
-Wardrobe's current capabilities in YAML are limited. The primary tools are:
-- `ENTITY_GLOW` — adds an outline effect to an entity. Available for all entity types.
-- Equipment/armor through SPAWN_ENTITY entity data (limited — entity type dependent).
-- Visual variants are currently a plugin gap for most entity types (Wolf colors, Cat patterns,
-  Axolotl variants, Horse colors) — these cannot be set via YAML. Note this when it affects
-  the collection visual language decision.
+1. **Boots** — first return; the most specific piece, sets the Armorer's eye
+2. **Leggings** — second
+3. **Chestplate** — third; visual center, midpoint of the show
+4. **Helmet** — fourth
+5. **Shield** — fifth; the protective close
+6. **Axe (main hand)** — sixth, final; weapon last, before the Vindicator arrives
 
-For this show, `ENTITY_GLOW` is the most likely Wardrobe tool. If the collection visual
-language decision involves visual distinction, a subtle glow on one or more companions may
-be the most accessible implementation.
+The weapon fills the stand's last slot immediately before the reveal. That slot filling
+is the show's penultimate beat. One moment of the stand holding all six pieces — then
+the Vindicator arrives. Stage Management ratifies the timing at intake.
 
----
+### YAML item strings (for Stage Management)
 
-## Show-Level Constraints
+```
+helmet:     CHAINMAIL_HELMET
+chestplate: IRON_CHESTPLATE
+leggings:   IRON_LEGGINGS
+boots:      LEATHER_BOOTS
+main_hand:  IRON_AXE
+off_hand:   SHIELD
+```
 
-- Wardrobe's collection language decision must be communicated to Casting before Casting
-  finalizes Home Base companion choices. These two departments decide together.
-- Any ENTITY_GLOW applied to companions must be cleared at the end of the A-section before
-  departure to a vignette, and reapplied on return — or applied once and held for the show's
-  duration if the entity persists. Confirm entity persistence strategy with Casting.
-- Vignette D (Strider): no wardrobe. The Strider's saddle status is Casting's call; equipment
-  state is not a Wardrobe instrument for this show.
-- Vignette F punchline creature: no wardrobe. The joke relies on the creature being exactly
-  what it is — unaltered, surprising, mundane.
-
----
-
-## Intake Questions for Wardrobe
-
-1. **Collection visual language:** Option A (no imposed logic), Option B (one shared attribute),
-   or Option C (named collection)? Wardrobe brings a recommendation and rationale.
-2. **ENTITY_GLOW usage:** If a glow is applied, which entities and what color? This requires
-   Casting's companion list first.
-3. **Companion persistence:** Do companions persist through vignette teleports or are they
-   despawned and respawned per A-section? (Casting answers this; Wardrobe needs the answer
-   to know how to manage glow states.)
+Enchantment on the axe (`Sharpness I`) — confirm with Stage Management whether
+the plugin's `ENTITY_EQUIP` supports enchanted items via item string or requires
+a separate mechanism. If not currently supported, the plain `IRON_AXE` is the
+fallback; the kit holds without the enchant.
 
 ---
 
-## Decisions
-*Filled at intake — after Casting confirms companion list.*
+## The Companion — Armorer Villager
 
-## Revision Notes
-*Added after each in-game test.*
+**No wardrobe intervention.** The Armorer Villager's brown robes and apron are exactly
+correct. The companion should not look more interesting than the Hero. Wardrobe does
+not touch them.
+
+---
+
+## The Armor Stand
+
+The armor stand at home base displays the filling sequence above across all six
+A-section returns. At show open: fully bare. At the penultimate A-return: five slots
+filled (boots through shield). Final slot (axe) fills on the last A-return, just
+before the Vindicator spawns.
+
+The stand's visual arc is the show's spine. The kit must read as a unified object
+when complete — the player should see the fully stocked stand and understand immediately
+that this belongs to one person, prepared by one person, for one purpose.
+
+---
+
+## Wardrobe's Open Items
+
+- Confirm with Stage Management whether `LEATHER_BOOTS` supports custom dye color
+  via the plugin's `equipment:` block, or whether dye requires a separate mechanism.
+  If unsupported, `LEATHER_BOOTS` (undyed) is the fallback.
+- Confirm enchanted item support for main hand axe (as above).
+- Both are low-priority fallback questions — the kit is coherent without them.

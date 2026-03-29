@@ -2,157 +2,147 @@
 show_id: showcase.01
 department: Stage Management & Production
 document: Department Brief
-updated: 2026-03-26
+updated: 2026-03-28
 ---
 
-# Stage Management & Production — showcase.01 "The Cabinet"
+# Stage Management — showcase.01 "Preparing for Battle"
 
 ## What This Department Serves
 
-Stage Management owns the show's skeleton: tick structure, department sequencing, run sheet,
-and the technical systems that make everything else possible. In a rondo show with six locations,
-Stage Management's primary challenge is **transition integrity** — ensuring that each departure
-from Home Base and each return is clean, sequenced correctly, and doesn't leave entities,
-sound beds, or effects active in the wrong place.
+Stage Management owns the show's sequence logic, timing, and the two most technically
+precise moments in "Preparing for Battle": the armor stand fill sequence on each
+A-section return, and the Hero reveal sequence in the finale.
 
-Production manages the show's development arc from brief through opening. For showcase.01,
-Production's job is to sequence the intake process correctly: Set is first mover, then
-Casting + Effects + Fireworks (altitude agreement), then all remaining departments. No YAML
-is written before coordinates are confirmed.
+Stage Management also owns the intake process — collecting commitments from all
+departments, sequencing gates, and ensuring no YAML is authored before its dependencies
+are resolved.
 
 ---
 
-## Tick Architecture — Rondo (ABACADAEAF)
+## The Armor Stand Fill Sequence
 
-The show's structure in ticks (approximate — actual values locked at YAML authoring):
+On each A-section return, one slot on the armor stand is filled. This is the show's
+visual spine and must land as a small, satisfying beat — not a ceremony, not a footnote.
+
+**Mechanics:**
+The armor stand is an entity. Stage Management uses `ENTITY_EQUIP` events to populate
+one slot at a time, sequenced to the appropriate A-section return. The equipping fires
+during or just before the player's TP back to home base — so the player arrives and
+the change is already present, or arrives and sees it happen within the first few seconds.
+
+**Timing decision for intake:**
+- Option A: The slot fills *before* the TP home fires — player arrives and the stand
+  is already updated. Silent, structural.
+- Option B: The slot fills *just after* the player arrives — the player watches it
+  happen. Small event, specific beat.
+
+Direction decides at intake based on what register fits the show. The brief suggests
+Option B for the first two fills (novelty) and Option A for the middle fills
+(the filling becomes routine, the stand just accumulates), with Option B returning
+for the final fill before the Hero arrives. Stage Management proposes a specific schedule.
+
+**Slot filling order:**
+Wardrobe recommends the sequence. Stage Management executes it. Probable dramatic
+order: boots → leggings → chestplate → helmet → shield → weapon. This saves the
+weapon for last — the most charged piece arrives right before the Hero does.
+
+---
+
+## The Finale Reveal Sequence
+
+This is the show's most technically precise moment. Stage Management owns tick alignment.
+
+**The decision: spawn-equipped vs. sequential equip**
+
+Both are confirmed available:
+- `SPAWN_ENTITY` with a fully populated `equipment:` block spawns the Hero in full kit
+  instantaneously. The reveal is visual — the mob appears and it is already the image.
+- Sequential `ENTITY_EQUIP` events after spawn equip the Hero slot by slot in the
+  player's view. The reveal is a process — the player watches the armor go on.
+
+**The brief recommendation:**
+Spawn-equipped is likely the stronger choice for this show. The companion has already
+placed each piece on the armor stand; the reveal should be *arrival*, not *another
+equipping*. The Hero appearing in full kit says "this was always who this was for."
+Sequential post-spawn equipping would repeat the show's spine structure in miniature
+rather than conclude it.
+
+Stage Management proposes; Casting co-decides; Direction confirms. This decision is
+locked at intake and does not change.
+
+**Reveal sequence beat structure (proposed):**
+
+1. Final A-section: companion returns with the shield (last piece). Armor stand
+   fills its final slot (the weapon, per Wardrobe's recommended sequence).
+2. Hold: 40–60 ticks. The companion is still. The armor stand is full.
+3. Voice's finale line fires (if there is one) — or silence holds.
+4. Hero spawn fires at the confirmed position. `SPAWN_ENTITY` with full `equipment:`.
+5. Camera redirect fires if needed (if the spawn position is outside the arrival
+   facing — one FACE event at the moment of spawn).
+6. Fireworks fire if Mira is in the finale — at or just after the Hero's appearance.
+7. Hold: 60+ ticks. The show does not rush its ending.
+
+Exact tick values confirmed at intake based on Hero mob, lighting state, and Sound's
+recommendation for the silence duration.
+
+---
+
+## Gate Sequence
+
+Production gates in dependency order:
+
+**Gate 1 (Casting):** Companion and Hero confirmed. Unlocks Wardrobe and Voice.
+
+**Gate 2 (Wardrobe):** Armor kit designed and slot fill order confirmed. Unlocks
+Set scouting brief and Stage Management's equipping sequence design.
+
+**Gate 3 (Set):** All six expedition sites and home base scouted and coordinates
+documented. Unlocks Effects, Camera, Lighting, and the bulk of YAML authoring.
+
+**Gate 4 (Intake conversation):** All departments present proposals. Stage Management
+records commitments. The following decisions are locked at Gate 4:
+- Fill timing (before or after TP-home, per slot)
+- Fill order (Wardrobe's recommended sequence confirmed)
+- Reveal mechanic (spawn-equipped vs. sequential post-spawn)
+- Hero spawn position relative to player arrival facing
+- Finale sequence beat structure with tick values
+- Fireworks presence and position in finale and/or shield scene
+- Effects events per site (with Set coordinates confirmed)
+
+No YAML is authored before Gate 4 closes.
+
+---
+
+## Show Structure Reference
+
+The show's rondo structure — for Stage Management's sequencing reference:
 
 ```
-T=0       Show opens. Home Base teleport fires. TIME_OF_DAY set.
-T=0–60    Arrival settling. BOSSBAR cleared. Allay spawns/activates.
-T=60–300  A1 — Home Base opening. Voice speaks (opening line). Ambient established.
-
-T=300     Departure for Vignette B. Sound clears ambient. TIME_OF_DAY adjustment if needed.
-T=320     PLAYER_TELEPORT to Vignette B. BOSSBAR: "The Still Water" activates.
-T=320–320+B_dur   Vignette B duration (free exploration). Voice line ~T+60. BOSSBAR fills.
-T=+B_end  BOSSBAR cleared. TIME_OF_DAY reset to Home Base canonical. Sound clears.
-T=+B_end+20   PLAYER_TELEPORT back to Home Base.
-T=+A2_start   A2 — Home Base return. Allay active. Voice observation line. Brief beat.
-
-[Pattern repeats for C, D, E, F]
-
-T=last_A  Final Home Base return. Voice closing lines. Allay present. Show settles.
-T=end     Show ends. Entities managed per despawn_on_end settings.
+A (open) → B → A₁ → C → A₂ → D → A₃ → E → A₄ → F → A₅ → G → A-FINAL (reveal)
 ```
 
-**Total target duration:** 8,400–9,600 ticks (7–8 minutes).
-
-### Vignette duration targets (approximate)
-- Vignette B: 800–1,200 ticks (40–60 sec) — free exploration, generous
-- Vignette C: 600–900 ticks (30–45 sec) — creature theater, let it develop
-- Vignette D: 600–800 ticks (30–40 sec) — Strider observation
-- Vignette E: 800–1,200 ticks (40–60 sec) — Mira's fireworks sequence (Mira confirms)
-- Vignette F: 400–600 ticks (20–30 sec) — setup + reveal + beat after
-- A-sections: 200–400 ticks each (10–20 sec)
-
-### Critical sequencing rules
-
-1. **Entity cleanup before teleport.** Any entities spawned in a vignette are despawned
-   OR explicitly managed before the teleport back to Home Base. Stage Management tracks
-   this per-vignette. A Strider left in the nether after the show is world pollution.
-
-2. **Sound clear before teleport.** STOP_SOUND fires before each PLAYER_TELEPORT event.
-   A nether ambient bed playing at Home Base is disorienting.
-
-3. **Levitation resolved before teleport.** If Effects has levitation active (Vignettes D
-   and E), it must either be resolved (player back near floor) or handled by slow_falling
-   that doesn't interfere with the teleport. Stage Management and Effects agree on the
-   timing at intake.
-
-4. **REDSTONE tick coordination (Vignette F).** The REDSTONE event and the SOUND comedy
-   hit must fire on the same tick. Stage Management is responsible for confirming this
-   alignment. If they drift by even 2–3 ticks, the comedy collapses.
-
-5. **TIME_OF_DAY reset on each A-return.** Lighting issues the reset; Stage Management
-   tracks that it fires within 60 ticks of each Home Base arrival.
+Seven A-sections total: one opening, five returns, one finale. Six expeditions.
+Six `ENTITY_EQUIP` calls on the armor stand (one per A-section return, A₁ through the
+penultimate A before the finale). One `SPAWN_ENTITY` (or `SPAWN_ENTITY` + `ENTITY_EQUIP`
+sequence) for the Hero at the finale.
 
 ---
 
-## Production Sequencing — Intake Order
+## YAML Items Owned by Stage Management
 
-The intake process for this show follows a specific dependency order:
-
-**Gate 1 — Set delivers:**
-- All six stage coordinates confirmed and entered in stage registry
-- Registry slugs named and stable
-- Contraption trigger XYZ documented (Vignette F)
-- Ceiling heights for Vignettes D and E documented
-
-**Gate 2 — Altitude agreement (Effects + Fireworks + Camera):**
-- Effects proposes Vignette E altitude target
-- Mira accepts or counters — one number locked
-- Camera answers Vignette E philosophy question
-- All three departments confirm before any of the three author Vignette E YAML
-
-**Gate 3 — Casting confirms performers:**
-- Allay management decision (persist vs. respawn)
-- Companion list for Home Base
-- Vignette C creature pair (primary + backup)
-- Vignette E aerial presence (yes/no + species)
-- Vignette F punchline creature (after Set confirms contraption design)
-
-**Gate 4 — All remaining departments author:**
-- Lighting, Sound, Voice, Wardrobe, Choreography can work in parallel after Gates 1–3
-- Each coordinates with Stage Management on tick values as they author
-
-**Gate 5 — Stage Management writes run sheet:**
-- Full tick-by-tick event list across all sections
-- Run sheet saved to `showcase.01/run-sheet.md`
-- C-numbers assigned for in-game test debrief
+- Armor stand `ENTITY_EQUIP` events (six, one per A-section return)
+- All teleport events (TP-out for each expedition, TP-home for each return)
+- Hero `SPAWN_ENTITY` event in the finale (in coordination with Casting's confirmed
+  mob type and Wardrobe's confirmed item strings)
+- Finale hold timing (tick delays between armor stand full → Voice line → Hero spawn)
+- Camera `FACE` event at finale if warranted (in coordination with Camera)
+- Any departmental timing alignment required for the finale sequence
 
 ---
 
-## Technical Coordination Items
+## What Stage Management Does NOT Do
 
-**SOUND capability check:** Stage Management should test whether `entity.allay.item_given`
-is a triggerable sound identifier on this server before Voice and Sound make decisions that
-depend on it. File the result as a note in this document after testing.
-
-**Nether world name:** The PLAYER_TELEPORT event for Vignette D requires the exact world
-name as the server registers it (not just "nether"). Stage Management confirms this with
-Set's scouting notes and verifies it against the plugin's world resolution behavior.
-
-**End world name (if applicable):** Same as above for Vignette E if End islands are chosen.
-
-**REDSTONE event syntax confirmation:** The REDSTONE event fires at an absolute XYZ coordinate
-in a specific world. Stage Management confirms the event fires correctly in the test environment
-and that the REDSTONE OFF cleanup (if needed) is also verified.
-
-**Return behavior:** All sets in this show use `return_on_end: true`. Stage Management
-confirms that the return fires correctly after show end and that it doesn't conflict with
-any cleanup events that fire simultaneously.
-
----
-
-## Ops-Inbox Items to File
-
-If any of the following capabilities are discovered missing during show development, file
-to `ops-inbox.md`:
-
-- World name resolution failure on PLAYER_TELEPORT across dimensions (nether/end)
-- REDSTONE event not firing at absolute coordinates
-- `entity.allay.item_given` not registering as a valid SOUND identifier
-- Any levitation/teleport sequencing interaction that produces unexpected player behavior
-
----
-
-## Run Sheet
-
-*Written after all department YAML is drafted. Saved to `showcase.01/run-sheet.md`.*
-
----
-
-## Decisions
-*Filled at intake — intake order matters. See Production Sequencing above.*
-
-## Revision Notes
-*Added after each in-game test.*
+- Does not make creative decisions about armor aesthetics (Wardrobe)
+- Does not decide which Hero mob to cast (Casting)
+- Does not author expedition content (department-owned per scene)
+- Does not file capability gaps in this document — those go to `ops-inbox.md`

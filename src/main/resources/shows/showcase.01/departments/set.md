@@ -2,87 +2,178 @@
 show_id: showcase.01
 department: Set Director
 document: Department Brief
-updated: 2026-03-26
+updated: 2026-03-28
 ---
 
-# Set — showcase.01 "The Cabinet"
+# Set — showcase.01 "Preparing for Battle"
 
 ## What This Department Serves
 
-Set is the first mover for this show. No other department can author YAML until Set has confirmed
-real-world coordinates for each location. The show has six distinct spaces: the Home Base (A),
-and five vignette destinations (B–F). All six must be scouted or built and entered into the
-stage registry before intake closes.
+Set scouts and establishes all seven locations: home base and six expedition sites. The
+previous scouting brief is fully retired — all six expedition sites are a fresh slate.
+No YAML is written until Zarathale has scouted and documented real-world coordinates for
+every location.
 
-The show's premise is that the Allay has been collecting things — places as much as items. Every
-space the player visits is something the Allay found and thought worth keeping. Set's job is to
-find (or build) spaces that actually earn that premise. The player should feel, at each stop,
-that a small eccentric creature chose this place for a reason.
-
----
-
-## Key Decisions
-
-**1. All six locations must be confirmed before anything else moves.**
-The scouting task list in `kb/departments/set/stage-registry.md` defines what each space needs.
-That document is the authoritative brief for Zarathale's in-game work.
-
-**2. Home Base personality shapes the show's entire register.**
-Home Base is visited 5–6 times. It must have a distinctive quality — a feature, a formation,
-a light condition — that makes it feel like a *chosen* place, not a random clearing. Identify
-that quality during scouting and document it. Casting will build around it. Voice will refer to it.
-
-**3. Each vignette space must have a clear player arrival orientation.**
-Document `yaw` and `pitch` for each arrival point. The player spawns-in facing something specific.
-That first view IS the vignette's opening image — it must be intentional.
-
-**4. "The Contraption" (Vignette F) requires building.**
-This is the only task requiring active construction in-game. Design guidance is in the stage
-registry Task 6. The trigger XYZ must be known so the REDSTONE YAML event can be authored.
-Design the contraption with the show's comedy register in mind: small, specific, slightly absurd.
-A door opens; a piston places one flower; a chicken was waiting there the whole time.
+Set is the third mover in this show's production order, after Casting (companion + Hero)
+and Wardrobe (armor kit). Wardrobe's kit design informs the scouting lens — what the
+armor looks like affects what "where this piece belongs" should feel like in-world.
 
 ---
 
-## Show-Level Constraints
+## The Scouting Lens
 
-- All six stages must be registered in `kb/departments/set/stage-registry.md` using the standard
-  registry format (slug, coordinates, facing, biome/type, ceiling height, ambient light,
-  sight lines, scouting notes).
-- YAML `set:` block entries use the registry slug as the identifier. Consistency here prevents
-  errors downstream.
-- The Nether Valley (Vignette D) requires documenting the world name as the plugin sees it —
-  not just "nether." Confirm the actual world name on this server.
-- "The Suspension" (Vignette E) requires sky clearance data: what is the maximum safe altitude
-  for player levitation at this location? That number goes to Effects and Fireworks at intake.
-- `return_on_end: true` is required for all six stages (the show always returns the player home).
-- The Welcome Stage (Task 8, showcase.03) is also on Zarathale's task list. That stage is a
-  separate show's deliverable but shares the same scouting window — if opportunistic, scout both.
+Each expedition site is selected for its resonance with a specific armor slot. The logic
+is poetic, not literal. The forge doesn't need a crafting table. The height location
+doesn't need to be labeled. The connection between place and piece should be felt —
+experienced — not explained.
+
+The question for every candidate location: *does this feel like where this piece was
+waiting?*
+
+Not: is this an impressive build? Not: is this easy to navigate? The question is always
+about the piece and the place belonging to each other.
 
 ---
 
-## Intake Questions for Set
+## Home Base
 
-1. **Home Base:** What is the distinctive feature that makes this space feel chosen? Describe
-   it in one sentence as Zarathale experienced it.
-2. **Vignette B ("The Still Water"):** What time of day looks best here? Is the water a lake,
-   river, or waterfall? What does the player see on arrival?
-3. **Vignette C ("The Theater"):** What is the natural "stage" element — a clearing in trees,
-   a cliff face behind, a slight elevation? Where do the wing entry points sit?
-4. **Vignette D ("The Nether Valley"):** What is the exact world name? What is the safe floor
-   elevation on arrival? What biome variant (basalt delta, soul sand valley, nether wastes)?
-5. **Vignette E ("The Suspension"):** End islands or high overworld? What is the floor altitude
-   (player arrival) and the maximum safe ceiling? Is there clear downward space for fireworks?
-6. **Vignette F ("The Contraption"):** What does the contraption do? What are the trigger
-   coordinates? What is the before-state and after-state visible from the player arrival point?
-   Is a REDSTONE OFF event needed for cleanup?
-7. **Registry slugs:** Propose a slug for each location at confirmation. (Example:
-   `home_base_meadow`, `still_water_falls`, `theater_grove`, etc.)
+The companion's workshop. The armor stand is the centerpiece. The player arrives into
+this space six times — at show open and after each expedition. They must recognize it
+immediately on every return.
+
+Home base should read as a craftsperson's space: functional, specific, slightly worn.
+Not a staged room. A place someone actually works in. The armor stand is placed
+prominently — the player should be able to see it clearly on arrival and notice when a
+new slot fills.
+
+**What Set documents for home base:**
+- Coordinates (x, y, z) and world
+- Arrival facing (compass direction or yaw/pitch) — must put the armor stand in the
+  center of the player's first view
+- The armor stand's exact position (Stage Management places this; Set confirms the space)
+- Any containment or staging concerns (mob paths, nearby AI interference)
 
 ---
 
-## Decisions
-*Filled at intake — after Zarathale confirms all six locations in-game.*
+## Expedition Sites
 
-## Revision Notes
-*Added after each in-game test.*
+### Site B — The Helmet: "High Ground"
+**Slot:** Helmet (head protection, vision, sky-facing)
+
+Scout for a location with height and exposure. A mountain peak, a watchtower, a stone
+formation at altitude, a mesa clifftop. The quality to find: the player should feel
+above things. The sky should be close. The helmet was left here — or found here — by
+someone who understood that protection begins with being able to see what's coming.
+
+The space doesn't need to be large. It needs to feel like the top of something.
+
+**What Set documents:** Coordinates, arrival facing, safe player position (no fall risk
+at TP-in), ceiling clearance if relevant, biome, any notable terrain features.
+
+### Site C — The Chestplate: "The Forge"
+**Slot:** Chestplate (core protection, weight, the largest piece)
+
+Scout for a location with heat, depth, or the memory of making. An active lava forge, an
+abandoned nether-adjacent structure, a blaze-adjacent ruin, an overgrown smithy in a
+badlands or nether biome. The chestplate is the heaviest piece and the show's most
+weighted expedition. The place should have gravity in it — not dramatic decoration, but
+the feeling of something important having been done here.
+
+Nether is likely for this site — netherite calls for it. But if a surface forge exists
+with the right quality, it is worth considering.
+
+**What Set documents:** Coordinates, arrival facing, biome (including nether biome if
+applicable), lava proximity (Effects needs this for levitation safety assessment),
+ceiling clearance, ambient light level.
+
+### Site D — The Leggings: "The Long Road"
+**Slot:** Leggings (movement, distance, the sustained effort of going)
+
+Scout for a traversal space — a path through a biome that implies distance. A river
+valley with a visible horizon. A road or cleared path through a forest. A plains stretch
+with something at its end. The leggings protect movement; the place should feel like
+movement happens here, like distance is the point.
+
+This is the show's middle beat — not the most dramatic, not the lightest. Set should
+find a place with a sense of continuity to it, not a destination but a passage.
+
+**What Set documents:** Coordinates, arrival facing (should orient toward the path or
+horizon, not away from it), path direction if applicable, biome.
+
+### Site E — The Boots: "The Burning Floor"
+**Slot:** Boots (terrain, what's underfoot, the tactile ground)
+
+Scout for a location with distinctive, challenging terrain. Magma field, soul sand valley,
+snowfield, deep swamp, clay riverbed, ash-covered basalt delta floor. The boots are about
+the ground — the place should make you aware of what you're standing on.
+
+This site has potential for Effects involvement (slow/fast/levitation relative to terrain
+type). Set must document the terrain type in detail so Effects can assess whether a
+movement sensation is warranted and safe.
+
+**What Set documents:** Coordinates, arrival facing, exact terrain type (material/biome),
+safe altitude above terrain for player TP, any terrain hazard notes for Effects.
+
+### Site F — The Weapon: "The Choice"
+**Slot:** Main hand weapon (intent, will, the decision to fight)
+
+Scout for a location that has the quality of a decision having been made here. A ruin of
+something that was defended. A pillager outpost (claimed from an adversary — the
+companion took their weapon, which is its own statement). A cleared battlefield. A place
+with a monument, a crater, a broken wall. The weapon is the piece that implies intent.
+The place should share that quality.
+
+This is the show's most emotionally weighted expedition. The location should have
+stillness to it — not emptiness, but the specific quiet of a place where something
+significant happened. Set should find a place that earns that quiet.
+
+**What Set documents:** Coordinates, arrival facing, any AI-active hostile mobs in
+range (needs clear answer — this scene holds the show's most important silence), biome,
+notable structures or features.
+
+### Site G — The Shield: "The Threshold"
+**Slot:** Off hand shield (final protection, the last line, the liminal piece)
+
+Scout for an edge location — a clifftop at dusk, the mouth of a cave, the border of a
+dangerous biome, the lip of a deep ravine. The shield is the final piece and the most
+liminal — it is protection carried into the unknown. The companion picks it up and turns
+for home. The place should feel like a boundary.
+
+This site may warrant Mira's involvement if the location has open sky (for a small
+departure burst as the companion leaves for the last time). Set documents sky clearance
+for Fireworks' assessment.
+
+**What Set documents:** Coordinates, arrival facing (toward the edge or threshold,
+not away from it), sky clearance above (blocks to obstruction), biome, time-of-day
+notes if applicable, any fall risk at player TP position.
+
+---
+
+## Scouting Format
+
+For each location, Zarathale files a scouting report with:
+
+```
+Location: [Site letter and name]
+World: [overworld / nether / end]
+Coordinates: x=__, y=__, z=__
+Arrival facing: yaw=__, pitch=__
+Biome: __
+Sky clearance: __ blocks (or "obstructed")
+Terrain notes: __
+Hazard notes: __
+Theatrical read: [1-2 sentences — why this place fits the piece]
+Candidate status: [recommended / alternate / rejected with reason]
+```
+
+Every location confirmed by Set enters the permanent stage registry in
+`kb/departments/set/stage-registry.md` before the show enters tech.
+
+---
+
+## Mob Containment
+
+If any expedition site requires mob containment (creature AI wandering off stage), Set
+designs it as needed — fence line, low wall, terrain modification. Containment is a
+design task, not a scouting filter. Find the place with the right theatrical feel first;
+design whatever containment is needed afterward.

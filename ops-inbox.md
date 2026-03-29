@@ -100,10 +100,12 @@ runs across all positions combined (consistent with how chase already works acro
 
 **Area:** Wardrobe, Casting Director
 **Schema field:** `variant:` and `profession:` on `SPAWN_ENTITY`
+**Now blocking:** showcase.01 "Preparing for Battle" — companion is an Armorer Villager;
+`profession: ARMORER` must work for the companion to spawn correctly.
 
 `SpawnEntityEvent` parses both fields correctly (model layer is complete), but `EntityEventExecutor.handleSpawn()` never applies them to the spawned entity. They are silently ignored at runtime.
 
-**Impact:** Villager professions, cat coat patterns, horse colorings, sheep wool colors, and wolf variants cannot be set via YAML. The fields appear to work but do nothing.
+**Impact:** Villager professions, cat coat patterns, horse colorings, sheep wool colors, and wolf variants cannot be set via YAML. The fields appear to work but do nothing. For showcase.01, the companion will spawn as a generic Villager rather than an Armorer Villager until this is fixed.
 
 **Fix scope:** In `EntityEventExecutor.handleSpawn()`, after spawning, cast to the appropriate entity subtype and apply:
 - `Villager` → `setProfession(Villager.Profession.valueOf(e.profession))` and `setVillagerType(Villager.Type.valueOf(e.variant))`
@@ -358,6 +360,75 @@ the available categories.
 `p.stopSound(soundId, SoundCategory.valueOf(source.toUpperCase()))` instead of the channel-wide
 stop. When omitted, behavior is unchanged (channel-wide clear). This gives Sound Designer
 per-sound-ID stop control without breaking existing usage.
+
+---
+
+### [java-gap] No native item frame content event (SET_ITEM_DISPLAY)
+
+**Area:** Set Director, Stage Manager
+**Event:** (new — does not exist)
+**Filed:** 2026-03-28 (showcase.01 — original context was "The Cabinet"; show direction
+has since changed, but the capability gap remains valid for any future show using
+progressive item frame display as a mechanic)
+
+Currently the only way to set an item frame's displayed item is via the COMMAND escape
+hatch:
+```
+/data modify entity @e[type=item_frame,name="frame_B",limit=1] Item set value {id:"...",Count:1b}
+```
+This works, but COMMAND is outside the stop-safety contract and requires precise entity
+naming discipline.
+
+**Proposed:** Add a `SET_ITEM_FRAME` (or more general `SET_ENTITY_DISPLAY`) point-in-time
+event that sets the displayed item of a targeted item frame entity:
+```yaml
+type: SET_ITEM_FRAME
+target: entity:world:frame_B   # or entity:spawned:Name
+item: minecraft:saddle
+```
+Implementation: resolve the target entity, cast to `ItemFrame`, call `setItem(ItemStack)`.
+Alternatively, if `SPAWN_ENTITY` gains an `entity_data:` NBT passthrough field, item frames
+could be spawned with items already in them — which would also solve Wardrobe and Casting's
+need for entity variant control.
+
+**Priority:** Low — no current show depends on this. Worth addressing before a show
+uses progressive item frame display as a core mechanic.
+
+---
+
+### [future-capability] Post-show interactive choice prompt
+
+**Area:** Stage Management, Casting
+**Event:** (new — does not exist)
+**Filed:** 2026-03-28 (showcase.01 "Preparing for Battle" — finale design)
+
+showcase.01 ends with a fully equipped Vindicator alive in the world. The player can
+fight it or walk away — no mechanic manages this. This is the deliberate design choice
+for the current show (Option A: mob lives, player decides). However, a richer option
+exists: present the player with a post-show choice prompt that branches to fight (leave
+the Vindicator hostile and aware) or release (DESPAWN_ENTITY fires with particle_burst).
+
+**No current event type supports player-input branching.** All show timelines are
+deterministic and linear. A choice prompt would require: (a) a clickable chat or simple
+GUI event that pauses show execution and waits for player input, and (b) a branching
+mechanism (conditional CUE execution based on that input).
+
+**Proposed (high level):**
+```yaml
+type: PLAYER_CHOICE
+prompt: "Fight, or let them go?"
+options:
+  - label: "Fight"
+    cue: showcase.01.epilogue.fight
+  - label: "Walk away"
+    cue: showcase.01.epilogue.release
+timeout_ticks: 200   # auto-selects "Walk away" if no input
+```
+
+**Priority:** Low — showcase.01 works without it. High value for future shows where
+branching endings are part of the design. Would benefit any show with a player-agency
+finale. Flag for design discussion before implementation — the branching model has
+implications for show authoring architecture (linear timeline assumption).
 
 ---
 

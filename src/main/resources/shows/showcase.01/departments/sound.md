@@ -2,129 +2,114 @@
 show_id: showcase.01
 department: Sound Designer
 document: Department Brief
-updated: 2026-03-26
+updated: 2026-03-28
 ---
 
-# Sound — showcase.01 "The Cabinet"
+# Sound — showcase.01 "Preparing for Battle"
 
 ## What This Department Serves
 
-Sound in this show has two distinct jobs — and they require different instincts.
+Sound (Gracie) scores each location with its own sonic identity — true to where it
+actually is — and manages the emotional pacing of the show through what it plays and
+what it withholds. Sound is present in nearly every scene but should register as
+atmosphere, not score. The player should feel like they've arrived somewhere, not like
+a soundtrack has been cued.
 
-**Job 1: Environmental continuity.** Each vignette destination has its own biome and
-atmosphere. The player teleports in and the world should immediately feel different — not just
-visually but sonically. Sound establishes each space through its ambient bed: forest hush,
-water movement, nether reverb, the specific absence of sound in high altitude void. These are
-not events that happen — they are the condition of being in each place.
-
-**Job 2: The comedy hit in Vignette F.** When the Contraption fires, Sound lands the beat.
-This is the show's one precision-comedy moment. The audio hit must land on the same tick as
-the REDSTONE reveal, or the comedy collapses. Sound leads this coordination.
-
-The tone brief says "natural history documentary" — the audio should feel like a score that
-knows it's accompanying something slightly absurd, but plays it completely straight.
+The show's most important sound task: hold the silence in the weapon scene (F) without
+filling it. Sound owns the weapon scene's restraint.
 
 ---
 
-## Per-Section Direction
+## Home Base
 
-### A-sections — Home Base (recurring)
-The Allay has a musical note it plays when delivering items — this may or may not be accessible
-as a triggered sound in YAML (confirm with Stage Management on `entity.allay.item_given`).
-If accessible, consider whether a soft Allay note on each Home Base return reinforces the
-space's identity.
+Home base is a craftsperson's workshop. The ambient bed should feel functional and
+specific: tools nearby, the small sounds of a working space. Not music. Not dramatic
+underscore. The sounds of someone who is busy with something that matters to them.
 
-Ambient bed for Home Base: whatever the biome is — established after Set confirms the location.
-Day sounds, evening sounds, or the specific texture of whatever time of day Lighting sets.
-Home Base is visited 5–6 times; the ambient bed should feel consistent across all returns.
-
-### Vignette B — "The Still Water"
-Water ambient is the primary bed: river/lake/waterfall sound depending on what Set found.
-The player has free exploration. No events to hit — this vignette is entirely environmental.
-Sound's job here is making the water feel present and specific.
-
-Optional: one subtle SOUND hit on arrival — a bird call, a distant ambient sound — to mark
-the entry into this space as different from Home Base. This is optional; keep it light if used.
-
-### Vignette C — "The Theater"
-Two creatures interact. Sound should not over-score this — the creatures generate their own
-audio through AI behavior. Ambient bed appropriate to the biome.
-
-If the creature theater moment produces a particularly good sound (a Goat's bleat landing at
-a funny moment, two Cats yowling), that's AI-generated content that Sound has no control over.
-Do not try to anticipate or score over it. Leave space.
-
-### Vignette D — "The Nether Valley"
-Nether ambient bed — the specific texture of which nether biome Set finds (basalt delta has
-its own ambient register, distinct from soul sand valley). Confirm biome after Set reports.
-
-Strider ambient sound is AI-generated (`entity.strider.ambient`). It will fire on its own if
-AI is on — do not try to replicate or score over it. Establish the nether bed, then let the
-Strider be itself.
-
-Levitation will be active here (Effects owns altitude). Sound does not need to score the
-levitation — the visual is sufficient. Keep the nether bed intact throughout.
-
-### Vignette E — "The Suspension"
-This is Mira's vignette. Sound's contribution should not compete with the fireworks.
-During the fireworks sequence: near-silence or a very minimal ambient bed in the background.
-Let the fireworks carry the sensory load.
-
-The one sound worth authoring here: the sound of the lift (levitation onset). Consider a
-soft, ascending tone — `block.note_block.harp` at rising pitch, or `entity.experience_orb.pickup`
-at low volume — at the moment Effects activates the levitation. Confirm timing with Effects.
-
-After Mira's sequence: the silence after the fireworks is itself a sound event. Let it breathe.
-
-### Vignette F — "The Contraption"
-Sound leads the comedy coordination. The sequence:
-
-1. **Pre-reveal:** Whatever ambient texture the space has — this is the "before" state.
-   A ticking mechanical sound if the contraption is redstone-visible? Optional, but consider
-   whether a low ambient tick suggests something is about to happen.
-
-2. **The REDSTONE reveal tick:** A single SOUND hit lands simultaneously with the REDSTONE
-   trigger. This is the comedy beat. Options:
-   - `block.note_block.bass` (low BONK — surprised, absurd)
-   - `entity.chicken.egg` (if the punchline creature is a Chicken — thematically precise)
-   - `ui.button.click` + `entity.player.levelup` stacked (small and triumphant)
-   - Keep it one hit, not a chord. The restraint is the joke.
-
-3. **Post-reveal:** A beat of silence. Then optionally: Sprite speaks. Then ambient returns.
-
-Coordinate with Stage Management on exact tick alignment between REDSTONE event and SOUND event.
+**Consistency requirement:** The home base ambient bed must be identical on every
+A-section return. The player recognizes home partly by its sound. If the ambient state
+risks changing (weather, time-of-day), Sound authors a state-restore at each A-section
+arrival.
 
 ---
 
-## Show-Level Constraints
+## Expedition Sites
 
-- Each vignette's ambient bed must be cleared on departure (STOP_SOUND) before the next
-  location's teleport. Ambient beds don't know they've moved.
-- The nether biome's ambient sounds may include hostile mob calls — confirm these don't
-  interfere with the Strider vignette's emotional register.
-- The comedy hit in Vignette F is the show's precision-timing moment. Get the tick right.
-- Do not over-score the A-section returns. Home Base should feel like a return, not a
-  re-introduction. A brief ambient tone is enough; do not re-establish the full bed each time
-  if it's already running.
+### Site B — The Helmet (high ground)
+Wind is the primary sonic signature of altitude. If the location is genuinely high,
+native Minecraft wind ambient may be sufficient — Sound documents whether it is and
+whether any authored layer adds to it or competes with it.
+
+This is the show's first expedition. Sound should be clean and purposeful here — no
+mood-building, just where you are.
+
+### Site C — The Chestplate (the forge)
+The forge or nether site has its own ambient: blaze sounds, lava, the ambient drone of
+the nether. Sound documents what the native bed is and assesses whether it already
+carries the scene. Nether ambient is usually strong enough on its own.
+
+If this is a surface forge: lava sounds, the creak of a structure, ambient heat if
+achievable. Sound should aim for "working heat," not "dramatic lair."
+
+### Site D — The Leggings (the long road)
+A traversal biome has a lighter ambient touch than the forge or the height site. Wind,
+grass, water if a river is present, birds if in a forest. This is the show's middle
+beat — Sound should not escalate here. Let the environment breathe.
+
+### Site E — The Boots (the terrain site)
+Terrain-specific sound is this scene's strongest card. A magma field has a specific
+crackle. A soul sand valley has its own ambient (the shrieking quality is part of it).
+A snowfield has a distinct quietness. Sound documents what the terrain gives and
+whether it serves the scene without modification.
+
+This scene is tactile. The sound should feel like something underfoot, not overhead.
+Do not try to score the terrain; let it speak.
+
+### Site F — The Weapon (the choice)
+This is the show's most emotionally weighted stop. Voice may be silent here. Lighting
+will not escalate. Sound must hold the space with equal restraint.
+
+**The brief for this scene is: less.** Whatever ambient the location provides, Sound
+may thin it — not silence it (silence is its own event and should be used deliberately),
+but reduce it to something that feels like a held breath. The player should feel the
+weight of the place without being pushed toward a feeling by a soundtrack.
+
+If the location is a ruin or a cleared site: the ambient quality of emptiness is the
+score. Sound should not fill what the location is using as content.
+
+After the companion collects the weapon: hold the ambient until the TP home fires.
+No resolve, no swell, no punctuation.
+
+### Site G — The Shield (the threshold)
+The threshold location — edge of something, liminal space — may benefit from a slight
+ambient shift: something that sounds like the edge between inside and outside, safe
+and exposed. This is the show's final expedition and the one closest to the finale.
+Sound can allow slightly more texture here than in the weapon scene, but the register
+is still restrained. This is not a crescendo. It is a final breath before the reveal.
+
+If Mira is in this scene with fireworks: Sound steps back and lets Mira lead. No
+competing audio.
 
 ---
 
-## Intake Questions for Sound
+## The Finale
 
-1. **Home Base biome:** What ambient bed does this space call for? (Answered after Set confirms.)
-2. **Allay note sound:** Is `entity.allay.item_given` triggerable as a SOUND event? Test
-   and confirm with Stage Management.
-3. **Vignette B water type:** Lake, river, or waterfall? Affects which ambient water sounds apply.
-4. **Vignette D nether biome:** Basalt delta, soul sand valley, or nether wastes? Affects
-   ambient choice significantly.
-5. **Vignette E levitation sound:** Yes or no? If yes, which sound on which tick (coordinate
-   with Effects for the exact onset tick)?
-6. **Vignette F comedy hit:** What is the sound? What is the exact tick it fires?
+The Hero arrives. Sound does not cue a fanfare.
+
+If anything: hold the home base ambient and let the visual do the work. If Sound can
+find a moment where the world sounds like it recognized what just happened — the quality
+of a door opening onto something expected — that is the correct register. Not dramatic.
+Acknowledged.
+
+The silence after the Hero appears is part of the show. Hold it.
 
 ---
 
-## Decisions
-*Filled at intake.*
+## What Sound Does NOT Do
 
-## Revision Notes
-*Added after each in-game test.*
+- Does not provide scored music in the traditional sense (no leitmotif, no swell)
+- Does not fill the weapon scene with underscore
+- Does not compete with Mira's fireworks in any shared scene
+- Does not use sound events to signal emotional content ("now feel something")
+
+Sound establishes place. The emotion is the player's.

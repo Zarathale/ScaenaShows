@@ -2,131 +2,99 @@
 show_id: showcase.01
 department: Camera Director
 document: Department Brief
-updated: 2026-03-26
+updated: 2026-03-28
 ---
 
-# Camera — showcase.01 "The Cabinet"
+# Camera — showcase.01 "Preparing for Battle"
 
 ## What This Department Serves
 
-Camera (Mark) is an orientation instrument in this show — not a dramatic one. The player
-teleports into six distinct spaces across the course of the show. At each teleport, they arrive
-facing whatever the `set:` coordinates specify. Camera's job is to confirm that arrival facing
-serves the opening image of each vignette, and then to step back.
+Camera (Mark) is an orientation tool in this show. The player teleports into seven
+distinct spaces (home base, six expedition sites). At each arrival, Camera confirms
+the player is looking at the right thing — then releases. The show does not call for
+sustained reorientation or dramatic sweeps.
 
-This is not a show that calls for dramatic camera sweeps or sustained reorientation. The player
-is an explorer. Let them explore. Camera gives them the right first view, then releases them.
-
-**This is the baseline — not the ceiling.** The restrained footprint in the brief is Camera's
-conservative starting position. As the show develops through Watch Rounds, Mark is standing by
-to take more cues and suggest moments where a camera intervention would serve the show: a
-creature entrance that lands harder if the player is already facing left, a sound hit that pulls
-focus somewhere worth orienting toward, a moment in Vignette E: The Suspension that the
-orientation philosophy doesn't fully account for. The brief says "do less"; Watch Rounds are
-where "do more here" gets discovered.
-
-The one planned exception at brief stage: Vignette E: The Suspension. The player is elevated
-into Mira's fireworks sequence. Mark has a specific question to answer for that moment: does
-the player face into the sky, or downward into the burst below them? This is a philosophy
-question, not a technical one, and Mark brings the answer to intake.
+The one exception is the finale. The Hero's reveal requires that the player is facing
+the right direction at the right moment. Camera owns that.
 
 ---
 
-## Per-Section Direction
+## Per-Scene Direction
 
-### A-sections — Home Base
-Arrival facing is defined by Set's coordinates. Mark confirms (with Set) that the arrival
-facing puts the Allay in the center of the frame.
+### A — Home Base (all returns)
 
-Once the player is at Home Base, no camera adjustment is required. The Home Base is familiar
-by the second return — the player knows where they are. Trust that.
+On arrival: orient the player toward the armor stand. The armor stand is the show's
+visual spine; the player must be looking at it when they land. Mark coordinates with
+Set on the exact arrival facing — the armor stand position drives this.
 
-The exception: the very first A-section arrival (show opening). This is the player's introduction
-to the world. If the arrival facing doesn't immediately present the Allay and the space, Mark
-may add a single `FACE` adjustment after a short pause (60 ticks) to let the player settle,
-then orient. This is optional — if Set's coordinates land the Allay in frame naturally, skip it.
+On each return, the armor stand has one more slot filled. Camera does not re-orient
+after arrival; the player will notice the change naturally. Camera lands them facing
+it and releases.
 
-### Vignette B — "The Still Water"
-Arrival facing is toward the most interesting part of the water space (Set documents this).
-After the player arrives, no camera intervention. This vignette is about free exploration — any
-reorientation after arrival interrupts the player's agency in a space designed for it.
+### B — Site B: The Helmet (high ground)
 
-### Vignette C — "The Theater"
-Arrival facing is toward the natural stage area where the two creatures are staged.
-Mark should confirm with Set that the arrival coordinates produce a sight line to the "stage"
-from the player's entry position.
+Orient the player toward height — toward the sky, or toward the view that makes the
+elevation legible. If the location has a drop, orient the player toward the drop (they
+should feel height, not just be on it). Then release.
 
-After the initial orientation: no adjustment. The player watches what the creatures do. If the
-creatures wander out of frame, that is the creature theater's authentic nature — do not try to
-compensate by reorienting the player.
+### C — Site C: The Chestplate (the forge)
 
-### Vignette D — "The Nether Valley"
-The player arrives slightly elevated (Effects' light levitation). The arrival facing should
-present the nether landscape and the Strider in the same frame.
+Orient the player toward depth — the interior of the forge, the heat source, whatever
+gives this space its gravity. The player should arrive feeling like they are entering
+something rather than standing next to it. Then release.
 
-If the Strider is on lava and the player is 3–4 blocks up, a slight downward pitch on arrival
-(negative pitch value in coordinates) helps the Strider and the lava read in the same view.
-Mark coordinates with Set on whether to adjust the `pitch:` field in the stage registry entry
-for this.
+### D — Site D: The Leggings (the long road)
 
-No reorientation after arrival — the player floats and observes.
+Orient the player down the road or path — toward the horizon or toward the direction
+of distance. The player should arrive looking *along* the traversal space, not *across*
+it. Then release.
 
-### Vignette E — "The Suspension"
-Mark's primary question for this show: **what does the player look at during Mira's fireworks?**
+### E — Site E: The Boots (the terrain site)
 
-Three options:
-- **Option A — Face the sky above:** Player looks up, slightly downward pitch so the burst
-  radius is in view. The experience is "I am floating and the sky is doing something."
-- **Option B — Face downward:** Player looks at the world below, fireworks firing between
-  them and the ground. The experience is "I am above everything."
-- **Option C — Hold the arrival facing:** Player stays oriented as they arrived (horizontal,
-  looking at the landscape). Fireworks occur at peripheral altitude. Less directed, more ambient.
+Orient toward the most distinctive feature of the terrain underfoot — the magma field,
+the snowfield, whatever makes this place tactile. Looking down at a slight angle can
+serve this scene if the terrain warrants it. Then release.
 
-Mark brings a recommendation to intake. Effects and Mira should hear the recommendation before
-intake closes — the altitude agreement and the facing decision are coupled. A player facing down
-at altitude 20 has a different experience than a player facing up at altitude 20.
+### F — Site F: The Weapon (the choice)
 
-If a `FACE` event is used: fire it at the start of the levitation climb (before reaching full
-altitude), not after. The reorientation and the lift should work together.
+This scene holds the show's most important silence. Camera delivers the arrival facing
+and holds out. Do not re-orient mid-scene. The player should land looking at whatever
+Set has placed as the scene's visual anchor (the ruin, the relic, the cleared site)
+and be allowed to stay there.
 
-### Vignette F — "The Contraption"
-Arrival facing is toward the contraption's "before" state. The player sees the setup.
-After the REDSTONE trigger fires the reveal, no camera adjustment is needed — the reveal happens
-in front of them if Set's approach is designed correctly.
+### G — Site G: The Shield (the threshold)
 
-If the punchline creature appears somewhere that isn't in the arrival frame, Mark may add a
-single `FACE` to redirect toward it immediately after the REDSTONE event. Coordinate with Set
-and Casting at intake on whether this is needed.
+Orient toward the edge — the clifftop, the mouth, the border. The player should feel
+the threshold quality of this location immediately on arrival. If the edge involves
+a drop, the player should be facing it, not standing with their back to it.
+
+### A-Final — The Reveal
+
+This is Camera's most important moment in the show.
+
+The Hero will arrive/spawn at a position Stage Management confirms at intake. Mark must
+ensure the player is facing that position when the Hero appears. If the arrival facing
+from Set already puts the spawn point in frame: Camera holds. If the Hero enters from
+a direction the player isn't facing on TP-in: a single FACE redirect fires at the moment
+of the Hero's spawn — not before, not after.
+
+Do not reorient the player after the Hero is visible. Let the player look.
 
 ---
 
-## Show-Level Constraints
+## What Camera Does NOT Do
 
-- The `set:` registry coordinates include arrival `yaw:` and `pitch:` — Camera's primary tool
-  is coordinating with Set on what those values should be, not necessarily issuing separate
-  `FACE` events.
-- `FACE` events (velocity-based smooth turns) take time. A `FACE` issued immediately on arrival
-  is jarring. If reorientation is needed after teleport, wait 40–60 ticks before issuing it.
-- This show has six distinct arrival moments. Mark reviews each stage registry entry and signs
-  off (or proposes adjustments) on each `yaw:` and `pitch:` value before YAML is authored.
+- No dramatic sweeps or gradual reorientation arcs in this show
+- No mid-scene reorientation except the one allowed FACE redirect in the finale
+- No camera work that calls attention to itself as camera work
 
----
-
-## Intake Questions for Camera
-
-1. **Vignette E philosophy:** Option A (look up), Option B (look down), or Option C (hold
-   arrival facing)? Mark brings a recommendation.
-2. **Opening A-section:** Does Set's arrival facing naturally frame the Allay? Or does Mark
-   need a single `FACE` event 60 ticks in?
-3. **Vignette C sight line:** Confirm with Set that the arrival coordinates produce a clear
-   sight line to the "stage" area where the creature pair is staged.
-4. **Vignette F reveal:** Is the punchline creature visible from the arrival facing after the
-   REDSTONE trigger? Or does Mark need to issue a `FACE`?
+The show earns its reveals through location, staging, and restraint. Camera's job
+is to make sure the player is positioned to receive them — not to perform the reveal.
 
 ---
 
-## Decisions
-*Filled at intake — Vignette E: The Suspension orientation philosophy answered first.*
+## Coordination Gate
 
-## Revision Notes
-*Added after each in-game test.*
+Mark brings one question to intake: does Set's home base arrival facing already put the
+armor stand in center frame? If yes: Camera holds on home base. If no: a single
+arrival-facing adjustment is warranted, coordinated with Set before YAML is authored.
