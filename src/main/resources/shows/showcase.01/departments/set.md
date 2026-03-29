@@ -51,6 +51,11 @@ new slot fills.
   center of the player's first view
 - The armor stand's exact position (Stage Management places this; Set confirms the space)
 - Any containment or staging concerns (mob paths, nearby AI interference)
+- **Blast furnace placement:** Home base requires a blast furnace as a practical set piece —
+  it is the workshop's ambient sound source and visual anchor (lit glow). Scout for a space
+  that either already contains one or has room to place one in a natural workshop position.
+  The furnace should be visible to the player on arrival but not competing with the armor
+  stand as the primary focal point.
 
 ---
 

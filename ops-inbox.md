@@ -396,6 +396,43 @@ uses progressive item frame display as a core mechanic.
 
 ---
 
+### [java-gap] No BLOCK_STATE event — cannot set block lit/active states via YAML
+
+**Area:** Sound Designer, Set Director
+**Event:** (new — does not exist)
+**Filed:** 2026-03-29 (showcase.01 "Preparing for Battle" — home base workshop design)
+
+No event type currently allows the show to set a block's state (e.g., `lit=true` on a blast
+furnace or furnace). Block state changes can only be done via the COMMAND escape hatch, which
+is outside the stop-safety contract.
+
+**showcase.01 use case:** The Armorer's home base workshop contains a blast furnace. The show
+needs to activate it (set `lit=true`) at show open to produce both the glow (light emission)
+and the ambient crackle sound in-world. On show end / stop-safety, the furnace should return
+to its prior state (`lit=false`).
+
+**Proposed:** Add a `BLOCK_STATE` point-in-time event:
+```yaml
+type: BLOCK_STATE
+target: {x: 100, y: 64, z: 200}
+world_specific: true
+state:
+  lit: true   # block-state key/value pairs; applied via block.setBlockData()
+```
+Implementation: resolve the target block, read current `BlockData`, apply the specified state
+fields, call `block.setBlockData(data)`. At show start, record the original `BlockData` for
+each targeted block in `RunningShow`. On show end (natural or interrupted), `applyStopSafety`
+restores original block data. This brings block state changes inside the cleanup contract.
+
+**Note:** The existing `BLOCK_PLACE` / `BLOCK_REMOVE` ops-inbox item handles adding/removing
+blocks. This item is narrower and distinct — it only changes the state of an already-present
+block (lit, open, powered, etc.) without altering block type.
+
+**Priority:** Medium — showcase.01 will use sound-only (`block.blastfurnace.fire_crackle`) as
+a bridge until this is implemented. Visual furnace glow at home base is blocked on this fix.
+
+---
+
 ### [future-capability] Post-show interactive choice prompt
 
 **Area:** Stage Management, Casting

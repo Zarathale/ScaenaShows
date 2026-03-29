@@ -23,14 +23,26 @@ which makes this restraint the show's last sonic act before home and the reveal.
 
 ## Home Base
 
-Home base is a craftsperson's workshop. The ambient bed should feel functional and
-specific: tools nearby, the small sounds of a working space. Not music. Not dramatic
-underscore. The sounds of someone who is busy with something that matters to them.
+Home base is the Armorer's workshop — a craftsperson's space where the preparation
+actually happens. The player is the observer here; the antechamber between the Armorer
+and the Vindicator behind the wall.
 
-**Consistency requirement:** The home base ambient bed must be identical on every
-A-section return. The player recognizes home partly by its sound. If the ambient state
-risks changing (weather, time-of-day), Sound authors a state-restore at each A-section
-arrival.
+**The ambient bed is the blast furnace.** A blast furnace is a set piece at home base.
+When it is activated (lit=true via BLOCK_STATE — see ops-inbox.md), it produces both
+the glow and the native crackle sound in-world. That crackle is the home base ambient
+layer. No authored SOUND bed needed — the block does the work.
+
+**Java gap bridge:** Until BLOCK_STATE is implemented, Sound authors
+`minecraft:block.blastfurnace.fire_crackle` as a SOUND event at show open (low volume,
+ambient channel, max_duration_ticks to match scene length or restated per section).
+Once BLOCK_STATE ships, the authored SOUND events are removed and the live block
+carries the bed.
+
+**Consistency requirement:** The home base ambient must be identical on every A-section
+return. The player recognizes home by its sound — the same furnace, the same room.
+If the ambient state risks changing (weather, time-of-day), Sound issues a state-restore
+on each A-section arrival. If using the live block (post-BLOCK_STATE), the furnace stays
+lit for the full show and no restore is needed.
 
 ---
 

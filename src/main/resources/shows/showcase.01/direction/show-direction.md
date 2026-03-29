@@ -14,11 +14,11 @@ stage: Brief
 
 ## The Story
 
-A devoted companion — small, earnest, not built for combat — is equipping a Hero for something that matters. The armor stand at home base stands empty at the show's open. The companion sets out five times, once per piece of gear: helmet, chestplate, leggings, boots, weapon. Each expedition is a procurement. Each return fills one more slot on the armor stand. At the final return, the armor stand is full — and the Hero arrives to wear it.
+A devoted companion — small, earnest, not built for combat — is equipping a Hero for something that matters. The armor stand at home base stands empty at the show's open. The companion sets out five times, once per piece of gear: helmet, chestplate, leggings, boots, weapon. Each expedition is a procurement run — he knows where each piece is, and he goes to get it. Each return fills one more slot on the armor stand. At the final return, the armor stand is full — and the Hero arrives to wear it.
 
 The show is not about the battle. It is about the preparation. The devotion in the doing.
 
-The player witnesses this. They travel with the companion on each expedition. They watch the armor stand grow. And at the end, they see who it was all for.
+**The player's role:** Observer in the antechamber. They are present in the Armorer's workshop — the working space where the companion does his craft. The armor stand is in front of them. The Vindicator is behind a wall. They are the witness between the maker and the made. They travel with the companion on each expedition, then return to the same room, the same stand, the same sound of a furnace running. At the end, they see who it was all for — and understand they were standing in the preparation the whole time.
 
 ---
 
@@ -154,14 +154,14 @@ The reveal sequence is the show's most technically precise moment. Whether the H
 
 ## Scene-Level Direction
 
-### A — Home Base: "The Stand"
-*"Six slots. One reason."*
+### A — Home Base: "The Workshop"
+*"The antechamber between the maker and the made."*
 
-The armor stand is here. The Armorer Villager is here. The Vindicator is not — they are absent until the finale reveal. The player arrives into the Armorer's preparation without preamble.
+This is the Armorer's workspace. A craftsperson's shop — functional, specific, slightly worn. A blast furnace runs here. The armor stand is the centerpiece. The Vindicator is behind the wall, separated by an iron door. The player arrives into this space and stays in it — they are the witness in the antechamber.
 
-The companion speaks once at opening: a line that establishes the mission without narrating it. Not "I must equip the Hero for battle." Something that implies it. A specific detail — the weight of the first piece, where they're going first, something that makes the scale of the task legible without stating it.
+The player is between two things they don't fully understand yet: an Armorer who is completely calm and professional, and something behind a closed door that is not. By the end of the show, they understand both.
 
-Each A-section return is a brief, functional beat. One slot fills. The companion may speak or not. When they speak on return, it is a field note — something specific to the expedition just concluded, not a recap. The armor stand does the narrative work; the companion does not need to.
+The companion speaks once at opening (after the door clanks shut): a line that establishes the mission without narrating it. Each A-section return is a brief, functional beat. One slot fills. The companion's return lines are field notes — something specific to the expedition just concluded, not a recap. The armor stand does the narrative accumulation; the companion does not need to.
 
 The final A-return is different from all others. See Scene A-Final below.
 

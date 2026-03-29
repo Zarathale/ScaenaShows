@@ -95,7 +95,7 @@ Fills in dramatic order, independent of expedition order:
 | D | ✓ Find-firework | Understated, road-quality |
 | E | ✓ Find-firework | Tactile, swamp-register |
 | F | ✗ Absent | Intentional — final expedition, absence carries max force |
-| A-Final | TBD | Mira proposes burst or silence — decide at first YAML session |
+| A-Final | ✓ Grand finale burst | Locked 2026-03-29 — big payoff, maximum impact |
 
 Timing: between Armorer line 2 (names piece) and line 3. Simultaneous with item in hand.
 
@@ -112,7 +112,7 @@ Timing: between Armorer line 2 (names piece) and line 3. Simultaneous with item 
 | Expedition camera | Drone spectate dolly-in template (all 5 scenes) | Reusable cue; Site F pacing slower |
 | Item in hand at discovery | `ENTITY_EQUIP` main hand at find beat | **TBD — confirm Armorer Villager main-hand targeting** |
 | Particle beat at Site F | Proposed — ground particles at axe discovery | **TBD — Effects confirms viability after scouting report** |
-| Vindicator offstage voice | Text lines, distinct format (color/caps), short/blunt | **TBD — Voice session: format, timing, count per A-section** |
+| Vindicator offstage voice | Sound grunt at show open; text "AXE." at A4 return | Locked 2026-03-29 — deep red `#CC2200`, all caps, CHAT event (confirm vs ACTIONBAR with Sound) |
 
 ---
 
@@ -135,11 +135,11 @@ Timing: between Armorer line 2 (names piece) and line 3. Simultaneous with item 
 
 YAML authoring begins when all TBD params above are resolved. Current blockers:
 
-- [ ] Player spectator mode — plugin support confirmed or ops-inbox filed
+- [x] Player spectator mode — confirmed. Camera owns expedition transitions via `PLAYER_SPECTATE` (verified in Camera KB). Stop-safety restores prior game mode. No ops-inbox item needed.
 - [ ] Armorer Villager main-hand targeting — ENTITY_EQUIP confirmed
 - [ ] Scouting report delivered (Gate 3) — coordinates for all 6 locations
-- [ ] Site F particle beat — Effects confirms viability
-- [ ] Voice session — A-section revision, F line 3, Vindicator voice format
-- [ ] Fireworks finale decision — burst or silence
+- [ ] Site F particle beat — Effects confirms viability after scouting report. Decision unblocks with #3 (Set scouts cleared space dimensions and ruin structure at Site F).
+- [x] Voice session — complete 2026-03-29. Script v2 locked. A-sections revised for wall staging, Vindicator voice format set (text, deep red `#CC2200`, all caps, show open sound + A4 text "AXE."), F.3 = silence. TBA flags remain (Set-dependent word-level updates only). Two small items for Sound coordination before YAML: delivery event (CHAT vs ACTIONBAR) and Vindicator sound ID.
+- [x] Fireworks finale — locked 2026-03-29. Grand finale burst. Big payoff, maximum impact.
 
 When all boxes above are checked, YAML authoring begins. No separate intake meeting required.
