@@ -71,7 +71,7 @@ The player is enclosed in the workshop for the duration of the show. They hear t
 Vindicator behind the door. They do not see him until the reveal.
 
 The Vindicator may have a text voice — short, blunt lines in a distinct format (color,
-caps) heard through the wall. The Armorer may address him directly. See `departments/voice.md`
+caps) heard through the wall. The Armorer may address him directly. See `departments/showcase.01.voice.md`
 for full direction notes on the Vindicator offstage voice.
 
 Stage Management owns the iron door stop-safety cleanup cue — if the show is interrupted,
@@ -87,7 +87,7 @@ The absence is intentional and now doubly powerful: Site F is the final expediti
 By Scene F, the player has internalized the pattern across four scenes. The silence
 where the firework should be — at the show's most weighted stop, on the last piece
 before the reveal — is the scene's emotional center. Departments must not compensate
-for this absence. See `departments/fireworks.md`.
+for this absence. See `departments/showcase.01.fireworks.md`.
 
 ---
 

@@ -59,8 +59,8 @@ filed the Environment Notes. This is Michael C.'s first delivery.
 
 ### What Michael C. reads first
 
-The show brief (`shows/[show_id]/brief.md`) and the Set department brief
-(`shows/[show_id]/departments/set.md`). The Set department brief identifies:
+The show brief (`shows/[show_id]/[show_id].brief.md`) and the Set department brief
+(`shows/[show_id]/departments/[show_id].set.md`). The Set department brief identifies:
 - How many distinct locations the show needs
 - What each location must support (player staging, performer crosses, levitation height, fireworks clearance)
 - Any spatial constraints that carry cross-department implications
@@ -88,7 +88,7 @@ translates findings to stage registry entries and Environment Notes.
 stage is available to all future productions.
 
 **Environment Notes** — one entry per scene/set in the show's Set department brief
-(`shows/[show_id]/departments/set.md`). These are show-specific and are what other
+(`shows/[show_id]/departments/[show_id].set.md`). These are show-specific and are what other
 departments actually read. Format defined below.
 
 ### When it's due
@@ -102,7 +102,7 @@ and Fireworks (needs sky clearance and player altitude ceiling).
 
 ## Environment Notes Format
 
-One entry per scene or set. Filed in `shows/[show_id]/departments/set.md` under Decisions,
+One entry per scene or set. Filed in `shows/[show_id]/departments/[show_id].set.md` under Decisions,
 before department briefing close.
 
 ```markdown

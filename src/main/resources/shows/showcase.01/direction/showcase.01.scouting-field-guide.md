@@ -159,6 +159,11 @@ that is immediately legible without being hazardous.
 **Extra capture:** Exact floor material (mud, clay, water depth). Blocks above terrain
 floor. Drone start position. Sky clearance.
 
+**Lighting note — capture for Steve:** How dense is the canopy overhead at the Armorer
+mark? Can you see the sky from ground level, or is it mostly covered? Roughly what
+height is the tree canopy? Steve uses this to decide regular campfire (warm orange) vs.
+soul campfire (cold blue-teal) at this site. Decision after scouting report is in.
+
 ---
 
 ## Site F — The Weapon: "The Choice" *(final expedition)*
@@ -212,8 +217,8 @@ Sky clearance (no firework here, but document regardless).
 
 ## After scouting
 
-1. File completed report to this folder as `scouting-report.md`
-2. Michael C. translates to Environment Notes in `departments/set.md`
+1. File completed report to this folder as `showcase.01.scouting-report.md`
+2. Michael C. translates to Environment Notes in `departments/showcase.01.set.md`
 3. Stage registry entries go in `kb/departments/set/stage-registry.md`
 4. Direction closes Gate 3 and schedules intake conversation
 

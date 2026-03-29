@@ -178,8 +178,8 @@ Open questions for this session:
 - [department-specific intake questions from the dept brief]
 ```
 
-When the pass closes, decisions are recorded in the relevant `departments/[dept].md` file
-under the `## Decisions` section. The Director notes the pass as complete in `direction/intake.md`.
+When the pass closes, decisions are recorded in the relevant `departments/[show_id].[dept].md` file
+under the `## Decisions` section. The Director notes the pass as complete in `direction/[show_id].intake.md`.
 
 ---
 

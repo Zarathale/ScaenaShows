@@ -310,6 +310,6 @@ Once coordinates are confirmed for all seven locations:
 - Gate 3 closes: department authoring can begin
 - Gate 4 is scheduled: intake conversation with all departments
 
-The four TBA flags in script-v1 (`direction/script-v1.md`) — departure lines
+The four TBA flags in script-v1 (`showcase.01.script-v1.md`) — departure lines
 referencing "the forge," "long road," and "threshold" — update to match the confirmed
 site character once scouting delivers. Voice will revise to v2 at that point.

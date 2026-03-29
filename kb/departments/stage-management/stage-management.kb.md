@@ -53,10 +53,10 @@ The full process is documented in `kb/departments/stage-management/show-creation
 ```
 1. Concept accepted by Show Director
 2. Show folder scaffolded (from _template)
-3. Intake brief written by Show Director → filed in direction/intake.md
+3. Intake brief written by Show Director → filed in direction/[show_id].intake.md
 4. Show Director brief written → filed in brief.md
 5. Department briefings distributed → each dept receives brief + their specific brief
-6. Department decisions filed → departments/[dept].md for each dept
+6. Department decisions filed → departments/[show_id].[dept].md for each dept
 7. Kendra confirms all blocking departments have filed decisions
 8. YAML authoring begins (Kendra owns the YAML, building from dept decisions)
 9. Run sheet written alongside YAML
@@ -72,7 +72,7 @@ When the Show Director issues a brief:
 
 - Kendra reads it for structural implications before distributing: is there anything in the brief that creates an immediate blocking constraint for any department? (e.g., "we need a 6-block stage" is a Set decision that blocks Choreography)
 - She distributes the brief to departments with their specific briefing questions attached (see Show Director KB for the standing per-department brief format)
-- She tracks which departments have filed decisions in `departments/[dept].md`
+- She tracks which departments have filed decisions in `departments/[show_id].[dept].md`
 - She flags to the Show Director when a department's decision is absent but needed to proceed
 
 **Blocking vs. non-blocking departments by pass type:**

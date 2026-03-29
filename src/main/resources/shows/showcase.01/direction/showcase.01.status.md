@@ -11,7 +11,7 @@ last_updated: 2026-03-29
 **Brief** — Gates 1 and 2 closed. Scouting prep in progress. No YAML work has begun.
 
 ## Last Session
-2026-03-29 (session 2). Major structural revision + pre-scout prep continued.
+2026-03-29 (session 3). Lighting arc and block light work.
 
 **Structural decisions locked this session:**
 
@@ -30,6 +30,21 @@ last_updated: 2026-03-29
   visual beat (substituting for the absent firework). Effects to confirm viability
   once Set scouts the specific site. Set must document cleared space dimensions and
   surrounding structure for Effects assessment.
+
+**Session 3 work (2026-03-29):**
+
+- **Lighting arc locked.** Show starts MC 12,500 (twilight). Natural clock progression
+  through the show. TIME_OF_DAY: 22,000 nudge fires at A-Final hold beat to guarantee
+  sunrise during the Vindicator fight.
+- **Campfire decisions made** for Sites D and F. D = regular campfire (warm, waystation).
+  F = regular campfire (small, he came back here). Site E (Swamp): soul campfire
+  recommended; decision deferred to scouting — Zarathale captures canopy conditions,
+  Steve decides after report is filed.
+- **Lighting KB expanded** with Block Light Reference, Set Piece Light Authority, and
+  Scene Light Estimation sections. Steve now tracks light environment per scene.
+- **Set brief updated** with nighttime mob spawning note — campfires serve as
+  atmosphere AND spawn containment at dark expedition sites.
+- **ops-inbox updated** — BLOCK_STATE entry annotated with campfire cross-use note.
 
 **Previously locked (session 1, 2026-03-29):**
 
@@ -52,14 +67,14 @@ clean fallbacks and do not block scouting.
 
 **Voice — Script v1: ✅ LOCKED (revised)**
 Revised 2026-03-29. Five expeditions. "Five pieces" throughout. F line 3 and
-A-Final updated. G scene removed. See `direction/script-v1.md`.
+A-Final updated. G scene removed. See `showcase.01.script-v1.md`.
 
 **Gate 3 — Set Scouting: OPEN — next step**
 Zarathale scouts 6 locations (home base + 5 expedition sites B through F).
 Pre-scout decisions locked for A–E. Site F not yet fully walked through — ruin
 with cleared central space is the direction; Zarathale scouts with this as the
-brief. Use `direction/scouting-field-guide.md`. File report to
-`direction/scouting-report.md`.
+brief. Use `showcase.01.scouting-field-guide.md`. File report to
+`showcase.01.scouting-report.md`.
 
 **Gate 4 — Intake Conversation: pending Gate 3**
 Key decisions at intake: equipping fill timing, reveal tick sequence, Hero spawn
@@ -75,7 +90,7 @@ vs. silence).
   Zarathale scouts with this brief. No further prep session needed unless Site F
   presents unexpected terrain challenges.
 - **Set scouting** — Zarathale ready to go. Field guide and blank report at
-  `direction/scouting-field-guide.md` and `direction/scouting-report.md`.
+  `showcase.01.scouting-field-guide.md` and `showcase.01.scouting-report.md`.
   Drone start position required per site.
 - **Intake conversation** — scheduled after scouting delivers coordinates.
 - **Stage Management — iron door stop-safety:** Cleanup cue needed. Raise at intake.

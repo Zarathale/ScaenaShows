@@ -48,12 +48,12 @@ Read these files. They are not optional:
 7. If the show has a folder at `src/main/resources/shows/[show_id]/`, read these in order:
    - `brief.md` — the entry point. The Show Direction section (non-negotiables, watch-for
      risks, elevated departments) is the Director's prior statement of what must be true.
-   - `direction/show-direction.md` — the current Show Direction; check whether the non-
+   - `direction/[show_id].show-direction.md` — the current Show Direction; check whether the non-
      negotiables are being met, watch-for risks are still active, and elevated departments
      have delivered.
-   - `direction/intake.md` — what each department committed to before authoring began.
+   - `direction/[show_id].intake.md` — what each department committed to before authoring began.
      Use this to evaluate whether departments delivered on their intake promises.
-   - `direction/revision-log.md` — the running history of the production. Understand where
+   - `direction/[show_id].revision-log.md` — the running history of the production. Understand where
      the show has been before evaluating where it is now.
    - Any `departments/*.md` files that exist — the review builds on prior decisions.
 
@@ -84,7 +84,7 @@ independent of tone or arc.
 
 The Director closes by pulling the threads together — deciding, not just summarizing. What does
 the team's collective input actually mean for the next revision? The Director's synthesis is
-also the input to `direction/revision-log.md` — it's the record that the next session reads to
+also the input to `direction/[show_id].revision-log.md` — it's the record that the next session reads to
 understand where the production is.
 
 ---
@@ -109,10 +109,10 @@ accomplishing that? This is the Director's assessment of the gap between what's 
 and what the show wants to be. Not a summary — a judgment.
 
 **Show Direction check:**
-If `direction/show-direction.md` exists, evaluate it explicitly: do the non-negotiables still
+If `direction/[show_id].show-direction.md` exists, evaluate it explicitly: do the non-negotiables still
 hold? Are the watch-for risks still active? Have the elevated departments delivered on their
 priority? Note any Show Direction items that are being met, and any that are at risk.
-If intake records exist in `direction/intake.md`, check whether departments delivered on
+If intake records exist in `direction/[show_id].intake.md`, check whether departments delivered on
 their intake commitments — flag any significant departures.
 If no brief or Show Direction exists, write one using the templates from show-director.kb.md
 before issuing department charges — the departments need a direction to respond to.
@@ -182,7 +182,7 @@ the YAML as a call script:
   in ways that create technical conflicts or a muddled player experience? If found: what are
   they, and what is Kendra's proposed resolution?
 - **Revision continuity** — Does the current YAML match the run sheet? If revision notes
-  exist in `direction/revision-log.md`, do the tick positions and cue numbers still align?
+  exist in `direction/[show_id].revision-log.md`, do the tick positions and cue numbers still align?
 
 Kendra closes her section with a **pre-test sign-off**: "Structurally clear to test" or
 "Hold — [specific issue must be resolved first]."
@@ -207,7 +207,7 @@ This is editorial judgment, not a greatest-hits of every department's wishlist. 
 departments' suggestions will not make the priority list. That's the Director's call.
 
 **Revision log entry:**
-Write the Director's synthesis in the format used by `direction/revision-log.md`:
+Write the Director's synthesis in the format used by `direction/[show_id].revision-log.md`:
 
 ```markdown
 ## Revision N (vX.Y.Z — YYYY-MM-DD)
@@ -231,7 +231,7 @@ Write the Director's synthesis in the format used by `direction/revision-log.md`
 [Specific redirects, approvals, escalations]
 ```
 
-Tell the user: "This revision log entry is ready to paste into `direction/revision-log.md`
+Tell the user: "This revision log entry is ready to paste into `direction/[show_id].revision-log.md`
 in the show folder."
 
 **Reduction test:**
@@ -309,7 +309,7 @@ doesn't scale with show complexity.
 Tell the user where the file is (with a computer:// link) and give them a 2–4 sentence verbal
 summary of the Director's synthesis — the path forward, not the full review. Do not recite
 department sections in chat. Also remind the user that the revision log entry at the end of
-the Director's synthesis is ready to paste into `direction/revision-log.md`.
+the Director's synthesis is ready to paste into `direction/[show_id].revision-log.md`.
 
 This skill produces a review artifact only. It does not implement changes, update the show
 YAML, or modify the show folder. If Alan wants to act on the review, that is a separate

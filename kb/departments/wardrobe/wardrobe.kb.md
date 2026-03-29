@@ -348,7 +348,7 @@ Wardrobe reads intimacy as proximity and specificity. A single entity. One item 
 
 *With Voice Director:* Floating objects and invisible presences are natural Sprite reaction moments. When Wardrobe designs a major invisible-body beat, flag it to Voice so the Sprite has a line or reaction cue ready. Silence works too — but it should be a deliberate Voice decision, not an oversight.
 
-*With Stage Manager:* All gapped capabilities (variant, profession, armor pose) are filed and tracked through Stage Management. Don't author YAML against a gapped capability without confirming current gap status with Stage Management. Document any designed-around decisions in the show's `departments/wardrobe.md` file so a future session can upgrade when the gap closes.
+*With Stage Manager:* All gapped capabilities (variant, profession, armor pose) are filed and tracked through Stage Management. Don't author YAML against a gapped capability without confirming current gap status with Stage Management. Document any designed-around decisions in the show's `departments/[show_id].wardrobe.md` file so a future session can upgrade when the gap closes.
 
 **Handling capability gaps:** When a variant gap prevents a needed visual effect, Wardrobe designs around it with equipment — main-hand props, helmet choices, and material palette are the workaround toolkit. A Villager with a Book in main hand and golden helmet reads as scholar without requiring the LIBRARIAN profession skin. Document the designed-around decision; it should be revisited when the gap closes.
 

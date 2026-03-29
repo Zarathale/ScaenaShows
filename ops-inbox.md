@@ -431,6 +431,13 @@ block (lit, open, powered, etc.) without altering block type.
 **Priority:** Medium — showcase.01 will use sound-only (`block.blastfurnace.fire_crackle`) as
 a bridge until this is implemented. Visual furnace glow at home base is blocked on this fix.
 
+**Cross-use note:** When BLOCK_STATE is implemented for the blast furnace, campfire
+lighting-on-arrival (setting `lit: true` on a pre-placed, unlit campfire) is a natural
+secondary use case for the same event type. Any campfire-as-set-piece that should arrive
+dark and then light when the scene begins can be handled by the same `BLOCK_STATE`
+mechanism. Worth documenting as a second scenario when this item is scoped for
+implementation.
+
 ---
 
 ### [future-capability] Post-show interactive choice prompt

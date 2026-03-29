@@ -23,10 +23,10 @@ status: stub — to be expanded from show authoring practice
 1.  Concept accepted by Show Director
 2.  Show folder scaffolded from _template
       src/main/resources/shows/[show_id]/
-3.  Intake brief written → direction/intake.md
+3.  Intake brief written → direction/[show_id].intake.md
 4.  Show Director brief written → brief.md
 5.  Per-department briefings issued → each dept's standing brief questions asked
-6.  Department decisions filed → departments/[dept].md (one file per dept)
+6.  Department decisions filed → departments/[show_id].[dept].md (one file per dept)
 7.  Kendra confirms blocking departments have filed
       → signals "YAML authoring can begin — [dept list] ready; [dept list] non-blocking for this pass"
 8.  YAML authored (by Kendra / Claude-as-Kendra) from dept decisions
@@ -62,7 +62,7 @@ When the Show Director issues a brief, Kendra distributes it to departments with
 
 **Minimum per-department brief package:**
 1. Link to `brief.md`
-2. Department's section from the Show Direction document (`direction/show-direction.md`)
+2. Department's section from the Show Direction document (`direction/[show_id].show-direction.md`)
 3. Standing questions for that department (from Show Director KB)
 4. Deadline: when Kendra needs the decision filed to stay on schedule
 
@@ -71,7 +71,7 @@ When the Show Director issues a brief, Kendra distributes it to departments with
 ## Kendra's Gates
 
 **Gate 1 — Before YAML authoring begins:**
-All blocking departments for the current pass have filed decisions in `departments/[dept].md`.
+All blocking departments for the current pass have filed decisions in `departments/[show_id].[dept].md`.
 Kendra signals explicitly: "YAML authoring can begin."
 
 **Gate 2 — Before build:**
@@ -90,9 +90,9 @@ Kendra signals explicitly: "YAML authoring can begin."
 After each in-game test:
 
 1. Alan debrief → raw notes by cue number (C3, C7, etc.)
-2. Each department files its revision notes in `departments/[dept].md`
+2. Each department files its revision notes in `departments/[show_id].[dept].md`
 3. Kendra logs structural issues in the run sheet
-4. Show Director synthesizes into `direction/revision-log.md`
+4. Show Director synthesizes into `direction/[show_id].revision-log.md`
 5. Show Director decides revision scope: which departments get new briefing questions, which just re-author within existing brief
 6. Kendra identifies YAML revision scope: full diff or section-targeted
 7. YAML revised → run sheet updated → version bumped → build

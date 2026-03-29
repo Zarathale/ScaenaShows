@@ -143,6 +143,133 @@ Minecraft's world time runs 0–24000 (one full day). Values and their sky quali
 
 ---
 
+## Block Light Reference
+
+*Block light is Steve N.'s second instrument family — the physical light sources in the world. All light-emitting set pieces, regardless of which department places them, are Lighting instruments. See Set Piece Light Authority below.*
+
+Minecraft light levels run 0–15. Block light decays by 1 per block of distance in every direction. Perceived brightness at a location equals the maximum of sky light and block light at that position.
+
+### Full Block Light Table
+
+| Block | Level | Color temperature | Notes |
+|-------|-------|-------------------|-------|
+| Campfire (lit) | 15 | Warm orange | Floor placement; animated flame; particles rise; reads as someone was here |
+| Soul Campfire (lit) | 10 | Cold blue-teal | Same profile as campfire; color temperature inverts the register entirely |
+| Lantern | 15 | Warm amber | Hanging from ceiling chain or floor post; small footprint, high output |
+| Soul Lantern | 10 | Cold blue-teal | Architectural soul-register; hanging or floor |
+| Torch | 14 | Warm yellow-orange | Wall or floor; undecorated, functional — the most common human presence marker |
+| Soul Torch | 10 | Cold blue-teal | Wall or floor; same form as torch, wrong color |
+| Jack o'Lantern | 15 | Warm orange | Block with carved face; folk register; slightly uncanny by association |
+| Blast Furnace (lit) | 13 | Warm orange | Fixed block; requires BLOCK_STATE to activate (see ops-inbox); workshop anchor |
+| Furnace (lit) | 13 | Warm orange | Fixed block; same constraint; domestic workshop |
+| Smoker (lit) | 13 | Warm orange | Fixed block; culinary/practical workshop |
+| Glowstone | 15 | Neutral white | Block; nether origin; feels alien in overworld interiors |
+| Sea Lantern | 15 | Cold white-blue | Block; aquatic/architectural; clean and non-domestic |
+| End Rod | 14 | Clean cold white | Upright 1×1 rod; directional, minimal, contemporary |
+| Shroomlight | 15 | Warm orange-red | Organic nether block; richly warm, unusual texture |
+| Redstone Lamp (lit) | 15 | Warm neutral white | Block; requires active redstone signal; even, controlled output |
+| Beacon | 15 | Variable (glass cap) | Pyramid base required; emits sky beam; high drama, hard to use subtly |
+| Lava (source/flowing) | 15 | Hot orange-red | Environmental; cannot be placed casually; always reads as dangerous |
+| Nether Portal | 11 | Purple shimmer | Requires obsidian frame; eerie and dimensional; major visual presence |
+| Crying Obsidian | 10 | Purple pulse (animated) | Block; charged, haunted quality; light throbs |
+| Froglight — Ochre | 15 | Warm yellow | Organic block; from ochre frogs; slightly unusual but warm |
+| Froglight — Verdant | 15 | Green | Uncommon; green ambient light is strange and specific |
+| Froglight — Pearlescent | 15 | Pale lavender-white | Soft, ethereal; the gentlest of the froglights |
+| Candle ×4 (lit, in one block) | 12 | Warm | Tiny footprint; intimate scale; cannot cover a large space |
+| Candle ×1 (lit) | 3 | Warm | Accent only; near-zero coverage |
+| Cave Vine with Glow Berries | 14 | Warm amber | Hangs from ceiling; natural, organic; cave/ruin register |
+| Glow Lichen | 7 | Neutral | Flat surface growth; passive cave ambiance; accent at best |
+| Amethyst Cluster (full) | 5 | Purple sparkle | Wall growth; magical accent; minimal area coverage |
+| Magma Block | 3 | Dim warm orange | Floor only; dangerous association; heat without light |
+| Sculk Catalyst | 6 | Pale blue | Deep dark material; low output; strong biome association |
+
+### Practical Radius Reference
+
+How far each light level reaches before the scene feels unlit (≤6) vs. technically not zero (≥1):
+
+| Light Level | To level 7 (dim but usable) | To level 1 (minimum presence) | No-spawn radius (Java 1.18+) |
+|-------------|----------------------------|-------------------------------|------------------------------|
+| 15 | ~8 blocks | ~14 blocks | ~14 blocks |
+| 14 | ~7 blocks | ~13 blocks | ~13 blocks |
+| 13 | ~6 blocks | ~12 blocks | ~12 blocks |
+| 10 | ~3 blocks | ~9 blocks | ~9 blocks |
+| 7 | 0 (source only) | ~6 blocks | ~6 blocks |
+| 3 | 0 | ~2 blocks | ~2 blocks |
+
+**Java 1.18+ mob spawning rule:** Hostile mobs spawn when block light level is 0 — sky light is no longer factored into the spawn check. On the overworld surface at night, sky light provides a floor of 4 (clear weather), but under heavy tree canopy or overhangs, sky light can reach 0 at surface level. Any unlit overworld location can spawn mobs at night in practice. A campfire (L15) creates a ~14-block no-spawn zone — sufficient to protect an NPC at a small expedition site when placed centrally.
+
+### Color Temperature Groups
+
+**Warm / fire register** — inhabited, domestic, human presence:
+Campfire, Lantern, Torch, Jack o'Lantern, Blast Furnace/Furnace/Smoker (lit), Shroomlight, Cave Vine with Glow Berries, Froglight Ochre, Candle
+
+**Cold / soul register** — uncanny, wrong-in-the-right-way:
+Soul Campfire, Soul Lantern, Soul Torch, Sea Lantern, End Rod, Froglight Pearlescent
+
+**Environmental / dangerous** — not placed by a person, not safe:
+Lava, Magma Block, Glow Lichen (passive), Sculk Catalyst
+
+**Architectural / functional** — controlled, deliberate, designed:
+Glowstone, Redstone Lamp, Beacon, Sea Lantern
+
+**Dramatic / weighted** — high visual impact, cannot be used quietly:
+Nether Portal, Crying Obsidian, Froglight Verdant, Beacon
+
+---
+
+## Set Piece Light Authority
+
+Lighting has full authority over any set piece that emits light — regardless of which department proposes or places it.
+
+**The principle:** A light-emitting block is a lighting instrument. A campfire placed at Site D changes the ambient register of that scene as meaningfully as a TIME_OF_DAY event. Set proposes; Lighting decides quantity, placement, and color temperature.
+
+### Workflow
+
+When Set identifies a light-emitting block as part of a location design (campfire, lantern, lit furnace, etc.):
+
+1. Set notes the proposed block and rough placement in the scouting report or set brief
+2. Lighting reviews: confirms, adjusts placement, changes block type if color temperature conflicts, or requests removal
+3. The agreed-upon configuration is documented in the show's Scene Light Notes (see below)
+4. Set places the agreed block(s) during location setup
+
+Steve does not veto proposals without reason — the default is yes, with coordination notes. The constraint is that no light-emitting set piece enters the show without Lighting's review. The conversation is brief; the payoff is that the sky arc and physical light sources arrive in the same register.
+
+**What this protects against:**
+- A warm-orange lantern placed at a soul campfire scene, canceling the cold register entirely
+- Redundant torches on every ruin wall, flattening shadow that should be deep
+- A light source placed too close to the player arrival point, washing out the first impression of a dark scene
+
+---
+
+## Scene Light Estimation
+
+Steve tracks the approximate light environment at each show moment before YAML is authored. This is not a precise simulation — it's a planning tool to prevent surprises in-game.
+
+### The Two Sources
+
+**Sky light** at night in the overworld:
+
+| MC tick range | Sky light (clear) | Practical note |
+|---------------|-------------------|----------------|
+| 0–12000 (day) | 15 | Full daylight — block light invisible |
+| 12500 (twilight) | ~10–11 | Sky still contributing; block light supplements |
+| 13500 (civil dusk) | ~7–8 | Parity zone — sky and block light roughly equal |
+| 14000–15000 (night establishing) | ~4–5 | Block light becomes primary |
+| 15000–22000 (full night) | 4 | Sky provides a floor of 4; block light dominant |
+| Thunderstorm (any time) | ~0–2 | Near-zero sky contribution; block light only |
+
+*Rain reduces sky light by ~3–4 levels. Heavy canopy in swamp biomes can reduce effective surface sky light to 0 even without rain.*
+
+**Block light** — from placed set pieces (see Block Light Reference above).
+
+### Scene Light Notes
+
+Lighting maintains a per-show scene light tracking table. File the show's version in `[show_id]/departments/[show_id].lighting.md`. The table documents: expected MC tick, sky light contribution, key block light sources at the site, and the resulting ambient quality.
+
+This table is what Lighting brings to the intake conversation — not abstract arc decisions, but: "Here is what each site will actually look like when the player arrives."
+
+---
+
 ## Owned Event Types
 
 | Event | Type | What it does |
@@ -445,6 +572,8 @@ end. Flag restoration needs to Stage Manager at brief time.
 filed gaps for Lighting. If a future need arises (per-player lighting, fog, gradual fade), file
 with Stage Management before authoring any workaround.
 
+**Set Piece Light Authority:** Any light-emitting block in a show location is a Lighting instrument, regardless of which department places or proposes it. Set proposes light-emitting set pieces; Lighting reviews, confirms placement, and documents the output in the show's Scene Light Notes before anything is placed. This is not a veto — it is coordination. No light-emitting set piece enters the show without Steve's sign-off. See Block Light Reference and Set Piece Light Authority sections above for the full reference material.
+
 **Houselights-down principle (Alan feedback, R7 debrief 2026-03-28):** Avoid multiple TIME_OF_DAY step-downs in quick succession for the show's opening transition. Two visible bumps in a short span reads as mechanical — the world is clearly being controlled, not experiencing something. The principle: design transitions so they read as atmospheric rather than commanded. If steps are needed, spread them across more increments over more time so no individual snap is perceptible. If a single deliberate snap is needed, coordinate it with something else happening simultaneously — a sound hit, a levitation event, a voice line — so the light change is motivated and connected to the show, not administrative. *"Let the sky do the work."*
 
 **Escalation discipline:** Lighting resolves arc and instrument decisions independently.
@@ -518,6 +647,29 @@ Items the Lighting department wants to develop mastery over. 📋 Proposed = nam
 ### `lightning.beat` — 📋 Proposed
 **Intent:** Strike timed to a specific dramatic beat — same tick as a levitation event, sound hit, or entrance. R7 observation: lightning "fully pulls focus to the moment." What tick offset makes the strike feel causal vs. coincidental?
 **Confirmed when:** Player attributes the lightning to what just arrived, not as weather noise.
+
+---
+
+### `campfire.warm.waystation` — 📋 Proposed
+**Intent:** Regular campfire as the primary light source at a deep-night expedition site (~MC 15000+). What does a scene lit almost entirely by campfire feel and look like? Does it read as "inhabited, someone was here" or as a functional light prop?
+**Setup:** Scout a deep-night overworld site (open sky or light canopy); place single campfire at center; player TP-in; observe at MC 15000–18000.
+**Watch questions:** Does the campfire pull focus or recede into the environment? Is the warmth register clear? Does the dark surround feel atmospheric or just unfinished?
+**Confirmed when:** Campfire reads as environmental storytelling, not a game mechanic. The site feels occupied.
+
+---
+
+### `soul.campfire.uncanny` — 📋 Proposed
+**Intent:** Soul campfire replacing a regular campfire at the same site. Blue-teal color at night — test whether the shift from warm to cold reads as atmosphere or as "blue light."
+**Setup:** Same site and placement as `campfire.warm.waystation` but with soul campfire substituted. Compare at the same MC tick.
+**Watch questions:** Does the color register as uncanny/strange or just different? What emotional effect does the blue light have at a dark outdoor location? Is there a biome where it fits better (swamp) vs. worse (open plains)?
+**Confirmed when:** Steve can describe when soul campfire earns its use vs. when regular campfire serves better.
+
+---
+
+### `block.light.vs.sky` — 📋 Proposed
+**Intent:** Calibrate how sky light and block light interact at transitional sky times. At MC 12,500 (twilight), a campfire competes with remaining sky contribution — does it read at all? At MC 15,000, is it the primary source? Find the crossover tick where block light becomes dominant.
+**Setup:** Place campfire at a fixed outdoor location; observe at MC 12500, 13500, 14500, 15000 — note at which tick the campfire visually takes over from sky light.
+**Confirmed when:** Steve can predict from MC tick + block source what the player will perceive, without testing in-game.
 
 ---
 

@@ -82,12 +82,12 @@ affect department briefs.
   to be confirmed by Stage Management at intake.
 
 **Briefs updated this session:**
-- `departments/voice.md` — Vindicator offstage voice section; home base per-scene guidance
-- `departments/wardrobe.md` — item-in-hand at discovery section
-- `departments/camera.md` — expedition drone-spectate template section
-- `departments/fireworks.md` — full rewrite; find-firework pattern as recurring structure
-- `direction/scouting-field-guide.md` — updated with all locked decisions + drone start req.
-- `direction/status.md` — full session update
+- `departments/showcase.01.voice.md` — Vindicator offstage voice section; home base per-scene guidance
+- `departments/showcase.01.wardrobe.md` — item-in-hand at discovery section
+- `departments/showcase.01.camera.md` — expedition drone-spectate template section
+- `departments/showcase.01.fireworks.md` — full rewrite; find-firework pattern as recurring structure
+- `direction/showcase.01.scouting-field-guide.md` — updated with all locked decisions + drone start req.
+- `direction/showcase.01.status.md` — full session update
 
 **Next actions:**
 1. Resume pre-scout prep for Sites E, F, G (next session)

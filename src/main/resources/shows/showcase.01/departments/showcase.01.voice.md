@@ -205,7 +205,7 @@ departure and acknowledgment of what's been accomplished: one line that does it 
 The bar here is high. Do not force it.
 
 Voice proposes at intake. Direction decides after Set confirms the location's atmosphere.
-The current script placeholder is "Five. Let's go home." — see `direction/script-v1.md`.
+The current script placeholder is "Five. Let's go home." — see `showcase.01.script-v1.md`.
 
 **A-Final — The Reveal**
 The Vindicator arrives in full kit.

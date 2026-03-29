@@ -40,7 +40,7 @@ The `direction/` folder is the Show Director's working space — same relationsh
 
 ### Department Intake and Revision Accountability
 
-Every show opens with a **default intake conversation** — the Show Director asks each department a standing set of questions before any YAML is written. The intake record lives in `direction/intake.md`. After each in-game test, each active department files a **revision debrief** in their `departments/[dept].md` file. The Director synthesizes into `direction/revision-log.md`. See `show-director.kb.md` for the full intake and revision accountability templates.
+Every show opens with a **default intake conversation** — the Show Director asks each department a standing set of questions before any YAML is written. The intake record lives in `direction/[show_id].intake.md`. After each in-game test, each active department files a **revision debrief** in their `departments/[show_id].[dept].md` file. The Director synthesizes into `direction/[show_id].revision-log.md`. See `show-director.kb.md` for the full intake and revision accountability templates.
 
 ### Escalation Discipline
 
@@ -121,7 +121,7 @@ A complete brief answers:
 - **What does the player carry away?** The one thing they should feel or understand after.
 - **What are the constraints?** Duration, setting, cue library access, known technical limits.
 
-The **Show Direction** lives in `direction/show-direction.md` within the show folder — a dedicated file, separate from the brief, that the Director keeps current throughout production. It is the Director's communication to all departments simultaneously: non-negotiables, known cross-department risks, and which departments carry elevated priority. See `show-director.kb.md` for the full Show Direction format and the `direction/` folder structure.
+The **Show Direction** lives in `direction/[show_id].show-direction.md` within the show folder — a dedicated file, separate from the brief, that the Director keeps current throughout production. It is the Director's communication to all departments simultaneously: non-negotiables, known cross-department risks, and which departments carry elevated priority. See `show-director.kb.md` for the full Show Direction format and the `direction/` folder structure.
 
 ---
 

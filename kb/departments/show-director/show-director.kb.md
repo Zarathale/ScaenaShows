@@ -101,7 +101,7 @@ mechanics, that's a signal the brief was unclear — fix the brief, not the YAML
 **Tone document:**
 
 For any show where tone needs unpacking across multiple departments, the Director may write
-a `direction/tone.md` — a brief elaboration of the tone phrase per department. Not required
+a `direction/[show_id].tone.md` — a brief elaboration of the tone phrase per department. Not required
 for every show; most useful when the tone phrase is ambiguous or departments have conflicting
 default interpretations.
 
@@ -126,7 +126,7 @@ Every show follows this sequence before any YAML is written:
 4. Save the brief to the show folder
 5. Brief each department head
 6. Departments ask their questions and make their decisions
-   → Each department's decisions are recorded in departments/[dept].md
+   → Each department's decisions are recorded in departments/[show_id].[dept].md
 7. Authoring begins (YAML)
 8. Show Director reviews YAML against brief
 9. Send to in-game test (tech stage)
@@ -160,7 +160,7 @@ written.
 have not yet been briefed.
 
 **Department Intake:** Each department receives their brief, asks questions, and commits to
-initial decisions. `direction/intake.md` is filled in. No YAML has been written. This stage
+initial decisions. `direction/[show_id].intake.md` is filled in. No YAML has been written. This stage
 is complete when every active department has made their first-pass decisions.
 
 **Tech:** First full YAML pass. The show exists on paper. First in-game test. This is a
@@ -308,16 +308,16 @@ the Director's document, but it belongs to the whole production.
 1. Copy the scaffold: `cp -r src/main/resources/shows/_template/ src/main/resources/shows/[show_id]/`
 2. Rename the template YAML placeholder to `[show_id].yml`
 3. Fill in `brief.md` with the show brief before any YAML authoring begins
-4. Fill in `direction/show-direction.md` with the Show Direction
-5. Fill in `direction/intake.md` — one section per department, using Standing Department Asks below
-6. Fill in each `departments/[dept].md` with the briefing and initial department decisions
+4. Fill in `direction/[show_id].show-direction.md` with the Show Direction
+5. Fill in `direction/[show_id].intake.md` — one section per department, using Standing Department Asks below
+6. Fill in each `departments/[show_id].[dept].md` with the briefing and initial department decisions
 7. Add the run sheet to `run-sheet.md` after the first authoring pass
 
 **Keeping direction/ files current:**
-`direction/show-direction.md` updates when the arc changes significantly — before re-briefing
-departments, not after. `direction/revision-log.md` gets a new entry after every in-game test
+`direction/[show_id].show-direction.md` updates when the arc changes significantly — before re-briefing
+departments, not after. `direction/[show_id].revision-log.md` gets a new entry after every in-game test
 and at every stage transition (Tech → Dress, Dress → Previews, Previews → Opening).
-`direction/intake.md` is a record of pre-authoring decisions; it does not change after
+`direction/[show_id].intake.md` is a record of pre-authoring decisions; it does not change after
 authoring begins.
 
 **On the plugin scanner:** The plugin currently reads flat `shows/*.yml` files. Until the
@@ -483,7 +483,7 @@ Any known capability gaps that affect this show's design?
 ## Standing Department Asks — Default Intake
 
 These are the Director's standing questions for each department at the start of every show.
-All questions should have answers in `direction/intake.md` before authoring begins. The
+All questions should have answers in `direction/[show_id].intake.md` before authoring begins. The
 intake record is a snapshot of what each department committed to before writing started —
 it does not update after authoring begins.
 
@@ -563,8 +563,8 @@ it does not update after authoring begins.
 After each in-game test, the Director asks each active department for a debrief. Only
 departments whose domain was exercised in that run need to report.
 
-Department debriefs are written into `departments/[dept].md` under a `## Revision N (vX.Y.Z)`
-header. The Director reads all debriefs and writes their synthesis into `direction/revision-log.md`.
+Department debriefs are written into `departments/[show_id].[dept].md` under a `## Revision N (vX.Y.Z)`
+header. The Director reads all debriefs and writes their synthesis into `direction/[show_id].revision-log.md`.
 
 ---
 
@@ -578,7 +578,7 @@ header. The Director reads all debriefs and writes their synthesis into `directi
 
 ---
 
-### Director's Synthesis (into direction/revision-log.md after each debrief round)
+### Director's Synthesis (into direction/[show_id].revision-log.md after each debrief round)
 
 ```
 ## Revision N (vX.Y.Z — YYYY-MM-DD) [Stage: Tech / Dress / Previews]

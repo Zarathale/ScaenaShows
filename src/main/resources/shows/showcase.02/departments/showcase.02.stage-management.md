@@ -114,7 +114,7 @@ before any of them authors YAML.
 6. **Stage Management documents LIGHTNING tick table** (all four departments sign off)
 7. **All remaining departments author** (Voice, Choreography, Wardrobe, Fireworks — all can
    proceed after the tick table is locked)
-8. **Stage Management writes run sheet** → `showcase.02/run-sheet.md`
+8. **Stage Management writes run sheet** → `showcase.02/showcase.02.run-sheet.md`
 
 ---
 
@@ -135,7 +135,7 @@ before any of them authors YAML.
 
 ## Run Sheet
 
-*Written after all department YAML is drafted. Saved to `showcase.02/run-sheet.md`.*
+*Written after all department YAML is drafted. Saved to `showcase.02/showcase.02.run-sheet.md`.*
 
 ---
 

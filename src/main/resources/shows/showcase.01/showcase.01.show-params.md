@@ -131,6 +131,24 @@ Timing: between Armorer line 2 (names piece) and line 3. Simultaneous with item 
 
 ---
 
+## Lighting Arc
+
+| Param | Value | Notes |
+|-------|-------|-------|
+| Show start time | MC tick 12,500 | Twilight — sun just below horizon, sky still holds faint color |
+| Time progression | Natural clock | No authored TIME_OF_DAY events after T=0 until A-Final |
+| A-Final nudge | TIME_OF_DAY: 22,000 at hold beat | Pre-dawn, fires between Armorer's last line and Vindicator spawn; guarantees sunrise during fight |
+| Home base | Blast furnace (L13, warm orange) | Anchor light source; lanterns TBD after scouting. BLOCK_STATE not yet implemented — sound bridge only until then |
+| Site B | No block light proposed | Open sky at dusk (~MC 13,200); Set assesses after scouting |
+| Site C | Lava (L15) if adjacent | Set scouts lava proximity; lava IS the light source if present |
+| Site D | Regular campfire (L15, warm) | Waystation atmosphere + mob containment (~14-block no-spawn radius) |
+| Site E | Soul campfire (L10) recommended | **Decision deferred to scouting** — Zarathale captures canopy density; Steve N. decides soul vs. regular after report |
+| Site F | Regular campfire (L15, warm) | Stillness + mob containment; central to cleared space; coordinates with Effects particle beat |
+
+*Mob containment note: Java 1.18+ spawns on block light 0 only. Campfires at D, E, F protect the Armorer's mark at deep-night MC ticks.*
+
+---
+
 ## YAML Readiness
 
 YAML authoring begins when all TBD params above are resolved. Current blockers:

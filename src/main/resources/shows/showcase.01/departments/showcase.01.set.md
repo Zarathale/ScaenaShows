@@ -167,3 +167,23 @@ If any expedition site requires mob containment (creature AI wandering off stage
 designs it as needed — fence line, low wall, terrain modification. Containment is a
 design task, not a scouting filter. Find the place with the right theatrical feel first;
 design whatever containment is needed afterward.
+
+**Nighttime spawning — this show specifically:** showcase.01 runs from MC 12,500
+(twilight) to MC 22,000+ (pre-dawn). Deep-night expedition sites (D, E, F) are in full
+darkness by the time the player arrives. In Java 1.18+, hostile mobs spawn when block
+light is 0 — sky light no longer prevents surface spawning at night.
+
+The Armorer stands at each expedition site. In open terrain (Sites D, F) the clear-sky
+light floor of 4 provides marginal protection in open areas. In swamp terrain (Site E),
+heavy canopy can reduce effective sky light to 0 at surface level — this site has active
+mob spawn risk.
+
+**Campfire as dual-purpose set piece:** The campfires proposed by Lighting at Sites D,
+E, and F (see `departments/showcase.01.lighting.md`) serve double duty — atmosphere AND mob
+containment. A campfire at light level 15 creates a ~14-block no-spawn zone from its
+center. A soul campfire at level 10 creates a ~9-block zone. If campfire placement is
+confirmed by Lighting, the spawn risk at the Armorer's position is managed.
+
+Set documents campfire placement in the scouting report alongside coordinates.
+If Lighting adjusts campfire position, update the spawn-safety assessment to confirm
+the Armorer's mark remains within the no-spawn radius.

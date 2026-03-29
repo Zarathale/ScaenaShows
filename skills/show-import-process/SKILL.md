@@ -59,10 +59,10 @@ Copy all template files into the new show folder:
 
 ```bash
 cp src/main/resources/shows/_template/brief.md \
-   src/main/resources/shows/[show_id]/brief.md
+   src/main/resources/shows/[show_id]/[show_id].brief.md
 
 cp src/main/resources/shows/_template/run-sheet.md \
-   src/main/resources/shows/[show_id]/run-sheet.md
+   src/main/resources/shows/[show_id]/[show_id].run-sheet.md
 
 cp -r src/main/resources/shows/_template/departments/ \
       src/main/resources/shows/[show_id]/departments/
@@ -72,7 +72,7 @@ cp -r src/main/resources/shows/_template/departments/ \
 
 ## Step 4 — Fill in the Brief
 
-Open `[show_id]/brief.md` and replace the template stubs with the show's actual content.
+Open `[show_id]/[show_id].brief.md` and replace the template stubs with the show's actual content.
 
 Draw from:
 - The show YAML itself (section structure, cues used, timing)
@@ -92,7 +92,7 @@ The brief has these sections to complete:
 
 ## Step 5 — Fill in the Run Sheet
 
-Open `[show_id]/run-sheet.md` and port over content from any existing run sheet in `docs/`.
+Open `[show_id]/[show_id].run-sheet.md` and port over content from any existing run sheet in `docs/`.
 
 If no run sheet exists, build one from the show YAML section by section:
 - Each section gets: Intention, Function, Mechanics, Watch question, Notes

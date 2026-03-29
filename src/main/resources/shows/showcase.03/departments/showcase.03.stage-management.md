@@ -144,7 +144,7 @@ for revision.
 - Each delivers Arrival contributions to Stage Management who confirms ±5-tick compliance
 
 **Gate 5 — Stage Management writes run sheet:**
-→ `showcase.03/run-sheet.md`
+→ `showcase.03/showcase.03.run-sheet.md`
 
 ---
 
@@ -169,7 +169,7 @@ for revision.
 
 ## Run Sheet
 
-*Written after all department YAML is drafted. Saved to `showcase.03/run-sheet.md`.*
+*Written after all department YAML is drafted. Saved to `showcase.03/showcase.03.run-sheet.md`.*
 
 ---
 

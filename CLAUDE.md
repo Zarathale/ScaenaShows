@@ -23,7 +23,7 @@ The engine is built and the production team is in place. We're in the Showcase S
 All 12 department KBs are now in folder structure (`kb/departments/[dept-slug]/[dept-slug].kb.md`). Migration is complete.
 
 **Immediate pending (not show-specific):**
-- R7 debrief ✅ complete (2026-03-28). Full findings in `demo.archetype_sampler/run-sheet.md §General Findings`. Key issues: C2 too long (24s actual), levitation texture continuous through C7, C12 finale too short (7s), C1 lighting bumps jarring, mob spawning risk identified, voice undirected. R8 not yet scheduled.
+- R7 debrief ✅ complete (2026-03-28). Full findings in `demo.archetype_sampler/demo.archetype_sampler.run-sheet.md §General Findings`. Key issues: C2 too long (24s actual), levitation texture continuous through C7, C12 finale too short (7s), C1 lighting bumps jarring, mob spawning risk identified, voice undirected. R8 not yet scheduled.
 - Next: pick one Showcase, open P1 (Set), begin the scouting brief for Zarathale
 
 *Last audit: 2026-03-28 — `kb/audits/2026-03-28_session-audit.md`*
@@ -34,11 +34,11 @@ All 12 department KBs are now in folder structure (`kb/departments/[dept-slug]/[
 
 | Show | Stage | State File |
 |------|-------|------------|
-| showcase.01 "Preparing for Battle" | Brief | `src/main/resources/shows/showcase.01/direction/status.md` |
-| showcase.02 "The Long Night" | Brief | `src/main/resources/shows/showcase.02/direction/status.md` |
-| showcase.03 "Welcome" | Brief | `src/main/resources/shows/showcase.03/direction/status.md` |
+| showcase.01 "Preparing for Battle" | Brief | `src/main/resources/shows/showcase.01/direction/showcase.01.status.md` |
+| showcase.02 "The Long Night" | Brief | `src/main/resources/shows/showcase.02/direction/showcase.02.status.md` |
+| showcase.03 "Welcome" | Brief | `src/main/resources/shows/showcase.03/direction/showcase.03.status.md` |
 
-Each show's `direction/status.md` holds: current stage, last session summary, what's next, and Direction's open items. **After any session that touches a show, update that show's status.md.**
+Each show's `direction/[show_id].status.md` holds: current stage, last session summary, what's next, and Direction's open items. **After any session that touches a show, update that show's status file.**
 
 Alan moves between shows freely. There's no lock on which show is primary.
 
@@ -48,12 +48,12 @@ Alan moves between shows freely. There's no lock on which show is primary.
 
 1. Read this file
 2. Read `ROADMAP.md` — the full picture of how this project is structured
-3. **If working on a specific show:** read that show's `direction/status.md`, then `show-params.md` (if it exists — showcase.01 has one; it's the single source of truth for structural facts). Then read `direction/show-direction.md` for creative context.
+3. **If working on a specific show:** read that show's `direction/[show_id].status.md`, then `[show_id].show-params.md` (if it exists — showcase.01 has one; it's the single source of truth for structural facts). Then read `direction/[show_id].show-direction.md` for creative context.
 4. **If writing shows or cues:** read `kb/production-team.md`, then `kb/departments/show-director/show-director.kb.md`. Write the Show Director brief before any YAML. Read the relevant department KB(s) before writing YAML for their tools.
 5. **If creating cues:** naming is `[category].[archetype].[variant]` per spec §9; add `tags:` per taxonomy spec §10
 6. **If writing Java:** re-skim the relevant spec section first. Capability gaps go in `ops-inbox.md` — that's Alan's list, for plugin-level Java work only.
 
-**show-params.md:** Where it exists, this is the show's settled structural facts — kit, sites, structure, key mechanics, firework pattern, and YAML readiness checklist. A value in show-params means "build from this." A TBD means it's still in play. No formal lock ceremony — updating a param IS the lock. Department briefs reference show-params rather than restating facts.
+**[show_id].show-params.md:** Where it exists, this is the show's settled structural facts — kit, sites, structure, key mechanics, firework pattern, and YAML readiness checklist. A value in show-params means "build from this." A TBD means it's still in play. No formal lock ceremony — updating a param IS the lock. Department briefs reference show-params rather than restating facts.
 
 ---
 
@@ -118,14 +118,17 @@ ScaenaShows/
 │               ├── _template/      ← Scaffold for new show folders
 │               └── [show_id]/      ← Show folder
 │                   ├── [show_id].yml
+│                   ├── [show_id].show-params.md   ← Structural facts (where it exists)
+│                   ├── [show_id].run-sheet.md
+│                   ├── [show_id].brief.md
 │                   ├── direction/
-│                   │   ├── status.md        ← Current state, last session, what's next
-│                   │   ├── show-direction.md
-│                   │   ├── tone.md
-│                   │   ├── intake.md
-│                   │   └── revision-log.md
+│                   │   ├── [show_id].status.md        ← Current state, last session, what's next
+│                   │   ├── [show_id].show-direction.md
+│                   │   ├── [show_id].tone.md
+│                   │   ├── [show_id].intake.md
+│                   │   └── [show_id].revision-log.md
 │                   └── departments/
-│                       └── *.md    ← One file per department
+│                       └── [show_id].[dept].md    ← One file per department
 ├── _archive/
 │   └── v1/                        ← v1 plugin source (retired)
 ├── CLAUDE.md                       ← this file
@@ -181,7 +184,7 @@ Do not reopen these without Alan.
 
 ## Versioning Policy
 
-**Current version:** `2.9.0`
+**Current version:** `2.10.0`
 **Version file:** `build.gradle.kts` — the `version = "x.y.z"` line
 
 Before telling Alan to build, either bump the version or explicitly state why no bump is needed.
@@ -210,7 +213,7 @@ Before building new cues: propose a short list of archetypes and wait for alignm
 
 When building cues for review:
 1. Build a **demo show**: quiet Sprite intro → cue fires → labeled in chat
-2. Generate a **run sheet** — save in the show folder at `[show_id]/run-sheet.md`
+2. Generate a **run sheet** — save in the show folder at `[show_id]/[show_id].run-sheet.md`
 3. Each run sheet entry: Intention, Function, Mechanics, Watch question, Notes
 4. Number every cue (C1, C3, C7) so Alan can take notes by number
 

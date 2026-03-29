@@ -38,7 +38,7 @@ takes more impact. They have measured them. This knowledge is never stated — i
 the specificity of what the Armorer says and chooses.
 
 **Voice register:** Craft knowledge as intimacy. Technically precise and emotionally
-loaded without meaning to be. See `voice.md` for full development.
+loaded without meaning to be. See `showcase.01.voice.md` for full development.
 
 ---
 
@@ -55,7 +55,7 @@ who would have gone without the armor if the companion hadn't made sure they did
 followed by `ENTITY_EQUIP` events. Vindicator supports all equipment slots via
 Bukkit's `EntityEquipment` API. Confirmed. Kit is now five pieces (no shield).
 
-**Equipment:** Per Wardrobe's confirmed kit. See `wardrobe.md`.
+**Equipment:** Per Wardrobe's confirmed kit. See `showcase.01.wardrobe.md`.
 
 **Post-show behavior:** The Vindicator remains alive in the world after show end. The
 player may choose to engage or not. The show does not manage this outcome — it simply

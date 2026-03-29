@@ -146,15 +146,15 @@ These two rounds alternate. A session may include both.
 
 **showcase.01 — "The Cabinet"**
 `src/main/resources/shows/showcase.01/`
-*Current state: `direction/status.md`*
+*Current state: `direction/showcase.01.status.md`*
 
 **showcase.02 — "The Long Night"**
 `src/main/resources/shows/showcase.02/`
-*Current state: `direction/status.md`*
+*Current state: `direction/showcase.02.status.md`*
 
 **showcase.03 — "Welcome"**
 `src/main/resources/shows/showcase.03/`
-*Current state: `direction/status.md`*
+*Current state: `direction/showcase.03.status.md`*
 
 ---
 
