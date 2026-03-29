@@ -10,6 +10,53 @@ status: active — pre-production pivot recorded below
 
 ---
 
+## 2026-03-29 — Scouting Prep + Cross-Show Creative Decisions
+
+**Type:** Pre-scout decisions (no YAML authored, no in-game test)
+
+**Summary:**
+Scouting prep session. Walked through Sites A–D with Alan and locked pre-scout
+decisions for each. Multiple significant cross-show creative decisions made that
+affect department briefs.
+
+**Site decisions locked:**
+- A (Home Base): Pillager outpost setting; enclosed outbuilding; iron door + Vindicator
+  holding space; fenced Armorer area with Blast Furnace.
+- B (Helmet): Natural mountain peak; small divot at summit; two marks only.
+- C (Chestplate): Badlands with lava and exposed mineshaft. Open sky. (Not nether.)
+- D (Leggings): Savanna or open plains village; armorer shop beside road.
+- E–G: Not yet discussed. Resume next session or scout with current brief.
+
+**Cross-show decisions:**
+- Find-firework pattern: burst between line 2 and line 3 at every expedition scene
+  (B, C, D, E, G). Site F explicitly excluded — absence is intentional and structural.
+- Expedition camera template: drone spectate dolly-in pattern for all 6 scenes.
+  Player spectates drone moving from far position toward Armorer mark — smooth approach.
+  Reusable template cue; drone start position added to scouting requirements.
+- Armorer item-in-hand at discovery: ENTITY_EQUIP main hand at find moment, synchronized
+  with firework. Wardrobe to confirm Villager targeting capability.
+- Vindicator offstage presence at home base: behind wall, iron door (REDSTONE-controlled).
+  Vindicator may have text voice + sounds — Voice and Sound crossover session needed.
+- Script v1 partially unlocked: A-section lines need revision with Vindicator staging
+  as active context. All other lines remain locked.
+- Player in spectator/frozen mode during all expedition scenes. Spectator mode capability
+  to be confirmed by Stage Management at intake.
+
+**Briefs updated this session:**
+- `departments/voice.md` — Vindicator offstage voice section; home base per-scene guidance
+- `departments/wardrobe.md` — item-in-hand at discovery section
+- `departments/camera.md` — expedition drone-spectate template section
+- `departments/fireworks.md` — full rewrite; find-firework pattern as recurring structure
+- `direction/scouting-field-guide.md` — updated with all locked decisions + drone start req.
+- `direction/status.md` — full session update
+
+**Next actions:**
+1. Resume pre-scout prep for Sites E, F, G (next session)
+2. Zarathale scouting session in-world
+3. Intake conversation (Gate 4) after scouting delivers
+
+---
+
 ## 2026-03-28 — Pre-Production Direction Pivot
 
 **Type:** Full creative direction change (pre-YAML, no in-game test conducted)

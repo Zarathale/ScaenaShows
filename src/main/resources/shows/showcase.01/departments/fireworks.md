@@ -9,66 +9,81 @@ updated: 2026-03-28
 
 ## What This Department Serves
 
-Mira authors fireworks sequences where open sky, emotional scale, or the show's
-narrative calls for them. Fireworks are not guaranteed in every scene — in this show,
-they are not guaranteed in most scenes. The weapon scene (F) explicitly excludes them.
-Mira's potential home in this show is one of: the shield scene (G), the finale, or both.
-Not both with equal scale — if Mira is present in both, one is smaller than the other.
+**Updated 2026-03-29 — Mira now has a recurring role in every expedition scene.**
 
-The question Mira answers: *where in this show does a burst upward serve the story?*
-The answer must be specific and earned. "I can do fireworks here" is not enough.
+Mira authors one firework burst per expedition scene at the moment of item discovery.
+This is a structural beat, not an accent — it fires at the same position in every
+scene (between line 2 and line 3) and becomes part of the show's legible rhythm.
+The weapon scene (F) is the one explicit exception. That exception is intentional
+and powerful.
+
+---
+
+## The Find-Firework Pattern
+
+**Applies to:** Sites B, C, D, E, G (all expeditions except F)
+
+**Timing:** Between the Armorer's line 2 (names the piece) and line 3 (count + departure).
+Simultaneous with or just after the item appearing in the Armorer's main hand
+(ENTITY_EQUIP — see Wardrobe brief). Stage Management owns tick alignment.
+
+**The beat:**
+> Armorer: *"Iron. Wide at the shoulders — I measured for this. You know I measured."*
+> → item appears in hand → firework fires →
+> Armorer: *"Heavier than it looks. Come on."*
+
+**Register per scene:** Not identical — Mira calibrates each burst to the scene's
+emotional weight. The pattern is consistent; the scale and palette shift.
+
+| Scene | Slot | Register | Notes |
+|-------|------|----------|-------|
+| B — Helmet | Chain helmet | Crisp, upward, light | First burst; establishes the pattern |
+| C — Chestplate | Iron chestplate | Warmer, slightly wider | More weight than B; badlands sky |
+| D — Leggings | Iron leggings | Understated, road-quality | Middle beat; don't oversell it |
+| E — Boots | Leather boots | Tactile, lower burst | Ground-level quality if terrain supports |
+| F — Weapon | Iron axe | **NO FIREWORK** | See below |
+| G — Shield | Plain shield | Departure quality | Last burst before home; see G notes below |
+
+**Sky clearance is now required at every site.** Set documents clearance for all
+six expedition sites during scouting (it's in the scouting report template). A burst
+that fires under a tree canopy or a partial ceiling will not read. Mira cannot author
+without this data.
 
 ---
 
 ## Scene Assessment
 
-### Sites B–E
-No Fireworks involvement in the first four expeditions. These scenes establish the
-show's texture and build toward the finale. Fireworks in these early scenes would
-spend the show's visual currency too early.
-
 ### Site F — The Weapon (the choice)
-**Fireworks explicitly excluded.** This scene holds the show's most emotionally
-weighted silence. A burst here would be a tonal catastrophe. Mira does not author
-anything for Site F.
+**Fireworks explicitly excluded — confirmed and intentional.**
+
+By Scene F, the audience has internalized the pattern: item named → firework. When
+the Armorer names the axe and the firework does not come, the absence lands as a beat.
+The pattern breaks and no one explains why. That silence is the scene's emotional
+center.
+
+Mira does not author anything for Site F. Not even a small accent.
 
 ### Site G — The Shield (the threshold)
-**Mira's primary proposal opportunity.**
+The find-firework fires here per the standard pattern. But this is also the show's
+last expedition and the last firework before the finale. Mira may author this burst
+with slightly more finality than B–E — something that sounds like the last note before
+the door closes, not a celebration.
 
-The shield site is a liminal edge — a clifftop, a border, a threshold. If Set scouts
-a location with open sky and significant vertical clearance, Mira may author a small
-departure burst: the companion picks up the shield, turns for home, and a single small
-upward sequence fires as they go.
-
-The register for this burst: not triumphant. Something that sounds like the last moment
-before a door closes. Small shape, warm palette, brief. One arc, not a sequence. The
-quality is: *acknowledgment, not celebration.*
-
-**This burst, if authored, must:**
-- Have confirmed sky clearance from Set (minimum 20 blocks above player)
-- Not coincide with any Sound event (Sound steps back if Mira is here)
-- Fire at the companion's departure beat, not on player arrival
-- Be proposed to Direction before authoring; Direction confirms or declines
+If Set confirms significant sky clearance at the threshold location (minimum 25 blocks),
+Mira may also author a small departure burst as the Armorer turns for home. This is
+separate from the find-firework and would fire at the companion's departure beat.
+Propose to Direction at intake; do not assume it.
 
 ### The Finale
-**Mira's secondary proposal opportunity.**
+With the find-firework pattern established across 5 scenes, the finale's firework (if
+any) needs to feel different — escalated, not just repeated. The Vindicator's arrival
+is the show's one peak. Options for Mira at the finale:
 
-The Hero arrives fully equipped. This is the show's one peak. If fireworks are present
-at the finale, they should feel like the room recognized what happened — not like a
-victory fanfare was cued.
+- A burst at the moment of the Hero's appearance, larger and warmer than any expedition burst
+- Silence — trusting that the reveal is sufficient after five earned bursts
 
-A possible approach: a single small burst that fires at the moment of the Hero's
-appearance — warm, contained, from below or beside (not directly overhead, which
-reads as "we're celebrating" rather than "something arrived"). Then silence.
-
-**The alternative is nothing.** The visual of a fully equipped Hero may be sufficient.
-Mira should propose but hold the option lightly. If Casting delivers a visually
-striking Hero, the reveal may not need any punctuation. Direction decides after Casting
-delivers.
-
-**Mira does not author both the shield scene burst and a large finale sequence.**
-If present in both, the shield scene gets the smaller, quieter burst; the finale gets
-the more considered sequence. Scale must escalate from G to finale, not repeat.
+Direction decides after Casting delivers and Stage Management confirms the reveal
+sequence. Mira proposes both options at intake.
 
 ---
 

@@ -58,6 +58,35 @@ to do so — the preparation is complete, and what comes next is the player's st
 future interactive post-show choice prompt (fight vs. despawn) is noted in `ops-inbox.md`
 as a potential capability addition.
 
+**9. The Vindicator is present at home base from show open — locked 2026-03-29.**
+The home base set includes a wall separating the workshop from the Vindicator's holding
+space. An iron door in that wall is the show's central spatial mechanic:
+
+- Default state: door open
+- Show start (Scene A open): door closes on cue (REDSTONE event) — the clank is the
+  show's first beat, before the Armorer's first line
+- Finale (A-Final): door opens on cue — the Vindicator steps through
+
+The player is enclosed in the workshop for the duration of the show. They hear the
+Vindicator behind the door. They do not see him until the reveal.
+
+The Vindicator may have a text voice — short, blunt lines in a distinct format (color,
+caps) heard through the wall. The Armorer may address him directly. See `departments/voice.md`
+for full direction notes on the Vindicator offstage voice.
+
+Stage Management owns the iron door stop-safety cleanup cue — if the show is interrupted,
+the door must be manually openable. This is a non-negotiable safety item.
+
+**10. The find-firework pattern — locked 2026-03-29.**
+A firework fires between the Armorer's line 2 and line 3 at every expedition scene.
+Line 2 names the piece. The firework fires. Line 3 is the count and departure.
+Simultaneous with or just after the item appearing in the Armorer's main hand.
+
+This pattern fires at Sites B, C, D, E, and G. It does NOT fire at Site F (The Weapon).
+The absence is intentional. By Scene F, the player has internalized the pattern. The
+silence where the firework should be is the scene's emotional center. Departments must
+not compensate for this absence. See `departments/fireworks.md`.
+
 ---
 
 ## Tonal Register

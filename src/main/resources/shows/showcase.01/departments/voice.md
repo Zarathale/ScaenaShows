@@ -10,21 +10,91 @@ casting_locked: true
 
 ## Status
 
-**Script v1 locked — 2026-03-28.** See `direction/script-v1.md`.
+**Script v1 partially unlocked — 2026-03-29.**
 
-Full line set drafted and confirmed: 39 lines across 13 scenes (home base open +
-6 expeditions + 5 intermediate returns + finale). The register, the ambiguous-address
-structure, and the finale beat are all confirmed. Lines are ready for in-game test.
+Original v1 structure, register, and dramatic irony remain confirmed. The home base
+(A-section) lines require revision in light of a new set decision: the Vindicator is
+physically present at home base from show open, waiting behind a wall with an iron door.
+Voice must rethink the A-section with this staging as active context. All expedition
+lines and the finale remain valid and locked.
 
 TBA flags in script-v1 are minor — a handful of departure lines reference location
-character (forge, road, threshold) that may update once Set delivers coordinates.
-All other lines are location-agnostic and survive scouting without revision.
+character (forge, road, threshold) that update once Set delivers coordinates.
 
 **Dramatic irony — confirmed and locked:**
 The Armorer is preparing the Vindicator to fight the player. The player does not know
 this until the finale. Voice's "you" is structurally ambiguous throughout — addressed
 to the Vindicator, received by the player. The finale resolves it warmly:
 *"I'll leave you two to it."*
+
+---
+
+## The Vindicator's Offstage Voice
+
+**New as of 2026-03-29 — opens a direction conversation for the Voice session.**
+
+The Vindicator is present at home base from show open. He is behind a wall, separated
+from the player and Armorer by a closed iron door. He is never seen until the finale
+reveal. But he can be *heard* — and possibly *read*.
+
+### The concept
+
+The Armorer may speak to the Vindicator directly through the wall. The Vindicator may
+respond. The player reads this exchange in text, hears the sounds, and still doesn't
+fully understand what's on the other side of the door.
+
+This adds a second voice to home base. The two voices are not equal:
+
+- **The Armorer's voice** — calm, professional, in procurement mode. Their usual register.
+  No change.
+- **The Vindicator's voice** — a different format entirely. Consider: all-caps, a
+  contrasting text color (red? harsh white? something that reads as threat or
+  impatience), a different delivery cadence. Short. Blunt. Demanding or eager for battle.
+  Not a narrator — a creature that wants what it wants.
+
+The exchange should feel like overhearing something. The player is present for a
+conversation that isn't addressed to them — or isn't *only* addressed to them.
+
+### What the Vindicator might say
+
+Not lines yet — register and intent only. The Vindicator:
+- Makes demands about the kit (impatient, specific about what he needs)
+- May indicate readiness or agitation — eager for what comes next
+- Does not explain himself. One or two words, or a sound only.
+
+Examples of the register (not final copy): *"AXE."* / *"WHEN."* / *"ENOUGH WAITING."*
+The Armorer responds to these as a professional responds to a difficult client —
+with complete calm.
+
+### The sound dimension
+
+Well-timed Vindicator sounds during home base scenes — a grunt, a weapon sound, an
+impatient noise — could reveal his offstage presence before any text appears. A
+Vindicator grunt between the Armorer's first and second lines at show open would plant
+the question: *what is that?* without answering it.
+
+**Cross-department ask for Sound:** Voice needs Sound's inventory of what Vindicator
+sounds can be triggered on cue (via PLAY_SOUND or equivalent) versus what ambient
+sounds the live entity will generate on its own. The goal: select one or two specific
+sounds that plant his presence at theatrically precise moments — not random ambient
+noise from the entity, but deliberate, authored beats.
+
+See `kb/departments/sound/` for current capability status. Raise this in intake.
+
+### Format decisions for Voice session
+
+These are open questions for the Voice direction session — not locked here:
+
+- What text delivery event for Vindicator lines? (CHAT vs. ACTIONBAR — or a different
+  color/format variant of the same event?) Armorer's format should be visually distinct
+  from Vindicator's at a glance.
+- How many Vindicator "lines" across the A-sections? (Show open only? Each return?
+  Or just show open + A-Final?)
+- Does the Armorer ever directly address the Vindicator in text that the player reads?
+  (Currently all Armorer lines use ambiguous "you" — a direct call through the wall
+  would be a different register. Use sparingly if at all.)
+- Vindicator lines at show open only, or also on A-section returns as the stand fills?
+  Each return, the Vindicator's waiting gets one show longer.
 
 ---
 
@@ -72,17 +142,26 @@ Voice does not narrate that accumulation.
 
 ### Per-scene guidance
 
-**A — Home Base (opening)**
+**A — Home Base (opening) — REVISED CONTEXT**
 The show's most important line. Establishes the Armorer's register for everything that
 follows. Must imply the full scope of the mission without stating it.
 
-The direction: something specific about the first expedition or the first piece — said
-with the familiarity of someone who has done this before and knows exactly what they're
-doing.
+**New staging context:** The Vindicator is behind the wall at show open. The iron door
+has just clanked shut. The player has just been locked into the workshop. Whatever
+the Armorer's opening line is, it lands in a space where something is already present
+on the other side of that door.
 
-Draft direction (not final copy — to be written after Set confirms locations):
-The line should land the player in the middle of a thought already in progress. The
-Armorer is not introducing the show. They are already doing the show.
+Voice must decide: does the Armorer's opening line acknowledge the Vindicator's presence
+(indirectly), or proceed as if it's only about the procurement mission? The ambiguity
+deepens if the Armorer speaks to someone the player can't see — and then looks at the
+player as if they were always part of the plan.
+
+The iron door closing is a sound event. The Armorer's first line comes after it. That
+sequence — *clank, silence, then: "Six pieces..."* — is the show's first beat. Voice
+should write knowing that beat exists.
+
+The script v1 opening lines remain valid structurally; they may need tonal refinement
+once the Vindicator voice register is decided and the sound of the door close is confirmed.
 
 **B — Scene 1: The Helmet**
 The Armorer is fresh. First expedition. One line, or none. Something about the helmet,

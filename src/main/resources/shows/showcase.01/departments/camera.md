@@ -82,9 +82,54 @@ Do not reorient the player after the Hero is visible. Let the player look.
 
 ---
 
+## Expedition Camera Template — ALL 6 Scenes (added 2026-03-29)
+
+**This is a cross-show pattern.** All six expedition scenes (B through G) use the
+same camera opening. Mark designs this as a single reusable template cue with
+site-specific drone path parameters.
+
+### The concept: walking up on the Armorer
+
+The player arrives at the expedition site and the Armorer is *already working there*.
+The camera opens from a distance and tracks smoothly toward him — as if the player
+is walking up on the scene. The camera arrives close as the Armorer begins speaking.
+The find-beat (firework + item in hand) lands with the camera in close.
+
+### How it works (drone spectate pattern)
+
+1. Player TPs to expedition site. View immediately spectates an invisible drone entity
+   positioned at the "far" starting position.
+2. Drone has a scripted CROSS_TO path moving from the far mark toward the Armorer's
+   mark — smooth, continuous movement. Duration should feel like a natural walk-up,
+   not a rush (calibrate per site, roughly 3–5 seconds).
+3. Drone arrives near the Armorer's position as lines begin. Player has "walked up"
+   on the scene.
+4. Lines 1–2 fire. Item appears in Armorer's hand. Firework fires.
+5. Line 3 fires (count + departure).
+6. PLAYER_SPECTATE_END. Player TP'd back to home base.
+
+### Scouting requirement
+
+Zarathale documents a **drone start position** at each expedition site — the "far"
+coordinate that Camera uses as the beginning of the dolly path. This is separate
+from the player arrival mark and the Armorer mark. Three positions per site:
+drone start → Armorer position → (drone arrives near Armorer mark).
+
+### Site F exception
+
+Site F (The Weapon) uses the same template but with adjusted pacing: the drone
+moves slower, and there is a deliberate hold after the drone arrives before lines
+begin. This scene's silence is the show's most important beat. The camera arriving
+slowly and then holding is the right read. The absence of the firework after line 2
+will be felt against that held frame.
+
+No firework at Site F. Camera does not compensate — hold the frame.
+
+---
+
 ## What Camera Does NOT Do
 
-- No dramatic sweeps or gradual reorientation arcs in this show
+- No dramatic sweeps or sudden reorientation during scenes
 - No mid-scene reorientation except the one allowed FACE redirect in the finale
 - No camera work that calls attention to itself as camera work
 

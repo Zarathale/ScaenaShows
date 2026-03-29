@@ -103,3 +103,37 @@ that this belongs to one person, prepared by one person, for one purpose.
   If unsupported, `LEATHER_BOOTS` (undyed) is the fallback.
 - Confirm enchanted item support for main hand axe (as above).
 - Both are low-priority fallback questions — the kit is coherent without them.
+
+---
+
+## New Direction — 2026-03-29: Item Visible in Armorer's Hand at Discovery
+
+**Concept (added in scouting prep session):**
+
+At the moment the Armorer "finds" each piece during an expedition, the item should
+appear visibly in his hand. The intended beat per scene:
+
+> Armorer speaks line 2 (names the piece) → item appears in main hand
+> → firework fires → Armorer speaks line 3 (count + departure)
+
+The item materializes as part of the discovery beat, simultaneous with or just before
+the firework. He is visibly holding the piece when he speaks the count. He carries it
+on departure.
+
+**What Wardrobe needs to confirm:**
+
+Can `ENTITY_EQUIP` target the Armorer Villager's main hand slot? The event is confirmed
+for the Vindicator (Hero), but the Companion (Armorer Villager) has not been tested as
+a target for equipment events. Confirm at intake.
+
+If confirmed: Wardrobe authors one `ENTITY_EQUIP` per expedition scene, placing the
+relevant kit piece into the Armorer's `main_hand` slot at the discovery tick. Stage
+Management owns the tick alignment with the firework event.
+
+**The return implication (raise at intake):**
+
+If the Armorer is carrying the item on departure from the expedition site, he could
+arrive at home base with it visibly in hand — then the A-section armor stand fill
+doubles as the item leaving his hand and appearing on the stand. That's a
+Wardrobe + Stage Management coordination question. Not required, but available
+if the sequencing works cleanly.
