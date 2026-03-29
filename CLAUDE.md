@@ -34,7 +34,7 @@ All 12 department KBs are now in folder structure (`kb/departments/[dept-slug]/[
 
 | Show | Stage | State File |
 |------|-------|------------|
-| showcase.01 "The Cabinet" | Brief | `src/main/resources/shows/showcase.01/direction/status.md` |
+| showcase.01 "Preparing for Battle" | Brief | `src/main/resources/shows/showcase.01/direction/status.md` |
 | showcase.02 "The Long Night" | Brief | `src/main/resources/shows/showcase.02/direction/status.md` |
 | showcase.03 "Welcome" | Brief | `src/main/resources/shows/showcase.03/direction/status.md` |
 
@@ -48,19 +48,24 @@ Alan moves between shows freely. There's no lock on which show is primary.
 
 1. Read this file
 2. Read `ROADMAP.md` — the full picture of how this project is structured
-3. **If working on a specific show:** read that show's `direction/status.md`, then `direction/show-direction.md`
+3. **If working on a specific show:** read that show's `direction/status.md`, then `show-params.md` (if it exists — showcase.01 has one; it's the single source of truth for structural facts). Then read `direction/show-direction.md` for creative context.
 4. **If writing shows or cues:** read `kb/production-team.md`, then `kb/departments/show-director/show-director.kb.md`. Write the Show Director brief before any YAML. Read the relevant department KB(s) before writing YAML for their tools.
 5. **If creating cues:** naming is `[category].[archetype].[variant]` per spec §9; add `tags:` per taxonomy spec §10
 6. **If writing Java:** re-skim the relevant spec section first. Capability gaps go in `ops-inbox.md` — that's Alan's list, for plugin-level Java work only.
+
+**show-params.md:** Where it exists, this is the show's settled structural facts — kit, sites, structure, key mechanics, firework pattern, and YAML readiness checklist. A value in show-params means "build from this." A TBD means it's still in play. No formal lock ceremony — updating a param IS the lock. Department briefs reference show-params rather than restating facts.
 
 ---
 
 ## How Show Work Flows
 
 ### Starting a new show
-Scaffold from `src/main/resources/shows/_template/`. The Show Director writes the brief and per-department briefings before any YAML is authored. Brief, Show Direction, intake record, and department decisions all live in the show folder:
-- `direction/` — Show Director's working files (status, show-direction, tone, intake, revision-log)
+Scaffold from `src/main/resources/shows/_template/`. The Show Director writes the brief and per-department briefings before any YAML is authored. Show files live in:
+- `show-params.md` — structural facts, kit, sites, key mechanics, YAML readiness checklist
+- `direction/` — Show Director's working files (status, show-direction, tone, revision-log)
 - `departments/` — one file per department that has decisions or notes for this show
+
+**There is no formal intake gate.** Decisions get made iteratively across sessions. The YAML Readiness section of show-params.md tracks what's still TBD. When those items are resolved, YAML authoring begins.
 
 ### Calibration and demo shows
 `demo.*` shows are the calibration lab. Each department maintains a **Calibration Backlog** in its KB — specific things they want to develop mastery over. A calibration round picks from that list, builds a demo show, Alan watches, and findings get recorded back in the KB as **patterns** (named configurations with notes on storytelling effect).

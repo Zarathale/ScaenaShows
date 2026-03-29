@@ -2,7 +2,7 @@
 show_id: showcase.01
 department: Stage Management & Production
 document: Department Brief
-updated: 2026-03-28
+updated: 2026-03-29
 ---
 
 # Stage Management — showcase.01 "Preparing for Battle"
@@ -42,9 +42,11 @@ Option B for the first two fills (novelty) and Option A for the middle fills
 for the final fill before the Hero arrives. Stage Management proposes a specific schedule.
 
 **Slot filling order:**
-Wardrobe recommends the sequence. Stage Management executes it. Probable dramatic
-order: boots → leggings → chestplate → helmet → shield → weapon. This saves the
-weapon for last — the most charged piece arrives right before the Hero does.
+Wardrobe recommends the sequence. Stage Management executes it. Dramatic order:
+boots → leggings → chestplate → helmet → weapon (axe). Five slots. The weapon is
+last — the final expedition piece, arriving right before the Hero does. The slot
+fill now aligns with the expedition: Armorer returns from Site F with the axe,
+the stand's fifth slot fills, the reveal fires.
 
 ---
 
@@ -72,10 +74,11 @@ locked at intake and does not change.
 
 **Reveal sequence beat structure (proposed):**
 
-1. Final A-section: companion returns with the shield (last piece). Armor stand
-   fills its final slot (the weapon, per Wardrobe's recommended sequence).
+1. A-Final: companion returns from Site F (the weapon expedition). Armor stand
+   fills its final slot — the axe. Five pieces. The stand is complete.
 2. Hold: 40–60 ticks. The companion is still. The armor stand is full.
-3. Voice's finale line fires (if there is one) — or silence holds.
+3. Voice's three finale lines fire ("Five pieces. Everything where it belongs." /
+   "You've been good company." / "I'll leave you two to it.").
 4. Hero spawn fires at the confirmed position. `SPAWN_ENTITY` with full `equipment:`.
 5. Camera redirect fires if needed (if the spawn position is outside the arrival
    facing — one FACE event at the moment of spawn).
@@ -96,7 +99,7 @@ Production gates in dependency order:
 **Gate 2 (Wardrobe):** Armor kit designed and slot fill order confirmed. Unlocks
 Set scouting brief and Stage Management's equipping sequence design.
 
-**Gate 3 (Set):** All six expedition sites and home base scouted and coordinates
+**Gate 3 (Set):** All five expedition sites and home base scouted and coordinates
 documented. Unlocks Effects, Camera, Lighting, and the bulk of YAML authoring.
 
 **Gate 4 (Intake conversation):** All departments present proposals. Stage Management
@@ -106,8 +109,8 @@ records commitments. The following decisions are locked at Gate 4:
 - Reveal mechanic (spawn-equipped vs. sequential post-spawn)
 - Hero spawn position relative to player arrival facing
 - Finale sequence beat structure with tick values
-- Fireworks presence and position in finale and/or shield scene
-- Effects events per site (with Set coordinates confirmed)
+- Fireworks presence and position in finale
+- Effects events per site, including Site F particle beat (with Set coordinates confirmed)
 
 No YAML is authored before Gate 4 closes.
 
@@ -118,19 +121,19 @@ No YAML is authored before Gate 4 closes.
 The show's rondo structure — for Stage Management's sequencing reference:
 
 ```
-A (open) → B → A₁ → C → A₂ → D → A₃ → E → A₄ → F → A₅ → G → A-FINAL (reveal)
+A (open) → B → A₁ → C → A₂ → D → A₃ → E → A₄ → F → A-FINAL (reveal)
 ```
 
-Seven A-sections total: one opening, five returns, one finale. Six expeditions.
-Six `ENTITY_EQUIP` calls on the armor stand (one per A-section return, A₁ through the
-penultimate A before the finale). One `SPAWN_ENTITY` (or `SPAWN_ENTITY` + `ENTITY_EQUIP`
-sequence) for the Hero at the finale.
+Six A-sections total: one opening, four regular returns, one finale. Five expeditions.
+Five `ENTITY_EQUIP` calls on the armor stand (one per A-section return, A₁ through
+A-FINAL). One `SPAWN_ENTITY` (or `SPAWN_ENTITY` + `ENTITY_EQUIP` sequence) for the
+Hero at the finale. The A-FINAL section carries both the final slot fill and the reveal.
 
 ---
 
 ## YAML Items Owned by Stage Management
 
-- Armor stand `ENTITY_EQUIP` events (six, one per A-section return)
+- Armor stand `ENTITY_EQUIP` events (five, one per A-section return)
 - All teleport events (TP-out for each expedition, TP-home for each return)
 - Hero `SPAWN_ENTITY` event in the finale (in coordination with Casting's confirmed
   mob type and Wardrobe's confirmed item strings)

@@ -2,7 +2,7 @@
 show_id: showcase.01
 department: Camera Director
 document: Department Brief
-updated: 2026-03-28
+updated: 2026-03-29
 ---
 
 # Camera — showcase.01 "Preparing for Battle"
@@ -62,12 +62,6 @@ and holds out. Do not re-orient mid-scene. The player should land looking at wha
 Set has placed as the scene's visual anchor (the ruin, the relic, the cleared site)
 and be allowed to stay there.
 
-### G — Site G: The Shield (the threshold)
-
-Orient toward the edge — the clifftop, the mouth, the border. The player should feel
-the threshold quality of this location immediately on arrival. If the edge involves
-a drop, the player should be facing it, not standing with their back to it.
-
 ### A-Final — The Reveal
 
 This is Camera's most important moment in the show.
@@ -82,9 +76,9 @@ Do not reorient the player after the Hero is visible. Let the player look.
 
 ---
 
-## Expedition Camera Template — ALL 6 Scenes (added 2026-03-29)
+## Expedition Camera Template — ALL 5 Scenes (added 2026-03-29)
 
-**This is a cross-show pattern.** All six expedition scenes (B through G) use the
+**This is a cross-show pattern.** All five expedition scenes (B through F) use the
 same camera opening. Mark designs this as a single reusable template cue with
 site-specific drone path parameters.
 
@@ -115,15 +109,17 @@ coordinate that Camera uses as the beginning of the dolly path. This is separate
 from the player arrival mark and the Armorer mark. Three positions per site:
 drone start → Armorer position → (drone arrives near Armorer mark).
 
-### Site F exception
+### Site F exception *(and finale lead-in)*
 
 Site F (The Weapon) uses the same template but with adjusted pacing: the drone
 moves slower, and there is a deliberate hold after the drone arrives before lines
-begin. This scene's silence is the show's most important beat. The camera arriving
-slowly and then holding is the right read. The absence of the firework after line 2
-will be felt against that held frame.
+begin. This is now both the show's most emotionally weighted stop AND the final
+expedition. The camera arriving slowly and then holding is the right read. The
+absence of the firework after line 2 — on the last expedition piece, the weapon —
+will be felt against that held frame as the player has never felt it before.
 
-No firework at Site F. Camera does not compensate — hold the frame.
+No firework at Site F. Camera does not compensate — hold the frame. The TP home
+from this scene leads directly to the reveal sequence.
 
 ---
 

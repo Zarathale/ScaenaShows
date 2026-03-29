@@ -2,7 +2,7 @@
 show_id: showcase.01
 department: Sound Designer
 document: Department Brief
-updated: 2026-03-28
+updated: 2026-03-29
 ---
 
 # Sound — showcase.01 "Preparing for Battle"
@@ -16,7 +16,8 @@ atmosphere, not score. The player should feel like they've arrived somewhere, no
 a soundtrack has been cued.
 
 The show's most important sound task: hold the silence in the weapon scene (F) without
-filling it. Sound owns the weapon scene's restraint.
+filling it. Sound owns the weapon scene's restraint — and F is now the final expedition,
+which makes this restraint the show's last sonic act before home and the reveal.
 
 ---
 
@@ -57,38 +58,33 @@ grass, water if a river is present, birds if in a forest. This is the show's mid
 beat — Sound should not escalate here. Let the environment breathe.
 
 ### Site E — The Boots (the terrain site)
-Terrain-specific sound is this scene's strongest card. A magma field has a specific
-crackle. A soul sand valley has its own ambient (the shrieking quality is part of it).
-A snowfield has a distinct quietness. Sound documents what the terrain gives and
-whether it serves the scene without modification.
+**Terrain locked 2026-03-29: Swamp.** Sound documents what swamp ambient gives —
+water, frogs, the specific wet quiet of a swamp floor — and assesses whether it
+serves the scene without modification. Swamp ambient is distinctive and earthy;
+it may be sufficient on its own.
 
 This scene is tactile. The sound should feel like something underfoot, not overhead.
 Do not try to score the terrain; let it speak.
 
-### Site F — The Weapon (the choice)
-This is the show's most emotionally weighted stop. Voice may be silent here. Lighting
-will not escalate. Sound must hold the space with equal restraint.
+### Site F — The Weapon (the choice — final expedition)
+This is the show's most emotionally weighted stop AND its final expedition. Voice
+may be silent here. Lighting will not escalate. Sound must hold the space with
+equal restraint.
 
 **The brief for this scene is: less.** Whatever ambient the location provides, Sound
 may thin it — not silence it (silence is its own event and should be used deliberately),
 but reduce it to something that feels like a held breath. The player should feel the
 weight of the place without being pushed toward a feeling by a soundtrack.
 
-If the location is a ruin or a cleared site: the ambient quality of emptiness is the
-score. Sound should not fill what the location is using as content.
+The location is a ruin with a cleared central space. Sound documents what the native
+ambient is at that kind of site and assesses whether to thin it or hold it.
+
+If Effects authors a particle beat at the discovery moment: Sound must not compete
+with it. The particle beat is a visual event; Sound steps back and holds the existing
+ambient underneath it.
 
 After the companion collects the weapon: hold the ambient until the TP home fires.
-No resolve, no swell, no punctuation.
-
-### Site G — The Shield (the threshold)
-The threshold location — edge of something, liminal space — may benefit from a slight
-ambient shift: something that sounds like the edge between inside and outside, safe
-and exposed. This is the show's final expedition and the one closest to the finale.
-Sound can allow slightly more texture here than in the weapon scene, but the register
-is still restrained. This is not a crescendo. It is a final breath before the reveal.
-
-If Mira is in this scene with fireworks: Sound steps back and lets Mira lead. No
-competing audio.
+No resolve, no swell, no punctuation. The player is going home to the reveal.
 
 ---
 

@@ -2,7 +2,7 @@
 show_id: showcase.01
 department: Effects Director
 document: Department Brief
-updated: 2026-03-28
+updated: 2026-03-29
 ---
 
 # Effects — showcase.01 "Preparing for Battle"
@@ -53,31 +53,38 @@ slow-falling adjustments are possible. Effects holds until Set delivers the scou
 **This is Effects' primary scene.** The boots are about what's underfoot, and the terrain
 type should be felt.
 
-Possibilities depending on Set's scouting report:
-- **Magma field:** Fire resistance (protective) + a levitation pulse 1-2 blocks above
-  the surface so the player hovers slightly over the heat (the boots protect against
-  the burning ground). Coordinate altitude with Set before authoring.
-- **Soul sand valley:** Slowness may apply if the soul sand is walkable — or levitation
-  2-3 blocks above to float over it. Soul speed is a boot enchantment, which could be
-  an interesting inverse: the boots that will protect the Hero do not yet protect the
-  companion.
-- **Snowfield:** No effect likely — snow is traversable. Effects holds unless Set
-  identifies a specific quality that warrants representation.
-- **Swamp/clay:** No effect likely.
+**Terrain locked 2026-03-29: Swamp.** The show stays in the overworld. Swamp terrain
+is earthy, specific, distinctive underfoot — clay and mud floor, shallow water patches.
 
-Effects cannot author this scene until Set delivers the boots site terrain type in full.
+**Effects assessment for swamp:** No levitation, no fire resistance. The swamp floor
+is traversable but particular. Effects proposes at intake whether any subtle movement
+quality serves the scene — the earthy resistance of shallow water, the heaviness of
+soft ground. If no specific effect reads as "world doing this," Effects passes. The
+terrain itself may be sufficient. Effects waits for Set to confirm exact terrain detail
+before deciding.
 
-### Site F — The Weapon (the choice)
-**Effects is not in this scene.** The weapon site holds the show's most important silence
-and moral weight. A levitation event or player-sensation effect would be tonally wrong.
-Effects explicitly passes this scene.
+### Site F — The Weapon (the choice — final expedition)
+**Updated 2026-03-29.** Previous guidance: Effects passes entirely. New direction:
+particles as the find-beat substitute.
 
-### Site G — The Shield (the threshold)
-A liminal edge location. If the site involves a significant drop or open sky, a brief
-slow-falling quality on arrival could register as "you are at the edge of something."
-This is a light effect — one tick, or a brief duration — not a sustained sensation.
+Since there is no firework at this scene, and since F is now the final expedition,
+a subtle particle effect at the discovery moment may serve as the scene's visual beat
+without adding spectacle. The concept: at the moment the Armorer picks up the axe,
+ground particles fire in the cleared ruins space — something that reads as *the ground
+recognizing this*, not as a celebration. Embers. Ash disturbed from the earth.
+Something that has been waiting.
 
-Effects proposes after Set confirms the threshold site geometry.
+**Requirements for this to work:**
+- Set must scout a ruin with a cleared, flat central space — open enough that particles
+  read against the ground, not lost in clutter
+- The surrounding ruin structure should frame the cleared space so particles are visible
+  and atmospheric, not competing with ambient environment detail
+- No lava glow, no active fire, no ambient particle sources that would drown the effect
+
+**This is a proposal for intake, not a locked decision.** If Set's location makes it
+feel like the world is doing it, Effects authors it. If it reads as the plugin doing
+something: Effects passes and the silence holds alone. Both are valid. Direction
+decides after Set scouts and confirms the environment quality.
 
 ---
 
@@ -99,9 +106,11 @@ sensation should pull the player's attention from what they're seeing.
 ## Coordination Requirements
 
 Effects cannot finalize any expedition scene until Set delivers:
-- Terrain type (exact material/biome)
+- Terrain type (exact material/biome) — Site E now confirmed as swamp
 - Safe player TP altitude (blocks above terrain floor)
-- Lava proximity notes for forge site
-- Sky/ceiling clearance at all sites where levitation is possible
+- Lava proximity notes for forge site (C)
+- Sky/ceiling clearance at relevant sites
+- **Site F:** Cleared space dimensions and surrounding ruin structure — needed to
+  assess whether the particle beat is viable in this environment
 
 Effects brings confirmed proposals to the intake conversation. No YAML until intake.

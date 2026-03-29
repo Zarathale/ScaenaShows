@@ -3,12 +3,12 @@ show_id: showcase.01
 document: Scouting Brief
 author: Set Director (Zarathale)
 updated: 2026-03-28
-status: Active — v2, updated with confirmed casting/wardrobe/voice
+status: Active — v3, updated 2026-03-29 (shield/Site G cut; 5 expeditions)
 ---
 
 # Scouting Brief — showcase.01 "Preparing for Battle"
 
-> Zarathale: this is your in-game task list. All six expedition sites are a fresh slate.
+> Zarathale: this is your in-game task list. All five expedition sites are a fresh slate.
 > The question is always: *does this feel like where this piece was waiting?*
 
 ---
@@ -18,7 +18,7 @@ status: Active — v2, updated with confirmed casting/wardrobe/voice
 Everything downstream is now confirmed. Read this section before going in-world.
 
 **The show:**
-An Armorer Villager equips a Vindicator across six expeditions — one armor slot per trip.
+An Armorer Villager equips a Vindicator across five expeditions — one armor slot per trip.
 The player travels with the Armorer, watches the armor stand fill, and in the finale the
 Vindicator arrives fully equipped.
 
@@ -36,11 +36,11 @@ not foreboding. The irony belongs to the finale, not to the locations.
 | Chestplate | Iron chestplate | Weight and authority |
 | Leggings | Iron leggings | Matched to chestplate |
 | Boots | Dark leather boots | The Armorer's specific choice |
-| Weapon | Iron axe (Sharpness I) | One good edge |
-| Shield | Plain shield | No markings; the work speaks |
+| Weapon | Iron axe (Sharpness I) | One good edge — the final piece |
 
-Fill order: boots → leggings → chestplate → helmet → shield → axe (weapon last,
-right before the Vindicator arrives).
+Fill order on the armor stand: boots → leggings → chestplate → helmet → axe (weapon last,
+right before the Vindicator arrives). The expedition order (B → C → D → E → F) does not
+match the fill order — the stand fills in dramatic sequence independent of expedition sequence.
 
 **The voice (script v1 confirmed):**
 The Armorer speaks in ambiguous address — "you" throughout could be the Vindicator
@@ -80,7 +80,7 @@ Every confirmed location enters the permanent stage registry at
 seven times — at show open and after each of the six expeditions.
 
 **The voice lines here:**
-> *"Six pieces. Everything I need is out there — I know where each one is."*
+> *"Five pieces. Everything I need is out there — I know where each one is."*
 > *"You'll want to be properly prepared. I've made sure of that."*
 > *"Helmet first. Keep up."*
 
@@ -200,43 +200,44 @@ The middle beat of the show — honest, unspectacular, a place where someone wal
 
 ---
 
-## Site E — The Boots: "The Burning Floor"
+## Site E — The Boots: "The Swamp Floor"
 
 **Slot:** Dark leather boots, dyed by the Armorer — specific, personal, the piece
 that says someone paid attention.
+
+**Terrain locked 2026-03-29: Swamp.** The show stays in the overworld.
 
 **The voice lines here:**
 > *"Feel that. This is why boots matter. Most people never think about the ground."*
 > *"Leather. Dark — I dyed these myself. I know what you walk toward."*
 > *"Four. The hard ones are still ahead."*
 
-"Feel that." — the terrain must be immediately legible underfoot. The player arrives
-and knows within seconds what kind of ground this is. Whatever the terrain type, it
-should be the thing you notice first. "I know what you walk toward" — the Armorer
-knows this warrior's path. Find ground that implies a path worth having boots for.
+"Feel that." — the swamp floor is immediately legible: earthy, wet, specific
+underfoot. Clay and mud, shallow water patches. "I know what you walk toward" —
+the Armorer knows this warrior's path. The swamp is the ground they will walk through.
 
-**What to find:** Memorable, distinctive terrain. Magma field. Soul sand valley.
-Deep snowfield. Muddy swamp floor. Clay riverbed. The content of this scene is
-underfoot — not a skyline, not a structure.
+**What to find:** A swamp location with a clear floor character — mud, clay, water.
+The scene is tactile and humble, not dramatic. Middle-of-the-show energy. The swamp
+doesn't need to be remarkable; it needs to feel specific and noticed.
 
 **Requirements:**
-- Terrain legibility: the ground type is obvious within 5 seconds of arrival
-- Safe player TP altitude: document blocks above the terrain floor
-  (Effects calibrates levitation from this — if applicable to terrain type)
-- Exact floor material (Effects needs this for the specific sensation type)
-- Terrain hazards: magma damage range, soul sand slowness, etc.
+- Confirmed swamp biome (mud/clay floor, water present)
+- Terrain legibility immediate on arrival
+- Safe player TP altitude: document blocks above terrain floor
+- Exact floor material for Effects assessment (may pass — swamp is traversable)
 - Sky clearance: document
 
 ---
 
-## Site F — The Weapon: "The Choice"
+## Site F — The Weapon: "The Choice" *(final expedition)*
 
 **Slot:** Iron axe, Sharpness I — one edge, made deliberate, the most charged piece.
+This is the last expedition. The show returns home from here.
 
 **The voice lines here:**
 > *"I kept coming back to this place. It answers something."*
 > *"Iron axe. I had it sharpened once. That's all you need — one good edge."*
-> *"Five. One left. The shield — it's the lightest piece. Not the easiest."*
+> *"Five. Let's go home."* *(or silence — Voice decides at intake)*
 
 "I kept coming back to this place. It answers something." — this is the hardest site
 to find. It's not a landmark or a dramatic set. It's a place with a particular
@@ -249,8 +250,9 @@ The Armorer kept coming back. That means there's something here worth returning 
 Find what that is.
 
 **What to find:** Stillness with weight. Not emptiness — a place that has earned its
-quiet. This is the show's most emotionally weighted stop. Everything in the scene
-should make the Armorer's line feel inevitable rather than described.
+quiet. This is the show's most emotionally weighted stop AND its final expedition.
+Everything in the scene should make the Armorer's line feel inevitable rather than
+described. The player departs from here to witness the reveal.
 
 **Requirements:**
 - Arrival facing toward the scene's visual anchor — the ruin, the relic, the
@@ -262,42 +264,8 @@ should make the Armorer's line feel inevitable rather than described.
 - No particle effects, no lava glow, nothing that creates ambient spectacle —
   this scene works through stillness
 - Biome: any where conflict or decision reads as native
-- Sky clearance: document
+- Sky clearance: document (fireworks are explicitly excluded here, but document anyway)
 - Note every notable structural or terrain feature at the site
-
----
-
-## Site G — The Shield: "The Threshold"
-
-**Slot:** Plain shield — no markings, the work speaks, the last piece.
-
-**The voice lines here:**
-> *"There's something beyond this. You can't quite see it from here. That's where you're going."*
-> *"Plain shield. No markings. I thought about a sigil — decided the work should speak for itself."*
-> *"That's everything. Time to go home."*
-
-"There's something beyond this. You can't quite see it from here." — the location
-must have something beyond it that isn't fully visible. A clifftop over a drop. The
-mouth of a cave system. The border of a dark forest or badlands. A ravine lip where
-the far side disappears into shadow. The player arrives facing the edge. The Armorer
-is already there, looking into it.
-
-"That's where you're going" — the Armorer says this to the Vindicator. The player
-is standing at that edge right now, hearing it. Find a threshold that makes both
-readings feel true.
-
-**Requirements:**
-- Arrival facing TOWARD the edge — the player looks into the boundary, not away
-- Sky clearance: minimum 25 blocks above TP position — Mira may author a small
-  departure burst here and needs open sky
-- Drop depth below edge: document if applicable
-- Biome: any — the liminal quality matters more than the biome
-- Time-of-day notes: what time-of-day serves this site best? Dusk is the strong
-  candidate; document the native light quality and whether Lighting should author
-  a set
-- Note: this is the last expedition. The tone is finality, not dread. The Armorer
-  turns for home from here. The location should feel like the last necessary place,
-  not the most dangerous one.
 
 ---
 
@@ -305,11 +273,11 @@ readings feel true.
 
 File the scouting report to Michael C. (Set Director) and copy Direction.
 
-Once coordinates are confirmed for all seven locations:
+Once coordinates are confirmed for all six locations (home base + 5 expedition sites):
 - Stage registry entries are completed for each site (`kb/departments/set/stage-registry.md`)
 - Gate 3 closes: department authoring can begin
 - Gate 4 is scheduled: intake conversation with all departments
 
-The four TBA flags in script-v1 (`direction/script-v1.md`) — departure lines
-referencing "the forge," "long road," and "threshold" — update to match the confirmed
-site character once scouting delivers. Voice will revise to v2 at that point.
+The TBA flags in script-v1 (`direction/script-v1.md`) — departure lines referencing
+"the forge" and "long road" — update to match the confirmed site character once scouting
+delivers. Voice will revise to v2 at that point.

@@ -2,7 +2,7 @@
 show_id: showcase.01
 document: Status
 stage: Brief
-last_updated: 2026-03-28
+last_updated: 2026-03-29
 ---
 
 # showcase.01 "Preparing for Battle" — Current Status
@@ -11,61 +11,34 @@ last_updated: 2026-03-28
 **Brief** — Gates 1 and 2 closed. Scouting prep in progress. No YAML work has begun.
 
 ## Last Session
-2026-03-29. Scouting prep session — pre-scout decisions for all 7 locations.
+2026-03-29 (session 2). Major structural revision + pre-scout prep continued.
 
-Walked through Sites A–D in detail. Multiple cross-show decisions locked. Several
-department briefs updated. Paused mid-session at Site E (boots terrain type TBD).
-Sites F and G not yet discussed.
+**Structural decisions locked this session:**
 
-**Sites decided this session:**
+- **Shield cut / Site G retired.** The show is now 5 expeditions: helmet, chestplate,
+  leggings, boots, weapon. No shield. No Site G. Site F (The Weapon) is the final
+  expedition and the show's climax. All department briefs updated.
+- **Show structure:** A(open) → B → A1 → C → A2 → D → A3 → E → A4 → F → A-Final.
+  Six A-sections total (opening + 4 regular returns + A-Final). Five expedition sites.
+- **Script revised:** "Six pieces" → "Five pieces" throughout. F line 3 revised to
+  "Five. Let's go home." (placeholder; Voice may propose silence at intake). A5 return
+  and Scene G removed entirely. A-Final unchanged in structure; finale lines updated.
+- **Site E — Boots: LOCKED as Swamp.** Overworld only for this show. Swamp terrain;
+  earthy, distinctive underfoot. Effects assesses swamp sensation at intake.
+- **Site F — Weapon: pre-scout direction.** Ruin with cleared central space, flat
+  open area. Effects proposes particle beat at axe discovery moment as the scene's
+  visual beat (substituting for the absent firework). Effects to confirm viability
+  once Set scouts the specific site. Set must document cleared space dimensions and
+  surrounding structure for Effects assessment.
 
-**Site A — Home Base:** Near a naturally-generated pillager outpost. Tower visible
-as background context. Small enclosed outbuilding with windows oriented toward tower.
-Armor stand on 1-block pedestal, 6–8 blocks from player arrival. Armorer Villager
-contained in a fenced area with Blast Furnace job site block. **New staging addition:**
-the Vindicator waits behind a wall at home base from show open — separated from the
-player by a closed iron door. Iron door default state: open. Show start: door closes
-on cue (REDSTONE). Finale: door opens on cue — Vindicator steps through. Player is
-contained in the workshop during the show. Iron door stop-safety cleanup cue required
-(Stage Management). Spawning safety approach: 72-block distance from tower + lit
-enclosure + pre-show pillager clear cue.
+**Previously locked (session 1, 2026-03-29):**
 
-**Site B — The Helmet:** Natural mountain peak. Open sky. Small divot at summit
-carved for precise marks. Two marks: player arrival and Armorer position.
-
-**Site C — The Chestplate:** Badlands biome, overworld. Lava present. Exposed
-mineshaft nearby as the "old work" visual anchor. Open sky.
-
-**Site D — The Leggings:** Savanna or open plains village. Small armorer shop
-beside an open road. Open sky, natural world.
-
-**Cross-show decisions locked this session:**
-
-- **Find-firework pattern:** A firework fires between Armorer line 2 and line 3 at
-  every expedition scene — at the moment of item discovery. EXCEPTION: Site F (The
-  Weapon) — no firework. The break in pattern is intentional and powerful. Fireworks
-  brief updated; Mira has a recurring role in all 5 firework-eligible scenes plus
-  the finale.
-- **Armorer item-in-hand at discovery:** At the find moment (simultaneous with firework),
-  item appears in Armorer's main hand via ENTITY_EQUIP. Wardrobe to confirm Villager
-  main-hand targeting. Carry-through to A-section return (item in hand → transfers to
-  armor stand) is available if sequencing works. Wardrobe brief updated.
-- **Expedition camera template (all 6 scenes):** Drone spectate pattern. Invisible drone
-  spawns at "far" position, moves toward Armorer via scripted CROSS_TO (smooth, no jerk).
-  Player spectates drone — camera "walks up" on the Armorer already working. Drone
-  arrives at close position by the find beat. Firework fires. PLAYER_SPECTATE_END,
-  then TP back to home base. Mark designs this as a reusable template cue. Zarathale
-  documents drone start position per site during scouting. Camera brief updated.
-- **Player in spectator/frozen mode:** All expedition scenes, player does not move.
-  Spectator mode is the preferred approach; confirm plugin support at intake (may be
-  a Stage Management/ops-inbox item).
-- **Vindicator offstage voice:** Vindicator may speak from behind the wall in text
-  (different format/color, short, blunt). Armorer may address him directly. Sound
-  crossover: well-timed Vindicator sounds at home base scenes — a grunt between lines
-  1 and 2. Voice brief updated with full direction notes for the Voice session.
-- **Script v1 partial unlock:** A-section lines require revision with Vindicator
-  staging as active context. All expedition lines and finale remain locked. Voice
-  brief updated.
+- Site A–D pre-scout decisions (home base, helmet, chestplate, leggings) — all locked
+- Find-firework pattern (fires at B, C, D, E; explicitly absent at F)
+- Expedition camera template (drone spectate dolly-in, all 5 scenes)
+- Armorer item-in-hand at discovery (ENTITY_EQUIP)
+- Vindicator offstage presence / iron door staging
+- Script v1 partial unlock (A-section lines need revision)
 
 ## Gate Sequence
 
@@ -73,56 +46,44 @@ beside an open road. Open sky, natural world.
 Armorer Villager (companion) + Vindicator (Hero). Both confirmed.
 
 **Gate 2 — Wardrobe: ✅ CLOSED**
-Full kit designed and slot fill order confirmed. Two minor technical questions remain
-for Stage Management (leather dye support, enchanted item support) — both have clean
-fallbacks and do not block scouting.
+Five-piece kit designed and slot fill order confirmed. Shield removed. Two minor
+technical questions remain (leather dye support, enchanted item support) — both have
+clean fallbacks and do not block scouting.
 
-**Voice — Script v1: ✅ LOCKED**
-39 lines across 13 scenes. Dramatic irony confirmed. 3-line rhythm per scene.
-Finale: "I'll leave you two to it." See `direction/script-v1.md`.
+**Voice — Script v1: ✅ LOCKED (revised)**
+Revised 2026-03-29. Five expeditions. "Five pieces" throughout. F line 3 and
+A-Final updated. G scene removed. See `direction/script-v1.md`.
 
 **Gate 3 — Set Scouting: OPEN — next step**
-Zarathale scouts all 7 locations (home base + 6 expedition sites). Pre-scout decisions
-now locked for Sites A–D. Sites E–G need one more prep session before scouting, or
-scout with the current brief and adjust. Key new scouting note: every site now requires
-drone start position documented in addition to player arrival mark. Use the updated
-`direction/scouting-field-guide.md` as the in-game reference. File report to
+Zarathale scouts 6 locations (home base + 5 expedition sites B through F).
+Pre-scout decisions locked for A–E. Site F not yet fully walked through — ruin
+with cleared central space is the direction; Zarathale scouts with this as the
+brief. Use `direction/scouting-field-guide.md`. File report to
 `direction/scouting-report.md`.
 
 **Gate 4 — Intake Conversation: pending Gate 3**
-All departments present proposals. Stage Management records commitments. Key decisions
-locked at intake: equipping fill timing per A-section return, reveal tick sequence
-and Hero spawn position, Fireworks scope (Mira's role in shield scene and/or finale),
-Effects events per terrain site.
+Key decisions at intake: equipping fill timing, reveal tick sequence, Hero spawn
+position, Fireworks at finale (Mira proposes burst or silence), Effects at Sites
+E and F (swamp sensation + weapon particle beat viability), Voice F line 3 (line
+vs. silence).
 
 **YAML authoring begins after Gate 4.**
 
 ## Direction's Open Items
 
-- **Complete pre-scout prep** — Sites E (boots), F (weapon), G (shield) not yet
-  walked through. Resume in next session before scouting, OR scout with current brief
-  and add specificity after. Site E was paused mid-discussion: terrain type (magma /
-  soul sand / snowfield / swamp) not yet decided.
-- **Set scouting** — Zarathale needs an in-world session. Updated field guide and
-  blank report are at `direction/scouting-field-guide.md` and `direction/scouting-report.md`.
-  New: drone start position required per site in addition to player arrival mark.
-- **Intake conversation** — scheduled after scouting delivers coordinates
-- **Stage Management — iron door stop-safety:** Cleanup cue needed (manually invocable)
-  to open the door if show is interrupted mid-run. Player could be trapped otherwise.
-  Raise at intake; SM owns.
-- **Stage Management — spectator mode:** Confirm whether PLAYER_SPECTATE supports
-  full player freeze during expedition scenes, or if this requires a plugin addition
-  (ops-inbox). Raise at intake.
-- **Voice session** — A-section lines require revision with Vindicator-behind-wall
-  staging as context. Vindicator voice format and line register to be decided.
-  Sound crossover (Vindicator sounds at home base) also on the Voice session agenda.
-  See `departments/voice.md` for full direction notes.
-- **Camera brief** — expedition drone-spectate template added today. Mark designs
-  the reusable expedition camera cue at YAML time.
-- **Fireworks brief** — find-firework pattern added today. Mira authors one burst
-  per eligible scene. Site F: confirmed no firework.
-- **Wardrobe** — confirm ENTITY_EQUIP on Armorer Villager main hand (item-in-hand
-  at discovery beat). Raise at intake.
+- **Site F pre-scout prep** — direction given (ruin, cleared flat space, particle-viable).
+  Zarathale scouts with this brief. No further prep session needed unless Site F
+  presents unexpected terrain challenges.
+- **Set scouting** — Zarathale ready to go. Field guide and blank report at
+  `direction/scouting-field-guide.md` and `direction/scouting-report.md`.
+  Drone start position required per site.
+- **Intake conversation** — scheduled after scouting delivers coordinates.
+- **Stage Management — iron door stop-safety:** Cleanup cue needed. Raise at intake.
+- **Stage Management — spectator mode:** Confirm PLAYER_SPECTATE capability. Raise at intake.
+- **Voice session** — A-section lines need revision with Vindicator staging active.
+  F line 3 open: "Five. Let's go home." or silence. Voice decides at intake.
+- **Effects — Site F particle beat:** Bring proposal to intake once Set confirms
+  cleared space dimensions. If viable: particle event at axe discovery tick.
+  If not viable: silence holds alone. Both are acceptable.
 - **ROADMAP.md** — still lists this show as "The Cabinet." Update when convenient.
-- **ops-inbox.md** — future capability: interactive post-show choice prompt
-  (fight vs. despawn Vindicator). Noted, not blocking.
+- **ops-inbox.md** — future: interactive post-show choice prompt. Noted, not blocking.

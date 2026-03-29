@@ -2,17 +2,16 @@
 show_id: showcase.01
 department: Set Director
 document: Department Brief
-updated: 2026-03-28
+updated: 2026-03-29
 ---
 
 # Set — showcase.01 "Preparing for Battle"
 
 ## What This Department Serves
 
-Set scouts and establishes all seven locations: home base and six expedition sites. The
-previous scouting brief is fully retired — all six expedition sites are a fresh slate.
-No YAML is written until Zarathale has scouted and documented real-world coordinates for
-every location.
+Set scouts and establishes all six locations: home base and five expedition sites (B
+through F). The shield site (G) is cut — five expeditions total. No YAML is written
+until Zarathale has scouted and documented real-world coordinates for every location.
 
 Set is the third mover in this show's production order, after Casting (companion + Hero)
 and Wardrobe (armor kit). Wardrobe's kit design informs the scouting lens — what the
@@ -114,8 +113,8 @@ movement sensation is warranted and safe.
 **What Set documents:** Coordinates, arrival facing, exact terrain type (material/biome),
 safe altitude above terrain for player TP, any terrain hazard notes for Effects.
 
-### Site F — The Weapon: "The Choice"
-**Slot:** Main hand weapon (intent, will, the decision to fight)
+### Site F — The Weapon: "The Choice" *(final expedition)*
+**Slot:** Main hand weapon (intent, will, the decision to fight) — the last piece
 
 Scout for a location that has the quality of a decision having been made here. A ruin of
 something that was defended. A pillager outpost (claimed from an adversary — the
@@ -123,29 +122,15 @@ companion took their weapon, which is its own statement). A cleared battlefield.
 with a monument, a crater, a broken wall. The weapon is the piece that implies intent.
 The place should share that quality.
 
-This is the show's most emotionally weighted expedition. The location should have
-stillness to it — not emptiness, but the specific quiet of a place where something
-significant happened. Set should find a place that earns that quiet.
+This is the show's most emotionally weighted expedition AND its final one. The location
+should have stillness to it — not emptiness, but the specific quiet of a place where
+something significant happened. Set should find a place that earns that quiet. The
+player departs from here to witness the reveal.
 
 **What Set documents:** Coordinates, arrival facing, any AI-active hostile mobs in
 range (needs clear answer — this scene holds the show's most important silence), biome,
-notable structures or features.
-
-### Site G — The Shield: "The Threshold"
-**Slot:** Off hand shield (final protection, the last line, the liminal piece)
-
-Scout for an edge location — a clifftop at dusk, the mouth of a cave, the border of a
-dangerous biome, the lip of a deep ravine. The shield is the final piece and the most
-liminal — it is protection carried into the unknown. The companion picks it up and turns
-for home. The place should feel like a boundary.
-
-This site may warrant Mira's involvement if the location has open sky (for a small
-departure burst as the companion leaves for the last time). Set documents sky clearance
-for Fireworks' assessment.
-
-**What Set documents:** Coordinates, arrival facing (toward the edge or threshold,
-not away from it), sky clearance above (blocks to obstruction), biome, time-of-day
-notes if applicable, any fall risk at player TP position.
+notable structures or features, sky clearance (fireworks explicitly excluded here, but
+document regardless).
 
 ---
 

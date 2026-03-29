@@ -10,7 +10,46 @@ status: active — pre-production pivot recorded below
 
 ---
 
-## 2026-03-29 — Scouting Prep + Cross-Show Creative Decisions
+## 2026-03-29 (session 2) — Shield Cut + Pre-Scout Completion
+
+**Type:** Major structural revision (pre-YAML, no in-game test)
+
+**Summary:**
+Shield removed entirely. Site G retired. Show is now 5 expeditions. Site F (The Weapon)
+is the final expedition and show climax. All department briefs updated to reflect the
+change. Pre-scout prep continued: Site E locked as swamp, Site F direction given as
+ruin with cleared flat central space.
+
+**Structural decisions:**
+- Kit: 5 pieces (chain helmet, iron chestplate, iron leggings, dark leather boots,
+  iron axe). Shield (off-hand) removed from all documents.
+- Show structure: A(open) → B → A1 → C → A2 → D → A3 → E → A4 → F → A-Final.
+  Six A-sections, five expeditions, five armor stand fills.
+- Firework pattern: fires at B, C, D, E. Absent at F (final expedition, climax). The
+  absence now carries maximum force — the pattern breaks at the last piece.
+- Script: "Six pieces" → "Five pieces" throughout. F line 3 revised ("Five. Let's go
+  home." — placeholder; Voice may propose silence). A5 return removed. G scene removed.
+  A-Final finale lines updated.
+
+**Site decisions locked:**
+- E (Boots): Swamp — staying overworld for this show. Effects assesses at intake.
+- F (Weapon): Ruin with cleared flat central space. Effects proposes particle beat at
+  axe discovery as the scene's visual beat (no firework substitute). Set must document
+  cleared space dimensions for Effects assessment.
+
+**Briefs updated this session:**
+All department briefs updated: show-direction, script-v1, scouting-field-guide,
+scouting-brief, fireworks, wardrobe, set, camera, stage-management, voice, effects,
+sound, lighting, casting, choreography, tone, status.
+
+**Next actions:**
+1. Zarathale scouting session (Sites A–F, with Site F brief as ruin/cleared space)
+2. Intake conversation (Gate 4) after scouting delivers
+3. Voice session — A-section revision + F line 3 decision
+
+---
+
+## 2026-03-29 (session 1) — Scouting Prep + Cross-Show Creative Decisions
 
 **Type:** Pre-scout decisions (no YAML authored, no in-game test)
 

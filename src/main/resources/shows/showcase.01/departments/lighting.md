@@ -2,7 +2,7 @@
 show_id: showcase.01
 department: Lighting & Atmosphere Designer
 document: Department Brief
-updated: 2026-03-28
+updated: 2026-03-29
 ---
 
 # Lighting — showcase.01 "Preparing for Battle"
@@ -15,8 +15,8 @@ where it actually is. Lighting does not impose a unified palette across the show
 it preserves each location's own light logic.
 
 The one place where Lighting makes a consistent, authored choice: home base. Every
-A-section return, the player comes back to the same light. That constancy is part of
-what makes home base feel like home.
+A-section return — six total, including the finale — the player comes back to the
+same light. That constancy is part of what makes home base feel like home.
 
 ---
 
@@ -66,31 +66,27 @@ wrong (deep night at a plains site, for instance). Lighting notes the condition 
 proposes a correction only if warranted.
 
 ### Site E — The Boots (the terrain site)
-Terrain-specific. Magma fields have their own glow. Soul sand valleys have their own
-fog. Snow fields read differently than deserts. Lighting documents what the terrain's
-native atmosphere is and assesses whether it serves the scene.
+**Terrain locked 2026-03-29: Swamp.** Swamp has its own ambient light quality —
+filtered, damp, low contrast. Lighting documents whether the native swamp atmosphere
+serves the scene and whether any authored adjustment adds to it or competes with it.
 
-This scene is tactile, not dramatic. Lighting that tries to add drama here is misreading
-the scene. Trust the terrain.
+This scene is tactile, not dramatic. Trust the terrain.
 
-### Site F — The Weapon (the choice)
-The show's most emotionally weighted stop. Lighting has potential here — but the risk
-of overcooking is high. The scene needs the quality of stillness, not spectacle. If
-anything: late afternoon or early dusk at this location, if the native state allows
+### Site F — The Weapon (the choice — final expedition)
+The show's most emotionally weighted stop AND its final expedition. Lighting has
+potential here — but the risk of overcooking is high. The scene needs the quality
+of stillness, not spectacle. The location is a ruin with a cleared central space.
+
+If anything: late afternoon or early dusk at this location, if the native state allows
 for it, can add gravity without adding drama. Do not manufacture darkness. Do not add
-particle effects or unusual color shifts.
+unusual color shifts.
 
-If the native light at this site already has the right quality: hold it and do nothing.
-This is the correct choice more often than not.
+If Effects authors a particle beat at the discovery moment: Lighting must not compete
+with it. The cleared ruins space should be lit so particles read clearly — neither too
+bright (washes them out) nor too dark (turns them into spectacle they aren't meant to be).
 
-### Site G — The Shield (the threshold)
-Liminal location — a border, an edge, the mouth of something. Dusk or early dark is
-appropriate if Set scouts a location that carries it. Lighting may set time-of-day here
-if the site and the moment warrant it — this is the show's final expedition before the
-reveal, and the quality of light at the threshold is a real creative choice.
-
-Coordinate with Fireworks: if Mira is in this scene, Lighting should complement her
-palette rather than compete with it.
+If the native light at this site already has the right quality: hold it. This is the
+correct choice more often than not.
 
 ---
 

@@ -2,7 +2,7 @@
 show_id: showcase.01
 department: Sprite Voice Director
 document: Department Brief
-updated: 2026-03-28
+updated: 2026-03-29
 casting_locked: true
 ---
 
@@ -129,9 +129,11 @@ not procurement. The Armorer doesn't explain why they care. They demonstrate it.
 ### Tonal texture per expedition
 
 The Armorer's register shifts slightly across the show — not dramatically, but the
-cumulative weight of six expeditions is felt. Early scenes are purposeful and forward.
-Middle scenes are in-the-work. The weapon scene may be the Armorer's one moment of
-stillness. The final expedition is the Armorer who knows they're almost done.
+cumulative weight of five expeditions is felt. Early scenes are purposeful and forward.
+Middle scenes are in-the-work. The weapon scene (F) is the Armorer's one moment of
+stillness — and now it IS the final expedition, which changes its register. The
+Armorer isn't almost done. They are done. That difference belongs in the line,
+or in the silence that replaces it.
 
 ---
 
@@ -185,26 +187,25 @@ Something specific about the terrain or about what the boots protect against. Ta
 The Armorer noticed something about the ground here that reminded them of the Vindicator's
 needs. One brief observation.
 
-**F — Scene 5: The Weapon**
-The show's most weighted stop. Two options, both valid:
+**F — Scene 5: The Weapon** *(final expedition)*
+The show's most weighted stop — and now the last expedition. This changes the register.
+Three options:
 
-*Option 1 — silence.* The location does the work. The Armorer picks up the axe and
-leaves without saying anything. This is the show's most powerful use of silence. It
-implies the weight of the decision without making it explicit.
+*Option 1 — silence after line 2.* The Armorer names the axe and says nothing. No
+line 3. No count, no departure. The player watches them pick it up and leave. This
+is the show's most powerful use of silence, and now it carries the additional weight
+of being the final departure from an expedition site.
 
-*Option 2 — one word or one line.* If a line, it is about the weapon specifically — not
-about the Vindicator, not about battle, but about the axe: its weight, its balance, why
-this one. Something a craftsperson would notice. The emotion is in the noticing, not
-the statement.
+*Option 2 — line 3 as minimal departure.* Something like "Five. Let's go home." The
+count, the turn, the return. Plain. No embellishment. If the Armorer speaks, it should
+feel like they're already thinking about what comes next — not marking the moment.
 
-Voice proposes both options at intake. Direction decides after Set confirms the location.
+*Option 3 — one loaded word or phrase.* If Voice has something that lands as both
+departure and acknowledgment of what's been accomplished: one line that does it all.
+The bar here is high. Do not force it.
 
-**G — Scene 6: The Shield**
-The last expedition. The Armorer has everything. One line, or none. If a line: it faces
-homeward. The Armorer turning back with the final piece. Something that implies
-completion without stating it.
-
-This line — if there is one — sets up the finale. Don't spend it. The reveal is next.
+Voice proposes at intake. Direction decides after Set confirms the location's atmosphere.
+The current script placeholder is "Five. Let's go home." — see `direction/script-v1.md`.
 
 **A-Final — The Reveal**
 The Vindicator arrives in full kit.
@@ -225,7 +226,7 @@ Line drafts are written against confirmed Set coordinates and staging. Voice can
 the opening A-section line without knowing the home base character. Voice cannot write
 expedition lines without knowing what each location actually feels like.
 
-The line-writing session opens at Gate 4 (after intake closes). All six expedition lines
-and the finale line are drafted in one session, reviewed as a set, and revised together —
+The line-writing session opens at Gate 4 (after intake closes). All five expedition lines
+and the finale lines are drafted in one session, reviewed as a set, and revised together —
 not piecemeal. The Armorer's voice must feel continuous across the show, and that
 continuity requires all the lines to exist at once before any of them are final.

@@ -2,7 +2,7 @@
 show_id: showcase.01
 department: Choreography Director
 document: Department Brief
-updated: 2026-03-28
+updated: 2026-03-29
 ---
 
 # Choreography — showcase.01 "Preparing for Battle"
@@ -89,6 +89,7 @@ reliable for Option A, and which reveal register feels right once the Hero is ca
 - Does not stage the companion to be expressive or performative
 - Does not add mob movement that draws attention away from the armor stand at home base
 - Does not try to make the weapon scene (F) more interesting through mob staging —
-  that scene works through the location, not movement
+  that scene works through the location and the particle beat (if Effects confirms),
+  not movement
 
 The companion works; the show watches. Choreography enables the work to be visible.

@@ -2,26 +2,27 @@
 show_id: showcase.01
 department: Fireworks Director
 document: Department Brief
-updated: 2026-03-28
+updated: 2026-03-29
 ---
 
 # Fireworks — showcase.01 "Preparing for Battle"
 
 ## What This Department Serves
 
-**Updated 2026-03-29 — Mira now has a recurring role in every expedition scene.**
+**Updated 2026-03-29 — find-firework pattern established; shield/Site G cut.**
 
 Mira authors one firework burst per expedition scene at the moment of item discovery.
 This is a structural beat, not an accent — it fires at the same position in every
-scene (between line 2 and line 3) and becomes part of the show's legible rhythm.
-The weapon scene (F) is the one explicit exception. That exception is intentional
-and powerful.
+eligible scene (between line 2 and line 3) and becomes part of the show's legible rhythm.
+The weapon scene (F) — now the final expedition — is the explicit exception. That
+exception is intentional and doubly powerful: the pattern breaks on the last piece,
+the one that implies what the kit was always for.
 
 ---
 
 ## The Find-Firework Pattern
 
-**Applies to:** Sites B, C, D, E, G (all expeditions except F)
+**Applies to:** Sites B, C, D, E (all expeditions except F)
 
 **Timing:** Between the Armorer's line 2 (names the piece) and line 3 (count + departure).
 Simultaneous with or just after the item appearing in the Armorer's main hand
@@ -41,8 +42,7 @@ emotional weight. The pattern is consistent; the scale and palette shift.
 | C — Chestplate | Iron chestplate | Warmer, slightly wider | More weight than B; badlands sky |
 | D — Leggings | Iron leggings | Understated, road-quality | Middle beat; don't oversell it |
 | E — Boots | Leather boots | Tactile, lower burst | Ground-level quality if terrain supports |
-| F — Weapon | Iron axe | **NO FIREWORK** | See below |
-| G — Shield | Plain shield | Departure quality | Last burst before home; see G notes below |
+| F — Weapon | Iron axe | **NO FIREWORK** | Final expedition; absence is structural |
 
 **Sky clearance is now required at every site.** Set documents clearance for all
 six expedition sites during scouting (it's in the scouting report template). A burst
@@ -56,28 +56,19 @@ without this data.
 ### Site F — The Weapon (the choice)
 **Fireworks explicitly excluded — confirmed and intentional.**
 
-By Scene F, the audience has internalized the pattern: item named → firework. When
-the Armorer names the axe and the firework does not come, the absence lands as a beat.
-The pattern breaks and no one explains why. That silence is the scene's emotional
-center.
+By Scene F, the audience has internalized the pattern across four scenes: item named →
+firework. When the Armorer names the axe and the firework does not come, the absence
+lands as a beat — and now it lands at the show's climactic moment, the final expedition,
+the piece that implies what this has all been building toward. The pattern breaks at the
+worst possible time for comfort and the best possible time for meaning.
 
 Mira does not author anything for Site F. Not even a small accent.
 
-### Site G — The Shield (the threshold)
-The find-firework fires here per the standard pattern. But this is also the show's
-last expedition and the last firework before the finale. Mira may author this burst
-with slightly more finality than B–E — something that sounds like the last note before
-the door closes, not a celebration.
-
-If Set confirms significant sky clearance at the threshold location (minimum 25 blocks),
-Mira may also author a small departure burst as the Armorer turns for home. This is
-separate from the find-firework and would fire at the companion's departure beat.
-Propose to Direction at intake; do not assume it.
-
 ### The Finale
-With the find-firework pattern established across 5 scenes, the finale's firework (if
-any) needs to feel different — escalated, not just repeated. The Vindicator's arrival
-is the show's one peak. Options for Mira at the finale:
+With the find-firework pattern established across 4 scenes (and pointedly absent at the
+final expedition), the finale's firework (if any) needs to feel different — escalated,
+not just repeated. The Vindicator's arrival is the show's one peak. Options for Mira
+at the finale:
 
 - A burst at the moment of the Hero's appearance, larger and warmer than any expedition burst
 - Silence — trusting that the reveal is sufficient after five earned bursts
@@ -89,12 +80,12 @@ sequence. Mira proposes both options at intake.
 
 ## Coordination Gates
 
-Mira cannot finalize either potential scene until:
-- **Shield site (G):** Set confirms sky clearance at the threshold location
+Mira cannot finalize the finale option until:
 - **Finale:** Casting confirms the Hero mob; Stage Management confirms the reveal
   sequence and spawn position
 
-Mira brings proposals to intake. No YAML until intake closes.
+Mira brings proposals (both finale options: burst or silence) to intake. No YAML
+until intake closes.
 
 ---
 

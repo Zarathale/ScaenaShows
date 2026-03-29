@@ -2,7 +2,7 @@
 show_id: showcase.01
 department: Casting Director
 document: Department Brief
-updated: 2026-03-28
+updated: 2026-03-29
 casting_status: LOCKED
 ---
 
@@ -21,7 +21,7 @@ casting_status: LOCKED
 
 ## The Companion — Armorer Villager
 
-The companion is the show's narrator and the player's guide for all six expeditions.
+The companion is the show's narrator and the player's guide for all five expeditions.
 Their voice is what we read in chat.
 
 The Armorer Villager's professional identity is the show's register: this mob's entire
@@ -52,8 +52,8 @@ prepared.* The companion is not equipping someone helpless — they're equipping
 who would have gone without the armor if the companion hadn't made sure they didn't.
 
 **Java confirmation:** `SPAWN_ENTITY` with full `equipment:` block, or `SPAWN_ENTITY`
-followed by `ENTITY_EQUIP` events. Vindicator supports all 6 equipment slots via
-Bukkit's `EntityEquipment` API. Confirmed.
+followed by `ENTITY_EQUIP` events. Vindicator supports all equipment slots via
+Bukkit's `EntityEquipment` API. Confirmed. Kit is now five pieces (no shield).
 
 **Equipment:** Per Wardrobe's confirmed kit. See `wardrobe.md`.
 

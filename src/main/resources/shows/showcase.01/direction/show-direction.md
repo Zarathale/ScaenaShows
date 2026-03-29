@@ -1,7 +1,7 @@
 ---
 show_id: showcase.01
 document: Show Direction
-updated: 2026-03-28
+updated: 2026-03-29
 stage: Brief
 ---
 
@@ -14,7 +14,7 @@ stage: Brief
 
 ## The Story
 
-A devoted companion — small, earnest, not built for combat — is equipping a Hero for something that matters. The armor stand at home base stands empty at the show's open. The companion sets out six times, once per piece of gear: helmet, chestplate, leggings, boots, weapon, shield. Each expedition is a procurement. Each return fills one more slot on the armor stand. At the final return, the armor stand is full — and the Hero arrives to wear it.
+A devoted companion — small, earnest, not built for combat — is equipping a Hero for something that matters. The armor stand at home base stands empty at the show's open. The companion sets out five times, once per piece of gear: helmet, chestplate, leggings, boots, weapon. Each expedition is a procurement. Each return fills one more slot on the armor stand. At the final return, the armor stand is full — and the Hero arrives to wear it.
 
 The show is not about the battle. It is about the preparation. The devotion in the doing.
 
@@ -25,7 +25,7 @@ The player witnesses this. They travel with the companion on each expedition. Th
 ## Non-Negotiables
 
 **1. The armor stand is the show's spine.**
-It is present at home base from the first moment. At show open, it is bare. On every A-section return, one slot is visibly filled — in sequence, bottom to top or in dramatic order as Wardrobe designs. By the penultimate return, five slots are full. The final piece is placed, and then the Hero arrives. If the armor stand does not feel like it is becoming something real, the show has failed its central image.
+It is present at home base from the first moment. At show open, it is bare. On every A-section return, one slot is visibly filled — in sequence, bottom to top or in dramatic order as Wardrobe designs. By the penultimate return, four slots are full. The final piece — the weapon — is placed at A-Final, and then the Hero arrives. If the armor stand does not feel like it is becoming something real, the show has failed its central image.
 
 **2. The companion is a character, not a delivery mechanism.**
 Voice writes their lines. The companion goes out, finds the piece, brings it back. What they say along the way is specific to them — their scale, their devotion, their slight absurdity relative to the epic task they've taken on. They do not explain the story. They live it.
@@ -82,10 +82,12 @@ A firework fires between the Armorer's line 2 and line 3 at every expedition sce
 Line 2 names the piece. The firework fires. Line 3 is the count and departure.
 Simultaneous with or just after the item appearing in the Armorer's main hand.
 
-This pattern fires at Sites B, C, D, E, and G. It does NOT fire at Site F (The Weapon).
-The absence is intentional. By Scene F, the player has internalized the pattern. The
-silence where the firework should be is the scene's emotional center. Departments must
-not compensate for this absence. See `departments/fireworks.md`.
+This pattern fires at Sites B, C, D, and E. It does NOT fire at Site F (The Weapon).
+The absence is intentional and now doubly powerful: Site F is the final expedition.
+By Scene F, the player has internalized the pattern across four scenes. The silence
+where the firework should be — at the show's most weighted stop, on the last piece
+before the reveal — is the scene's emotional center. Departments must not compensate
+for this absence. See `departments/fireworks.md`.
 
 ---
 
@@ -125,7 +127,7 @@ That's the job. The finale line — *"I'll leave you two to it"* — is warm, no
 
 **Effects in the weapon scene.** The weapon scene (Scene F) has the show's most emotionally weighted stop. Effects, if present at all, must register as gravity — not spectacle. A levitation beat here would be tonally wrong. Read the room.
 
-**Fireworks.** Mira's tools are available but not guaranteed a scene. The finale is the most likely candidate. If Mira is given a scene, it should be the one where scale serves the story — the reveal, or one expedition where open sky is part of the location's identity. Fireworks at the weapon site would be a tonal mismatch. Fireworks at the reveal could be exactly right.
+**Fireworks.** The find-firework pattern fires at four scenes (B, C, D, E). The finale is the candidate for an additional burst — scaled up from the expedition pattern, or absent entirely if the reveal lands without it. Mira proposes both options at intake. Fireworks at the weapon site (F) are explicitly off the table — the silence there is structural.
 
 ---
 
@@ -197,33 +199,27 @@ The boots are tactile — they're about what's underfoot. The location should ha
 
 Effects may have an opportunity here if the terrain type supports a movement sensation (slow falling on deep snow, slight levitation on magma — only if Set confirms safe altitude). Effects: propose, do not assume.
 
-### F — Scene 5: "The Weapon"
+### F — Scene 5: "The Weapon" *(final expedition)*
 *"This one required a decision."*
 
-The weapon is the piece that implies intent. The location is a place where something was decided — a ruin of something, a site of past conflict, a place that asks: *are you sure?* The companion does not answer out loud. They pick up the weapon and leave.
+The weapon is the piece that implies intent — and it is the last piece. This is the show's final expedition. The location is a place where something was decided — a ruin, a site of past conflict, a place that asks: *are you sure?* The companion does not answer out loud. They pick up the axe and come home.
 
-This is the show's most weighted stop. Voice has the show's most important single line here — or is silent. Silence is allowed if the location does the work.
+This is the show's most weighted stop AND its conclusion. Voice has the show's most important single line here — or is silent. Silence is allowed if the location does the work. The departure from this scene leads directly to the reveal at home base.
 
 No fireworks. No levitation. No effects that reach for spectacle. The weight of this scene is moral, not visual. Departments: do less here, not more.
 
-### G — Scene 6: "The Shield"
-*"The last thing between the hero and what's coming."*
-
-The shield is the final piece and the most liminal — it is protection carried into the unknown. The location should feel like an edge: a clifftop at dusk, the mouth of something, the border of a dangerous biome. The companion picks it up, turns, and comes home.
-
-There is a finality to this expedition that is different from the others. The companion knows what comes next. Voice has one line, or none.
-
-Mira may have a role here if the location has open sky and the moment asks for it. An upward burst as the companion departs — small, specific, not triumphant. Or nothing. Mira proposes; Direction decides.
+The absence of the firework has accumulated force: the player has felt it at B, C, D, and E. The silence at F — the last expedition, the weapon, the piece that implies what this has all been for — is the scene's entire emotional content. Hold it.
 
 ### A-Final — The Reveal
 *"Here."*
 
-The companion returns with the shield. The armor stand is full. Then: the Hero arrives.
+The companion returns with the weapon. The armor stand is full. Then: the Hero arrives.
 
 The reveal approach: `SPAWN_ENTITY` with full equipment populated. The Vindicator arrives
-in full kit — iron armor, iron axe, Sharpness enchant on the weapon. The reveal is arrival,
-not another equipping. Six expeditions. One purpose. Now, the warrior those expeditions
-were for. Stage Management ratifies the tick sequencing at intake.
+in full kit — chain helmet, iron chestplate, iron leggings, dark leather boots, iron axe
+with Sharpness enchant. The reveal is arrival, not another equipping. Five expeditions.
+One purpose. Now, the warrior those expeditions were for. Stage Management ratifies the
+tick sequencing at intake.
 
 After the show ends, the Vindicator remains in the world, armed and alive. The player
 decides what happens next.
@@ -231,7 +227,7 @@ decides what happens next.
 The Armorer has three lines. The rhythm breaks here — there is no "next quest," no departure.
 The job is done.
 
-    "Six pieces. Everything where it belongs."
+    "Five pieces. Everything where it belongs."
     "You've been good company."
     "I'll leave you two to it."
 

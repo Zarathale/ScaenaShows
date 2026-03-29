@@ -1,7 +1,7 @@
 ---
 show_id: showcase.01
 document: Tone Elaboration
-updated: 2026-03-28
+updated: 2026-03-29
 ---
 
 # Tone — showcase.01 "Preparing for Battle"
@@ -16,7 +16,7 @@ phrase means in your domain so you can find it yourself.
 
 ## What "devoted" means
 
-The companion has decided this Hero is worth six expeditions and doesn't revisit the
+The companion has decided this Hero is worth five expeditions and doesn't revisit the
 decision. There is no scene where they wonder if it's worth it. There is no moment of
 doubt. The commitment is total and quiet. The show does not celebrate the devotion — it
 simply lets you see it. A department that tries to make the devotion touching will overshoot.
@@ -124,17 +124,12 @@ ground here is different." If Effects cannot make that case for a given scene, t
 not in that scene.
 
 **Fireworks (Mira)**
-Mira is not guaranteed every expedition. The most likely home for fireworks is either the
-shield scene (Scene G) if the location has open sky, or the finale reveal. Not both —
-picking one is the right call.
-
-If the finale: the Hero arriving into a small upward burst — warm, contained, not a
-celebration but an acknowledgment. Or nothing. The visual of a fully equipped mob may not
-need any fireworks to land. Mira proposes; Direction decides after Casting confirms the Hero.
-
-If Scene G (the shield site): a small departure burst as the companion turns for home,
-knowing they have everything. This would be the show's most emotionally earned fireworks
-moment — the last expedition, the threshold, the turn toward home.
+The find-firework pattern fires at four scenes (B, C, D, E). It is explicitly absent at
+Scene F — the final expedition. That absence is structural, not accidental. The finale
+is the candidate for one additional burst: the Hero arriving into a small upward burst —
+warm, contained, not a celebration but an acknowledgment. Or nothing. The visual of a
+fully equipped mob may not need any fireworks to land. Mira proposes both options;
+Direction decides after Casting confirms the Hero and Stage Management confirms the reveal.
 
 **Choreography**
 The companion's movement at each site is purposeful. They arrive, assess, take the piece,
@@ -146,7 +141,7 @@ Choreography keeps them in relationship to it — not performing, just present. 
 stand should always be in frame when the companion is at home.
 
 **Set**
-Six new locations. Each one scouted with its armor slot as the creative lens. The question
+Five new expedition locations plus home base. Each one scouted with its armor slot as the creative lens. The question
 per location is not "is this impressive" — it is "does this feel like where this piece
 lives?" A place that has height belongs to the helmet. A place that has heat belongs to
 the chestplate. A place that has distance belongs to the leggings. The logic is poetic,

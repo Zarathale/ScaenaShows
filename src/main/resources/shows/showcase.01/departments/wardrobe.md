@@ -2,7 +2,7 @@
 show_id: showcase.01
 department: Wardrobe & Properties Director
 document: Department Brief
-updated: 2026-03-28
+updated: 2026-03-29
 casting_locked: true
 ---
 
@@ -31,13 +31,16 @@ royal one.** Earned, not bestowed.
 | Leggings | `IRON_LEGGINGS` | Matched to chestplate |
 | Boots | `LEATHER_BOOTS` (dyed dark — `#3B2A1A`) | Someone paid attention here |
 | Main hand | `IRON_AXE` + Sharpness I enchant | The Vindicator's native weapon, made deliberate |
-| Off hand | `SHIELD` | Plain shield — no banner pattern; function over sigil |
+
+**Shield removed — 2026-03-29.** The kit is five pieces: helmet, chestplate, leggings,
+boots, weapon. The off-hand slot is empty. The show's arc is complete without the shield.
 
 **The logic of this kit:** Iron is earned material. Chain at the head says this warrior
 moves. The leather boots in a dark earthy tone are the Armorer's mark — they chose
 something specific where they could have chosen nothing. The Sharpness enchant on the
-axe is the kit's one glint; it tells you the Armorer took the weapon seriously. The
-plain shield says the point was not decoration.
+axe is the kit's one glint; it tells you the Armorer took the weapon seriously. The axe
+as the final piece — both the last expedition and the last slot filled — gives the weapon
+the weight it deserves as the piece that implies everything else.
 
 The player sees this kit in full on the Vindicator at the finale. It should read as
 coherent and intentional from across the room — not miscellaneous.
@@ -50,12 +53,12 @@ The armor stand fills one slot per A-section return, in this sequence:
 2. **Leggings** — second
 3. **Chestplate** — third; visual center, midpoint of the show
 4. **Helmet** — fourth
-5. **Shield** — fifth; the protective close
-6. **Axe (main hand)** — sixth, final; weapon last, before the Vindicator arrives
+5. **Axe (main hand)** — fifth, final; weapon last, before the Vindicator arrives
 
-The weapon fills the stand's last slot immediately before the reveal. That slot filling
-is the show's penultimate beat. One moment of the stand holding all six pieces — then
-the Vindicator arrives. Stage Management ratifies the timing at intake.
+The weapon fills the stand's last slot immediately before the reveal. This now aligns
+with the expedition order: the Armorer returns from the weapon site (F) and the axe
+goes onto the stand. One moment of the stand holding all five pieces — then the
+Vindicator arrives. Stage Management ratifies the timing at intake.
 
 ### YAML item strings (for Stage Management)
 
@@ -65,7 +68,6 @@ chestplate: IRON_CHESTPLATE
 leggings:   IRON_LEGGINGS
 boots:      LEATHER_BOOTS
 main_hand:  IRON_AXE
-off_hand:   SHIELD
 ```
 
 Enchantment on the axe (`Sharpness I`) — confirm with Stage Management whether
@@ -85,10 +87,11 @@ not touch them.
 
 ## The Armor Stand
 
-The armor stand at home base displays the filling sequence above across all six
-A-section returns. At show open: fully bare. At the penultimate A-return: five slots
-filled (boots through shield). Final slot (axe) fills on the last A-return, just
-before the Vindicator spawns.
+The armor stand at home base displays the filling sequence above across all five
+A-section returns. At show open: fully bare. At the penultimate A-return (A4, after
+the boots expedition): four slots filled (boots through helmet). Final slot (axe) fills
+at A-Final, when the Armorer returns from the weapon site — just before the Vindicator
+spawns.
 
 The stand's visual arc is the show's spine. The kit must read as a unified object
 when complete — the player should see the fully stocked stand and understand immediately

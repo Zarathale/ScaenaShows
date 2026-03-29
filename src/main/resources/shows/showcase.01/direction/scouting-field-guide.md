@@ -2,7 +2,7 @@
 show_id: showcase.01
 document: Scouting Field Guide
 version: v1
-updated: 2026-03-29
+updated: 2026-03-29 (v2 — shield/Site G cut; 5 expeditions)
 use: In-game reference — keep open on second screen while scouting
 ---
 
@@ -137,45 +137,44 @@ behind the player arrival point — camera travels along the road toward the Arm
 
 ---
 
-## Site E — The Boots: "The Burning Floor"
+## Site E — The Boots: "The Swamp Floor"
 
-**One quality:** *"Feel that."* The ground type is obvious within 5 seconds of arrival.
+**One quality:** *"Feel that."* The ground is earthy, wet, specific underfoot.
 
-**PRE-SCOUT STATUS: Terrain type not yet decided — paused mid-session 2026-03-29.**
-Resume pre-scout prep before scouting, OR scout with the candidates below and bring
-the options back to a decision session.
+**TERRAIN LOCKED 2026-03-29: Swamp.** The show stays in the overworld. Swamp terrain
+is the confirmed direction — clay and mud floor, shallow water, distinctive ground
+that is immediately legible without being hazardous.
 
 **Key lines:**
 > *"Feel that. This is why boots matter. Most people never think about the ground."*
 > *"Leather. Dark — I dyed these myself. I know what you walk toward."*
 
-**Terrain candidates (in order of theatrical strength):**
-- Magma field / basalt delta — visceral, hostile, heat; connects back to the forge
-- Soul sand valley — eerie, slowing; "I know what you walk toward" lands hard here
-- Deep snowfield — quieter, heavier, covered-over quality
-- Swamp or clay riverbed — earthy, specific, humble
-
 **Must-haves:**
-- Terrain legibility: floor material known instantly on arrival
-- Safe player TP altitude — no magma damage at landing
-- Effects needs exact floor material for movement sensation assessment
+- Terrain legibility: swamp floor material immediately obvious on arrival
+- Safe player TP altitude — no fall damage
+- Swamp biome confirmed (frog presence, muddy palette, water patches)
+- Effects will assess whether any subtle sensation applies — swamp is traversable;
+  they may pass this scene if no specific effect reads as "world doing it"
 
-**Extra capture:** Exact floor material. Blocks above terrain floor. Terrain hazard
-radius. Drone start position. Sky clearance (Mira's find-firework fires here).
+**Extra capture:** Exact floor material (mud, clay, water depth). Blocks above terrain
+floor. Drone start position. Sky clearance.
 
 ---
 
-## Site F — The Weapon: "The Choice"
+## Site F — The Weapon: "The Choice" *(final expedition)*
 
 **One quality:** *"I kept coming back to this place. It answers something."* Stillness
 with weight — not emptiness, but a place that has earned its quiet.
 
-**Slot:** Iron axe, Sharpness I — the piece that implies intent.
+**Slot:** Iron axe, Sharpness I — the piece that implies intent. The last piece. The show
+ends here before coming home to the reveal.
 
 **Key line spoken here:**
 > *"I kept coming back to this place. It answers something."*
 >
 > *"Iron axe. I had it sharpened once. That's all you need — one good edge."*
+>
+> *"Five. Let's go home."* *(or silence — Voice decides at intake)*
 
 **Must-haves:**
 - **Hostile mobs must be answered.** This scene holds the show's most important silence.
@@ -183,45 +182,31 @@ with weight — not emptiness, but a place that has earned its quiet.
 - No ambient spectacle — no lava glow, no particle effects, nothing competing with quiet
 - Arrival facing toward the visual anchor (ruin, cleared site, whatever reads as the reason)
 
-**PRE-SCOUT STATUS: Not yet discussed — resume pre-scout prep before scouting.**
+**PRE-SCOUT DIRECTION LOCKED 2026-03-29:** Ruin with a cleared central space.
+Flat, open ground surrounded by ruin structure. The cleared space is the scene's
+visual center — the Armorer is in it, the axe is in it, and (pending Effects
+confirmation) particles fire into it at the discovery moment.
 
-**Strong candidates:** Pillager outpost (taking their axe is its own statement), a ruin
-with a cleared space, a site of past conflict, a broken wall with something behind it.
+**What Zarathale is looking for:** A ruin where some event or force cleared the
+center — a courtyard, a collapsed interior, a blast-cleared area within broken walls.
+The surrounding structure frames the space; the clearing is what you arrive into.
+The ground in the cleared area should be flat and visually simple (dirt, stone,
+ash-covered — nothing that creates visual noise competing with particles).
 
-**⚠ NO FIREWORK AT THIS SITE.** The find-firework pattern fires at every other
-expedition. The absence here is intentional and is the scene's emotional center.
+**Strong candidates:** Pillager outpost courtyard (taking their axe from their own
+ground is its own statement), a surface ruin with collapsed walls, a cleared site
+of past conflict with surviving wall fragments framing it.
+
+**⚠ NO FIREWORK AT THIS SITE.** The find-firework pattern fired at B, C, D, and E.
+The absence here is intentional and now carries maximum force: this is the FINAL expedition.
 Do not compensate. Camera holds; Sound steps back; Effects does nothing. The silence
-after line 2 is the beat.
+after line 2 is the beat — and the last expedition beat the player will feel before the reveal.
 
-**Extra capture:** Every notable structural or terrain feature. Mob AI answer (can
-mobs be contained, or is natural spawning suppressed here?). Drone start position.
-
----
-
-## Site G — The Shield: "The Threshold"
-
-**One quality:** *"There's something beyond this. You can't quite see it from here."*
-An edge. A boundary. The last place before going forward.
-
-**Slot:** Plain shield — no markings, final piece, the show's most liminal object.
-
-**Key line spoken here:**
-> *"There's something beyond this. You can't quite see it from here. That's where you're going."*
->
-> *"Plain shield. No markings. I thought about a sigil — decided the work should speak for itself."*
->
-> *"That's everything. Time to go home."*
-
-**PRE-SCOUT STATUS: Not yet discussed — resume pre-scout prep before scouting.**
-
-**Must-haves:**
-- Arrival facing TOWARD the edge (cliff lip, cave mouth, biome border, ravine edge)
-- **Sky clearance minimum 25 blocks above TP** — Mira's find-firework fires here,
-  plus a possible departure burst. Sky is a hard requirement.
-- Player TP position not at immediate fall risk
-
-**Extra capture:** Drop depth below edge. Time-of-day notes — dusk is the strong
-candidate. Drone start position. Sky clearance (critical — two firework beats possible).
+**Extra capture:** Every notable structural or terrain feature. Cleared space
+dimensions (width × depth approximately). Ground material in the cleared area.
+Surrounding structure height and framing quality. Mob AI answer (can mobs be
+contained, or is natural spawning suppressed here?). Drone start position.
+Sky clearance (no firework here, but document regardless).
 
 ---
 
@@ -232,5 +217,7 @@ candidate. Drone start position. Sky clearance (critical — two firework beats 
 3. Stage registry entries go in `kb/departments/set/stage-registry.md`
 4. Direction closes Gate 3 and schedules intake conversation
 
-**The four TBA flags in script-v1** will update to match the confirmed site character
+**Six locations total:** home base (A) + five expedition sites (B through F).
+
+**The TBA flags in script-v1** will update to match the confirmed site character
 once scouting delivers. Voice revises to v2 at that point.
