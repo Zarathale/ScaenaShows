@@ -144,7 +144,7 @@ These two rounds alternate. A session may include both.
 
 ### The three shows
 
-**showcase.01 — "The Cabinet"**
+**showcase.01 — "Preparing for Battle"**
 `src/main/resources/shows/showcase.01/`
 *Current state: `direction/showcase.01.status.md`*
 
