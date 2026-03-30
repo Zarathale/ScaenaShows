@@ -1,9 +1,10 @@
 ---
 show_id: showcase.01
-document: Scouting Brief
+document: Scouting Brief — ARCHIVED
 author: Set Director (Zarathale)
 updated: 2026-03-28
-status: Active — v3, updated 2026-03-29 (shield/Site G cut; 5 expeditions)
+status: RETIRED — v3 working draft, superseded by live scouting-brief.md (v4, 2026-03-30)
+note: This was accidentally placed in archive instead of promoted to live. Live file is now current.
 ---
 
 # Scouting Brief — showcase.01 "Preparing for Battle"

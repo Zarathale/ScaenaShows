@@ -1,40 +1,101 @@
 ---
 show_id: showcase.01
 document: Scouting Field Guide
-version: v1
-updated: 2026-03-29 (v2 — shield/Site G cut; 5 expeditions)
+version: v3
+updated: 2026-03-30 (plugin commands added; consistent with 5-expedition structure)
 use: In-game reference — keep open on second screen while scouting
 ---
 
 # Scouting Field Guide — showcase.01 "Preparing for Battle"
 
-> Seven locations. One question per site: *does this feel like where this piece was waiting?*
-> Stand at the player arrival point. Hit F3. Record what's below.
+> Six locations. One question per site: *does this feel like where this piece was waiting?*
+> Walk to each mark. Capture coordinates with the plugin. Note everything else in F3 and the report.
+
+---
+
+## Plugin Workflow — How to Scout
+
+The plugin handles coordinate capture. You do not need to manually copy F3 coordinates.
+
+**Start your session:**
+```
+/scaena scout load showcase.01          — loads all 10 marks, shows sidebar
+/scaena scout load showcase.01 sites    — just the 6 site marks (start here)
+/scaena scout load showcase.01 spawns  — cast positions (Armorer + Vindicator)
+/scaena scout load showcase.01 props   — set piece positions (armor stand + iron door)
+```
+Recommended: start with `sites` tag, then reload with `spawns` and `props` once you have the home base set up.
+
+**Check what's loaded:**
+```
+/scaena scout status   — shows all marks with codes; captured ones show coordinates
+```
+
+**Capture a mark:**
+Stand at the position. Type:
+```
+/scaena set 1.1       — captures your exact position for that code
+```
+Chat confirms: `✓ 1.1 home_base — (x.x, y.y, z.z)`. Mark disappears from sidebar.
+You can re-capture a mark by running `/scaena set <code>` again — it overwrites.
+
+**Save when done:**
+```
+/scaena scout save    — writes all captured marks to the server
+                        File: plugins/ScaenaShows/scout_captures/showcase.01/[date].yml
+                        Session stays active — keep going if you want to add more.
+```
+
+**End session:**
+```
+/scaena scout dismiss — hides sidebar, ends session
+```
+
+After saving: tell Alan you're done. He pulls the capture file from the server and merges coordinates into show-params. You do not need to copy any coordinates manually.
+
+**Still use F3 for:** biome name, sky type, ceiling height, canopy density, light level, visible hazards. Those are descriptive notes — they go in the scouting report, not the plugin.
+
+---
+
+## Mark Reference — showcase.01
+
+| Code | Name | What it is |
+|------|------|-----------|
+| 1.1 | home_base | Site A — player arrival position at The Workshop |
+| 1.2 | high_ground | Site B — player arrival position at High Ground |
+| 1.3 | the_forge | Site C — player arrival position at The Forge |
+| 1.4 | the_long_road | Site D — player arrival position at The Long Road |
+| 1.5 | the_swamp_floor | Site E — player arrival position at The Swamp Floor |
+| 1.6 | the_choice | Site F — player arrival position at The Choice |
+| 2.1 | companion_spawn | Armorer Villager — opening position at home base |
+| 2.2 | vindicator_spawn | Vindicator — behind-wall holding position at home base |
+| 3.1 | armor_stand | Armor stand staging position |
+| 3.2 | iron_door | Iron door target (stand in the doorway) |
+
+**Not yet in the plugin (capture manually for now):** Armorer mark per expedition site (2–4 blocks from your arrival mark) and drone start position per expedition site (15–25 blocks back from Armorer mark). Note these in the scouting report as separate coordinates.
 
 ---
 
 ## What to capture at every site
 
 ```
-World:
-Coordinates (player arrival):  x=    y=    z=
-Arrival yaw:                         pitch=
-Armorer mark position:          x=    y=    z=
-Drone start position (far):     x=    y=    z=    ← NEW: Camera needs this per site
+Site code + /scaena set:   ← captures arrival position
+Armorer mark position:      x=    y=    z=    ← note manually (2–4 blocks from arrival)
+Drone start position (far): x=    y=    z=    ← note manually (15–25 blocks back)
 Biome (F3):
 Sky:           open / partial / enclosed / underground
 Ceiling:       open / __ blocks
 Sky clearance above TP: __ blocks  ← Fireworks need this at every site
-Ambient light: full sun / overcast / dusk / night / cave / nether
+Ambient light:
 Hazards:
 Theatrical read (1–2 sentences — why this place fits the piece):
 Status:        recommended / alternate / rejected: [reason]
 ```
 
-**Drone start position:** Stand where the camera "opens" — 15–25 blocks back from
-the Armorer mark, in the direction the camera will travel FROM. This is where the
-invisible drone spawns. The drone moves from here toward the Armorer. Record these
-coordinates in F3 the same way as the player arrival mark.
+**Drone start position:** Stand where the camera "opens" — 15–25 blocks back from the
+Armorer mark, in the direction the camera will travel FROM. This is where the invisible
+drone spawns. The drone moves from here toward the Armorer. Note F3 coordinates the same
+way as the arrival mark.
 
 ---
 
@@ -55,10 +116,11 @@ The Vindicator is behind a wall here from show open — heard, not seen.
   Door closes at show start, opens at finale. Vindicator waits on the other side.
 - **Spawning safety:** >72 blocks from tower center. Lit interior (light ≥8).
 
+**Plugin marks at home base:** 1.1 (arrival) + 2.1 (Armorer) + 2.2 (Vindicator) + 3.1 (armor stand) + 3.2 (iron door). Run all four mark sets here.
+
 **What to document beyond standard fields:**
-- Proposed armor stand position (x, y, z)
 - Iron door position (x, y, z) — Stage Management needs this for REDSTONE event
-- Vindicator holding area — enough room for one entity
+- Vindicator holding area — enough room for one entity, not visible from arrival
 - Distance to tower center (confirm >72 blocks)
 
 **Note:** No drone start position needed for home base — camera pattern applies to
@@ -174,12 +236,12 @@ with weight — not emptiness, but a place that has earned its quiet.
 **Slot:** Iron axe, Sharpness I — the piece that implies intent. The last piece. The show
 ends here before coming home to the reveal.
 
-**Key line spoken here:**
+**Key lines spoken here:**
 > *"I kept coming back to this place. It answers something."*
 >
 > *"Iron axe. I had it sharpened once. That's all you need — one good edge."*
 >
-> *"Five. Let's go home."* *(or silence — Voice decides at intake)*
+> *"[silence or 'Five. Let's go home.' — Voice decides at intake]*"
 
 **Must-haves:**
 - **Hostile mobs must be answered.** This scene holds the show's most important silence.
@@ -217,10 +279,12 @@ Sky clearance (no firework here, but document regardless).
 
 ## After scouting
 
-1. File completed report to this folder as `showcase.01.scouting-report.md`
-2. Michael C. translates to Environment Notes in `departments/showcase.01.set.md`
-3. Stage registry entries go in `kb/departments/set/stage-registry.md`
-4. Direction closes Gate 3 and schedules intake conversation
+1. `/scaena scout save` — write the capture file to the server
+2. Tell Alan you're done — he pulls the file and merges coordinates into show-params
+3. Fill in the descriptive fields in `showcase.01.scouting-report.md` and commit
+4. Michael C. translates to Environment Notes in `departments/showcase.01.set.md`
+5. Stage registry entries go in `kb/departments/set/stage-registry.md`
+6. Direction closes Gate 3 and schedules intake conversation
 
 **Six locations total:** home base (A) + five expedition sites (B through F).
 

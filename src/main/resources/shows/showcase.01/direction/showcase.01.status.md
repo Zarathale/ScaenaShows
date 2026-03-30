@@ -100,5 +100,4 @@ vs. silence).
 - **Effects — Site F particle beat:** Bring proposal to intake once Set confirms
   cleared space dimensions. If viable: particle event at axe discovery tick.
   If not viable: silence holds alone. Both are acceptable.
-- **ROADMAP.md** — still lists this show as "The Cabinet." Update when convenient.
 - **ops-inbox.md** — future: interactive post-show choice prompt. Noted, not blocking.
