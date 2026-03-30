@@ -2,7 +2,7 @@
 department: Wardrobe & Properties Director
 owner: Wardrobe & Properties Director (Margaret in-game)
 kb_version: 4.0
-updated: 2026-03-26
+updated: 2026-03-29
 notes: >
   Full department KB — role summary, instruments, tone translation, department principles,
   and capability status table. Detailed technical catalogues live in kb/departments/wardrobe/ subfolder.
@@ -38,7 +38,7 @@ She approaches the work from an **object theater tradition** — the practice of
 - **Six equipment slots** on any LivingEntity, set at spawn (`SPAWN_ENTITY equipment:`) or changed mid-show (`ENTITY_EQUIP`). A wardrobe change mid-scene is a character transformation moment.
 - **The invisible-body technique** (`ENTITY_INVISIBLE`) makes a living entity's body disappear while keeping armor and held items visible — floating weapons, ghostly presences, relics in space.
 - **Armor Stand displays** as static costume-on-wire surfaces: memorials, silent witnesses, items held at altar height.
-- **Mob variants and professions** (`variant:`, `profession:` on SPAWN_ENTITY) extend the visual palette enormously — villager professions, cat coats, horse colors, sheep wool, wolf variants — currently blocked by a Java gap but designed in advance.
+- **Mob variants and professions** (`variant:`, `profession:` on SPAWN_ENTITY) extend the visual palette enormously — villager professions, cat coats, horse colors, sheep wool, wolf variants. **Now functional as of v2.12.0.** See §Mob Variants and Professions for authoring rules.
 
 ---
 
@@ -164,44 +164,89 @@ duration_ticks: 200             # how long the invisibility lasts
 
 ### Mob Variants and Professions
 
-> ⚠️ **CURRENTLY NON-FUNCTIONAL — Gap filed in `ops-inbox.md`**
+**Functional as of v2.12.0.** The `variant:` and `profession:` fields on SPAWN_ENTITY now apply at runtime via Paper's Registry API.
 
-The `variant:` and `profession:` fields on SPAWN_ENTITY are parsed by the YAML layer but silently ignored at runtime. Writing them has no effect until the Java gap is resolved.
+**Critical authoring rule — value format is lowercase:**
+Values use Minecraft's internal NamespacedKey naming convention — lowercase with underscores. `profession: armorer`, not `profession: ARMORER`. Invalid values log a warning and the field is silently skipped.
 
-Once the gap is resolved, these fields will work as follows:
+**Critical authoring rule — lock profession with ENTITY_AI:**
+Freshly spawned Villagers have active AI and will seek nearby job site blocks, overriding the profession you set within one game tick. To prevent this, disable AI one tick after spawn. This pattern applies to any show-managed Villager that must hold a specific profession.
 
 ```yaml
-type: SPAWN_ENTITY
-entity_type: VILLAGER
-variant: SNOW          # biome skin (PLAINS | DESERT | JUNGLE | SAVANNA | SNOW | SWAMP | TAIGA)
-profession: CLERIC     # (FARMER | LIBRARIAN | CLERIC | ARMORER | BUTCHER | CARTOGRAPHER |
-                       #  FLETCHER | TOOLSMITH | WEAPONSMITH | NITWIT | NONE)
-name: "Priest"
-offset: {x: 0, y: 0, z: 3}
-despawn_on_end: true
+# Armorer Villager — correct pattern
+- at: 0
+  type: SPAWN_ENTITY
+  entity_type: VILLAGER
+  profession: armorer      # lowercase — Registry NamespacedKey format
+  variant: plains          # biome skin (plains | desert | jungle | savanna | snow | swamp | taiga)
+  name: "Companion"
+  offset: {x: 2, y: 0, z: 0}
+  despawn_on_end: true
+
+- at: 1
+  type: ENTITY_AI
+  target: entity:spawned:Companion
+  enabled: false           # locks the profession; prevents job site override
 ```
 
 ```yaml
-type: SPAWN_ENTITY
-entity_type: CAT
-variant: SIAMESE   # (TABBY | BLACK | RED | SIAMESE | BRITISH_SHORTHAIR | CALICO |
-                   #  PERSIAN | RAGDOLL | WHITE | JELLIE | ALL_BLACK)
-name: "WatchingCat"
-offset: {x: -2, y: 0, z: 0}
-despawn_on_end: true
+# Cleric Villager — different profession, same pattern
+- at: 0
+  type: SPAWN_ENTITY
+  entity_type: VILLAGER
+  profession: cleric       # (farmer | librarian | cleric | armorer | butcher | cartographer |
+                           #  fletcher | toolsmith | weaponsmith | nitwit | none)
+  variant: snow
+  name: "Priest"
+  offset: {x: 0, y: 0, z: 3}
+  despawn_on_end: true
+- at: 1
+  type: ENTITY_AI
+  target: entity:spawned:Priest
+  enabled: false
 ```
 
 ```yaml
-type: SPAWN_ENTITY
-entity_type: SHEEP
-variant: BLACK     # any DyeColor (WHITE | ORANGE | MAGENTA | LIGHT_BLUE | YELLOW | LIME |
-                   #  PINK | GRAY | LIGHT_GRAY | CYAN | PURPLE | BLUE | BROWN | GREEN | RED | BLACK)
-name: "BlackSheep"
-offset: {x: 3, y: 0, z: 0}
-despawn_on_end: true
+# Cat coat color
+- at: 0
+  type: SPAWN_ENTITY
+  entity_type: CAT
+  variant: siamese   # (tabby | black | red | siamese | british_shorthair | calico |
+                     #  persian | ragdoll | white | jellie | all_black)
+  name: "WatchingCat"
+  offset: {x: -2, y: 0, z: 0}
+  despawn_on_end: true
 ```
 
-**Current workaround while gap is open:** Use the `equipment:` block to differentiate entities visually. A Villager with a carved pumpkin helmet and a hoe in main hand reads as farmer even without the FARMER profession skin. A Villager with a golden helmet and a Book in main hand reads as scholar. Equipment is the only currently reliable visual differentiation tool.
+```yaml
+# Sheep wool color — still uses ALLCAPS DyeColor (not Registry-based)
+- at: 0
+  type: SPAWN_ENTITY
+  entity_type: SHEEP
+  variant: BLACK     # DyeColor enum: WHITE | ORANGE | MAGENTA | LIGHT_BLUE | YELLOW | LIME |
+                     #   PINK | GRAY | LIGHT_GRAY | CYAN | PURPLE | BLUE | BROWN | GREEN | RED | BLACK
+  name: "BlackSheep"
+  offset: {x: 3, y: 0, z: 0}
+  despawn_on_end: true
+```
+
+```yaml
+# Wolf coat variant (1.21+ only)
+- at: 0
+  type: SPAWN_ENTITY
+  entity_type: WOLF
+  variant: pale      # (pale | ashen | black | chestnut | rusty | snowy | spotted | striped | woods)
+  name: "Scout"
+  offset: {x: 0, y: 0, z: 4}
+  despawn_on_end: true
+```
+
+**Horse color** also uses lowercase Registry format: `variant: brown`, `variant: chestnut`, `variant: black`, `variant: gray`, `variant: white`, `variant: dark_brown`, `variant: creamy`.
+
+**Note on value format summary:**
+- Villager profession, Villager type, Cat type, Wolf variant, Horse color → **lowercase** (Registry API)
+- Sheep wool → **ALLCAPS** (DyeColor enum — unchanged)
+- Equipment materials → **ALLCAPS** (Material enum — unchanged)
 
 ---
 
@@ -234,7 +279,7 @@ equipment:
 
 | Gap | Status | Workaround |
 |-----|--------|-----------|
-| `variant` and `profession` on SPAWN_ENTITY — silently ignored | Open (ops-inbox.md) | Use equipment to differentiate visually (see `equipment-slots.md` for creative workarounds) |
+| `variant` and `profession` on SPAWN_ENTITY | ✅ Resolved v2.12.0 | Values are lowercase (Registry format). Lock Villager profession with ENTITY_AI: false at T=1. |
 | Armor Stand pose — requires COMMAND | No filed gap (low priority) | Document cleanup; use sparingly |
 | No ENTITY_EQUIP for players | Not applicable — players manage their own inventory | Use COMMAND escape hatch for inventory modification; not covered by stop-safety |
 
@@ -249,12 +294,12 @@ equipment:
 - Armor Stands as static costume displays
 - Non-standard helmet uses (carved pumpkins, mob heads, decorative items)
 
-**Strong (once variant Java gap is resolved):**
-- Villager professions (9 types, each with distinct visual identity)
+**Strong:**
+- Villager professions (9 types, each with distinct visual identity) — requires ENTITY_AI: false at T=1 to lock
 - Villager biome variants (7 types with different skin palettes)
 - Cat coat colors (11 variants)
-- Horse variants (7 colors + 5 marking overlays)
-- Wolf coat colors (multiple variants in 1.21+)
+- Horse color variants (7 colors)
+- Wolf coat variants (9 types, 1.21+)
 - Sheep wool colors (all 16 dye colors)
 
 **Currently thin or unavailable:**
@@ -399,8 +444,8 @@ Note: `variant:` and `profession:` on SPAWN_ENTITY are gapped (parsed but not ap
 | Armor Stand as display surface (costume on a wire) | ✅ Verified | Accepts all equipment; no invisibility needed; static by default |
 | Non-standard helmet items (carved pumpkin, mob heads) | ✅ Verified | Bukkit `Material` enum accepts any item in the helmet slot |
 | ENTITY_EQUIP on player inventory | ⚠️ Gapped | Players manage own inventory; no stop-safety; use COMMAND escape hatch only |
-| `variant:` on SPAWN_ENTITY — cat, sheep, horse, wolf, parrot colors | ⚠️ Gapped | Parsed but silently ignored at runtime — filed in `ops-inbox.md` |
-| `profession:` on SPAWN_ENTITY — villager professions | ⚠️ Gapped | Parsed but silently ignored at runtime — filed in `ops-inbox.md` |
+| `variant:` on SPAWN_ENTITY — cat, horse, wolf, sheep colors | ✅ Verified v2.12.0 | Values lowercase (Registry). Sheep uses ALLCAPS DyeColor. See §Mob Variants and Professions. |
+| `profession:` on SPAWN_ENTITY — villager professions | ✅ Verified v2.12.0 | Values lowercase (Registry). Must follow with ENTITY_AI: false at T=1 to lock against job site override. |
 | Armor Stand pose control | ⚠️ Gapped | Requires COMMAND event; outside show cleanup contract; low priority |
 | Tropical fish variant YAML syntax | ⚠️ Gapped | Not yet documented; exact YAML syntax unknown; flag to Stage Manager if needed |
 | Parrot perch on shoulder | 📋 Aspirational | Not implemented; would require a custom event or mount mechanic |

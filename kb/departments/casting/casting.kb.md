@@ -1,8 +1,8 @@
 ---
 department: Casting Director
 owner: Casting Director
-kb_version: 2.1
-updated: 2026-03-27
+kb_version: 2.2
+updated: 2026-03-29
 notes: >
   v2.0: Full instrument inventory (Fresh Spawn, Company Sweep, Theatrical Entrance/Exit,
   Puppet/Performer toggle), Dramatis Personae mob register, entity targeting reference,
@@ -49,7 +49,7 @@ Before choosing a performer, Casting needs answers to these questions. These may
 **About the show arc:**
 - Does this performer need to do anything other than exist? (Pure tableau figures need zero movement design)
 - Does the performer need to be removed at some point, and how — vanish (DESPAWN_ENTITY), walk off (EXIT), or simply release to the world (RELEASE_ENTITIES)?
-- Is the variant or profession of this entity emotionally important? If yes, flag immediately — variant/profession are currently gapped (see §Gaps).
+- Is the variant or profession of this entity emotionally important? If so, confirm value format (lowercase Registry keys) and plan for ENTITY_AI: false at T=1 to lock Villager profession. See §Gaps for current status.
 
 **About risk:**
 - Is AI release safe in this context? Phantoms, Creepers, Wardens, and Elder Guardians can actively harm the player when AI is enabled. This requires the Show Director's sign-off.
@@ -248,8 +248,8 @@ all subsequent targeting, and optionally removes it at show end.
 - `baby: true` is a separate emotional register for most mobs — use it deliberately
 
 **Limitations and gaps:**
-- `variant:` and `profession:` are parsed but NOT applied at runtime (see §Gaps). Default
-  mob skin/profession always renders regardless of what YAML specifies.
+- `variant:` and `profession:` are now applied at runtime (v2.12.0). Values must be **lowercase** (Registry NamespacedKey format): `profession: armorer`, not `ARMORER`. Invalid values log a warning and are skipped.
+- Villager profession AI override: a freshly spawned Villager will seek nearby job site blocks within one tick, overriding the profession. Fire `ENTITY_AI enabled: false` at T=1 to lock the profession permanently.
 - No size control for Slimes/Magma Cubes
 - No facing/yaw control at spawn — entity spawns with default orientation; use FACE immediately after if orientation matters
 
@@ -432,7 +432,7 @@ behavior — authentic, but unpredictable.
 |---|---|---|
 | `entity:spawned:Name` | A specific entity spawned by this show via SPAWN_ENTITY or ENTER | Reliable; registered at spawn |
 | `entity_group:groupname` | All members of a CAPTURE_ENTITIES group | ⚠️ Only first member for behavior events — see §Gaps |
-| `entity:world:Name` | A named entity already present in the world | ⚠️ Not implemented — see §Gaps |
+| `entity:world:Name` | A named entity already present in the world by custom name | ✅ Implemented v2.12.0 — scans anchor world for matching custom name |
 
 ---
 
@@ -443,13 +443,11 @@ behavior — authentic, but unpredictable.
 
 ---
 
-### Gap 1: `variant` and `profession` on SPAWN_ENTITY — parsed but not applied
-**Status:** Open. Filed in `ops-inbox.md`.
-**Impact:** Villager profession, cat coat, horse color, sheep wool color, wolf variant (1.21+) cannot
-be set via YAML. The fields are silently ignored. Default mob appearance always renders.
-**Workaround:** Use `equipment:` to differentiate visually. A Villager with a LEATHER_HELMET and
-HOE reads differently from one with GOLDEN_HELMET and BOOK. Design around the gap: choose mobs whose
-default appearance serves the role without variant control.
+### Gap 1: `variant` and `profession` on SPAWN_ENTITY — ✅ Resolved (v2.12.0)
+**Status:** Resolved. Removed from `ops-inbox.md`.
+**How it works:** The executor applies profession and variant via Paper's Registry API (NamespacedKey lookup). Values must be **lowercase**: `profession: armorer`, `variant: plains`. Invalid values log a warning and the field is skipped.
+**Villager profession override (known game mechanic):** A freshly spawned Villager with AI active will seek nearby job site blocks within one game tick, overriding the profession set at spawn. To lock the profession, fire `ENTITY_AI enabled: false` at T=1 immediately after spawn. This is the required pattern for any show-managed Villager that must hold a specific profession.
+**Wardrobe coordination:** `mob-variants.md` in the Wardrobe KB has full value tables for each entity type. The value format (lowercase vs. ALLCAPS) varies by type — consult that reference before authoring.
 
 ---
 
@@ -479,15 +477,12 @@ if the group needs updating. Document the expected world state in the run sheet.
 
 ---
 
-### Gap 4: `entity:world:Name` targeting not implemented
-**Status:** Open. Filed in `ops-inbox.md`.
-**Root cause:** `EntityEventExecutor.resolveEntity()` handles `entity:spawned:` and
-`entity_group:` prefixes only. No handler exists for `entity:world:`. The method returns null for
-any `entity:world:` target, and all events against it silently skip.
-**Impact:** Cannot target pre-existing named world entities by custom name through show YAML.
-CAPTURE_ENTITIES is the only way to bring world-resident entities under show control.
-**Workaround:** Use CAPTURE_ENTITIES with a radius of 1–2 and max_count: 1 to effectively single-
-target a known world entity. Name the group to match its role.
+### Gap 4: `entity:world:Name` targeting — ✅ Resolved (v2.12.0)
+**Status:** Resolved. Removed from `ops-inbox.md`.
+**How it works:** `EntityEventExecutor.resolveEntity()` now has a third branch for `entity:world:Name`. It scans all entities in the anchor's world and returns the first entity whose custom name exactly matches the target string. Case-sensitive.
+**Usage:** `target: "entity:world:MyFrameName"` — the entity must have a custom name set (e.g., named with a name tag in-game, or via a previous show event). This is the primary targeting path for pre-existing world entities like item frames, named mobs, or set pieces that were not spawned by the current show.
+**Performance note:** This does a full world entity scan. Avoid using in high-frequency bar events; point-in-time use is fine.
+**This also unblocks SET_ITEM_FRAME** (pending implementation) — the targeting layer is now in place.
 
 ---
 
@@ -542,9 +537,9 @@ timidity — it's craft. The decision to release a performer's AI is a dramatic 
 oversight. It should appear in the run sheet with a Watch question attached.
 
 **Casting and Wardrobe share the performer.** Casting chooses the entity type and the AI state;
-Wardrobe dresses them. A Casting decision that depends heavily on variant or profession requires
-an immediate coordination flag: "this read depends on Wardrobe being able to set the profession,
-which is currently gapped." Don't cast a Cleric and then silently accept a PLAINS farmer.
+Wardrobe dresses them. When profession or variant is part of the casting brief, Casting confirms
+the value format with Wardrobe (lowercase Registry keys) and owns the ENTITY_AI: false at T=1
+that locks the profession. Don't cast a Cleric and then skip the AI lock — the game will reassign.
 
 **Casting and Set share the Armor Stand.** An Armor Stand used as a pure set piece (the absent
 knight) belongs to Set; an Armor Stand that is a show performer with a named identity, AI state,
@@ -588,7 +583,7 @@ Casting's "patterns" are dramatic registers — what a mob communicates by its n
 | SPAWN_ENTITY — baby variant | ✅ Verified | setBaby() on Ageable; traced to EntityEventExecutor.java |
 | SPAWN_ENTITY — equipment at spawn | ✅ Verified | All 6 slots; traced to EntityEventExecutor.java |
 | SPAWN_ENTITY — despawn_on_end | ✅ Verified | Model field parsed; runtime cleanup confirmed |
-| SPAWN_ENTITY — variant / profession | ⚠️ Gapped | Parsed, not applied. Filed in ops-inbox.md |
+| SPAWN_ENTITY — variant / profession | ✅ Verified v2.12.0 | Lowercase Registry values. Villager profession requires ENTITY_AI: false at T=1 to lock. |
 | DESPAWN_ENTITY — silent | ✅ Verified | entity.remove(); traced to EntityEventExecutor.java |
 | DESPAWN_ENTITY — particle_burst | ✅ Verified | EXPLOSION particle; traced to EntityEventExecutor.java |
 | CAPTURE_ENTITIES — snapshot sweep | ✅ Verified | UUID list built from getNearbyEntities(); traced to EntityEventExecutor.java |
@@ -601,6 +596,6 @@ Casting's "patterns" are dramatic registers — what a mob communicates by its n
 | ENTER — equipment at entrance | 📋 Aspirational | Not in model — use SPAWN_ENTITY + CROSS_TO for equipped entrances |
 | EXIT — pathfinder move + despawn | ✅ Verified | distanceSquared < 4 proximity check; traced to StageEventExecutor.java |
 | EXIT — Armor Stand / non-mob | ⚠️ Gapped | EXIT only works on Mob subclass |
-| entity:world:Name targeting | ⚠️ Gapped | No handler in resolveEntity(). Filed in ops-inbox.md. Use CAPTURE_ENTITIES workaround. |
+| entity:world:Name targeting | ✅ Verified v2.12.0 | Scans anchor world by custom name. Case-sensitive. Point-in-time use only (full world scan). |
 | Slime / Magma Cube size control | 📋 Aspirational | Not YAML-controllable |
 | Armor Stand pose control | 📋 Aspirational | Requires COMMAND escape hatch (Set's domain) |
