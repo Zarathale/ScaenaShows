@@ -8,6 +8,9 @@ commands:
   show:
     description: Play/stop/reload ScaenaShows
     usage: /show <list|play|stop|stopall|reload>
+  scaena:
+    description: Scaena scouting tools
+    usage: /scaena <scout load <showId> [tag]|scout save|scout status|scout dismiss|set <code>>
 permissions:
   scae.shows.admin:
     description: Full access to ScaenaShows commands and bypass cooldown.
@@ -29,4 +32,7 @@ permissions:
     default: op
   scae.shows.scenes:
     description: Allow using --scenes (director mode) flag.
+    default: op
+  scae.shows.scout:
+    description: Allow using /scaena scouting commands.
     default: op

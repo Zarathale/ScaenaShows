@@ -1,5 +1,6 @@
 package com.scaena.shows;
 
+import com.scaena.shows.command.ScoutCommand;
 import com.scaena.shows.command.ShowCommand;
 import com.scaena.shows.config.ScaenaConfig;
 import com.scaena.shows.registry.CueRegistry;
@@ -8,6 +9,7 @@ import com.scaena.shows.registry.ShowRegistry;
 import com.scaena.shows.runtime.PlayerLifecycleListener;
 import com.scaena.shows.runtime.ShowManager;
 import com.scaena.shows.runtime.executor.ExecutorRegistry;
+import com.scaena.shows.scout.ScoutManager;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -37,6 +39,7 @@ public final class ScaenaShowsPlugin extends JavaPlugin {
     private ShowRegistry      showRegistry;
     private ExecutorRegistry  executors;
     private ShowManager       showManager;
+    private ScoutManager      scoutManager;
 
     @Override
     public void onEnable() {
@@ -48,6 +51,7 @@ public final class ScaenaShowsPlugin extends JavaPlugin {
         saveDefaultResource("fireworks.yml");
         saveDefaultResources("cues");
         saveDefaultResources("shows");
+        saveDefaultResources("scout_objectives");
 
         // 2. Load config
         saveDefaultConfig();
@@ -75,7 +79,10 @@ public final class ScaenaShowsPlugin extends JavaPlugin {
         // 7. Show manager
         showManager = new ShowManager(this, scaenaConfig, cueRegistry, executors);
 
-        // 8. Register command
+        // 8a. Scout manager
+        scoutManager = new ScoutManager(this);
+
+        // 8b. Register /show command
         PluginCommand showCmd = getCommand("show");
         if (showCmd != null) {
             ShowCommand handler = new ShowCommand(
@@ -86,9 +93,19 @@ public final class ScaenaShowsPlugin extends JavaPlugin {
             ScaenaConsole.error("plugin.yml", "'show' command not found — check plugin.yml!");
         }
 
+        // 8c. Register /scaena command
+        PluginCommand scaenaCmd = getCommand("scaena");
+        if (scaenaCmd != null) {
+            ScoutCommand scoutHandler = new ScoutCommand(scoutManager);
+            scaenaCmd.setExecutor(scoutHandler);
+            scaenaCmd.setTabCompleter(scoutHandler);
+        } else {
+            ScaenaConsole.error("plugin.yml", "'scaena' command not found — check plugin.yml!");
+        }
+
         // 9. Player lifecycle listener
         getServer().getPluginManager().registerEvents(
-            new PlayerLifecycleListener(showManager), this);
+            new PlayerLifecycleListener(showManager, scoutManager), this);
 
         // Ready!
         ScaenaConsole.printReady();

@@ -476,6 +476,94 @@ implications for show authoring architecture (linear timeline assumption).
 
 ---
 
+### [future-capability] In-game scout capture — show-params as source of truth, bidirectional sync
+
+**Area:** Set Director, Stage Manager
+**Priority:** Low — aspirational quality-of-life for the scouting workflow
+**Filed:** 2026-03-29
+
+Currently, scouting a set requires manually noting coordinates from the F3 screen and transferring them into show-params by hand. This is error-prone and breaks the in-world flow.
+
+**Architecture:**
+
+The objectives file is not separately authored — it is **generated from show-params**. Every named mark or site defined in show-params becomes an objective. The in-game interface is a persistent, always-accurate reflection of what show-params expects. The capture save is the return path: positions set in-game flow back into show-params via a file Claude can pull from the server.
+
+```
+show-params (repo)
+    ↓  Claude generates
+scout_objectives/[show_id].yml  (pushed to Bisect server)
+    ↓  plugin loads, scoreboard sidebar shown in-game
+Zarathale walks and captures marks
+    ↓  /scaena scout save
+scout_captures/[show_id]/[date].yml  (on Bisect server)
+    ↓  Claude pulls, merges
+show-params (repo) — updated coordinates
+```
+
+**The objectives file (generated, not authored)**
+Claude reads show-params, extracts all named marks/sites, assigns short numeric codes, and writes:
+```yaml
+# AUTO-GENERATED from showcase.01.show-params.md — do not edit by hand
+# Regenerate by asking Claude to sync scout objectives for showcase.01
+show: showcase.01
+objectives:
+  "1.1": stage_center
+  "1.2": mark_A
+  "1.3": entry_wing_L
+  "1.4": entry_wing_R
+  "1.5": companion_spawn
+  "1.6": vindicator_spawn
+```
+When show-params gains a new mark, Claude regenerates this file and pushes to the server. The codes are stable as long as the mark names don't change — order is alphabetical by mark name within each site group so codes are predictable across regenerations.
+
+**In-game sidebar display (scoreboard)**
+`/scaena scout load showcase.01` loads the objectives file and registers a scoreboard sidebar for the player. The sidebar title is the show ID; each line shows the shortcode and mark name. The native Minecraft scoreboard sidebar appears on the right side of the screen — no mod required.
+
+Zarathale can load this at any time, not just during initial scouting. If a position needs to change mid-production, he loads, walks to the new location, captures the one mark, saves. This is the **persistent interface** — it stays valid across the whole life of the show.
+
+**Capture command**
+With the sidebar loaded, Zarathale walks to each location and enters:
+```
+/scaena set 1.1
+```
+The plugin records `player.getLocation()` (X/Y/Z + yaw/pitch) against objective `1.1`, removes (or strikes through) that entry from the sidebar, and confirms in chat. Partial captures are fine — only changed marks need to be captured on a given session.
+
+**Full command surface:**
+```
+/scaena scout load <show_id>    # load objectives from file, show sidebar
+/scaena set <code>              # capture current position for that objective code
+/scaena scout save              # write all captures this session to file on server
+/scaena scout status            # list captured vs. still outstanding
+/scaena scout dismiss           # hide sidebar without saving
+```
+
+**Save output**
+`/scaena scout save` writes to `plugins/ScaenaShows/scout_captures/[show_id]/[date].yml`:
+```yaml
+# Scout capture — showcase.01 — 2026-03-29
+show: showcase.01
+captured:
+  stage_center:    {x: 112, y: 64, z: -88,  yaw: 0.0,   pitch: 0.0}
+  entry_wing_L:    {x: 108, y: 64, z: -91,  yaw: 90.0,  pitch: 0.0}
+```
+Only marks captured this session appear — a partial save is valid and merges cleanly with show-params (existing values for uncaptured marks are preserved).
+
+Claude pulls this file from Bisect (access granted per session as needed), merges updated coordinates into show-params, and commits. That's the full loop — no manual transcription at any point.
+
+**Sync discipline:**
+- show-params is the canonical source. Objectives file is derived.
+- When show-params marks change: regenerate objectives file, push to server.
+- When in-game positions change: pull capture file, merge into show-params, commit.
+- The objectives file has a `# AUTO-GENERATED` header to prevent accidental hand-edits.
+
+**Implementation notes:**
+- Sidebar: `Bukkit.getScoreboardManager()`, new `Scoreboard` with `DisplaySlot.SIDEBAR`. Remove entries on capture via `score.resetScore()`.
+- `/scaena set <code>` is intentionally short — no `scout` prefix once objectives are loaded.
+- Plugin reads objectives file on `load` command — no restart required.
+- Captures held in memory (per-player map) until `save`.
+
+---
+
 ### [future-idea] Human as Designer — preamble layer for department KBs
 
 **Area:** All department KBs, production team workflow
