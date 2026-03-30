@@ -71,6 +71,19 @@ public final class FireworkEventExecutor implements EventExecutor {
         if (anchor == null) return;
 
         Location loc = PositionResolver.fireworkLocation(anchor, e.offsetX, e.offsetZ, e.yMode, e.offsetY);
+
+        // min_clearance check: skip launch if overhead clearance is insufficient
+        if (e.minClearance > 0) {
+            int highestY = loc.getWorld().getHighestBlockYAt(loc);
+            int clearance = highestY - (int) Math.floor(anchor.getY());
+            if (clearance < e.minClearance) {
+                log.fine("[ScaenaShows] FIREWORK skipped — clearance " + clearance
+                    + " < min_clearance " + e.minClearance + " at "
+                    + loc.getBlockX() + "," + loc.getBlockZ());
+                return;
+            }
+        }
+
         spawnFirework(loc, preset, preset.power(), null);
     }
 
@@ -123,9 +136,9 @@ public final class FireworkEventExecutor implements EventExecutor {
         Location anchor = show.getAnchorLocation();
         if (anchor == null) return;
 
-        // Build all positions across all arms
+        // Build all positions across all arms, preserving per-arm preset references
         List<Location> allPositions = new ArrayList<>();
-        List<String> armPresets    = new ArrayList<>();
+        List<String>   armPresets   = new ArrayList<>();
         for (FireworkFanEvent.FanArm arm : e.arms) {
             FireworkPreset preset = fireworkRegistry.get(arm.preset());
             if (preset == null) { log.warning("[ScaenaShows] Unknown preset: " + arm.preset()); continue; }
@@ -140,29 +153,34 @@ public final class FireworkEventExecutor implements EventExecutor {
 
         if (allPositions.isEmpty()) return;
 
-        boolean simultaneous = "simultaneous".equalsIgnoreCase(e.chase.mode());
+        int total = allPositions.size();
 
-        if (!e.chase.enabled() || simultaneous) {
-            // Fire all at once (or simultaneous per-arm — each arm chases independently)
-            // For simplicity, treat simultaneous as: launch all with per-position delay by arm index
-            for (int i = 0; i < allPositions.size(); i++) {
+        if (!e.chase.enabled()) {
+            // Simultaneous — fire all positions at once with variation applied by index
+            for (int i = 0; i < total; i++) {
                 FireworkPreset preset = fireworkRegistry.get(armPresets.get(i));
                 if (preset == null) continue;
-                Location loc = allPositions.get(i);
-                spawnFirework(loc, preset, preset.power(), null);
+                Color colorOverride = resolveColorVariation(e.colorVariation, i, total,
+                    preset, e.gradientFrom, e.gradientTo);
+                int power = resolvePower(e.powerVariation, i, total, preset.power());
+                spawnFirework(allPositions.get(i), preset, power, colorOverride);
             }
         } else {
-            // Sequential chase across all arms
-            for (int i = 0; i < allPositions.size(); i++) {
-                int idx = i;
-                FireworkPreset preset = fireworkRegistry.get(armPresets.get(idx));
+            // Sequential chase across all arms with staggered delay + variation
+            boolean reverse = "LF".equalsIgnoreCase(e.chase.direction());
+            for (int i = 0; i < total; i++) {
+                int seqIdx = reverse ? (total - 1 - i) : i;
+                FireworkPreset preset = fireworkRegistry.get(armPresets.get(seqIdx));
                 if (preset == null) continue;
-                Location loc = allPositions.get(idx);
-                long delay = (long) idx * e.chase.intervalTicks();
+                Location loc = allPositions.get(seqIdx);
+                Color colorOverride = resolveColorVariation(e.colorVariation, seqIdx, total,
+                    preset, e.gradientFrom, e.gradientTo);
+                int power = resolvePower(e.powerVariation, seqIdx, total, preset.power());
+                long delay = (long) i * e.chase.intervalTicks();
                 new BukkitRunnable() {
                     @Override public void run() {
                         if (!show.isRunning()) { cancel(); return; }
-                        spawnFirework(loc, preset, preset.power(), null);
+                        spawnFirework(loc, preset, power, colorOverride);
                     }
                 }.runTaskLater(plugin, delay);
             }

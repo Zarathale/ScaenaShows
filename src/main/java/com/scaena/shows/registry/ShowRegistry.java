@@ -37,15 +37,34 @@ public final class ShowRegistry {
             return;
         }
 
-        File[] files = showsDir.listFiles((d, n) -> n.endsWith(".yml"));
-        if (files == null || files.length == 0) {
+        // Collect candidate show files: flat shows/*.yml + nested shows/[id]/[id].yml
+        List<File> candidateFiles = new ArrayList<>();
+
+        File[] flatFiles = showsDir.listFiles((d, n) -> n.endsWith(".yml"));
+        if (flatFiles != null) {
+            candidateFiles.addAll(java.util.Arrays.asList(flatFiles));
+        }
+
+        // One level deep: shows/[id]/[id].yml
+        File[] subdirs = showsDir.listFiles(File::isDirectory);
+        if (subdirs != null) {
+            for (File dir : subdirs) {
+                String showId = dir.getName();
+                File nested = new File(dir, showId + ".yml");
+                if (nested.exists() && nested.isFile()) {
+                    candidateFiles.add(nested);
+                }
+            }
+        }
+
+        if (candidateFiles.isEmpty()) {
             log.info("[ScaenaShows] No show files found in shows/.");
             shows = Map.of();
             return;
         }
 
         Map<String, Show> loaded = new LinkedHashMap<>();
-        for (File f : files) {
+        for (File f : candidateFiles) {
             try {
                 Show show = parseFile(f);
                 if (show == null) continue;

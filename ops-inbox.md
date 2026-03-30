@@ -10,24 +10,6 @@ Items here are queued for the Java review team. Each entry has enough context to
 
 ---
 
-### [java-gap] FIREWORK: `min_clearance` field parsed but not enforced
-
-**Area:** Fireworks Director
-**Schema field:** `min_clearance:` on `FIREWORK`
-**Filed:** 2026-03-26 (Fireworks KB build)
-
-`FireworkEvent` parses `min_clearance` (stored as `int minClearance`, default −1), but
-`FireworkEventExecutor.handleFirework()` never reads `e.minClearance`. The value is silently
-ignored at runtime — rockets will launch even if the overhead clearance is below the minimum.
-
-**Impact:** The field cannot be used to prevent rockets from detonating inside a ceiling or
-low overhang. Authors may include it in YAML expecting a safety check that doesn't happen.
-
-**Fix scope:** In `handleFirework()`, after resolving `loc`, check the world's highest
-non-air block at `loc.getX(), loc.getZ()` against `anchor.getY() + minClearance`. If
-clearance is insufficient, skip the launch (optionally log a debug warning). Only enforce
-when `minClearance > 0` (the default −1 is the "not set" sentinel).
-
 ---
 
 ### [java-gap] FIREWORK preset `launch:` mode not applied by executor
@@ -56,25 +38,6 @@ for a design decision before implementing.
 ---
 
 ---
-
-### [java-gap] FIREWORK_FAN: no `power_variation` or `color_variation`
-
-**Area:** Fireworks Director
-**Schema field:** (fields do not exist on `FIREWORK_FAN`)
-**Filed:** 2026-03-26 (Fireworks KB build)
-
-`FireworkFanEvent` has no `powerVariation` or `colorVariation` fields. The fan executor does not
-call `launchWithChase()` — it builds its own position loop and always fires `preset.power()` with
-no color override. There is no way to add an energy arc or color shift across a fan's positions.
-
-**Impact:** A fan with RAMP_UP intent must be approximated with multiple FIREWORK_LINE events.
-Fans cannot use RAINBOW, GRADIENT, or ALTERNATE color schemes. Every arm position fires at its
-preset's base power and colors.
-
-**Fix scope:** Add `powerVariation` and `colorVariation` (+ `gradientFrom`/`gradientTo`) to
-`FireworkFanEvent`. Refactor the fan executor to call `launchWithChase()` for the full cross-arm
-position list (same as CIRCLE/LINE), passing the variation parameters. Confirm behavior: variation
-runs across all positions combined (consistent with how chase already works across all arms).
 
 ---
 
@@ -115,54 +78,7 @@ Implementation: BukkitRunnable interpolating yaw per tick, changing only the yaw
 
 ---
 
-### [java-gap] Show scanner reads flat `shows/*.yml` only — does not scan subdirectories
-
-**Area:** Stage Manager, all shows
-**Filed:** 2026-03-25 (show folder structure work, R7 session)
-
-The plugin's show-loading code scans `src/main/resources/shows/*.yml` at build time via
-`JarFile(getFile())`. The new show folder structure places YAMLs at
-`shows/[show_id]/[show_id].yml`. The scanner does not descend into subdirectories and will
-not find these files.
-
-**Impact:** Blocks full adoption of the show folder structure. YAMLs must remain as flat
-files alongside their folder counterparts until this is resolved. The folder structure
-currently serves as documentation/production-team organization only.
-
-**Fix scope:** Update the `JarFile` scan loop in the show-loading code to check one level
-of subdirectories. For each entry matching `shows/*/`, check for a nested YAML whose name
-matches the folder name (`shows/[id]/[id].yml`). Extract the show ID from the folder name.
-
-Example pattern to match (in addition to existing `shows/*.yml`):
-```
-shows/demo.archetype_sampler/demo.archetype_sampler.yml  →  show ID: demo.archetype_sampler
-```
-
-**Priority:** Medium — not blocking current shows (flat YAMLs still load), but gates full
-folder-structure adoption for all shows. See `docs/show-import-process.md` for the
-migration process that depends on this fix.
-
 ---
-
-### [java-gap] ENTITY_AI and behavior events resolve only first group member
-
-**Area:** Casting Director, Wardrobe
-**Events affected:** `ENTITY_AI`, `ENTITY_SPEED`, `ENTITY_EFFECT`, `ENTITY_EQUIP`, `ENTITY_INVISIBLE`, `ENTITY_VELOCITY`
-**Filed:** 2026-03-25 (Casting KB build)
-
-`EntityEventExecutor.resolveEntity()` returns only `group.get(0)` — the first UUID — when the
-target is `entity_group:<name>`. All six behavior event handlers call this singular resolver, so
-any group-targeted behavior event silently skips all members except the first.
-
-By contrast, `StageEventExecutor.resolveEntities()` (plural) correctly iterates the full group
-list — `HOLD`, `FACE`, and `CROSS_TO` work correctly on groups.
-
-**Impact:** `ENTITY_AI enabled: false` on `entity_group:chorus` only puppets the first entity.
-Any choreography that relies on group-wide AI control is silently broken.
-
-**Fix scope:** In `EntityEventExecutor`, replace `resolveEntity()` calls in all six behavior
-handlers with a loop over `resolveEntities()` (matching the pattern in StageEventExecutor), or
-extract a shared group-resolution helper accessible to both executors.
 
 ---
 
@@ -188,66 +104,9 @@ resolving from the stored UUID list.
 
 ---
 
-### [java-gap] ENTITY_SPEED does not address entity groups
-
-**Area:** Choreography
-**Event:** `ENTITY_SPEED`
-**Filed:** 2026-03-25 (Choreography KB build)
-
-`EntityEventExecutor.handleEntitySpeed()` calls `resolveEntity()`, which returns only the first
-member of an entity group (UUID list position 0). When `target: entity_group:Name` is used,
-only the first captured entity receives the speed change. All other group members are silently
-unaffected.
-
-**Impact:** Choreographers cannot apply a unified speed change to a chorus group with a single
-ENTITY_SPEED event. Each member must be addressed individually by name, or the group speed
-must be managed through ENTITY_AI + pathfinder behavior.
-
-**Fix scope:** In `handleEntitySpeed()`, resolve the full entity list (same pattern as
-`StageEventExecutor.resolveEntities()` which handles groups correctly) and apply the speed
-attribute to each member.
-
 ---
 
-### [java-gap] ENTER does not apply equipment fields
-
-**Area:** Choreography, Wardrobe
-**Event:** `ENTER`
-**Filed:** 2026-03-25 (Choreography KB build)
-
-`StageEventExecutor.handleEnter()` spawns the entity and sets name/baby variant, but does not
-apply any equipment fields. The spec implies ENTER should behave like SPAWN_ENTITY for
-equipment purposes, but the executor is missing the equipment-apply block that exists in
-`EntityEventExecutor.handleSpawn()`.
-
-**Impact:** A performer who enters via ENTER always appears unequipped. If equipment is needed
-at entry, the workaround is SPAWN_ENTITY at the wing mark offset + CROSS_TO to destination.
-
-**Fix scope:** After spawning in `handleEnter()`, add the same equipment-apply block as in
-`handleSpawn()` — cast to LivingEntity, get EntityEquipment, apply all six slots if non-null.
-The EnterEvent model class may need equipment fields added if they aren't already parsed.
-
 ---
-
-### [java-gap] RETURN_HOME silently skips non-Player entities
-
-**Area:** Choreography
-**Event:** `RETURN_HOME`
-**Filed:** 2026-03-25 (Choreography KB build)
-
-`StageEventExecutor.handleReturnHome()` iterates `resolveEntities()` but immediately continues
-on any target that is not a Player: `if (!(entity instanceof Player player)) continue;`
-
-A `RETURN_HOME` targeting a spawned entity or entity group silently does nothing. The spec does
-not document this restriction.
-
-**Impact:** Choreographers cannot return spawned entities to a home position using RETURN_HOME.
-The workaround is CROSS_TO (back to spawn offset) or DESPAWN_ENTITY.
-
-**Fix scope:** Implement entity home tracking in RunningShow — record each spawned entity's
-spawn location as its home at SPAWN_ENTITY time. In handleReturnHome(), add a branch for
-non-Player entities that CROSS_TO's or teleports them to the recorded spawn location when
-`return_home` is called.
 
 ---
 
@@ -501,3 +360,45 @@ Added `sound_id:` field to `StopSoundEvent`. When set, executor calls `p.stopSou
 ### [resolved] `entity:world:Name` targeting implemented ✓
 **Shipped:** 2.12.0 | **Filed:** 2026-03-25 | **Area:** Casting Director
 Added `entity:world:` branch to `EntityEventExecutor.resolveEntity()`. Scans world entities by custom name. Unblocks `SET_ITEM_FRAME` and any other event using world-entity targeting.
+
+---
+
+### [resolved] ENTITY_AI / behavior events — group resolution fixed ✓
+**Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Casting Director, Wardrobe
+Added `resolveEntities()` (plural) to `EntityEventExecutor`. All six behavior handlers (`ENTITY_AI`, `ENTITY_SPEED`, `ENTITY_EFFECT`, `ENTITY_EQUIP`, `ENTITY_INVISIBLE`, `ENTITY_VELOCITY`) now loop over the full group list instead of calling the singular `resolveEntity()`.
+
+---
+
+### [resolved] ENTITY_SPEED group resolution fixed ✓
+**Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Choreography
+Covered by the group resolution fix above — `handleEntitySpeed()` is now one of the six looped handlers.
+
+---
+
+### [resolved] ENTER equipment fields added ✓
+**Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Choreography, Wardrobe
+Added six equipment fields (`helmet`, `chestplate`, `leggings`, `boots`, `main_hand`, `off_hand`) to `EnterEvent`, parsed from an `equipment:` sub-map. Added equipment-apply block and `itemOf()` helper to `StageEventExecutor.handleEnter()`.
+
+---
+
+### [resolved] RETURN_HOME supports non-Player entities ✓
+**Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Choreography
+Added `spawnedEntityHomes` map to `RunningShow`; `registerSpawnedEntity()` now records spawn location as home automatically. `handleReturnHome()` now has a non-Player branch: instant teleport or pathfinder.moveTo() for mobs depending on `duration_ticks`.
+
+---
+
+### [resolved] FIREWORK: `min_clearance` enforced ✓
+**Shipped:** 2.13.0 | **Filed:** 2026-03-26 | **Area:** Fireworks Director
+Added clearance check in `handleFirework()` after resolving `loc`. Compares `world.getHighestBlockYAt(loc)` against `anchor.getY() + minClearance`. Skips launch with `log.fine()` debug entry when clearance is insufficient. Sentinel value −1 bypasses the check.
+
+---
+
+### [resolved] FIREWORK_FAN: `power_variation` and `color_variation` added ✓
+**Shipped:** 2.13.0 | **Filed:** 2026-03-26 | **Area:** Fireworks Director
+Added `powerVariation`, `colorVariation`, `gradientFrom`, `gradientTo` fields to `FireworkFanEvent`. Refactored `handleFan()` to apply variation via `resolvePower()` and `resolveColorVariation()` across the full combined arm position sequence, matching CIRCLE/LINE behavior.
+
+---
+
+### [resolved] Show scanner descends into subdirectories ✓
+**Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Stage Manager, all shows
+`ShowRegistry.load()` now collects both flat `shows/*.yml` and nested `shows/[id]/[id].yml` files before the parse loop. Enables full show-folder-structure adoption. Flat files still load normally; duplicate ID detection prevents double-loading if both exist.

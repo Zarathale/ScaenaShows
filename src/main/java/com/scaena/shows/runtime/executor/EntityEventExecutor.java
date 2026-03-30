@@ -201,9 +201,10 @@ public final class EntityEventExecutor implements EventExecutor {
     // ENTITY_AI
     // ------------------------------------------------------------------
     private void handleEntityAi(EntityAiEvent e, RunningShow show) {
-        Entity entity = resolveEntity(e.target, show);
-        if (entity instanceof Mob mob) {
-            mob.setAI(e.enabled);
+        for (Entity entity : resolveEntities(e.target, show)) {
+            if (entity instanceof Mob mob) {
+                mob.setAI(e.enabled);
+            }
         }
     }
 
@@ -211,9 +212,11 @@ public final class EntityEventExecutor implements EventExecutor {
     // ENTITY_SPEED
     // ------------------------------------------------------------------
     private void handleEntitySpeed(EntitySpeedEvent e, RunningShow show) {
-        Entity entity = resolveEntity(e.target, show);
-        if (entity instanceof LivingEntity living && living.getAttribute(Attribute.MOVEMENT_SPEED) != null) {
-            living.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(e.speed * 0.2); // Bukkit base unit
+        for (Entity entity : resolveEntities(e.target, show)) {
+            if (entity instanceof LivingEntity living
+                    && living.getAttribute(Attribute.MOVEMENT_SPEED) != null) {
+                living.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(e.speed * 0.2);
+            }
         }
     }
 
@@ -221,11 +224,12 @@ public final class EntityEventExecutor implements EventExecutor {
     // ENTITY_EFFECT
     // ------------------------------------------------------------------
     private void handleEntityEffect(EntityEffectEvent e, RunningShow show) {
-        Entity entity = resolveEntity(e.target, show);
         PotionEffectType type = PotionEffectType.getByName(e.effectId.toUpperCase());
         if (type == null) { log.warning("[ScaenaShows] Unknown potion effect: " + e.effectId); return; }
-        if (entity instanceof LivingEntity living) {
-            living.addPotionEffect(new PotionEffect(type, e.durationTicks, e.amplifier));
+        for (Entity entity : resolveEntities(e.target, show)) {
+            if (entity instanceof LivingEntity living) {
+                living.addPotionEffect(new PotionEffect(type, e.durationTicks, e.amplifier));
+            }
         }
     }
 
@@ -233,26 +237,28 @@ public final class EntityEventExecutor implements EventExecutor {
     // ENTITY_EQUIP
     // ------------------------------------------------------------------
     private void handleEntityEquip(EntityEquipEvent e, RunningShow show) {
-        Entity entity = resolveEntity(e.target, show);
-        if (!(entity instanceof LivingEntity living)) return;
-        EntityEquipment eq = living.getEquipment();
-        if (eq == null) return;
-        if (itemOf(e.helmet)     != null) eq.setHelmet(itemOf(e.helmet));
-        if (itemOf(e.chestplate) != null) eq.setChestplate(itemOf(e.chestplate));
-        if (itemOf(e.leggings)   != null) eq.setLeggings(itemOf(e.leggings));
-        if (itemOf(e.boots)      != null) eq.setBoots(itemOf(e.boots));
-        if (itemOf(e.mainHand)   != null) eq.setItemInMainHand(itemOf(e.mainHand));
-        if (itemOf(e.offHand)    != null) eq.setItemInOffHand(itemOf(e.offHand));
+        for (Entity entity : resolveEntities(e.target, show)) {
+            if (!(entity instanceof LivingEntity living)) continue;
+            EntityEquipment eq = living.getEquipment();
+            if (eq == null) continue;
+            if (itemOf(e.helmet)     != null) eq.setHelmet(itemOf(e.helmet));
+            if (itemOf(e.chestplate) != null) eq.setChestplate(itemOf(e.chestplate));
+            if (itemOf(e.leggings)   != null) eq.setLeggings(itemOf(e.leggings));
+            if (itemOf(e.boots)      != null) eq.setBoots(itemOf(e.boots));
+            if (itemOf(e.mainHand)   != null) eq.setItemInMainHand(itemOf(e.mainHand));
+            if (itemOf(e.offHand)    != null) eq.setItemInOffHand(itemOf(e.offHand));
+        }
     }
 
     // ------------------------------------------------------------------
     // ENTITY_INVISIBLE
     // ------------------------------------------------------------------
     private void handleEntityInvisible(EntityInvisibleEvent e, RunningShow show) {
-        Entity entity = resolveEntity(e.target, show);
-        if (entity instanceof LivingEntity living) {
-            living.addPotionEffect(new PotionEffect(
-                PotionEffectType.INVISIBILITY, e.durationTicks, 0, false, false));
+        for (Entity entity : resolveEntities(e.target, show)) {
+            if (entity instanceof LivingEntity living) {
+                living.addPotionEffect(new PotionEffect(
+                    PotionEffectType.INVISIBILITY, e.durationTicks, 0, false, false));
+            }
         }
     }
 
@@ -260,8 +266,7 @@ public final class EntityEventExecutor implements EventExecutor {
     // ENTITY_VELOCITY
     // ------------------------------------------------------------------
     private void handleEntityVelocity(EntityVelocityEvent e, RunningShow show) {
-        Entity entity = resolveEntity(e.target, show);
-        if (entity != null) {
+        for (Entity entity : resolveEntities(e.target, show)) {
             entity.setVelocity(new org.bukkit.util.Vector(e.vecX, e.vecY, e.vecZ));
         }
     }
@@ -296,6 +301,37 @@ public final class EntityEventExecutor implements EventExecutor {
             return null;
         }
         return null;
+    }
+
+    /**
+     * Resolve a target string to a list of entities (supports entity_group).
+     */
+    private List<Entity> resolveEntities(String target, RunningShow show) {
+        if (target == null) return List.of();
+        if (target.startsWith("entity:spawned:")) {
+            Entity e = show.getSpawnedEntity(target.substring("entity:spawned:".length()));
+            return e != null ? List.of(e) : List.of();
+        }
+        if (target.startsWith("entity_group:")) {
+            String groupName = target.substring("entity_group:".length());
+            List<UUID> uuids = show.getEntityGroup(groupName);
+            List<Entity> out = new ArrayList<>();
+            for (UUID uid : uuids) {
+                Entity e = Bukkit.getEntity(uid);
+                if (e != null) out.add(e);
+            }
+            return out;
+        }
+        if (target.startsWith("entity:world:")) {
+            String customName = target.substring("entity:world:".length());
+            Location anchor = show.getAnchorLocation();
+            if (anchor == null) return List.of();
+            for (Entity ent : anchor.getWorld().getEntities()) {
+                if (customName.equals(ent.getCustomName())) return List.of(ent);
+            }
+            return List.of();
+        }
+        return List.of();
     }
 
     private ItemStack itemOf(String material) {

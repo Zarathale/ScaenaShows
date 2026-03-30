@@ -5,12 +5,16 @@ import com.scaena.shows.model.event.StageEvents.*;
 import com.scaena.shows.runtime.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.*;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -155,15 +159,41 @@ public final class StageEventExecutor implements EventExecutor {
     // ------------------------------------------------------------------
     private void handleReturnHome(ReturnHomeEvent e, RunningShow show) {
         for (Entity entity : resolveEntities(e.target, show)) {
-            if (!(entity instanceof Player player)) continue;
-            ParticipantState ps = show.getParticipant(player.getUniqueId());
-            if (ps == null || ps.home == null) continue;
-            if (e.durationTicks <= 0) {
-                player.teleport(ps.home);
+            if (entity instanceof Player player) {
+                // Player: return to pre-show home stored in ParticipantState
+                ParticipantState ps = show.getParticipant(player.getUniqueId());
+                if (ps == null || ps.home == null) continue;
+                if (e.durationTicks <= 0) {
+                    player.teleport(ps.home);
+                } else {
+                    smoothMovePlayer(player, ps.home, e.durationTicks, null, show, show.getAnchorLocation());
+                }
             } else {
-                smoothMovePlayer(player, ps.home, e.durationTicks, null, show, show.getAnchorLocation());
+                // Non-Player entity: return to spawn-time home recorded in RunningShow
+                String spawnedName = getSpawnedName(entity, show);
+                if (spawnedName == null) continue;
+                Location home = show.getEntityHome(spawnedName);
+                if (home == null) continue;
+                if (e.durationTicks <= 0 || !(entity instanceof Mob mob)) {
+                    entity.teleport(home);
+                } else {
+                    mob.getPathfinder().moveTo(home);
+                }
             }
         }
+    }
+
+    /**
+     * Reverse-lookup the registered name for a spawned entity, so we can
+     * find its home in RunningShow. Returns null if the entity wasn't
+     * registered by name (e.g. captured via CAPTURE_ENTITIES).
+     */
+    private String getSpawnedName(Entity entity, RunningShow show) {
+        for (Map.Entry<String, org.bukkit.entity.Entity> entry
+                : show.getSpawnedEntities().entrySet()) {
+            if (entry.getValue().equals(entity)) return entry.getKey();
+        }
+        return null;
     }
 
     // ------------------------------------------------------------------
@@ -191,7 +221,26 @@ public final class StageEventExecutor implements EventExecutor {
         }
         if (e.baby && entity instanceof Ageable ageable) ageable.setBaby();
 
+        // Equipment — mirrors handleSpawn() in EntityEventExecutor
+        if (entity instanceof LivingEntity living) {
+            EntityEquipment eq = living.getEquipment();
+            if (eq != null) {
+                if (itemOf(e.helmetItem)     != null) eq.setHelmet(itemOf(e.helmetItem));
+                if (itemOf(e.chestplateItem) != null) eq.setChestplate(itemOf(e.chestplateItem));
+                if (itemOf(e.leggingsItem)   != null) eq.setLeggings(itemOf(e.leggingsItem));
+                if (itemOf(e.bootsItem)      != null) eq.setBoots(itemOf(e.bootsItem));
+                if (itemOf(e.mainHandItem)   != null) eq.setItemInMainHand(itemOf(e.mainHandItem));
+                if (itemOf(e.offHandItem)    != null) eq.setItemInOffHand(itemOf(e.offHandItem));
+            }
+        }
+
         if (entity instanceof Mob mob) mob.getPathfinder().moveTo(destLoc);
+    }
+
+    private ItemStack itemOf(String material) {
+        if (material == null || material.isEmpty()) return null;
+        try { return new ItemStack(Material.valueOf(material.toUpperCase())); }
+        catch (IllegalArgumentException ex) { return null; }
     }
 
     // ------------------------------------------------------------------

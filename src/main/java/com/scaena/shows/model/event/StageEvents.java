@@ -69,6 +69,12 @@ public final class StageEvents {
         public final int durationTicks;
         public final String facing;
         public final boolean baby;
+        public final String helmetItem;
+        public final String chestplateItem;
+        public final String leggingsItem;
+        public final String bootsItem;
+        public final String mainHandItem;
+        public final String offHandItem;
 
         public EnterEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
@@ -79,6 +85,13 @@ public final class StageEvents {
             this.durationTicks = intVal(m, "duration_ticks", 30);
             this.facing        = str(m, "facing", null);
             this.baby          = boolVal(m, "baby", false);
+            Map<String, Object> eq = mapVal(m, "equipment");
+            this.helmetItem     = str(eq, "helmet", "");
+            this.chestplateItem = str(eq, "chestplate", "");
+            this.leggingsItem   = str(eq, "leggings", "");
+            this.bootsItem      = str(eq, "boots", "");
+            this.mainHandItem   = str(eq, "main_hand", "");
+            this.offHandItem    = str(eq, "off_hand", "");
         }
 
         @Override public EventType type() { return EventType.ENTER; }

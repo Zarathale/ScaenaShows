@@ -148,16 +148,24 @@ public final class FireworkEvents {
         public final String yMode;
         public final double yOffset;
         public final Chase chase;
+        public final String powerVariation;   // UNIFORM | RAMP_UP | RAMP_DOWN | ALTERNATE | RANDOM
+        public final String colorVariation;   // UNIFORM | RAINBOW | GRADIENT | ALTERNATE
+        public final String gradientFrom;
+        public final String gradientTo;
 
         public record FanArm(double angle, double length, int count, String preset) {}
 
         @SuppressWarnings("unchecked")
         public FireworkFanEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
-            this.originOffset = XZOffset.from(m.get("origin_offset"), "x", "z");
-            this.yMode        = str(m, "y_mode", "surface");
-            this.yOffset      = dblVal(m, "y_offset", 2);
-            this.chase        = Chase.from(m.get("chase"));
+            this.originOffset    = XZOffset.from(m.get("origin_offset"), "x", "z");
+            this.yMode           = str(m, "y_mode", "surface");
+            this.yOffset         = dblVal(m, "y_offset", 2);
+            this.chase           = Chase.from(m.get("chase"));
+            this.powerVariation  = str(m, "power_variation", "UNIFORM").toUpperCase();
+            this.colorVariation  = str(m, "color_variation", "UNIFORM").toUpperCase();
+            this.gradientFrom    = str(m, "gradient_from", "#FF0000");
+            this.gradientTo      = str(m, "gradient_to", "#0000FF");
 
             List<Map<String, Object>> armMaps = (List<Map<String, Object>>) m.getOrDefault("arms", List.of());
             List<FanArm> armList = new ArrayList<>();

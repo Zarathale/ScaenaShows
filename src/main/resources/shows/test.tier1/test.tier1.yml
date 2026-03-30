@@ -1,0 +1,344 @@
+# test.tier1 — v2.13.0 Feature Verification
+#
+# PURPOSE: Checklist show for all 6 fixes shipped in v2.13.0.
+# Each cue is labeled by fix number. Run this show after a fresh build
+# and mark each cue pass/fail on the run sheet.
+#
+# META-TEST: This show lives in shows/test.tier1/test.tier1.yml (a subfolder).
+# If the show loads at all, Fix 6 (subdirectory scanner) is confirmed.
+#
+# USAGE: /show play test.tier1 <yourname>
+# Stand in an open flat area with ~20 blocks clearance. Have cows nearby or
+# let C2 spawn them. Watch cue numbers match the run sheet.
+#
+# CAUTION: Spawns a zombie (armored_zombie) at mark wing_R (+15 X).
+# The zombie despawns at end. Cows also despawn at end via despawn_on_end.
+
+id: test.tier1
+name: "v2.13.0 Feature Verification"
+description: >
+  Tier 1 verification show for ScaenaShows v2.13.0.
+  Tests: entity_group targeting, ENTER equipment, entity RETURN_HOME,
+  FIREWORK min_clearance, FIREWORK_FAN variation, subdirectory scanner.
+portable: true
+default_mode: static
+default_audience: broadcast
+front: south
+duration_ticks: 525
+
+marks:
+  center:    {x:  0, z:  0}
+  wing_R:    {x: 15, z:  0}
+  herd_zone: {x:  5, z:  5}
+
+meta:
+  created_by: Smitty
+  created_at: 2026-03-29
+  last_edited_by: Smitty
+  last_edited_at: 2026-03-29
+
+bossbar:
+  enabled: true
+  title: "<yellow>test.tier1 — v2.13.0 Verify</yellow>"
+  color: YELLOW
+  overlay: PROGRESS
+  audience: broadcast
+  fade_in_ticks: 5
+  fade_out_ticks: 10
+
+timeline:
+
+  # ══════════════════════════════════════════════════════════════════════
+  # C1 — FIX 6: SUBDIRECTORY SCANNER (T0–T20)
+  # If this show loaded, the subdirectory scanner is working.
+  # No additional action needed — the title IS the test.
+  # ══════════════════════════════════════════════════════════════════════
+
+  - at: 0
+    type: TITLE
+    audience: broadcast
+    title: "<gold><bold>test.tier1</bold></gold>"
+    subtitle: "<gray>v2.13.0 Feature Verification</gray>"
+    fade_in: 5
+    stay: 40
+    fade_out: 10
+
+  - at: 0
+    type: MESSAGE
+    audience: broadcast
+    message: "<yellow>[C1] FIX 6: Show loaded from subdirectory. Scanner confirmed. ✓"
+
+
+  # ══════════════════════════════════════════════════════════════════════
+  # C2 — FIX 1: ENTITY_GROUP TARGETING (T30–T185)
+  # Spawns 3 cows, captures them as test_herd, then applies ENTITY_AI
+  # and ENTITY_SPEED to the whole group via entity_group:test_herd.
+  # All 3 cows should freeze simultaneously, then crawl sluggishly.
+  # Watch: all 3 respond as a unit, not just one.
+  # ══════════════════════════════════════════════════════════════════════
+
+  - at: 30
+    type: SPAWN_ENTITY
+    entity_type: COW
+    name: cow_a
+    offset: {x: 3, y: 0, z: 4}
+    despawn_on_end: true
+
+  - at: 30
+    type: SPAWN_ENTITY
+    entity_type: COW
+    name: cow_b
+    offset: {x: 5, y: 0, z: 3}
+    despawn_on_end: true
+
+  - at: 30
+    type: SPAWN_ENTITY
+    entity_type: COW
+    name: cow_c
+    offset: {x: 4, y: 0, z: 6}
+    despawn_on_end: true
+
+  # CAPTURE_ENTITIES executes first in same-tick order per spec §15
+  - at: 50
+    type: CAPTURE_ENTITIES
+    entity_type: COW
+    radius: 12
+    max_count: 3
+    group_name: test_herd
+    capture_mode: snapshot
+
+  - at: 55
+    type: MESSAGE
+    audience: broadcast
+    message: "<yellow>[C2] FIX 1: Testing entity_group targeting. 3 cows should freeze now."
+
+  # All 3 cows freeze via group target
+  - at: 60
+    type: ENTITY_AI
+    target: entity_group:test_herd
+    enabled: false
+
+  # Speed reduction — takes effect when AI is restored below
+  - at: 90
+    type: ENTITY_SPEED
+    target: entity_group:test_herd
+    speed: 0.3
+
+  # Restore AI — cows should now move sluggishly (speed 0.3 * 0.2 = 0.06)
+  - at: 100
+    type: ENTITY_AI
+    target: entity_group:test_herd
+    enabled: true
+
+  - at: 105
+    type: MESSAGE
+    audience: broadcast
+    message: "<yellow>[C2] All 3 cows should now move slowly. Check: all moved as unit?"
+
+  - at: 160
+    type: MESSAGE
+    audience: broadcast
+    message: "<yellow>[C2] FIX 1 check: Did all 3 cows freeze (T60) then crawl (T100)?"
+
+  # Despawn individually — DESPAWN_ENTITY uses resolveEntity (singular),
+  # so despawn the cows by name rather than as a group.
+  - at: 175
+    type: DESPAWN_ENTITY
+    target: entity:spawned:cow_a
+    particle_burst: true
+
+  - at: 175
+    type: DESPAWN_ENTITY
+    target: entity:spawned:cow_b
+    particle_burst: true
+
+  - at: 175
+    type: DESPAWN_ENTITY
+    target: entity:spawned:cow_c
+    particle_burst: true
+
+
+  # ══════════════════════════════════════════════════════════════════════
+  # C3 — FIX 2: ENTER WITH EQUIPMENT (T200–T290)
+  # Spawns a zombie at wing_R (x+15), paths it to center, with full
+  # iron armor and iron sword applied at spawn.
+  # Watch: zombie arrives at center wearing iron kit.
+  # ══════════════════════════════════════════════════════════════════════
+
+  - at: 195
+    type: MESSAGE
+    audience: broadcast
+    message: "<yellow>[C3] FIX 2: ENTER with equipment. Zombie incoming from wing_R (+15 X)."
+
+  - at: 200
+    type: ENTER
+    entity_type: ZOMBIE
+    name: armored_zombie
+    from: mark:wing_R
+    destination: mark:center
+    duration_ticks: 80
+    facing: mark:center
+    equipment:
+      helmet: IRON_HELMET
+      chestplate: IRON_CHESTPLATE
+      leggings: IRON_LEGGINGS
+      boots: IRON_BOOTS
+      main_hand: IRON_SWORD
+
+  - at: 285
+    type: MESSAGE
+    audience: broadcast
+    message: "<yellow>[C3] FIX 2 check: Zombie at center wearing iron armor + sword?"
+
+
+  # ══════════════════════════════════════════════════════════════════════
+  # C4 — FIX 3: ENTITY RETURN_HOME (T300–T385)
+  # Commands the zombie to path back to its spawn location (wing_R).
+  # Home is captured at ENTER spawn time (not current position).
+  # Watch: zombie paths back toward wing_R.
+  # ══════════════════════════════════════════════════════════════════════
+
+  - at: 300
+    type: MESSAGE
+    audience: broadcast
+    message: "<yellow>[C4] FIX 3: entity RETURN_HOME. Zombie should path back to wing_R spawn."
+
+  - at: 305
+    type: RETURN_HOME
+    target: entity:spawned:armored_zombie
+    duration_ticks: 60
+
+  - at: 370
+    type: MESSAGE
+    audience: broadcast
+    message: "<yellow>[C4] FIX 3 check: Zombie walking back toward wing_R (+15 X)?"
+
+  - at: 380
+    type: DESPAWN_ENTITY
+    target: entity:spawned:armored_zombie
+    particle_burst: true
+
+
+  # ══════════════════════════════════════════════════════════════════════
+  # C5 — FIX 4: FIREWORK MIN_CLEARANCE (T395–T450)
+  # Test A: min_clearance:-1 — bypass sentinel, check skipped → FIRES.
+  # Test B: min_clearance:300 — clearance check runs; outdoors clearance
+  # is ≤0 which is < 300 → SKIPS silently.
+  # Default for min_clearance is -1 (no check). Only positive values
+  # trigger the clearance check. Use positive values for enclosed venues.
+  # ══════════════════════════════════════════════════════════════════════
+
+  - at: 395
+    type: MESSAGE
+    audience: broadcast
+    message: "<yellow>[C5] FIX 4: min_clearance test. Test A fires in ~5t. Test B silent."
+
+  # Test A: -1 bypasses the check entirely → firework fires
+  - at: 400
+    type: FIREWORK
+    preset: scae_star_warm
+    offset: {x: 0, y: 2, z: 0}
+    y_mode: relative
+    min_clearance: -1
+
+  - at: 430
+    type: MESSAGE
+    audience: broadcast
+    message: "<yellow>[C5] Test B: min_clearance:300 fires now — no firework should appear."
+
+  # Test B: 300 >> actual clearance outdoors → firework suppressed
+  - at: 435
+    type: FIREWORK
+    preset: scae_large_fanfare
+    offset: {x: 0, y: 2, z: 0}
+    y_mode: relative
+    min_clearance: 300
+
+  - at: 448
+    type: MESSAGE
+    audience: broadcast
+    message: "<yellow>[C5] FIX 4 check: Test A fired, Test B silent?"
+
+
+  # ══════════════════════════════════════════════════════════════════════
+  # C6 — FIX 5: FIREWORK_FAN VARIATION (T460–T515)
+  # Two arms (NW=315°, NE=45°), 5 positions each, chase FL.
+  # power_variation: RAMP_UP — power increases across the 10 positions.
+  # color_variation: RAINBOW — 7-color cycle (red→violet) per position.
+  # Watch: V-shape fireworks with escalating power and rainbow colors.
+  # ══════════════════════════════════════════════════════════════════════
+
+  - at: 458
+    type: MESSAGE
+    audience: broadcast
+    message: "<yellow>[C6] FIX 5: FIREWORK_FAN with RAMP_UP power + RAINBOW color. V-shape incoming."
+
+  - at: 462
+    type: FIREWORK_FAN
+    origin_offset: {x: 0, z: 0}
+    y_mode: relative
+    y_offset: 2
+    power_variation: RAMP_UP
+    color_variation: RAINBOW
+    arms:
+      - angle: 315
+        length: 8
+        count: 5
+        preset: scae_star_warm
+      - angle: 45
+        length: 8
+        count: 5
+        preset: scae_star_warm
+    chase:
+      enabled: true
+      direction: FL
+      interval_ticks: 5
+
+  - at: 510
+    type: MESSAGE
+    audience: broadcast
+    message: "<yellow>[C6] FIX 5 check: Rainbow V-shape with power ramp visible?"
+
+
+  # ══════════════════════════════════════════════════════════════════════
+  # C7 — SUMMARY CHECKLIST (T514–T525)
+  # ══════════════════════════════════════════════════════════════════════
+
+  - at: 514
+    type: TITLE
+    audience: broadcast
+    title: "<green><bold>test.tier1 Complete</bold></green>"
+    subtitle: "<gray>Check your run sheet</gray>"
+    fade_in: 5
+    stay: 60
+    fade_out: 10
+
+  - at: 516
+    type: MESSAGE
+    audience: broadcast
+    message: "<green>[C7] FIX 1 — entity_group targeting (C2): all 3 cows responded?"
+
+  - at: 517
+    type: MESSAGE
+    audience: broadcast
+    message: "<green>[C7] FIX 2 — ENTER equipment (C3): iron armor on zombie?"
+
+  - at: 518
+    type: MESSAGE
+    audience: broadcast
+    message: "<green>[C7] FIX 3 — entity RETURN_HOME (C4): zombie pathed back?"
+
+  - at: 519
+    type: MESSAGE
+    audience: broadcast
+    message: "<green>[C7] FIX 4 — min_clearance (C5): A fired, B silent?"
+
+  - at: 520
+    type: MESSAGE
+    audience: broadcast
+    message: "<green>[C7] FIX 5 — FIREWORK_FAN variation (C6): rainbow V-shape?"
+
+  - at: 521
+    type: MESSAGE
+    audience: broadcast
+    message: "<green>[C7] FIX 6 — subdirectory scanner (C1): show loaded from subfolder?"

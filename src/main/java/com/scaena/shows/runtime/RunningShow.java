@@ -51,6 +51,12 @@ public final class RunningShow {
     private final Map<String, Entity> spawnedEntities = new LinkedHashMap<>();
 
     // -----------------------------------------------------------------------
+    // Spawn-home locations for named entities (name → Location at spawn time)
+    // Used by RETURN_HOME to send non-Player entities back to origin.
+    // -----------------------------------------------------------------------
+    private final Map<String, Location> spawnedEntityHomes = new LinkedHashMap<>();
+
+    // -----------------------------------------------------------------------
     // Named entity groups captured by CAPTURE_ENTITIES (group_name → list of Entity UUIDs)
     // -----------------------------------------------------------------------
     private final Map<String, List<UUID>> entityGroups = new LinkedHashMap<>();
@@ -224,6 +230,13 @@ public final class RunningShow {
 
     public void registerSpawnedEntity(String name, Entity entity) {
         spawnedEntities.put(name, entity);
+        // Record spawn location as the entity's home for RETURN_HOME support
+        spawnedEntityHomes.put(name, entity.getLocation().clone());
+    }
+
+    /** Returns the spawn-time home location for a named entity, or null if unknown. */
+    public Location getEntityHome(String name) {
+        return spawnedEntityHomes.get(name);
     }
 
     public Entity getSpawnedEntity(String name) {
