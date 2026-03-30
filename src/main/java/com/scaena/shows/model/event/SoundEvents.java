@@ -39,11 +39,13 @@ public final class SoundEvents {
      *   "all"      — stops every sound source simultaneously
      */
     public static final class StopSoundEvent extends ShowEvent {
-        public final String source; // Adventure Sound.Source name, or "all"
+        public final String source;  // Adventure Sound.Source name, or "all"
+        public final String soundId; // null = channel-wide stop; set = per-sound-ID stop
 
         public StopSoundEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
-            this.source = str(m, "source", "music");
+            this.source  = str(m, "source", "music");
+            this.soundId = str(m, "sound_id", null);
         }
 
         @Override public EventType type() { return EventType.STOP_SOUND; }

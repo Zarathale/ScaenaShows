@@ -117,6 +117,8 @@ public final class FireworkEvents {
         public final Chase chase;
         public final String powerVariation;
         public final String colorVariation;
+        public final String gradientFrom;
+        public final String gradientTo;
 
         public FireworkLineEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
@@ -130,6 +132,8 @@ public final class FireworkEvents {
             this.chase         = Chase.from(m.get("chase"));
             this.powerVariation= str(m, "power_variation", "UNIFORM").toUpperCase();
             this.colorVariation= str(m, "color_variation", "UNIFORM").toUpperCase();
+            this.gradientFrom  = str(m, "gradient_from", "#FF0000");
+            this.gradientTo    = str(m, "gradient_to", "#0000FF");
         }
 
         @Override public EventType type() { return EventType.FIREWORK_LINE; }

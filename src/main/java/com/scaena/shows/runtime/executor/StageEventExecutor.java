@@ -64,8 +64,12 @@ public final class StageEventExecutor implements EventExecutor {
             double dx = lookTarget.getX() - from.getX();
             double dz = lookTarget.getZ() - from.getZ();
             float yaw = (float) (Math.atan2(-dx, dz) * 180.0 / Math.PI);
+            double dy = lookTarget.getY() - from.getY();
+            double horizontalDist = Math.sqrt(dx * dx + dz * dz);
+            float pitch = (float) (-Math.toDegrees(Math.atan2(dy, horizontalDist)));
             Location newLoc = from.clone();
             newLoc.setYaw(yaw);
+            newLoc.setPitch(pitch);
             entity.teleport(newLoc);
         }
     }

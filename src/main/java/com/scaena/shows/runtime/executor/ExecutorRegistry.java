@@ -39,10 +39,11 @@ public final class ExecutorRegistry {
         team.setExecutorRegistry(this);
 
         // §6.1 Text and Display
-        executors.put(EventType.MESSAGE,    text);
-        executors.put(EventType.TITLE,      text);
-        executors.put(EventType.ACTION_BAR, text);
-        executors.put(EventType.BOSSBAR,    text);
+        executors.put(EventType.MESSAGE,     text);
+        executors.put(EventType.TITLE,       text);
+        executors.put(EventType.TITLE_CLEAR, text);
+        executors.put(EventType.ACTION_BAR,  text);
+        executors.put(EventType.BOSSBAR,     text);
 
         // §6.2 Sound
         executors.put(EventType.SOUND,      sound);

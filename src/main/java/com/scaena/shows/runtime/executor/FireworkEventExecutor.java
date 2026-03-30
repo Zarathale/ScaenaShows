@@ -113,7 +113,7 @@ public final class FireworkEventExecutor implements EventExecutor {
             positions.add(PositionResolver.fireworkLocation(anchor, pt[0], pt[1], e.yMode, e.yOffset));
         }
 
-        launchWithChase(positions, e.chase, preset, e.powerVariation, e.colorVariation, null, null, show);
+        launchWithChase(positions, e.chase, preset, e.powerVariation, e.colorVariation, e.gradientFrom, e.gradientTo, show);
     }
 
     // ------------------------------------------------------------------

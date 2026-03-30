@@ -73,11 +73,17 @@ public final class SoundEventExecutor implements EventExecutor {
     private void executeStop(SoundEvents.StopSoundEvent e, RunningShow show) {
         List<Player> audience = AudienceResolver.resolve("participants", show);
         for (Player p : audience) {
-            stopSoundsForPlayer(p, e.source);
+            stopSoundsForPlayer(p, e.source, e.soundId);
         }
     }
 
-    private void stopSoundsForPlayer(Player p, String source) {
+    private void stopSoundsForPlayer(Player p, String source, String soundId) {
+        // Per-sound-ID stop: stop only the named sound on the given category
+        if (soundId != null && !soundId.isEmpty()) {
+            p.stopSound(soundId, parseCategory(source));
+            return;
+        }
+        // Channel-wide stop
         if (source.equalsIgnoreCase("all")) {
             p.stopSound(SoundStop.all());
             return;

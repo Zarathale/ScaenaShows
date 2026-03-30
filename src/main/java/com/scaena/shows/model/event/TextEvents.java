@@ -48,6 +48,22 @@ public final class TextEvents {
     }
 
     // ------------------------------------------------------------------
+    // TITLE_CLEAR — instant dismiss with optional fade-out; no pop
+    // ------------------------------------------------------------------
+    public static final class TitleClearEvent extends ShowEvent {
+        public final String audience;
+        public final int fadeOut;
+
+        public TitleClearEvent(Map<String, Object> m) {
+            super(intVal(m, "at", 0));
+            this.audience = str(m, "audience", "broadcast");
+            this.fadeOut  = intVal(m, "fade_out", 10);
+        }
+
+        @Override public EventType type() { return EventType.TITLE_CLEAR; }
+    }
+
+    // ------------------------------------------------------------------
     // ACTION_BAR
     // ------------------------------------------------------------------
     public static final class ActionBarEvent extends ShowEvent {

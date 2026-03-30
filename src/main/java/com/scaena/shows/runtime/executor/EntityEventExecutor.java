@@ -75,6 +75,40 @@ public final class EntityEventExecutor implements EventExecutor {
             ageable.setBaby();
         }
 
+        // Variant / Profession
+        // Villager, Cat, Wolf use Registry API (Paper 1.20.5+ — enum valueOf deprecated for removal)
+        // Horse, Sheep retain enum valueOf (not deprecated)
+        if (entity instanceof Villager villager) {
+            if (e.profession != null) {
+                Villager.Profession prof = Registry.VILLAGER_PROFESSION.get(
+                    NamespacedKey.minecraft(e.profession.toLowerCase()));
+                if (prof != null) { villager.setProfession(prof); }
+                else { log.warning("[ScaenaShows] Unknown villager profession: " + e.profession); }
+            }
+            if (e.variant != null) {
+                Villager.Type vtype = Registry.VILLAGER_TYPE.get(
+                    NamespacedKey.minecraft(e.variant.toLowerCase()));
+                if (vtype != null) { villager.setVillagerType(vtype); }
+                else { log.warning("[ScaenaShows] Unknown villager type: " + e.variant); }
+            }
+        } else if (entity instanceof Cat cat && e.variant != null) {
+            Cat.Type ctype = Registry.CAT_VARIANT.get(
+                NamespacedKey.minecraft(e.variant.toLowerCase()));
+            if (ctype != null) { cat.setCatType(ctype); }
+            else { log.warning("[ScaenaShows] Unknown cat type: " + e.variant); }
+        } else if (entity instanceof Horse horse && e.variant != null) {
+            try { horse.setColor(Horse.Color.valueOf(e.variant.toUpperCase())); }
+            catch (IllegalArgumentException ex) { log.warning("[ScaenaShows] Unknown horse color: " + e.variant); }
+        } else if (entity instanceof Sheep sheep && e.variant != null) {
+            try { sheep.setColor(DyeColor.valueOf(e.variant.toUpperCase())); }
+            catch (IllegalArgumentException ex) { log.warning("[ScaenaShows] Unknown sheep color: " + e.variant); }
+        } else if (entity instanceof Wolf wolf && e.variant != null) {
+            Wolf.Variant wv = Registry.WOLF_VARIANT.get(
+                NamespacedKey.minecraft(e.variant.toLowerCase()));
+            if (wv != null) { wolf.setVariant(wv); }
+            else { log.warning("[ScaenaShows] Unknown wolf variant: " + e.variant); }
+        }
+
         // Equipment
         if (entity instanceof LivingEntity living) {
             EntityEquipment eq = living.getEquipment();
@@ -251,6 +285,15 @@ public final class EntityEventExecutor implements EventExecutor {
             List<UUID> group = show.getEntityGroup(groupName);
             if (group.isEmpty()) return null;
             return Bukkit.getEntity(group.get(0));
+        }
+        if (target.startsWith("entity:world:")) {
+            String customName = target.substring("entity:world:".length());
+            Location anchor = show.getAnchorLocation();
+            if (anchor == null) return null;
+            for (Entity ent : anchor.getWorld().getEntities()) {
+                if (customName.equals(ent.getCustomName())) return ent;
+            }
+            return null;
         }
         return null;
     }

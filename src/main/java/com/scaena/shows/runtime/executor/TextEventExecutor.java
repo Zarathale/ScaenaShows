@@ -31,10 +31,11 @@ public final class TextEventExecutor implements EventExecutor {
     @Override
     public void execute(ShowEvent event, RunningShow show) {
         switch (event.type()) {
-            case MESSAGE    -> handleMessage((MessageEvent) event, show);
-            case TITLE      -> handleTitle((TitleEvent) event, show);
-            case ACTION_BAR -> handleActionBar((ActionBarEvent) event, show);
-            case BOSSBAR    -> handleBossbar((BossbarEvent) event, show);
+            case MESSAGE     -> handleMessage((MessageEvent) event, show);
+            case TITLE       -> handleTitle((TitleEvent) event, show);
+            case TITLE_CLEAR -> handleTitleClear((TextEvents.TitleClearEvent) event, show);
+            case ACTION_BAR  -> handleActionBar((ActionBarEvent) event, show);
+            case BOSSBAR     -> handleBossbar((BossbarEvent) event, show);
             default -> {}
         }
     }
@@ -62,6 +63,22 @@ public final class TextEventExecutor implements EventExecutor {
             Duration.ofMillis(e.fadeOut * 50L)
         );
         Title titleObj = Title.title(title, subtitle, times);
+        List<Player> audience = AudienceResolver.resolve(e.audience, show);
+        for (Player p : audience) {
+            p.showTitle(titleObj);
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // TITLE_CLEAR — send empty title with zero stay; fade_out controls the wipe speed
+    // ------------------------------------------------------------------
+    private void handleTitleClear(TextEvents.TitleClearEvent e, RunningShow show) {
+        Title.Times times = Title.Times.times(
+            Duration.ofMillis(0),
+            Duration.ofMillis(0),
+            Duration.ofMillis(e.fadeOut * 50L)
+        );
+        Title titleObj = Title.title(Component.empty(), Component.empty(), times);
         List<Player> audience = AudienceResolver.resolve(e.audience, show);
         for (Player p : audience) {
             p.showTitle(titleObj);

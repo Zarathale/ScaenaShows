@@ -40,9 +40,10 @@ public final class EventParser {
 
             ShowEvent event = switch (type) {
                 // §6.1 Text and Display
-                case MESSAGE    -> new TextEvents.MessageEvent(m);
-                case TITLE      -> new TextEvents.TitleEvent(m);
-                case ACTION_BAR -> new TextEvents.ActionBarEvent(m);
+                case MESSAGE     -> new TextEvents.MessageEvent(m);
+                case TITLE       -> new TextEvents.TitleEvent(m);
+                case TITLE_CLEAR -> new TextEvents.TitleClearEvent(m);
+                case ACTION_BAR  -> new TextEvents.ActionBarEvent(m);
                 case BOSSBAR    -> new TextEvents.BossbarEvent(m);
                 // §6.2 Sound
                 case SOUND      -> new SoundEvents.SoundEvent(m);

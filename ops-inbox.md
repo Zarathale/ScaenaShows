@@ -55,24 +55,6 @@ for a design decision before implementing.
 
 ---
 
-### [java-gap] FIREWORK_LINE: `gradient_from` / `gradient_to` not parsed; GRADIENT always red→blue
-
-**Area:** Fireworks Director
-**Schema field:** `color_variation: GRADIENT` on `FIREWORK_LINE`
-**Filed:** 2026-03-26 (Fireworks KB build)
-
-`FireworkLineEvent` does not parse `gradient_from` or `gradient_to` fields. The executor calls
-`launchWithChase()` with hardcoded `null, null` for these arguments. Inside `interpolateGradient()`,
-`null` inputs fall back to `"FF0000"` (red) and `"0000FF"` (blue). `color_variation: GRADIENT`
-on a LINE event always produces a red-to-blue gradient regardless of the YAML.
-
-**Impact:** Authors who author `color_variation: GRADIENT` with `gradient_from`/`gradient_to`
-on a FIREWORK_LINE see red→blue instead of their intended palette.
-
-**Fix scope:** Add `gradientFrom` and `gradientTo` fields to `FireworkLineEvent` (matching the
-existing pattern in `FireworkCircleEvent`). Pass them through to `launchWithChase()` instead of
-`null, null`. Verify the YAML parser reads them from the top-level map, not nested.
-
 ---
 
 ### [java-gap] FIREWORK_FAN: no `power_variation` or `color_variation`
@@ -96,44 +78,7 @@ runs across all positions combined (consistent with how chase already works acro
 
 ---
 
-### [java-gap] SPAWN_ENTITY: `variant` and `profession` fields parsed but not applied
-
-**Area:** Wardrobe, Casting Director
-**Schema field:** `variant:` and `profession:` on `SPAWN_ENTITY`
-**Now blocking:** showcase.01 "Preparing for Battle" — companion is an Armorer Villager;
-`profession: ARMORER` must work for the companion to spawn correctly.
-
-`SpawnEntityEvent` parses both fields correctly (model layer is complete), but `EntityEventExecutor.handleSpawn()` never applies them to the spawned entity. They are silently ignored at runtime.
-
-**Impact:** Villager professions, cat coat patterns, horse colorings, sheep wool colors, and wolf variants cannot be set via YAML. The fields appear to work but do nothing. For showcase.01, the companion will spawn as a generic Villager rather than an Armorer Villager until this is fixed.
-
-**Fix scope:** In `EntityEventExecutor.handleSpawn()`, after spawning, cast to the appropriate entity subtype and apply:
-- `Villager` → `setProfession(Villager.Profession.valueOf(e.profession))` and `setVillagerType(Villager.Type.valueOf(e.variant))`
-- `Cat` → `setCatType(Cat.Type.valueOf(e.variant))`
-- `Horse` → `setColor(Horse.Color.valueOf(e.variant))`
-- `Sheep` → `setColor(DyeColor.valueOf(e.variant))`
-- `Wolf` (1.21+) → `setVariant(Wolf.Variant.valueOf(e.variant))`
-
-Guard each cast; log and continue if the variant value is invalid.
-
 ---
-
-### [java-gap] FACE: yaw only, no pitch control
-
-**Area:** Effects Director (Camera specialty), Choreographer
-**Event:** `FACE`
-
-`StageEventExecutor.handleFace()` computes yaw (horizontal angle via atan2) but does not set pitch. The entity or player turns horizontally toward the target but is not oriented vertically.
-
-**Impact:** Cannot orient players or entities to look up or down at specific targets. Looking up at aerial performers, overhead fireworks, or elevated marks requires a PLAYER_TELEPORT workaround that also changes position.
-
-**Fix scope:** Add pitch computation alongside the existing yaw logic:
-```java
-double dy = lookTarget.getY() - from.getY();
-double horizontalDist = Math.sqrt(dx*dx + dz*dz);
-float pitch = (float) (-Math.toDegrees(Math.atan2(dy, horizontalDist)));
-newLoc.setPitch(pitch);
-```
 
 ---
 
@@ -149,15 +94,6 @@ Block modifications currently require the `COMMAND` escape hatch. COMMAND-placed
 **Proposed:** Add `BLOCK_PLACE` and `BLOCK_REMOVE` event types. On `BLOCK_PLACE`, record the original block type at the target location in `RunningShow`. On show end (natural or interrupted), `applyStopSafety` restores original blocks. This brings block modification inside the cleanup contract.
 
 ---
-
-### [java-gap] No TITLE_CLEAR event
-
-**Area:** Sprite Voice Director
-**Event:** (new — does not exist)
-
-No way to cleanly dismiss a `TITLE` before its `stay` timer expires. Current workaround — firing a new TITLE with empty strings — resets the fade clock and causes a visual pop.
-
-**Proposed:** Add a `TITLE_CLEAR` point-in-time event that sends a title with empty strings and `fade_in: 0, stay: 0, fade_out: 10`. Clean fast fade-out, no pop.
 
 ---
 
@@ -250,30 +186,6 @@ resolving from the stored UUID list.
 
 ---
 
-### [java-gap] `entity:world:Name` targeting prefix not implemented
-
-**Area:** Casting Director
-**Events affected:** All events that use `EntityEventExecutor.resolveEntity()`
-**Filed:** 2026-03-25 (Casting KB build)
-
-`resolveEntity()` handles `entity:spawned:` and `entity_group:` prefixes. There is no branch
-for `entity:world:`. Any target string beginning with `entity:world:` returns null and all
-events against it silently skip. The targeting prefix is documented in the Casting KB as valid,
-but has never been implemented.
-
-**Fix scope:** Add a branch in `resolveEntity()`:
-```java
-if (target.startsWith("entity:world:")) {
-    String customName = target.substring("entity:world:".length());
-    for (Entity ent : anchor.getWorld().getEntities()) {
-        if (customName.equals(ent.getCustomName())) return ent;
-    }
-    return null;
-}
-```
-Note: this world scan should be bounded (or replaced with a tagged lookup) for performance on
-large worlds.
-
 ---
 
 ### [java-gap] ENTITY_SPEED does not address entity groups
@@ -338,28 +250,6 @@ non-Player entities that CROSS_TO's or teleports them to the recorded spawn loca
 `return_home` is called.
 
 ---
-
-### [java-gap] STOP_SOUND: cannot stop by specific sound_id
-
-**Area:** Sound Designer
-**Event:** `STOP_SOUND`
-**Filed:** 2026-03-27 (Sound KB calibration session)
-
-`StopSoundEvent` in the YAML model has no `sound_id` field. The executor calls
-`p.stopSound(SoundStop.source(src))` — stopping everything on the given channel — with no
-mechanism to stop a single named sound independently. If a `sound_id:` key is present in the
-YAML, it is silently ignored.
-
-**Impact:** Sound Designer cannot stop a specific ambient loop without also stopping all other
-sounds on the same channel. The established workaround is routing sounds intended for independent
-stop control onto separate categories (e.g., one bed on `ambient`, the other on `hostile`).
-This constrains sound architecture — the number of independently stoppable beds is limited to
-the available categories.
-
-**Proposed:** Add a `sound_id:` field to `StopSoundEvent`. When set, the executor calls
-`p.stopSound(soundId, SoundCategory.valueOf(source.toUpperCase()))` instead of the channel-wide
-stop. When omitted, behavior is unchanged (channel-wide clear). This gives Sound Designer
-per-sound-ID stop control without breaking existing usage.
 
 ---
 
@@ -576,4 +466,38 @@ Add a "Human as Designer" preamble to each department KB clarifying the creative
 
 ## Resolved
 
-*(none yet)*
+---
+
+### [resolved] SPAWN_ENTITY: `variant` and `profession` fields applied ✓
+**Shipped:** 2.12.0 | **Filed:** 2026-03-26 | **Area:** Wardrobe, Casting Director
+Added entity subtype dispatch in `EntityEventExecutor.handleSpawn()`. Villager gets `setProfession` + `setVillagerType`; Cat, Horse, Sheep, Wolf each get their typed variant setter. All casts are guarded with warning logs on invalid values.
+
+---
+
+### [resolved] FACE: pitch added alongside yaw ✓
+**Shipped:** 2.12.0 | **Filed:** 2026-03-26 | **Area:** Effects Director, Choreographer
+Added `dy`, `horizontalDist`, and `pitch` computation to `StageEventExecutor.handleFace()`. Entities and players now orient vertically toward the look target.
+
+---
+
+### [resolved] FIREWORK_LINE: `gradient_from` / `gradient_to` parsed and passed through ✓
+**Shipped:** 2.12.0 | **Filed:** 2026-03-26 | **Area:** Fireworks Director
+Added `gradientFrom` and `gradientTo` fields to `FireworkLineEvent`. Executor now passes them to `launchWithChase()` instead of hardcoded `null, null`. GRADIENT color variation on FIREWORK_LINE now uses the authored palette.
+
+---
+
+### [resolved] TITLE_CLEAR: new event type added ✓
+**Shipped:** 2.12.0 | **Filed:** 2026-03-26 | **Area:** Sprite Voice Director
+Added `TITLE_CLEAR` to `EventType`, `TitleClearEvent` to `TextEvents`, handler in `TextEventExecutor`, and case in `EventParser`. Sends empty title with `fade_in: 0, stay: 0, fade_out: <n>` — clean wipe, no pop.
+
+---
+
+### [resolved] STOP_SOUND: `sound_id` field for per-sound stop ✓
+**Shipped:** 2.12.0 | **Filed:** 2026-03-27 | **Area:** Sound Designer
+Added `sound_id:` field to `StopSoundEvent`. When set, executor calls `p.stopSound(soundId, category)` for targeted stop. When omitted, channel-wide behavior is unchanged.
+
+---
+
+### [resolved] `entity:world:Name` targeting implemented ✓
+**Shipped:** 2.12.0 | **Filed:** 2026-03-25 | **Area:** Casting Director
+Added `entity:world:` branch to `EntityEventExecutor.resolveEntity()`. Scans world entities by custom name. Unblocks `SET_ITEM_FRAME` and any other event using world-entity targeting.
