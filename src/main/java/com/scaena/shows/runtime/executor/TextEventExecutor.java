@@ -4,6 +4,7 @@ import com.scaena.shows.model.event.*;
 import com.scaena.shows.model.event.TextEvents.*;
 import com.scaena.shows.runtime.AudienceResolver;
 import com.scaena.shows.runtime.RunningShow;
+import com.scaena.shows.runtime.ShowManager;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -24,18 +25,30 @@ public final class TextEventExecutor implements EventExecutor {
     private static final MiniMessage MM = MiniMessage.miniMessage();
     private final JavaPlugin plugin;
 
+    /**
+     * ShowManager is set post-construction (same pattern as TeamEventExecutor)
+     * to avoid a circular dependency at ExecutorRegistry build time.
+     */
+    private ShowManager showManager;
+
     public TextEventExecutor(JavaPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    /** Called by ExecutorRegistry after ShowManager is constructed. */
+    public void setShowManager(ShowManager showManager) {
+        this.showManager = showManager;
     }
 
     @Override
     public void execute(ShowEvent event, RunningShow show) {
         switch (event.type()) {
-            case MESSAGE     -> handleMessage((MessageEvent) event, show);
-            case TITLE       -> handleTitle((TitleEvent) event, show);
-            case TITLE_CLEAR -> handleTitleClear((TextEvents.TitleClearEvent) event, show);
-            case ACTION_BAR  -> handleActionBar((ActionBarEvent) event, show);
-            case BOSSBAR     -> handleBossbar((BossbarEvent) event, show);
+            case MESSAGE       -> handleMessage((MessageEvent) event, show);
+            case TITLE         -> handleTitle((TitleEvent) event, show);
+            case TITLE_CLEAR   -> handleTitleClear((TextEvents.TitleClearEvent) event, show);
+            case ACTION_BAR    -> handleActionBar((ActionBarEvent) event, show);
+            case BOSSBAR       -> handleBossbar((BossbarEvent) event, show);
+            case PLAYER_CHOICE -> handlePlayerChoice((PlayerChoiceEvent) event, show);
             default -> {}
         }
     }
@@ -161,5 +174,24 @@ public final class TextEventExecutor implements EventExecutor {
                 bar.progress(Math.max(0f, Math.min(1f, progress)));
             }
         }.runTaskTimer(plugin, 1L, 1L);
+    }
+
+    // ------------------------------------------------------------------
+    // PLAYER_CHOICE — suspend and hand off to ShowManager
+    // ------------------------------------------------------------------
+    private void handlePlayerChoice(PlayerChoiceEvent e, RunningShow show) {
+        if (showManager == null) {
+            plugin.getLogger().warning(
+                "[ScaenaShows] PLAYER_CHOICE fired but ShowManager not wired "
+                + "into TextEventExecutor — skipping.");
+            return;
+        }
+        if (e.options.isEmpty()) {
+            plugin.getLogger().warning(
+                "[ScaenaShows] PLAYER_CHOICE has no options in show '"
+                + show.show.id + "' — skipping.");
+            return;
+        }
+        showManager.suspendForChoice(show, e);
     }
 }

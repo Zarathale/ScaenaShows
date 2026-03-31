@@ -1,5 +1,7 @@
 package com.scaena.shows.model.event;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /** §6.1 — MESSAGE, TITLE, ACTION_BAR, BOSSBAR */
@@ -105,5 +107,51 @@ public final class TextEvents {
         }
 
         @Override public EventType type() { return EventType.BOSSBAR; }
+    }
+
+    // ------------------------------------------------------------------
+    // PLAYER_CHOICE — hard-fork branching event
+    // ------------------------------------------------------------------
+
+    /** A single branch option: the label shown in chat and the cue to fire if chosen. */
+    public record ChoiceOption(String label, String cueId) {}
+
+    /**
+     * Suspends show execution and presents a branching prompt to participants.
+     *
+     * Stop is always auto-injected as the final option — never authored.
+     * The first participant click resolves the choice for the whole show.
+     * On timeout, the option at index {@code defaultOption} is auto-selected.
+     */
+    public static final class PlayerChoiceEvent extends ShowEvent {
+        public final String             prompt;
+        public final List<ChoiceOption> options;
+        public final int                defaultOption;  // 0-indexed
+        public final int                timeoutTicks;   // 0 = no timeout
+        public final String             waitingSound;
+
+        @SuppressWarnings("unchecked")
+        public PlayerChoiceEvent(Map<String, Object> m) {
+            super(intVal(m, "at", 0));
+            this.prompt        = str(m, "prompt", "What do you do?");
+            this.defaultOption = intVal(m, "default", 0);
+            this.timeoutTicks  = intVal(m, "timeout_ticks", 300);
+            this.waitingSound  = str(m, "waiting_sound", "block.note_block.chime");
+
+            List<ChoiceOption> parsed = new ArrayList<>();
+            Object rawOpts = m.get("options");
+            if (rawOpts instanceof List<?> list) {
+                for (Object item : list) {
+                    if (!(item instanceof Map<?, ?> rawMap)) continue;
+                    Map<String, Object> opt = (Map<String, Object>) rawMap;
+                    String label = str(opt, "label", "?");
+                    String cue   = str(opt, "cue", "");
+                    if (!cue.isEmpty()) parsed.add(new ChoiceOption(label, cue));
+                }
+            }
+            this.options = List.copyOf(parsed);
+        }
+
+        @Override public EventType type() { return EventType.PLAYER_CHOICE; }
     }
 }

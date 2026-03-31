@@ -4,13 +4,15 @@ Items here are queued for the Java review team. Each entry has enough context to
 
 **Filing protocol:** Any role — Claude, Zara, Smitty — can add items here. Label each with the area it affects. Java review team audits regularly for control surface gaps.
 
+**Numbering:** Each item gets a permanent `OPS-###` identifier assigned at filing time. The number sticks with the item whether it's open or resolved — use `OPS-###` to refer to items in other docs, status files, and chat. New items take the next available number.
+
 ---
 
 ## Open
 
 ---
 
-### [java-gap] Scout sidebar — human-readable display labels for mark positions
+### OPS-001 [java-gap] Scout sidebar — human-readable display labels for mark positions
 
 **Area:** Set Director, Stage Manager
 **Feature:** Scout objectives sidebar (existing feature — label display enhancement)
@@ -62,7 +64,7 @@ experience, especially for sites with 4–6 simultaneous marks loaded.
 
 ---
 
-### [future-capability] Preview Mode — in-world scene preview during scouting and production
+### OPS-002 [future-capability] Preview Mode — in-world scene preview during scouting and production
 
 **Area:** Stage Management (coordinator), Set, Casting, Wardrobe, Lighting, Camera, Voice,
 Sound, Effects, Fireworks, Choreography
@@ -177,7 +179,7 @@ before showcase.01 enters YAML authoring.
 
 ---
 
-### [java-gap] FIREWORK preset `launch:` mode not applied by executor
+### OPS-003 [java-gap] FIREWORK preset `launch:` mode not applied by executor
 
 **Area:** Fireworks Director
 **Schema field:** `launch:` block in `fireworks.yml` presets
@@ -210,7 +212,7 @@ for a design decision before implementing.
 
 ---
 
-### [java-gap] No BLOCK_PLACE / BLOCK_REMOVE event type
+### OPS-004 [java-gap] No BLOCK_PLACE / BLOCK_REMOVE event type
 
 **Area:** Set Director, Stage Manager
 **Event:** (new — does not exist)
@@ -225,7 +227,7 @@ Block modifications currently require the `COMMAND` escape hatch. COMMAND-placed
 
 ---
 
-### [java-gap] No smooth yaw rotation (ROTATE event)
+### OPS-005 [java-gap] No smooth yaw rotation (ROTATE event)
 
 **Area:** Effects Director (Camera specialty)
 **Event:** (new — does not exist)
@@ -247,7 +249,7 @@ Implementation: BukkitRunnable interpolating yaw per tick, changing only the yaw
 
 ---
 
-### [java-gap] `capture_mode: live` parsed but not implemented
+### OPS-006 [java-gap] `capture_mode: live` parsed but not implemented
 
 **Area:** Casting Director
 **Event:** `CAPTURE_ENTITIES`
@@ -277,7 +279,7 @@ resolving from the stored UUID list.
 
 ---
 
-### [java-gap] No native item frame content event (SET_ITEM_DISPLAY)
+### OPS-007 [java-gap] No native item frame content event (SET_ITEM_DISPLAY)
 
 **Area:** Set Director, Stage Manager
 **Event:** (new — does not exist)
@@ -310,7 +312,7 @@ uses progressive item frame display as a core mechanic.
 
 ---
 
-### [java-gap] No BLOCK_STATE event — cannot set block lit/active states via YAML
+### OPS-008 [java-gap] No BLOCK_STATE event — cannot set block lit/active states via YAML
 
 **Area:** Sound Designer, Set Director
 **Event:** (new — does not exist)
@@ -354,43 +356,126 @@ implementation.
 
 ---
 
-### [future-capability] Post-show interactive choice prompt
+### OPS-009 [future-capability] PLAYER_CHOICE — interactive branching / CYOA foundation
 
-**Area:** Stage Management, Casting
-**Event:** (new — does not exist)
-**Filed:** 2026-03-28 (showcase.01 "Preparing for Battle" — finale design)
+**Area:** Stage Management, Show Direction, all departments
+**Event:** `PLAYER_CHOICE` (new)
+**Filed:** 2026-03-28 (showcase.01 finale design)
+**Updated:** 2026-03-31 (reframed from one-off to full CYOA foundation; design settled)
 
-showcase.01 ends with a fully equipped Vindicator alive in the world. The player can
-fight it or walk away — no mechanic manages this. This is the deliberate design choice
-for the current show (Option A: mob lives, player decides). However, a richer option
-exists: present the player with a post-show choice prompt that branches to fight (leave
-the Vindicator hostile and aware) or release (DESPAWN_ENTITY fires with particle_burst).
+#### Vision
 
-**No current event type supports player-input branching.** All show timelines are
-deterministic and linear. A choice prompt would require: (a) a clickable chat or simple
-GUI event that pauses show execution and waits for player input, and (b) a branching
-mechanism (conditional CUE execution based on that input).
+`PLAYER_CHOICE` is the foundation for choose-your-own-adventure shows. Choices can appear
+anywhere in a show — not just at the end. They can branch firework colors, introduce
+unexpected characters, alter the emotional arc, or take the story in completely different
+directions. The RunningShow stays alive through every branch, so all spawned entities and
+runtime context remain available to any branch cue. Complex narratives with multiple
+choice points and nested branches are supported by design.
 
-**Proposed (high level):**
+Direction owns the branching structure for each show: when choices appear, what the
+options are, and what each branch does. This is planned in the show direction files and
+coordinated with departments as with any other production decision.
+
+#### Hard fork model
+
+`PLAYER_CHOICE` is a **hard fork**. When it fires:
+
+1. Timeline execution stops — no further events in the current cue will fire
+2. The waiting loop begins (bossbar + sound pulse — see below)
+3. The first participant click resolves the choice for all participants (first click wins)
+4. The chosen branch cue fires inside the same `RunningShow`, with full access to all
+   show context (spawned entities, groups, anchor, runtime state)
+5. The branch cue is a normal cue — it can contain any events, including another
+   `PLAYER_CHOICE` for nested branching
+
+Control never returns to the parent cue after the fork. If events need to follow
+the choice, they belong in the branch cue (or a shared continuation cue fired from
+the tail of each branch).
+
+#### YAML schema
+
 ```yaml
-type: PLAYER_CHOICE
-prompt: "Fight, or let them go?"
-options:
-  - label: "Fight"
-    cue: showcase.01.epilogue.fight
-  - label: "Walk away"
-    cue: showcase.01.epilogue.release
-timeout_ticks: 200   # auto-selects "Walk away" if no input
+- at: 240
+  type: PLAYER_CHOICE
+  prompt: "Fight, or let them go?"
+  options:
+    - label: "Fight"
+      cue: showcase.01.epilogue.fight
+    - label: "Walk away"
+      cue: showcase.01.epilogue.release
+  default: 1          # 0-indexed — fires on timeout; "Walk away" in this example
+  timeout_ticks: 300  # 15 seconds; set to 0 for no timeout
+  waiting_sound: block.note_block.chime  # optional — has a sensible default
 ```
 
-**Priority:** Low — showcase.01 works without it. High value for future shows where
-branching endings are part of the design. Would benefit any show with a player-agency
-finale. Flag for design discussion before implementation — the branching model has
-implications for show authoring architecture (linear timeline assumption).
+`Stop` is **always injected** as the final option — authors never include it. Clicking
+Stop calls the show's full stop-safety contract, same as `/show stop`.
+
+#### Waiting loop
+
+While suspended, two things run continuously:
+
+**Bossbar (visible):** Displays the prompt text. Progress bar depletes from 1.0 → 0.0
+over `timeout_ticks`. Color: YELLOW. This is the primary "show is waiting" signal — it's
+always on screen and impossible to miss. If `timeout_ticks` is 0, the bar holds at full.
+
+**Sound pulse (audible):** Plays `waiting_sound` to all participants every 40 ticks
+(~2 seconds). Soft, not distracting, but clearly indicates the show is alive and
+waiting. Stops the moment a choice is made.
+
+**Chat links** are displayed once when the choice fires:
+```
+❓  Fight, or let them go?
+  [A] Fight      [B] Walk away      [■ Stop]
+```
+Each label is a clickable component that runs `/scaena choose <n>` internally.
+Players never type this command — it's behind the link.
+
+#### Multi-participant
+
+All participants see the same bossbar and chat links. The first click from any
+participant resolves the choice for the whole show. Late clicks from other participants
+are silently ignored.
+
+#### Runtime model
+
+`RunningShow` gains:
+- `suspended` flag — the scheduler skips event dispatch and tick advance while true
+- `activeChoice` — holds the live `ChoiceSession` (one at a time)
+- `durationOverride` — allows branch cue to extend the show's effective duration
+
+`ShowScheduler` gains:
+- Suspension check at the top of each tick
+- `injectBranchCue(Cue)` — clears future events from the map, expands the branch
+  cue's timeline at `currentTick`, sets `durationOverride`, resumes execution
+
+`ChoiceSession` is a new runtime object that owns the bossbar, pulse task, timeout
+task, option list, and resolution logic. `resolve(int optionIndex)` is idempotent —
+first call wins, subsequent calls are no-ops.
+
+#### Command routing
+
+`/scaena choose <n>` is the internal command behind each chat link.
+`/scaena choose stop` routes to the show's stop-safety.
+`ScoutCommand` handles these verbs and routes via `ShowManager.resolveChoice()`.
+
+#### Future: story map authoring
+
+For shows with 3+ choice points and many branches, Direction will need a visual map of
+the branching structure — a `[show_id].story-map.md` in `direction/` using Mermaid
+flowchart syntax, mapping choice moments to cue IDs. This is a **deferred authoring
+tool** — the engine supports CYOA from day one, but the story-map documentation
+convention is defined when the first multi-branch show enters production.
+
+#### Priority
+
+Medium — showcase.01 doesn't need it, but the pattern should be established before
+any show that has designed a branching narrative. The implementation is self-contained
+and doesn't touch existing show behavior for shows without `PLAYER_CHOICE` events.
 
 ---
 
-### [future-capability] In-game scout capture — show-params as source of truth, bidirectional sync
+### OPS-010 [future-capability] In-game scout capture — show-params as source of truth, bidirectional sync
 
 **Area:** Set Director, Stage Manager
 **Priority:** Low — aspirational quality-of-life for the scouting workflow
@@ -478,7 +563,7 @@ Claude pulls this file from Bisect (access granted per session as needed), merge
 
 ---
 
-### [future-capability] Scout session snapshot log — screenshot prompts bundled with Bisect export
+### OPS-011 [future-capability] Scout session snapshot log — screenshot prompts bundled with Bisect export
 
 **Area:** Stage Management, Set Director
 **Command:** `/scaena snap [label]`
@@ -533,7 +618,7 @@ The label is freeform — `site_a_overview`, `spawn_angle`, `door_sight_line` �
 
 ---
 
-### [future-idea] Human as Designer — preamble layer for department KBs
+### OPS-012 [future-idea] Human as Designer — preamble layer for department KBs
 
 **Area:** All department KBs, production team workflow
 **Priority:** Low — not blocking anything
@@ -547,78 +632,78 @@ Add a "Human as Designer" preamble to each department KB clarifying the creative
 
 ---
 
-### [resolved] SPAWN_ENTITY: `variant` and `profession` fields applied ✓
+### OPS-013 [resolved] SPAWN_ENTITY: `variant` and `profession` fields applied ✓
 **Shipped:** 2.12.0 | **Filed:** 2026-03-26 | **Area:** Wardrobe, Casting Director
 Added entity subtype dispatch in `EntityEventExecutor.handleSpawn()`. Villager gets `setProfession` + `setVillagerType`; Cat, Horse, Sheep, Wolf each get their typed variant setter. All casts are guarded with warning logs on invalid values.
 
 ---
 
-### [resolved] FACE: pitch added alongside yaw ✓
+### OPS-014 [resolved] FACE: pitch added alongside yaw ✓
 **Shipped:** 2.12.0 | **Filed:** 2026-03-26 | **Area:** Effects Director, Choreographer
 Added `dy`, `horizontalDist`, and `pitch` computation to `StageEventExecutor.handleFace()`. Entities and players now orient vertically toward the look target.
 
 ---
 
-### [resolved] FIREWORK_LINE: `gradient_from` / `gradient_to` parsed and passed through ✓
+### OPS-015 [resolved] FIREWORK_LINE: `gradient_from` / `gradient_to` parsed and passed through ✓
 **Shipped:** 2.12.0 | **Filed:** 2026-03-26 | **Area:** Fireworks Director
 Added `gradientFrom` and `gradientTo` fields to `FireworkLineEvent`. Executor now passes them to `launchWithChase()` instead of hardcoded `null, null`. GRADIENT color variation on FIREWORK_LINE now uses the authored palette.
 
 ---
 
-### [resolved] TITLE_CLEAR: new event type added ✓
+### OPS-016 [resolved] TITLE_CLEAR: new event type added ✓
 **Shipped:** 2.12.0 | **Filed:** 2026-03-26 | **Area:** Sprite Voice Director
 Added `TITLE_CLEAR` to `EventType`, `TitleClearEvent` to `TextEvents`, handler in `TextEventExecutor`, and case in `EventParser`. Sends empty title with `fade_in: 0, stay: 0, fade_out: <n>` — clean wipe, no pop.
 
 ---
 
-### [resolved] STOP_SOUND: `sound_id` field for per-sound stop ✓
+### OPS-017 [resolved] STOP_SOUND: `sound_id` field for per-sound stop ✓
 **Shipped:** 2.12.0 | **Filed:** 2026-03-27 | **Area:** Sound Designer
 Added `sound_id:` field to `StopSoundEvent`. When set, executor calls `p.stopSound(soundId, category)` for targeted stop. When omitted, channel-wide behavior is unchanged.
 
 ---
 
-### [resolved] `entity:world:Name` targeting implemented ✓
+### OPS-018 [resolved] `entity:world:Name` targeting implemented ✓
 **Shipped:** 2.12.0 | **Filed:** 2026-03-25 | **Area:** Casting Director
 Added `entity:world:` branch to `EntityEventExecutor.resolveEntity()`. Scans world entities by custom name. Unblocks `SET_ITEM_FRAME` and any other event using world-entity targeting.
 
 ---
 
-### [resolved] ENTITY_AI / behavior events — group resolution fixed ✓
+### OPS-019 [resolved] ENTITY_AI / behavior events — group resolution fixed ✓
 **Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Casting Director, Wardrobe
 Added `resolveEntities()` (plural) to `EntityEventExecutor`. All six behavior handlers (`ENTITY_AI`, `ENTITY_SPEED`, `ENTITY_EFFECT`, `ENTITY_EQUIP`, `ENTITY_INVISIBLE`, `ENTITY_VELOCITY`) now loop over the full group list instead of calling the singular `resolveEntity()`.
 
 ---
 
-### [resolved] ENTITY_SPEED group resolution fixed ✓
+### OPS-020 [resolved] ENTITY_SPEED group resolution fixed ✓
 **Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Choreography
 Covered by the group resolution fix above — `handleEntitySpeed()` is now one of the six looped handlers.
 
 ---
 
-### [resolved] ENTER equipment fields added ✓
+### OPS-021 [resolved] ENTER equipment fields added ✓
 **Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Choreography, Wardrobe
 Added six equipment fields (`helmet`, `chestplate`, `leggings`, `boots`, `main_hand`, `off_hand`) to `EnterEvent`, parsed from an `equipment:` sub-map. Added equipment-apply block and `itemOf()` helper to `StageEventExecutor.handleEnter()`.
 
 ---
 
-### [resolved] RETURN_HOME supports non-Player entities ✓
+### OPS-022 [resolved] RETURN_HOME supports non-Player entities ✓
 **Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Choreography
 Added `spawnedEntityHomes` map to `RunningShow`; `registerSpawnedEntity()` now records spawn location as home automatically. `handleReturnHome()` now has a non-Player branch: instant teleport or pathfinder.moveTo() for mobs depending on `duration_ticks`.
 
 ---
 
-### [resolved] FIREWORK: `min_clearance` enforced ✓
+### OPS-023 [resolved] FIREWORK: `min_clearance` enforced ✓
 **Shipped:** 2.13.0 | **Filed:** 2026-03-26 | **Area:** Fireworks Director
 Added clearance check in `handleFirework()` after resolving `loc`. Compares `world.getHighestBlockYAt(loc)` against `anchor.getY() + minClearance`. Skips launch with `log.fine()` debug entry when clearance is insufficient. Sentinel value −1 bypasses the check.
 
 ---
 
-### [resolved] FIREWORK_FAN: `power_variation` and `color_variation` added ✓
+### OPS-024 [resolved] FIREWORK_FAN: `power_variation` and `color_variation` added ✓
 **Shipped:** 2.13.0 | **Filed:** 2026-03-26 | **Area:** Fireworks Director
 Added `powerVariation`, `colorVariation`, `gradientFrom`, `gradientTo` fields to `FireworkFanEvent`. Refactored `handleFan()` to apply variation via `resolvePower()` and `resolveColorVariation()` across the full combined arm position sequence, matching CIRCLE/LINE behavior.
 
 ---
 
-### [resolved] Show scanner descends into subdirectories ✓
+### OPS-025 [resolved] Show scanner descends into subdirectories ✓
 **Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Stage Manager, all shows
 `ShowRegistry.load()` now collects both flat `shows/*.yml` and nested `shows/[id]/[id].yml` files before the parse loop. Enables full show-folder-structure adoption. Flat files still load normally; duplicate ID detection prevents double-loading if both exist.

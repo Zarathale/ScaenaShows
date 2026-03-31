@@ -1,5 +1,6 @@
 package com.scaena.shows.command;
 
+import com.scaena.shows.runtime.ShowManager;
 import com.scaena.shows.scout.ScoutManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
@@ -36,9 +37,11 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
     private static final String      PERM = "scae.shows.scout";
 
     private final ScoutManager scoutManager;
+    private final ShowManager  showManager;
 
-    public ScoutCommand(ScoutManager scoutManager) {
+    public ScoutCommand(ScoutManager scoutManager, ShowManager showManager) {
         this.scoutManager = scoutManager;
+        this.showManager  = showManager;
     }
 
     // -----------------------------------------------------------------------
@@ -63,10 +66,11 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
         }
 
         switch (args[0].toLowerCase()) {
-            case "scout" -> handleScout(player, args);
-            case "set"   -> handleSet(player, args);
-            case "snap"  -> handleSnap(player, args);
-            default      -> sendHelp(player);
+            case "scout"  -> handleScout(player, args);
+            case "set"    -> handleSet(player, args);
+            case "snap"   -> handleSnap(player, args);
+            case "choose" -> handleChoose(player, args);
+            default       -> sendHelp(player);
         }
         return true;
     }
@@ -170,6 +174,31 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
     }
 
     // -----------------------------------------------------------------------
+    // /scaena choose <index|stop>
+    // -----------------------------------------------------------------------
+
+    /**
+     * Routes a PLAYER_CHOICE selection from the clickable chat buttons.
+     * The click event fires "/scaena choose 0", "/scaena choose 1", or "/scaena choose stop".
+     *
+     * This verb intentionally lives on /scaena (not /show) so it's available
+     * even when the player doesn't have full admin permissions — only scae.shows.scout
+     * is required, which show participants should have.
+     */
+    private void handleChoose(Player player, String[] args) {
+        if (args.length < 2) {
+            player.sendMessage(MM.deserialize(
+                "<red>Usage: /scaena choose <index|stop></red>"));
+            return;
+        }
+        String rawChoice = args[1];
+        String error = showManager.handleChoiceCommand(player, rawChoice);
+        if (error != null) {
+            player.sendMessage(MM.deserialize("<red>" + error + "</red>"));
+        }
+    }
+
+    // -----------------------------------------------------------------------
     // Help
     // -----------------------------------------------------------------------
 
@@ -225,7 +254,7 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
 
         // /scaena <verb>
         if (args.length == 1) {
-            return filter(List.of("scout", "set", "snap"), args[0]);
+            return filter(List.of("scout", "set", "snap", "choose"), args[0]);
         }
 
         // /scaena scout <subcommand>

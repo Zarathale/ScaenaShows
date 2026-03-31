@@ -79,6 +79,9 @@ public final class ScaenaShowsPlugin extends JavaPlugin {
         // 7. Show manager
         showManager = new ShowManager(this, scaenaConfig, cueRegistry, executors);
 
+        // 7a. Wire ShowManager into ExecutorRegistry (breaks TextEventExecutor circular dep)
+        executors.setShowManager(showManager);
+
         // 8a. Scout manager (needs ShowRegistry for set-based teleport and scene ordering)
         scoutManager = new ScoutManager(this, showRegistry);
 
@@ -96,7 +99,7 @@ public final class ScaenaShowsPlugin extends JavaPlugin {
         // 8c. Register /scaena command
         PluginCommand scaenaCmd = getCommand("scaena");
         if (scaenaCmd != null) {
-            ScoutCommand scoutHandler = new ScoutCommand(scoutManager);
+            ScoutCommand scoutHandler = new ScoutCommand(scoutManager, showManager);
             scaenaCmd.setExecutor(scoutHandler);
             scaenaCmd.setTabCompleter(scoutHandler);
         } else {

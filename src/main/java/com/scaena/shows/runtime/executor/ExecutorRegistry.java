@@ -5,6 +5,7 @@ import com.scaena.shows.model.event.ShowEvent;
 import com.scaena.shows.registry.CueRegistry;
 import com.scaena.shows.registry.FireworkRegistry;
 import com.scaena.shows.runtime.RunningShow;
+import com.scaena.shows.runtime.ShowManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.EnumMap;
@@ -20,10 +21,14 @@ public final class ExecutorRegistry {
     private final Map<EventType, EventExecutor> executors = new EnumMap<>(EventType.class);
     private final Logger log;
 
+    /** Retained so ShowManager can be injected after construction (avoids circular dep). */
+    private final TextEventExecutor textExecutor;
+
     public ExecutorRegistry(JavaPlugin plugin, FireworkRegistry fireworkRegistry, CueRegistry cueRegistry) {
         this.log = plugin.getLogger();
 
         TextEventExecutor  text      = new TextEventExecutor(plugin);
+        this.textExecutor = text;
         SoundEventExecutor sound     = new SoundEventExecutor(plugin);
         VisualEventExecutor visual   = new VisualEventExecutor(plugin);
         TeamEventExecutor  team      = new TeamEventExecutor(plugin, cueRegistry, log);
@@ -39,11 +44,12 @@ public final class ExecutorRegistry {
         team.setExecutorRegistry(this);
 
         // §6.1 Text and Display
-        executors.put(EventType.MESSAGE,     text);
-        executors.put(EventType.TITLE,       text);
-        executors.put(EventType.TITLE_CLEAR, text);
-        executors.put(EventType.ACTION_BAR,  text);
-        executors.put(EventType.BOSSBAR,     text);
+        executors.put(EventType.MESSAGE,       text);
+        executors.put(EventType.TITLE,         text);
+        executors.put(EventType.TITLE_CLEAR,   text);
+        executors.put(EventType.ACTION_BAR,    text);
+        executors.put(EventType.BOSSBAR,       text);
+        executors.put(EventType.PLAYER_CHOICE, text);
 
         // §6.2 Sound
         executors.put(EventType.SOUND,      sound);
@@ -108,6 +114,14 @@ public final class ExecutorRegistry {
         executors.put(EventType.REST,    utility);
         executors.put(EventType.COMMAND, utility);
         executors.put(EventType.CUE,     utility);
+    }
+
+    /**
+     * Wire ShowManager into TextEventExecutor after both are fully constructed.
+     * Must be called from ScaenaShowsPlugin after ShowManager is built.
+     */
+    public void setShowManager(ShowManager showManager) {
+        textExecutor.setShowManager(showManager);
     }
 
     /**

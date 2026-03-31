@@ -1,7 +1,9 @@
 package com.scaena.shows.runtime;
 
 import com.scaena.shows.config.ScaenaConfig;
+import com.scaena.shows.model.Cue;
 import com.scaena.shows.model.Show;
+import com.scaena.shows.model.event.TextEvents.PlayerChoiceEvent;
 import com.scaena.shows.registry.CueRegistry;
 import com.scaena.shows.runtime.executor.ExecutorRegistry;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -179,6 +181,13 @@ public final class ShowManager {
         if (!running.isRunning()) return; // already stopping
         running.stop();
 
+        // Cancel any active PLAYER_CHOICE session before cleaning up the show
+        ChoiceSession activeChoice = running.getActiveChoice();
+        if (activeChoice != null) {
+            activeChoice.cancel();
+            running.setActiveChoice(null);
+        }
+
         ShowScheduler scheduler = schedulers.remove(running.instanceId);
         if (scheduler != null) {
             scheduler.cancel();
@@ -334,5 +343,95 @@ public final class ShowManager {
 
     public void shutdown() {
         stopAll();
+    }
+
+    // ------------------------------------------------------------------
+    // PLAYER_CHOICE — suspend and resume
+    // ------------------------------------------------------------------
+
+    /**
+     * Suspend a running show for a PLAYER_CHOICE event.
+     * Creates and starts a ChoiceSession, attaches it to the RunningShow,
+     * and sets the suspended flag so the scheduler halts event dispatch.
+     *
+     * Called by TextEventExecutor when it encounters a PLAYER_CHOICE event.
+     */
+    public void suspendForChoice(RunningShow running, PlayerChoiceEvent event) {
+        if (!running.isRunning()) return;
+
+        ChoiceSession session = new ChoiceSession(event, running, this, plugin, log);
+        running.setActiveChoice(session);
+        running.setSuspended(true);
+        session.start();
+
+        log.info("[ScaenaShows] Show '" + running.show.id + "' ("
+            + running.instanceId + ") suspended for PLAYER_CHOICE: \""
+            + event.prompt + "\"");
+    }
+
+    /**
+     * Resume a suspended show by injecting the chosen branch cue.
+     * Called by ChoiceSession.resolve() after a valid option is selected.
+     *
+     * Looks up the branch cue, validates it, and delegates to the scheduler
+     * to expand it into the event map and resume ticking.
+     */
+    public void resumeWithBranch(RunningShow running, String cueId) {
+        if (!running.isRunning()) return;
+
+        Cue branchCue = cueRegistry.get(cueId);
+        if (branchCue == null) {
+            log.warning("[ScaenaShows] PLAYER_CHOICE branch cue '" + cueId
+                + "' not found in show '" + running.show.id
+                + "' — stopping show instead.");
+            stopShow(running, true);
+            return;
+        }
+
+        ShowScheduler scheduler = schedulers.get(running.instanceId);
+        if (scheduler == null) {
+            log.warning("[ScaenaShows] No scheduler found for show '"
+                + running.show.id + "' during branch resume.");
+            stopShow(running, true);
+            return;
+        }
+
+        scheduler.injectBranchCue(branchCue);
+        // Note: injectBranchCue() clears suspension — scheduler resumes on next tick
+    }
+
+    /**
+     * Route a /scaena choose command from a participant.
+     * Validates the player is in a suspended show, then resolves the choice.
+     *
+     * @param player      the player who clicked a choice link
+     * @param rawChoice   the raw arg string — a digit (0-based index) or "stop"
+     * @return error message, or null on success
+     */
+    public String handleChoiceCommand(Player player, String rawChoice) {
+        RunningShow running = getShowForPlayer(player.getUniqueId());
+        if (running == null) {
+            return "You're not in a running show.";
+        }
+
+        ChoiceSession session = running.getActiveChoice();
+        if (session == null) {
+            return "No choice is active in your current show.";
+        }
+
+        if ("stop".equalsIgnoreCase(rawChoice)) {
+            session.resolve(ChoiceSession.STOP_INDEX);
+            return null;
+        }
+
+        int index;
+        try {
+            index = Integer.parseInt(rawChoice);
+        } catch (NumberFormatException e) {
+            return "Invalid choice: '" + rawChoice + "'. Click one of the options in chat.";
+        }
+
+        session.resolve(index);
+        return null;
     }
 }

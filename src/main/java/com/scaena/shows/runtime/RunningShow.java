@@ -35,10 +35,27 @@ public final class RunningShow {
     private UUID invokerUuid;
 
     // -----------------------------------------------------------------------
-    // Tick counter
+    // Tick counter and show state
     // -----------------------------------------------------------------------
     private long currentTick = 0;
     private boolean running  = true;
+
+    // -----------------------------------------------------------------------
+    // PLAYER_CHOICE suspension
+    // -----------------------------------------------------------------------
+
+    /** True while the show is suspended waiting for a PLAYER_CHOICE resolution. */
+    private boolean suspended = false;
+
+    /** The live ChoiceSession while suspended; null at all other times. */
+    private ChoiceSession activeChoice = null;
+
+    /**
+     * Override for the show's effective duration — set when a branch cue is injected
+     * so the scheduler knows when to end the show after branching.
+     * -1 means use show.durationTicks as normal.
+     */
+    private int durationOverride = -1;
 
     // -----------------------------------------------------------------------
     // Group assignments (group 1..N → list of UUIDs)
@@ -210,6 +227,24 @@ public final class RunningShow {
     /** Signal that the show has ended or been stopped. */
     public void stop() {
         running = false;
+    }
+
+    // Suspension (PLAYER_CHOICE)
+    public boolean isSuspended()                         { return suspended; }
+    public void setSuspended(boolean s)                  { this.suspended = s; }
+    public ChoiceSession getActiveChoice()               { return activeChoice; }
+    public void setActiveChoice(ChoiceSession cs)        { this.activeChoice = cs; }
+
+    // Duration override — used by branch cue injection to extend show lifetime
+    public int getDurationOverride()                     { return durationOverride; }
+    public void setDurationOverride(int ticks)           { this.durationOverride = ticks; }
+
+    /**
+     * Returns the effective duration for the scheduler's end-of-show check.
+     * Returns durationOverride when set; falls back to show.durationTicks.
+     */
+    public int getEffectiveDuration() {
+        return durationOverride >= 0 ? durationOverride : show.durationTicks;
     }
 
     // -----------------------------------------------------------------------

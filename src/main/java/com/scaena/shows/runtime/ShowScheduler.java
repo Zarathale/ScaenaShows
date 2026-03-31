@@ -70,6 +70,9 @@ public final class ShowScheduler {
                     return;
                 }
 
+                // Hard-suspended for PLAYER_CHOICE — hold until resolved
+                if (show.isSuspended()) return;
+
                 long tick = show.getCurrentTick();
 
                 // Dispatch events at this tick
@@ -89,13 +92,41 @@ public final class ShowScheduler {
 
                 show.tick();
 
-                // Check if show is complete
-                if (show.show.durationTicks > 0 && show.getCurrentTick() >= show.show.durationTicks) {
+                // Check if show is complete (uses durationOverride when a branch was injected)
+                if (show.getEffectiveDuration() > 0 && show.getCurrentTick() >= show.getEffectiveDuration()) {
                     showManager.stopShow(show, false /* completed naturally */);
                     cancel();
                 }
             }
         }.runTaskTimer(plugin, 1L, 1L);
+    }
+
+    /**
+     * Inject a branch cue's events into the running event map, replacing all
+     * future events (hard fork — the main timeline ends at the choice point).
+     *
+     * Called by ShowManager.resumeWithBranch() after a PLAYER_CHOICE resolution.
+     * Sets the show's durationOverride to the last event tick + 40 ticks buffer,
+     * then clears the suspension flag so the scheduler resumes on its next tick.
+     */
+    public void injectBranchCue(Cue branchCue) {
+        long currentTick = show.getCurrentTick();
+
+        // Clear all future events from the main timeline (hard fork)
+        eventMap.tailMap(currentTick, false).clear();
+
+        // Expand the branch cue's timeline into the map, rooted at currentTick
+        buildEventMap(branchCue.timeline, currentTick, 0);
+
+        // Compute the last event tick and extend the show's effective duration
+        long lastEventTick = eventMap.isEmpty() ? currentTick : eventMap.lastKey();
+        show.setDurationOverride((int) (lastEventTick + 40)); // +40 ticks (~2s buffer)
+
+        // Resume
+        show.setSuspended(false);
+        log.fine("[ScaenaShows] Branch '" + branchCue.id
+            + "' injected at tick " + currentTick
+            + " (new duration: " + show.getDurationOverride() + ")");
     }
 
     /** Cancel the scheduler task without triggering full stop (called by ShowManager). */
@@ -118,7 +149,7 @@ public final class ShowScheduler {
      * @param baseOffset  tick offset applied to all events in this timeline
      * @param depth       current recursion depth (for nesting limit)
      */
-    private void buildEventMap(List<ShowEvent> timeline, long baseOffset, int depth) {
+    void buildEventMap(List<ShowEvent> timeline, long baseOffset, int depth) {
         if (depth > 10) {
             log.warning("[ScaenaShows] Max cue nesting depth reached in show '" + show.show.id + "'");
             return;
