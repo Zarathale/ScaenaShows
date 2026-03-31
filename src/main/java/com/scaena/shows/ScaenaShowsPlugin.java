@@ -6,6 +6,7 @@ import com.scaena.shows.config.ScaenaConfig;
 import com.scaena.shows.registry.CueRegistry;
 import com.scaena.shows.registry.FireworkRegistry;
 import com.scaena.shows.registry.ShowRegistry;
+import com.scaena.shows.runtime.EntityCombatListener;
 import com.scaena.shows.runtime.PlayerLifecycleListener;
 import com.scaena.shows.runtime.ShowManager;
 import com.scaena.shows.runtime.executor.ExecutorRegistry;
@@ -109,6 +110,10 @@ public final class ScaenaShowsPlugin extends JavaPlugin {
         // 9. Player lifecycle listener
         getServer().getPluginManager().registerEvents(
             new PlayerLifecycleListener(showManager, scoutManager), this);
+
+        // 9b. Entity combat listener — drives BOSS_HEALTH_BAR progress + death hooks (OPS-026)
+        getServer().getPluginManager().registerEvents(
+            new EntityCombatListener(showManager, this), this);
 
         // Ready!
         ScaenaConsole.printCapabilities();

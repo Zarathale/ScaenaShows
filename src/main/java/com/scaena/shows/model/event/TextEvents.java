@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/** §6.1 — MESSAGE, TITLE, ACTION_BAR, BOSSBAR */
+/** §6.1 — MESSAGE, TITLE, ACTION_BAR, BOSSBAR, BOSS_HEALTH_BAR */
 public final class TextEvents {
 
     private TextEvents() {}
@@ -107,6 +107,38 @@ public final class TextEvents {
         }
 
         @Override public EventType type() { return EventType.BOSSBAR; }
+    }
+
+    // ------------------------------------------------------------------
+    // BOSS_HEALTH_BAR  (OPS-026)
+    // Entity-linked bossbar. Progress updates live via EntityCombatListener.
+    // On entity death: fires death_line to participants, then injects victory_cue.
+    // ------------------------------------------------------------------
+    public static final class BossHealthBarEvent extends ShowEvent {
+        public final String target;               // entity:spawned:<name>
+        public final String title;                // bossbar display title (MiniMessage)
+        public final String color;                // BossBar.Color name (e.g. "RED")
+        public final String overlay;              // BossBar.Overlay name (e.g. "PROGRESS")
+        public final String audience;             // audience string (e.g. "participants")
+        public final String deathLine;            // optional — text sent on entity death
+        public final String deathLineColor;       // hex color for death line (e.g. "#CC2200")
+        public final int    deathLinePauseTicks;  // ticks between death line and victory cue
+        public final String victoryCue;           // optional — cue ID injected after death
+
+        public BossHealthBarEvent(Map<String, Object> m) {
+            super(intVal(m, "at", 0));
+            this.target              = str(m, "target", "");
+            this.title               = str(m, "title", "Boss");
+            this.color               = str(m, "color", "RED");
+            this.overlay             = str(m, "overlay", "PROGRESS");
+            this.audience            = str(m, "audience", "participants");
+            this.deathLine           = str(m, "death_line", "");
+            this.deathLineColor      = str(m, "death_line_color", "#FFFFFF");
+            this.deathLinePauseTicks = intVal(m, "death_line_pause_ticks", 20);
+            this.victoryCue          = str(m, "victory_cue", "");
+        }
+
+        @Override public EventType type() { return EventType.BOSS_HEALTH_BAR; }
     }
 
     // ------------------------------------------------------------------

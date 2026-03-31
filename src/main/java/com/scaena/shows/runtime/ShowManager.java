@@ -401,6 +401,39 @@ public final class ShowManager {
     }
 
     /**
+     * Inject a cue into a running show without requiring it to be suspended first.
+     * Used by EntityCombatListener after entity death to fire the victory coda.
+     *
+     * Clears all remaining scheduled events and replaces them with the named cue,
+     * extending the show's effective duration accordingly.
+     * Silent no-op if the cue is not found (logs a warning) or the show is not running.
+     *
+     * @param running  the show to inject into
+     * @param cueId    the cue ID to inject
+     */
+    public void injectCue(RunningShow running, String cueId) {
+        if (!running.isRunning()) return;
+
+        Cue cue = cueRegistry.get(cueId);
+        if (cue == null) {
+            log.warning("[ScaenaShows] injectCue: cue '" + cueId
+                + "' not found in show '" + running.show.id + "' — skipping.");
+            return;
+        }
+
+        ShowScheduler scheduler = schedulers.get(running.instanceId);
+        if (scheduler == null) {
+            log.warning("[ScaenaShows] injectCue: no scheduler for show '"
+                + running.show.id + "' — skipping.");
+            return;
+        }
+
+        scheduler.injectBranchCue(cue);
+        log.info("[ScaenaShows] Injected cue '" + cueId
+            + "' into show '" + running.show.id + "' (" + running.instanceId + ")");
+    }
+
+    /**
      * Route a /scaena choose command from a participant.
      * Validates the player is in a suspended show, then resolves the choice.
      *

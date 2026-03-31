@@ -25,6 +25,11 @@ public final class EntityMgmtEvents {
         public final String offHandItem;
         public final boolean despawnOnEnd;
 
+        // OPS-026 — attribute overrides (0 = use mob default)
+        public final double maxHealth;  // generic.max_health absolute override (e.g. 36.0)
+        public final double speed;      // generic.movement_speed absolute override
+        public final double scale;      // generic.scale override (1.0 = default, 1.5 = 1.5× size)
+
         @SuppressWarnings("unchecked")
         public SpawnEntityEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
@@ -45,6 +50,11 @@ public final class EntityMgmtEvents {
             this.bootsItem      = str(eq, "boots", "");
             this.mainHandItem   = str(eq, "main_hand", "");
             this.offHandItem    = str(eq, "off_hand", "");
+            // Attribute overrides — top-level optional fields
+            Map<String, Object> attrs = mapVal(m, "attributes");
+            this.maxHealth = dblVal(attrs, "max_health", 0);
+            this.speed     = dblVal(attrs, "speed", 0);
+            this.scale     = dblVal(attrs, "scale", 0);
         }
 
         @Override public EventType type() { return EventType.SPAWN_ENTITY; }

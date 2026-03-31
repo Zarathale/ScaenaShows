@@ -3,7 +3,10 @@ package com.scaena.shows.runtime.executor;
 import com.scaena.shows.model.event.*;
 import com.scaena.shows.model.event.EntityBehaviorEvents.*;
 import com.scaena.shows.model.event.EntityMgmtEvents.*;
+import com.scaena.shows.model.event.TextEvents.*;
 import com.scaena.shows.runtime.RunningShow;
+import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
@@ -21,9 +24,11 @@ import java.util.logging.Logger;
  * Handles all entity management and entity behavior events:
  * SPAWN_ENTITY, DESPAWN_ENTITY, CAPTURE_ENTITIES, RELEASE_ENTITIES,
  * ENTITY_AI, ENTITY_SPEED, ENTITY_EFFECT, ENTITY_EQUIP,
- * ENTITY_INVISIBLE, ENTITY_VELOCITY
+ * ENTITY_INVISIBLE, ENTITY_VELOCITY, BOSS_HEALTH_BAR
  */
 public final class EntityEventExecutor implements EventExecutor {
+
+    private static final MiniMessage MM = MiniMessage.miniMessage();
 
     private final Logger log;
 
@@ -44,6 +49,7 @@ public final class EntityEventExecutor implements EventExecutor {
             case ENTITY_EQUIP      -> handleEntityEquip((EntityEquipEvent) event, show);
             case ENTITY_INVISIBLE  -> handleEntityInvisible((EntityInvisibleEvent) event, show);
             case ENTITY_VELOCITY   -> handleEntityVelocity((EntityVelocityEvent) event, show);
+            case BOSS_HEALTH_BAR   -> handleBossHealthBar((BossHealthBarEvent) event, show);
             default -> {}
         }
     }
@@ -119,6 +125,23 @@ public final class EntityEventExecutor implements EventExecutor {
                 if (itemOf(e.bootsItem)      != null) eq.setBoots(itemOf(e.bootsItem));
                 if (itemOf(e.mainHandItem)   != null) eq.setItemInMainHand(itemOf(e.mainHandItem));
                 if (itemOf(e.offHandItem)    != null) eq.setItemInOffHand(itemOf(e.offHandItem));
+            }
+
+            // OPS-026 — attribute overrides (only applied when explicitly set, i.e. > 0)
+            if (e.maxHealth > 0) {
+                var attr = living.getAttribute(Attribute.MAX_HEALTH);
+                if (attr != null) {
+                    attr.setBaseValue(e.maxHealth);
+                    living.setHealth(e.maxHealth); // sync current HP to new max
+                }
+            }
+            if (e.speed > 0) {
+                var attr = living.getAttribute(Attribute.MOVEMENT_SPEED);
+                if (attr != null) attr.setBaseValue(e.speed);
+            }
+            if (e.scale > 0) {
+                var attr = living.getAttribute(Attribute.SCALE);
+                if (attr != null) attr.setBaseValue(e.scale);
             }
         }
 
@@ -269,6 +292,51 @@ public final class EntityEventExecutor implements EventExecutor {
         for (Entity entity : resolveEntities(e.target, show)) {
             entity.setVelocity(new org.bukkit.util.Vector(e.vecX, e.vecY, e.vecZ));
         }
+    }
+
+    // ------------------------------------------------------------------
+    // BOSS_HEALTH_BAR  (OPS-026)
+    // Creates an entity-linked bossbar that tracks live HP via EntityCombatListener.
+    // ------------------------------------------------------------------
+    private void handleBossHealthBar(BossHealthBarEvent e, RunningShow show) {
+        Entity entity = resolveEntity(e.target, show);
+        if (!(entity instanceof LivingEntity living)) {
+            log.warning("[ScaenaShows] BOSS_HEALTH_BAR: entity not found or not LivingEntity: " + e.target);
+            return;
+        }
+
+        BossBar.Color color;
+        BossBar.Overlay overlay;
+        try { color   = BossBar.Color.valueOf(e.color.toUpperCase()); }
+        catch (Exception ex) { color = BossBar.Color.RED; }
+        try { overlay = BossBar.Overlay.valueOf(e.overlay.toUpperCase()); }
+        catch (Exception ex) { overlay = BossBar.Overlay.PROGRESS; }
+
+        BossBar bar = BossBar.bossBar(MM.deserialize(e.title), 1.0f, color, overlay);
+
+        // Show to all current participants
+        for (Player p : show.getOnlineParticipants()) {
+            p.showBossBar(bar);
+        }
+        show.addActiveBossBar(bar); // registered for cleanup on show end
+
+        // Record tracker so EntityCombatListener can react to damage/death
+        // Use attribute value directly — getMaxHealth() is deprecated in Paper 1.21
+        var maxHpAttr = living.getAttribute(Attribute.MAX_HEALTH);
+        double maxHp  = maxHpAttr != null ? maxHpAttr.getValue() : living.getHealth();
+        RunningShow.BossHealthBarTracker tracker = new RunningShow.BossHealthBarTracker(
+            entity.getUniqueId(),
+            bar,
+            maxHp,
+            e.deathLine,
+            e.deathLineColor,
+            e.deathLinePauseTicks,
+            e.victoryCue
+        );
+        show.registerBossHealthBar(entity.getUniqueId(), tracker);
+
+        log.fine("[ScaenaShows] BOSS_HEALTH_BAR registered for entity '"
+            + entity.getUniqueId() + "' in show '" + show.show.id + "' (maxHp=" + maxHp + ")");
     }
 
     // ------------------------------------------------------------------

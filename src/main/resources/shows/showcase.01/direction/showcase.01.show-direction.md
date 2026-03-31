@@ -1,7 +1,7 @@
 ---
 show_id: showcase.01
 document: Show Direction
-updated: 2026-03-29
+updated: 2026-03-31
 stage: Brief
 ---
 
@@ -45,18 +45,28 @@ The previous scouting brief is retired. Zarathale scouts six entirely new locati
 **7. The armor set is a unified aesthetic statement.**
 The Hero does not wear six random pieces. Wardrobe designs the complete set before any expedition is written — the aesthetic of the full kit determines what "finding the chestplate in a forge" looks like versus "finding it in a ruin." The set design of each expedition follows from the armor identity, not the other way around.
 
-**8. Casting is locked. The Hero lives after the show ends.**
+**8. Casting is locked. The Vindicator spawns at show open and is present the entire show.**
 Companion: Armorer Villager. Hero: Vindicator. Both confirmed. Gate 1 is closed.
 
-The reveal approach (Casting's recommendation, to be ratified at intake): `SPAWN_ENTITY`
-with full equipment populated — the Vindicator arrives in full kit. The reveal is arrival,
-not another equipping sequence.
+The Vindicator spawns at Scene A open (`SPAWN_ENTITY`, AI locked, no equipment). He
+remains behind the wall — present, contained, waiting — for the full duration of the show.
+He never despawns until the show ends. As each armor stand fill fires on A-section returns,
+a corresponding `ENTITY_EQUIP` event equips him with the same piece behind the wall.
+The player sees the stand filling. They do not see what is also being dressed on the other
+side of the door.
 
-After the show ends, the Vindicator remains alive in the world, fully armed. The player
-may engage or walk away. The show does not manage this outcome and requires no mechanic
-to do so — the preparation is complete, and what comes next is the player's story. A
-future interactive post-show choice prompt (fight vs. despawn) is noted in `ops-inbox.md`
-as a potential capability addition.
+The reveal at A-Final is the iron door opening. No `SPAWN_ENTITY` at the finale — he is
+already there and already fully equipped. Stage Management ratifies the equip timing at intake:
+each `ENTITY_EQUIP` on the Vindicator fires in the same tick window as the corresponding
+armor stand fill, not as a separate scene beat.
+
+After the Armorer steps back ("I'll leave you two to it."), the show holds, then
+`PLAYER_CHOICE` fires — "What now?" — presenting two branches:
+- **Fight** — countdown 5-4-3-2-1 GO, AI releases, boss health bossbar appears (OPS-026)
+- **Walk away** — Vindicator says "LATER." (deep red, CHAT), then despawns
+
+All combat parameters are in `show-params.md §Battle Sequence`. OPS-009 (PLAYER_CHOICE)
+and OPS-026 (boss health bossbar) are the enabling capabilities.
 
 **9. The Vindicator is present at home base from show open — locked 2026-03-29.**
 The home base set includes a wall separating the workshop from the Vindicator's holding
@@ -65,7 +75,12 @@ space. An iron door in that wall is the show's central spatial mechanic:
 - Default state: door open
 - Show start (Scene A open): door closes on cue (REDSTONE event) — the clank is the
   show's first beat, before the Armorer's first line
-- Finale (A-Final): door opens on cue — the Vindicator steps through
+- A-Final (post-choice): door opens at the start of whichever branch the player chooses.
+  The Vindicator does not move — he stays in his holding position, AI-locked, the whole
+  show. In the **fight branch**, the player steps through the open door and discovers
+  him frozen — the countdown fires, GO releases his AI. In the **walk away branch**,
+  the door opens, he says "LATER.", then despawns. The door is the branch's opening
+  beat in both cases.
 
 The player is enclosed in the workshop for the duration of the show. They hear the
 Vindicator behind the door. They do not see him until the reveal.
@@ -159,6 +174,8 @@ The reveal sequence is the show's most technically precise moment. Whether the H
 
 This is the Armorer's workspace. A craftsperson's shop — functional, specific, slightly worn. A blast furnace runs here. The armor stand is the centerpiece. The Vindicator is behind the wall, separated by an iron door. The player arrives into this space and stays in it — they are the witness in the antechamber.
 
+**Vindicator spawn:** At Scene A open, the Vindicator spawns in his holding position (AI locked, no equipment). He is present from this moment forward. His spawn is not the show's reveal — it is its foundation. Everything that follows is preparation for what is already waiting.
+
 The player is between two things they don't fully understand yet: an Armorer who is completely calm and professional, and something behind a closed door that is not. By the end of the show, they understand both.
 
 The companion speaks once at opening (after the door clanks shut): a line that establishes the mission without narrating it. Each A-section return is a brief, functional beat. One slot fills. The companion's return lines are field notes — something specific to the expedition just concluded, not a recap. The armor stand does the narrative accumulation; the companion does not need to.
@@ -210,19 +227,16 @@ No fireworks. No levitation. No effects that reach for spectacle. The weight of 
 
 The absence of the firework has accumulated force: the player has felt it at B, C, D, and E. The silence at F — the last expedition, the weapon, the piece that implies what this has all been for — is the scene's entire emotional content. Hold it.
 
-### A-Final — The Reveal
+### A-Final — The Reveal and The Choice
 *"Here."*
 
-The companion returns with the weapon. The armor stand is full. Then: the Hero arrives.
+The companion returns with the weapon. The armor stand is full. The Vindicator has been
+there the whole time — spawned at show open, AI locked, equipped piece by piece behind the
+wall as each armor stand fill fired. The reveal is not a spawn. The reveal is not even the
+door yet. The reveal is the Armorer's last line.
 
-The reveal approach: `SPAWN_ENTITY` with full equipment populated. The Vindicator arrives
-in full kit — chain helmet, iron chestplate, iron leggings, dark leather boots, iron axe
-with Sharpness enchant. The reveal is arrival, not another equipping. Five expeditions.
-One purpose. Now, the warrior those expeditions were for. Stage Management ratifies the
-tick sequencing at intake.
-
-After the show ends, the Vindicator remains in the world, armed and alive. The player
-decides what happens next.
+Five expeditions. One purpose. The warrior those expeditions were for — already armed,
+already waiting. The player doesn't know this until right now.
 
 The Armorer has three lines. The rhythm breaks here — there is no "next quest," no departure.
 The job is done.
@@ -233,8 +247,20 @@ The job is done.
 
 The second line is the first moment in the show addressed explicitly to the player. The
 third line acknowledges both parties — the Vindicator and the player — and is the show's
-only moment of warm, explicit complicity. The Armorer steps back. What happens next is
-not their department.
+only moment of warm, explicit complicity. The Armorer steps back.
 
-After the reveal: hold. Departments resist the urge to punctuate. The player is allowed
-to see what they're looking at. The Vindicator is alive. The player decides.
+After the Armorer's last line: **hold** (~6 seconds, `hold_before_choice_ticks` in show-params).
+The Vindicator is still behind a closed door — present, contained. Then `PLAYER_CHOICE`
+fires: *"What now?"*
+
+**Fight branch:** The iron door opens. The player steps through. The Vindicator is standing
+there — frozen, AI-locked, already fully equipped. Then the countdown fires: 5, 4, 3, 2, 1,
+GO (TITLE events). At GO: his AI releases. Boss health bossbar appears ("The Vindicator",
+RED, PROGRESS). The fight is the show's final beat. Departments do not punctuate it.
+
+**Walk away branch:** The iron door opens. The Vindicator speaks once — "LATER." (deep red
+`#CC2200`, CHAT, ALL CAPS). Then despawns (~3 seconds). The show closes with one Sprite
+line — "The stage is yours." (locked 2026-03-31).
+
+All combat parameters (health multiplier, countdown timing, bossbar color, etc.) are in
+`show-params.md §Battle Sequence`. Stage Management ratifies tick sequencing at intake.

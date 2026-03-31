@@ -2,7 +2,7 @@
 show_id: showcase.01
 department: Fireworks Director
 document: Department Brief
-updated: 2026-03-29
+updated: 2026-03-31
 ---
 
 # Fireworks — showcase.01 "Preparing for Battle"
@@ -78,14 +78,53 @@ sequence. Mira proposes both options at intake.
 
 ---
 
+## Victory Coda — Fight Branch
+
+**New 2026-03-31.** If the player chooses Fight and defeats the Vindicator, an 8-second
+victory coda fires. Mira owns the fireworks component.
+
+**Brief:** Celebratory. Plural. Exuberant. The fight is won — the world says so loudly.
+This is the show's one moment of unambiguous joy. The tonal constraint throughout the
+show has been *spare and earned*; this coda earns the release. It can be bigger than
+anything that came before.
+
+**Relationship to other fireworks in this show:**
+- Find-firework pattern (B, C, D, E): single discovery burst, register-specific per scene
+- Grand finale burst (A-Final reveal): the reveal's celebration — warm, earned, one peak
+- **Victory coda: the player's celebration** — distinct register, fires only on fight win
+
+The coda fireworks must feel categorically different from the reveal burst. The reveal
+was about what was prepared. The coda is about what the player did with it. The palette
+and pattern should shift accordingly — more kinetic, more plural, less ceremonial.
+
+**Parameters:**
+
+| Param | Status |
+|-------|--------|
+| Duration window | 160 ticks (8 seconds) — simultaneous with levitation |
+| Pattern | **Mira proposes** — multiple bursts in sequence, or a fan/spread. More than one rocket. |
+| Palette | Brighter and warmer than the reveal burst — golds, whites, sparks. Victory palette. |
+| Sky position | Open sky (fight occurs in Vindicator's holding area) — no clearance risk |
+
+**Mira's brief for the coda proposal:**
+Design a burst sequence (or fan) that fills the 8-second window with 2–4 discrete
+moments of color rather than a single peak. The player is floating upward during this
+window; the fireworks should surround that ascent. Think: *the world throwing a party
+for 8 seconds.* Bring 1–2 options to intake for Direction to choose between.
+
+---
+
 ## Coordination Gates
 
 Mira cannot finalize the finale option until:
-- **Finale:** Casting confirms the Hero mob; Stage Management confirms the reveal
+- **Finale burst:** Casting confirms the Hero mob; Stage Management confirms the reveal
   sequence and spawn position
+- **Victory coda:** Effects confirms levitation amplifier and ceiling clearance (sky
+  position for fight); Stage Management confirms coda cue timing framework (OPS-009 +
+  OPS-026 in place)
 
-Mira brings proposals (both finale options: burst or silence) to intake. No YAML
-until intake closes.
+Mira brings proposals (both finale options: burst or silence; plus coda pattern options)
+to intake. No YAML until intake closes.
 
 ---
 

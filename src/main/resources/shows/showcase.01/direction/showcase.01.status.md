@@ -2,7 +2,7 @@
 show_id: showcase.01
 document: Status
 stage: Brief
-last_updated: 2026-03-30
+last_updated: 2026-03-31
 ---
 
 # showcase.01 "Preparing for Battle" — Current Status
@@ -11,7 +11,62 @@ last_updated: 2026-03-30
 **Brief** — Gates 1 and 2 closed. Scouting prep in progress. No YAML work has begun.
 
 ## Last Session
-2026-03-30 (session 4). Site A scouted. Preview Mode filed to ops-inbox.
+2026-03-31 (session 6). Battle sequence params locked. A-Final arc staging corrected. Scale added to OPS-026.
+
+**Session 6 work (2026-03-31):**
+
+- **Battle sequence params locked (all from Alan):**
+  - `death_line`: "WORTHY." ✓
+  - `foe_health_multiplier`: 1.5 → 36 HP ✓
+  - `foe_speed_multiplier`: 0.5 — heavy, slow, intentional ✓
+  - `foe_scale_multiplier`: 1.5 — physically imposing; new param, added to show-params
+    and OPS-026 scope. Applied via `generic.scale` at `SPAWN_ENTITY`. Effects flagged:
+    1.5× Vindicator in ceil 0–4 workshop may clip — confirm fight space clearance at intake.
+- **A-Final arc staging corrected.** Vindicator never moves — he is frozen/AI-locked in
+  his holding position the entire show. The iron door opens at the **start of the chosen
+  branch**, not at the reveal beat. Fight branch: door opens → player steps through →
+  discovers Vindicator frozen → countdown fires → GO releases AI. Walk away branch:
+  door opens → "LATER." → despawn. show-direction.md §9 and §A-Final updated.
+  show-params.md §Key Mechanics updated.
+- **OPS-026 expanded.** `SPAWN_ENTITY` attribute support now covers health, speed, and
+  scale as a unified family. All three implement via `entity.getAttribute(...).setBaseValue()`.
+  showcase.01 locked values added to the OPS-026 parameters block.
+
+---
+
+**Previously: 2026-03-31 (session 5):**
+
+**Session 5 work (2026-03-31):**
+
+- **Decision point designed.** A-Final now ends with `PLAYER_CHOICE` ("What now?") presenting
+  two branches: Fight and Walk away. Full voice direction settled:
+  - Choice prompt: "What now?" (ShowSprite register)
+  - **Fight branch:** 5-4-3-2-1 countdown (TITLE events, white → gold bold GO), AI releases,
+    boss health bossbar appears. Sprite stays silent during the fight.
+  - **Walk away branch:** Vindicator says "LATER." (ALL CAPS, deep red `#CC2200`, CHAT),
+    then despawns (~60 ticks). Walk away fires on timeout (15s default). Voice to propose
+    a closing Sprite line for this branch.
+- **Vindicator spawn clarified — locked.** Vindicator spawns at Scene A open (AI locked,
+  no equipment) and is present the whole show. Never despawns until show end. Each armor stand
+  fill (A₁–A₄, A-Final) has a corresponding `ENTITY_EQUIP` on the Vindicator behind the wall.
+  The A-Final reveal is the iron door opening — no `SPAWN_ENTITY` at the finale. Show-params
+  and show-direction updated accordingly.
+- **Battle sequence pattern established.** `show-params.md §Battle Sequence` is now the
+  canonical show-level block for combat parameters. TBD values: `foe_health_multiplier`,
+  `foe_speed_multiplier`, `victory_cue`. Alan sets these.
+- **OPS-026 filed.** Boss health bossbar (`BOSS_HEALTH_BAR` event + `SPAWN_ENTITY` health
+  attribute support). Parallel to OPS-009. Implement OPS-009 first; OPS-026 follows.
+  Both required before A-Final YAML authoring.
+- **Victory coda designed.** On Vindicator death: death line fires → 20-tick pause →
+  8-second coda (levitation + fireworks). Death line proposed: "WORTHY." (TBD — Alan
+  confirms). Victory coda cue ID: `showcase.01.coda.victory`. Fireworks and Effects
+  both briefed.
+- **Walk-away Sprite close locked:** *"The stage is yours."* — established ScaenaCraft
+  MOTD line. In register.
+
+---
+
+**Previously: 2026-03-30 (session 4):**
 
 **Session 4 work (2026-03-30):**
 
@@ -110,9 +165,15 @@ vs. silence).
 - **Intake conversation** — scheduled after scouting delivers coordinates.
 - **Stage Management — iron door stop-safety:** Cleanup cue needed. Raise at intake.
 - **Stage Management — spectator mode:** Confirm PLAYER_SPECTATE capability. Raise at intake.
-- **Voice session** — A-section lines need revision with Vindicator staging active.
-  F line 3 open: "Five. Let's go home." or silence. Voice decides at intake.
+- **Voice — Walk away closing line:** *"The stage is yours."* — locked 2026-03-31.
 - **Effects — Site F particle beat:** Bring proposal to intake once Set confirms
   cleared space dimensions. If viable: particle event at axe discovery tick.
   If not viable: silence holds alone. Both are acceptable.
-- **ops-inbox.md** — future: interactive post-show choice prompt. Noted, not blocking.
+- **Battle sequence — remaining TBDs:** `victory_cue` fireworks pattern (Mira proposes
+  at intake); `victory_levitation_amplifier` (Effects holds pending ceiling clearance
+  confirmation — fight space confirmed through iron door staging). Health, speed, scale,
+  and death line all locked 2026-03-31.
+- **OPS-009** — required before A-Final YAML can be authored (PLAYER_CHOICE, already shipped).
+- **OPS-026** — shipped in 2.19.0. SPAWN_ENTITY attribute support (health, speed, scale) +
+  BOSS_HEALTH_BAR event fully implemented. A-Final YAML authoring now unblocked pending
+  scouting completion and intake conversation.

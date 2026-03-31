@@ -7,7 +7,7 @@ package com.scaena.shows.model.event;
 public enum EventType {
 
     // §6.1 Text and Display
-    MESSAGE, TITLE, TITLE_CLEAR, ACTION_BAR, BOSSBAR, PLAYER_CHOICE,
+    MESSAGE, TITLE, TITLE_CLEAR, ACTION_BAR, BOSSBAR, PLAYER_CHOICE, BOSS_HEALTH_BAR,
 
     // §6.2 Sound
     SOUND, STOP_SOUND,

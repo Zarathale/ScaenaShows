@@ -2,7 +2,7 @@
 show_id: showcase.01
 department: Effects Director
 document: Department Brief
-updated: 2026-03-29
+updated: 2026-03-31
 ---
 
 # Effects — showcase.01 "Preparing for Battle"
@@ -96,10 +96,49 @@ interior, functional. No player-sensation events here.
 
 ---
 
-## The Finale
+## The Reveal (A-Final door open)
 
 No Effects at the reveal. The Hero's arrival is a visual and staging event. No physical
 sensation should pull the player's attention from what they're seeing.
+
+---
+
+## Victory Coda — Fight Branch
+
+**New 2026-03-31.** If the player chooses Fight and defeats the Vindicator, an 8-second
+victory coda fires. Effects owns the levitation beat.
+
+**Brief:** The player is lifted — the world celebrates the outcome. Not a tutorial float.
+Not a demonstration. The ground releasing the player upward is the world's acknowledgment.
+It should feel momentary and earned, not prolonged or disorienting.
+
+**Parameters (from show-params §Battle Sequence):**
+
+| Param | Status |
+|-------|--------|
+| Duration | 160 ticks (8 seconds) |
+| Effect | `ENTITY_EFFECT: levitation` applied to player |
+| Amplifier | **TBD — Effects to propose after confirming ceiling clearance** |
+| Descent handling | **TBD — see safety note below** |
+
+**Ceiling clearance — critical question:**
+The fight occurs at the Vindicator's holding position. Per scouting (2026-03-30), this
+position is open sky (vindicator_spawn: open sky). If the fight stays in that area,
+levitation is unconstrained. However, if the player can drift back under the workshop
+ceiling (0–4 blocks) during or after the coda, levitation will pin them against the
+ceiling for the duration. Effects must confirm: *is the fight area open sky for the full
+8-second coda?*
+
+**Fall safety:** At amplifier 1, levitation 1 floats the player ~7 blocks upward over 8
+seconds. When the effect expires, the player falls. Without a soft landing, this is a
+survival fall. Effects proposes one of:
+- Low amplifier (0 = ~0.9 blocks/tick upward, more modest height)
+- `ENTITY_EFFECT: slow_falling` applied at the end of the levitation window to cushion
+  the descent (coda cue ends with a slow_fall tail)
+- Player teleported back to ground at coda end (Stage Management handles the TP)
+
+Effects proposes the amplifier and descent approach at intake, informed by the fight
+location's open-sky confirmation from Set scouting.
 
 ---
 

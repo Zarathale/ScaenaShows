@@ -44,8 +44,9 @@ public final class EventParser {
                 case TITLE       -> new TextEvents.TitleEvent(m);
                 case TITLE_CLEAR -> new TextEvents.TitleClearEvent(m);
                 case ACTION_BAR  -> new TextEvents.ActionBarEvent(m);
-                case BOSSBAR         -> new TextEvents.BossbarEvent(m);
-                case PLAYER_CHOICE   -> new TextEvents.PlayerChoiceEvent(m);
+                case BOSSBAR          -> new TextEvents.BossbarEvent(m);
+                case PLAYER_CHOICE    -> new TextEvents.PlayerChoiceEvent(m);
+                case BOSS_HEALTH_BAR  -> new TextEvents.BossHealthBarEvent(m);
                 // §6.2 Sound
                 case SOUND      -> new SoundEvents.SoundEvent(m);
                 case STOP_SOUND -> new SoundEvents.StopSoundEvent(m);

@@ -475,6 +475,120 @@ and doesn't touch existing show behavior for shows without `PLAYER_CHOICE` event
 
 ---
 
+### OPS-026 ~~[future-capability]~~ → **RESOLVED in 2.19.0** — see Resolved section below
+
+**Area:** Stage Management, Sprite Voice Director, Casting Director
+**Event:** New subsystem — `BOSS_HEALTH_BAR` + `SPAWN_ENTITY` health attribute support
+**Filed:** 2026-03-31 (showcase.01 A-Final battle sequence design)
+**Parallel to:** OPS-009 (PLAYER_CHOICE) — implement OPS-009 first; OPS-026 builds on it
+
+#### Need
+
+The current `BOSSBAR` event is scripted — progress depletes on a timer, not tied to entity
+health. A combat boss fight needs a reactive health bar: displays the foe's current HP as a
+fraction of max HP, updating in real time as the entity takes damage.
+
+Two capabilities are required together:
+
+**1. `SPAWN_ENTITY` attribute support** (health, speed, scale)
+Add optional attribute fields to the `SPAWN_ENTITY` event schema. All three are in the
+same implementation family — resolve together:
+
+```yaml
+type: SPAWN_ENTITY
+...
+max_health: 36.0    # generic.max_health — 24 HP base × 1.5 multiplier for showcase.01
+speed: 0.5          # generic.movement_speed — 0.5 for showcase.01 (heavy and slow)
+scale: 1.5          # generic.scale — 1.5× visual/physical size for showcase.01
+```
+
+Implementation notes:
+- `max_health`: `entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(value)` then `entity.setHealth(value)`
+- `speed`: `entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(value)`
+- `scale`: `entity.getAttribute(Attribute.GENERIC_SCALE).setBaseValue(value)` — Paper 1.20.5+ / MC 1.21 attribute. Verify Paper version supports `GENERIC_SCALE` before implementing. `generic.scale` affects both visual size and hitbox.
+
+**Effects note (showcase.01):** A 1.5× Vindicator in the workshop (ceil 0–4) may clip the ceiling. Effects flags this at intake — levitation amplifier for the victory coda may need adjustment or the fight may naturally carry the player to a more open space through the iron door. Stage Management confirms fight space clearance.
+
+Without attribute support, `foe_health_multiplier`, `foe_speed_multiplier`, and `foe_scale_multiplier` in show-params have no runtime effect.
+
+**2. `BOSS_HEALTH_BAR` event**
+A new bar event that links a bossbar's progress to an entity's live health ratio:
+```yaml
+type: BOSS_HEALTH_BAR
+target: entity:spawned:The Vindicator
+title: "The Vindicator"
+color: RED         # from show-params bossbar_color
+overlay: PROGRESS  # from show-params bossbar_overlay
+audience: participants
+```
+
+**Lifecycle:**
+- Fires at start of the fight branch (at or just after the GO beat)
+- Progress = `currentHP / maxHP` — updates on each `EntityDamageByEntityEvent` or
+  `EntityRegainHealthEvent` targeting the tracked entity
+- Dismisses on entity death (progress reaches 0, bar fades out)
+- Dismissed on `/show stop` via stop-safety (same cleanup contract as BOSSBAR)
+
+**Runtime model:**
+`RunningShow` gains:
+- `activeBossBars` map: entity UUID → `BossBar` instance
+- `registerBossBar(UUID entityId, BossBar bar)` — adds to cleanup list
+- `EntityDamageByEntityEvent` listener: if damaged entity UUID is in `activeBossBars`,
+  recompute progress and update bar
+- `EntityDeathEvent` listener: if killed entity UUID is in `activeBossBars`, animate bar
+  to 0 then dismiss
+
+**YAML hook (from fight branch cue):**
+```yaml
+- at: 0
+  type: BOSS_HEALTH_BAR
+  target: entity:spawned:The Vindicator
+  title: "The Vindicator"
+  color: RED
+  overlay: PROGRESS
+  audience: participants
+```
+
+#### Death line + victory hook
+
+When the tracked entity dies, two things fire in sequence:
+
+**1. Death line** (immediate, on `EntityDeathEvent`):
+The show fires a `MESSAGE` event in the Vindicator's text format — ALL CAPS, deep red
+`#CC2200`, CHAT — to all participants. The entity is dead; this is Sprite-delivered text
+in his register, not entity speech. `death_line_to_coda_ticks` pause follows.
+
+**2. Victory cue** (fires after the pause):
+The `victory_cue` ID from show-params is injected as a branch cue into the running show
+(same mechanism as `PLAYER_CHOICE` branch injection in OPS-009). It runs inside the same
+`RunningShow` with full show context. For showcase.01, the victory coda is:
+- `ENTITY_EFFECT: levitation` applied to the player for `victory_cue_duration` (160 ticks)
+- Fireworks bursts during the levitation window (Fireworks Director designs the pattern)
+- Show closes naturally at end of coda duration; stop-safety cleans up
+
+**Runtime:** `BOSS_HEALTH_BAR` listener handles `EntityDeathEvent`:
+1. Animate bar to 0 and dismiss
+2. Fire death line MESSAGE to participants
+3. Schedule `victory_cue` injection after `death_line_to_coda_ticks`
+4. `injectBranchCue(victoryCue)` runs the coda; show closes at coda end
+
+#### showcase.01 parameters (from show-params §Battle Sequence)
+
+- `foe_name`: "The Vindicator" (entity custom name at spawn + bossbar title)
+- `foe_health_multiplier`: `1.5` → 36 HP *(locked 2026-03-31)*
+- `foe_speed_multiplier`: `0.5` — heavy and slow *(locked 2026-03-31)*
+- `foe_scale_multiplier`: `1.5` — 1.5× size *(locked 2026-03-31)*
+- `death_line`: "WORTHY." *(locked 2026-03-31)*
+- `bossbar_color`: RED
+- `bossbar_overlay`: PROGRESS
+
+**Priority:** Medium — required for showcase.01 A-Final YAML authoring. Implement
+after OPS-009 is in place. `SPAWN_ENTITY` health attribute is the simpler half;
+implement it first as it unblocks setting `foe_health_multiplier` even before the
+reactive bossbar is ready.
+
+---
+
 ### OPS-010 [future-capability] In-game scout capture — show-params as source of truth, bidirectional sync
 
 **Area:** Set Director, Stage Manager
@@ -629,6 +743,28 @@ Add a "Human as Designer" preamble to each department KB clarifying the creative
 ---
 
 ## Resolved
+
+---
+
+### OPS-026 [resolved] SPAWN_ENTITY attribute support + BOSS_HEALTH_BAR event ✓
+**Shipped:** 2.19.0 | **Filed:** 2026-03-31 | **Area:** Stage Management, Casting, Effects
+
+**SPAWN_ENTITY attributes** — added optional `attributes:` block to `SpawnEntityEvent` with three fields:
+- `max_health:` — absolute `generic.max_health` override; syncs `setHealth()` to match
+- `speed:` — absolute `generic.movement_speed` override
+- `scale:` — `generic.scale` override (1.0 = default, 1.5 = 1.5× size)
+
+Applied in `EntityEventExecutor.handleSpawn()` after spawn, equipment, and name. All three only fire when the authored value is > 0.
+
+**BOSS_HEALTH_BAR event** — new event type that creates an entity-linked bossbar whose progress tracks live HP in real time. Fields: `target`, `title`, `color`, `overlay`, `audience`, `death_line`, `death_line_color`, `death_line_pause_ticks`, `victory_cue`. On entity death: bar animates to 0, death line is sent to participants, victory cue is injected via `ShowManager.injectCue()` after the configured pause.
+
+**New files:**
+- `TextEvents.BossHealthBarEvent` — event model
+- `EntityCombatListener` — Bukkit `EntityDamageByEntityEvent` + `EntityDeathEvent` listener; registered in `ScaenaShowsPlugin.onEnable()`
+
+**Other changes:** `RunningShow.BossHealthBarTracker` record + `bossHealthBars` map; `ShowManager.injectCue()` public method; `ExecutorRegistry` routes `BOSS_HEALTH_BAR` to `EntityEventExecutor`; `EventType.BOSS_HEALTH_BAR` added; `EventParser` case added.
+
+*showcase.01 A-Final YAML authoring is now unblocked (pending OPS-009 PLAYER_CHOICE — already shipped).*
 
 ---
 

@@ -88,6 +88,29 @@ public final class RunningShow {
     /** Per-event bossbars for inline BOSSBAR events */
     private final List<BossBar> activeBossBars = new ArrayList<>();
 
+    // -----------------------------------------------------------------------
+    // Entity-linked boss health bars  (OPS-026)
+    // Keyed by entity UUID; each tracker holds the bar, max HP snapshot,
+    // and optional death-line / victory-cue config.
+    // -----------------------------------------------------------------------
+
+    /**
+     * Tracks one BOSS_HEALTH_BAR event: the live bar, the entity UUID it follows,
+     * the max HP at registration (used to compute progress), and optional death
+     * line / victory cue fields fired by EntityCombatListener on entity death.
+     */
+    public record BossHealthBarTracker(
+        UUID   entityUuid,
+        BossBar bar,
+        double  maxHealth,
+        String  deathLine,
+        String  deathLineColor,
+        int     deathLinePauseTicks,
+        String  victoryCue
+    ) {}
+
+    private final Map<UUID, BossHealthBarTracker> bossHealthBars = new LinkedHashMap<>();
+
     /** Track scoreboard team names created by this show (for cleanup) */
     private final Set<String> ownedTeams = new HashSet<>();
 
@@ -307,6 +330,28 @@ public final class RunningShow {
     public void setShowBossBar(BossBar bar)          { this.showBossBar = bar; }
     public void addActiveBossBar(BossBar bar)        { activeBossBars.add(bar); }
     public List<BossBar> getActiveBossBars()         { return activeBossBars; }
+
+    // -----------------------------------------------------------------------
+    // Entity-linked boss health bars  (OPS-026)
+    // -----------------------------------------------------------------------
+
+    public void registerBossHealthBar(UUID entityUuid, BossHealthBarTracker tracker) {
+        bossHealthBars.put(entityUuid, tracker);
+    }
+
+    /** Returns the tracker for the given entity UUID, or null if not tracked. */
+    public BossHealthBarTracker getBossHealthBarTracker(UUID entityUuid) {
+        return bossHealthBars.get(entityUuid);
+    }
+
+    public void removeBossHealthBar(UUID entityUuid) {
+        bossHealthBars.remove(entityUuid);
+    }
+
+    /** All active boss-health-bar trackers (for cleanup on show end). */
+    public Map<UUID, BossHealthBarTracker> getBossHealthBars() {
+        return Collections.unmodifiableMap(bossHealthBars);
+    }
 
     // -----------------------------------------------------------------------
     // Teams
