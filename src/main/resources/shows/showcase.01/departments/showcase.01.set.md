@@ -2,7 +2,7 @@
 show_id: showcase.01
 department: Set Director
 document: Department Brief
-updated: 2026-03-29
+updated: 2026-03-30
 ---
 
 # Set — showcase.01 "Preparing for Battle"

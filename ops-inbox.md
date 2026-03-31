@@ -10,6 +10,171 @@ Items here are queued for the Java review team. Each entry has enough context to
 
 ---
 
+### [java-gap] Scout sidebar — human-readable display labels for mark positions
+
+**Area:** Set Director, Stage Manager
+**Feature:** Scout objectives sidebar (existing feature — label display enhancement)
+**Filed:** 2026-03-30 (showcase.01 scouting session — marker quality feedback)
+
+The scout sidebar currently displays mark codes (`1.1`, `2.1`) and raw names
+(`home_base`, `companion_spawn`). The codes are useful for capture commands but are not
+descriptive enough to read at a glance in-world, especially when a scout has multiple
+mark types loaded simultaneously.
+
+**Requested:** Add a `display_label` field to the objectives file format. The sidebar
+uses `display_label` for human-readable role description when present, falling back to
+`name`. Claude generates these labels when it builds the objectives file from show-params.
+
+**Example objectives format with labels:**
+```yaml
+objectives:
+  "1.1":
+    name: home_base
+    label: "Player Spawn : Site A"
+  "2.1":
+    name: companion_spawn
+    label: "Armorer — Opening Position"
+  "2.2":
+    name: vindicator_spawn
+    label: "Vindicator — Hold Position"
+  "3.1":
+    name: armor_stand
+    label: "Armor Stand — Pedestal"
+  "3.2":
+    name: iron_door
+    label: "Iron Door — Control Point"
+  "3.3":
+    name: blast_furnace
+    label: "Blast Furnace — Stand On Top"
+```
+
+**Sidebar display:** Each entry shows as `[code]  [label]` — e.g., `1.1  Player Spawn — Site A`.
+The code stays visible for capture command reference. The label replaces the raw name.
+
+**Fix scope:** Extend the objectives file YAML schema to accept either a plain string
+(existing format) or a map with `name:` + `label:`. The sidebar renderer checks for `label:`
+and uses it if present. Backward compatible — objectives files without `label:` continue to
+work as before. Claude regenerates the showcase.01 objectives file with labels once this
+ships.
+
+**Priority:** Low-medium — cosmetic but meaningfully improves the in-world scouting
+experience, especially for sites with 4–6 simultaneous marks loaded.
+
+---
+
+### [future-capability] Preview Mode — in-world scene preview during scouting and production
+
+**Area:** Stage Management (coordinator), Set, Casting, Wardrobe, Lighting, Camera, Voice,
+Sound, Effects, Fireworks, Choreography
+**Event:** New subsystem — `/scaena preview` command family
+**Filed:** 2026-03-30
+
+A production mode that materializes a show scene in-world so the builder or scout can see
+what the show has designed for that location — entities at their marks, blocks in their show
+state, optionally time of day set — without running the full show timeline. Stage Management
+coordinates: preview stop-safety mirrors the show's cleanup contract.
+
+**Why this matters:** During scouting, being able to see the Armorer Villager standing at
+their mark and the Vindicator behind the wall answers staging questions that coordinates alone
+can't. During production, standing in a scene with the full entity set and block state active
+is the fastest way to catch problems before the show runs.
+
+---
+
+#### Command surface
+
+```
+/scaena preview load [show_id] [scene]   — materialize a scene's setup bundle in-world
+/scaena preview dismiss                  — clean up all preview assets (full stop-safety)
+/scaena preview status                   — list what's currently active in preview
+```
+
+Scene labels match the scout load nomenclature: `site_a`, `site_b`, … `site_f` for
+showcase.01. The plugin resolves these to the appropriate scene definition.
+
+---
+
+#### Data source — two phases
+
+**Phase 1 — Pre-YAML (scouting and brief stage):**
+Data comes from `show-params.md` + `scout_captures/[show_id]/[date].yml`. Preview reads
+scouted mark positions and entity role definitions from show-params and materializes what
+it knows: entities spawned at their captured positions, block states applied, time of day
+set to the show's opening tick.
+
+This phase is explicitly limited to what show-params defines — no YAML authoring is
+required to use preview mode during scouting.
+
+**Phase 2 — Post-YAML:**
+Data comes from the show YAML. Preview executes the "setup bundle" — the events that
+establish scene state (SPAWN_ENTITY, BLOCK_STATE, ENTITY_EQUIP, TIME_OF_DAY) — immediately
+as a point-in-time snapshot rather than on the tick timeline. Sequence events (the show's
+narrative progression) are not fired in preview mode.
+
+---
+
+#### Department scope
+
+| Department | Phase | What preview shows |
+|---|---|---|
+| Set | Phase 1 | Scout markers already visible via sidebar; no additional preview behavior |
+| Casting | Phase 1 | Entities spawned at scouted positions with correct species and profession |
+| Wardrobe | Phase 1 | Entities equipped from show-params kit definition at spawn |
+| Lighting | Phase 1 (partial) | TIME_OF_DAY set to show's opening tick; BLOCK_STATE when that event lands |
+| Camera | Phase 1 (partial) | Drone entity (e.g., a named Bat with AI off) spawned at drone start mark |
+| Voice | Phase 2 | Scene's lines printed to player chat in sequence while preview is active |
+| Sound | Phase 2 | Scene's ambient sounds play once on preview load |
+| Effects | Phase 2 | Particle events fire once at their positions |
+| Fireworks | Phase 2 | One-shot test burst at Mira's computed position |
+| Choreography | Phase 2 | Entities positioned as authored in YAML |
+
+**Out of scope for all phases:** Tick-sequenced narrative events (the show progressing
+through its arc). Preview mode is a snapshot of scene state, not a partial show run.
+
+---
+
+#### Stop-safety contract — Stage Management owns this
+
+Preview is covered by the same cleanup contract as the show:
+
+- All preview-spawned entities are tracked in `PreviewSession` with `despawn_on_dismiss: true`
+- All block state changes record the original `BlockData` before modification; restored on dismiss
+- Player game mode is recorded at preview load and restored on dismiss
+- `/scaena preview dismiss` calls `applyStopSafety()` on the `PreviewSession` — identical
+  behavior to `/show stop`
+- If the server crashes or the player disconnects with preview active, the same safety
+  mechanism applies as for interrupted shows
+
+The Stage Manager owns the preview cleanup contract. A preview that cannot be fully cleaned
+up should not ship.
+
+---
+
+#### Implementation notes
+
+`PreviewSession` is a stripped-down analogue of `RunningShow`:
+- Tracks spawned entities (UUID list with despawn flag), block change records (location →
+  original `BlockData`), player state snapshot (gamemode, flight), and active preview scope
+  (show ID + scene label)
+- `previewLoad()` builds a `PreviewSession` by reading scene data (Phase 1: show-params
+  parser; Phase 2: a filtered pass over the show YAML that extracts setup events) and
+  fires those events immediately against the live world
+- `previewDismiss()` calls `applyStopSafety()` on the session — despawn entities, restore
+  blocks, restore player state
+- Reuse existing executors (`EntityEventExecutor`, `BlockStateEventExecutor` when it
+  exists, `TextEventExecutor` for Voice preview) — preview is not a separate execution
+  path, it's a different scheduling mode
+
+**One preview session per player at a time.** Loading a new scene while one is active
+auto-dismisses the current one first (with cleanup) before loading the new scene.
+
+---
+
+**Priority:** Medium-high — meaningfully improves both the scouting workflow and production
+review. Phase 1 (pre-YAML, entity + block spawn) is the high-value piece; Phase 2 (YAML
+integration) can follow once Phase 1 is established. Raise with Java review for scoping
+before showcase.01 enters YAML authoring.
+
 ---
 
 ### [java-gap] FIREWORK preset `launch:` mode not applied by executor
@@ -310,6 +475,56 @@ Claude pulls this file from Bisect (access granted per session as needed), merge
 - `/scaena set <code>` is intentionally short — no `scout` prefix once objectives are loaded.
 - Plugin reads objectives file on `load` command — no restart required.
 - Captures held in memory (per-player map) until `save`.
+
+---
+
+### [future-capability] Scout session snapshot log — screenshot prompts bundled with Bisect export
+
+**Area:** Stage Management, Set Director
+**Command:** `/scaena snap [label]`
+**Filed:** 2026-03-30
+**Context:** Scouting workflow — on location at a set site (Site A, Site B, etc.)
+
+When scouting a set, there's no record of what Alan was looking at when he took a screenshot. Screenshots land in `.minecraft/screenshots/` on the client — the server has no access to them and cannot trigger F2. The goal isn't to capture images server-side; it's to create a log entry that travels with the Bisect export bundle so Alan can match client-side screenshots to scout positions when he pulls the session data.
+
+**How it works:**
+
+`/scaena snap [label]` does two things:
+1. Sends a prominent title/actionbar cue to the player — "📷 Snap now — [label]" — so Alan knows to hit F2 at that exact moment
+2. Logs the moment to `snapshot_log.yml` in the session folder:
+
+```yaml
+# Scout snapshot log — showcase.01 — 2026-03-30
+show: showcase.01
+snapshots:
+  - label: "site_a_overview"
+    timestamp: "2026-03-30T14:22:11"
+    position: {x: 112, y: 68, z: -88, yaw: 180.0, pitch: -22.0}
+    site: site_a
+  - label: "companion_spawn_angle"
+    timestamp: "2026-03-30T14:23:44"
+    position: {x: 108, y: 64, z: -91, yaw: 90.0, pitch: 0.0}
+    site: site_a
+```
+
+**Bisect export bundle — session folder layout:**
+```
+plugins/ScaenaShows/sessions/[show_id]/[date]/
+  scout_captures.yml     ← mark positions (existing)
+  snapshot_log.yml       ← new: one entry per /scaena snap call
+```
+
+Alan pulls both files from Bisect alongside each other. The `timestamp` field cross-references directly to the `.minecraft/screenshots/` filename (which is timestamp-based), so matching is unambiguous.
+
+**Command surface:**
+```
+/scaena snap [label]     — log a snapshot moment and prompt F2
+/scaena snap list        — print snapshot log entries for this session to chat
+```
+
+The label is freeform — `site_a_overview`, `spawn_angle`, `door_sight_line` — whatever is useful for Claude and Alan to identify what the image contains when doing post-session review.
+
+**Priority:** Low — scouting works without it. High value-to-effort ratio since the server side is just a YAML write + title send. Implement alongside or just after `/scaena scout save`.
 
 ---
 

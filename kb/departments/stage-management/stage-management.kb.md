@@ -500,6 +500,32 @@ COMMAND is the escape hatch for anything not natively supported. Every COMMAND u
 
 ---
 
+## Preview Mode — Stage Management Coordinates
+
+Preview Mode is a new subsystem (filed to ops-inbox 2026-03-30) that materializes a show
+scene in-world without running the full timeline — entities at their marks, blocks in show
+state, time of day set. Stage Management owns three things in preview:
+
+**1. The cleanup contract.** Preview stop-safety mirrors show stop-safety. A `PreviewSession`
+tracks all spawned entities, block changes, and player state. `/scaena preview dismiss` is
+the equivalent of `/show stop` — full restore. No preview ships without a confirmed cleanup.
+
+**2. The scope definition.** Stage Management defines which events are "setup events" (fire
+in preview) vs. "sequence events" (do not fire in preview). Setup events establish scene
+state: SPAWN_ENTITY, BLOCK_STATE, ENTITY_EQUIP, TIME_OF_DAY. Sequence events are narrative
+progression — they belong to the show timeline, not preview.
+
+**3. Phase ownership.** Two phases are defined:
+- **Phase 1 (pre-YAML):** Show-params + scout_captures drive the preview. Entities spawn at
+  scouted positions with kit from show-params. No YAML required. This is the scouting-phase
+  tool.
+- **Phase 2 (post-YAML):** Show YAML drives the preview. Setup events are extracted and fired
+  as a snapshot. Voice lines print to chat, sounds play once, particles fire.
+
+Full department scope table and implementation notes: `ops-inbox.md §Preview Mode`.
+
+---
+
 ## Active Gap Registry
 
 Stage Management maintains this registry. All open items are in `ops-inbox.md` with full filing detail. This table is Stage Management's operational view — safety implications and department impact.
@@ -560,3 +586,5 @@ Always bump before building. Never build the same version number twice. Version 
 | Department briefing coordination | ✅ Active | Blocking/non-blocking table defined per pass type |
 | YAML authorship sequencing | ✅ Active | Kendra gates on dept decisions before authoring begins |
 | BLOCK_PLACE / BLOCK_REMOVE | ⚠️ Gapped | Requires COMMAND; outside cleanup contract — **High safety risk** |
+| Scout sidebar display labels | ⚠️ Gapped | Sidebar shows raw codes/names; `display_label` field not yet supported — ops-inbox filed 2026-03-30 |
+| Preview Mode (`/scaena preview`) | 📋 Designed | Full spec in ops-inbox 2026-03-30; Phase 1 (pre-YAML entity + block spawn) is priority |

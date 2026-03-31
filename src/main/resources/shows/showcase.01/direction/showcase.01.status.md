@@ -2,7 +2,7 @@
 show_id: showcase.01
 document: Status
 stage: Brief
-last_updated: 2026-03-29
+last_updated: 2026-03-30
 ---
 
 # showcase.01 "Preparing for Battle" — Current Status
@@ -11,9 +11,24 @@ last_updated: 2026-03-29
 **Brief** — Gates 1 and 2 closed. Scouting prep in progress. No YAML work has begun.
 
 ## Last Session
-2026-03-29 (session 3). Lighting arc and block light work.
+2026-03-30 (session 4). Site A scouted. Preview Mode filed to ops-inbox.
 
-**Structural decisions locked this session:**
+**Session 4 work (2026-03-30):**
+
+- **Site A scouted.** Full coordinates in show-params: home_base, companion_spawn,
+  vindicator_spawn, armor_stand, iron_door, blast_furnace. Environmental data captured.
+  Biome: Sparse Jungle. Main play space confirmed enclosed (ceiling 0–4). Blast furnace
+  reads as open sky — at exterior wall or courtyard position; confirm before BLOCK_STATE
+  authoring. Armorer spawn also open sky. Vindicator at Y=84, 4 blocks above workshop
+  floor. Sites B–F still pending.
+- **Preview Mode filed to ops-inbox.** Two entries: scout sidebar display labels
+  (small, cosmetic) and Preview Mode subsystem (Phase 1: pre-YAML entity + block
+  spawn from show-params; Phase 2: YAML-driven snapshot). Stage Management owns the
+  cleanup contract. All departments have preview scope defined. Filed 2026-03-30.
+
+---
+
+**Previously locked (session 3, 2026-03-29):**
 
 - **Shield cut / Site G retired.** The show is now 5 expeditions: helmet, chestplate,
   leggings, boots, weapon. No shield. No Site G. Site F (The Weapon) is the final
