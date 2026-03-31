@@ -79,8 +79,8 @@ public final class ScaenaShowsPlugin extends JavaPlugin {
         // 7. Show manager
         showManager = new ShowManager(this, scaenaConfig, cueRegistry, executors);
 
-        // 8a. Scout manager
-        scoutManager = new ScoutManager(this);
+        // 8a. Scout manager (needs ShowRegistry for set-based teleport and scene ordering)
+        scoutManager = new ScoutManager(this, showRegistry);
 
         // 8b. Register /show command
         PluginCommand showCmd = getCommand("show");
@@ -108,6 +108,7 @@ public final class ScaenaShowsPlugin extends JavaPlugin {
             new PlayerLifecycleListener(showManager, scoutManager), this);
 
         // Ready!
+        ScaenaConsole.printCapabilities();
         ScaenaConsole.printReady();
     }
 

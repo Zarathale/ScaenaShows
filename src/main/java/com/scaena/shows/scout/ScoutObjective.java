@@ -5,8 +5,12 @@ import java.util.List;
 /**
  * A single named position to be captured during a scouting session.
  * Loaded from a scout_objectives/[showId].yml file.
+ *
+ * The {@code note} field holds in-game hint text for the scout (e.g. positioning
+ * guidance, measurement notes). It is optional — may be null. Surfaced in
+ * /scaena scout status so the scout doesn't need an external reference for basics.
  */
-public record ScoutObjective(String code, String name, List<String> tags) {
+public record ScoutObjective(String code, String name, List<String> tags, String note) {
 
     /**
      * Display label for the scoreboard sidebar — name with underscores

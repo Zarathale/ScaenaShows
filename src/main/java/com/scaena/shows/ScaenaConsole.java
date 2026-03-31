@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
  *   onEnable()   → printBanner(version)
  *                → [registries log their individual load lines via Logger]
  *                → printStats(fw, cues, shows)
+ *                → printCapabilities()
  *                → printReady()
  *   onDisable()  → printCurtainDown()
  *   /show reload → separator() before + printStats() + separator() after
@@ -74,6 +75,36 @@ public final class ScaenaConsole {
         c(G  + "    ►  " + Y + cues      + "  " + GR + "cues");
         c(G  + "    ►  " + Y + shows     + "  " + GR + "shows ready");
         c(LINE);
+    }
+
+    /**
+     * Capability summary — stable feature listing with a per-version revision note.
+     * Call after printStats(), before printReady().
+     *
+     * Engine and Events sections grow only when new capability categories ship.
+     * Tooling section grows when production workflow tools are added.
+     * The revision line at the bottom is updated with each version bump.
+     */
+    public static void printCapabilities() {
+        c(LINE);
+        c(GR + "    Engine");
+        c(G  + "    ►  " + GR + "Universal recursive Cue — unlimited nesting, cycle-safe");
+        c(G  + "    ►  " + GR + "Reference-by-ID cue library  ·  tag taxonomy (§9–10)");
+        c(G  + "    ►  " + GR + "Multi-participant  ·  GROUP_ASSIGN  ·  static spatial anchor");
+        c(LINE);
+        c(GR + "    Events");
+        c(G  + "    ►  " + GR + "Teleport  ·  smooth movement  ·  stage direction  ·  return home");
+        c(G  + "    ►  " + GR + "Fireworks  ·  sound  ·  chat  ·  title  ·  actionbar  ·  bossbar");
+        c(G  + "    ►  " + GR + "Block state  ·  mob spawn  ·  glow");
+        c(LINE);
+        c(GR + "    Tooling");
+        c(G  + "    ►  " + GR + "Scout — scene nav  ·  in-world markers  ·  entry TP  ·  auto-next");
+        c(G  + "    ►  " + GR + "Show folder — direction  ·  departments  ·  run sheets");
+        c(G  + "    ►  " + GR + "Calibration lab — archetype library  ·  pattern registry");
+        c(LINE);
+        c(DG + "    " + Y + "2.16.0" + DG + "  —  " + GR
+            + "Scout workflow redesign: scene overview, TextDisplay markers, goto, next");
+        c(SEP);
     }
 
     /**

@@ -2,72 +2,185 @@
 # AUTO-GENERATED from showcase.01.show-params.md — update here when show-params changes.
 # Regenerate by asking Claude to sync scout objectives for showcase.01.
 #
-# Usage:
-#   /scaena scout load showcase.01          — loads all marks
-#   /scaena scout load showcase.01 sites    — sites only (A–F)
-#   /scaena scout load showcase.01 spawns   — cast positions only
-#   /scaena scout load showcase.01 props    — set dressing positions only
+# PRIMARY WORKFLOW — load by site (one location at a time):
+#   /scaena scout load showcase.01 site_a   — all 6 home base marks
+#   /scaena scout load showcase.01 site_b   — all 3 marks at High Ground
+#   /scaena scout load showcase.01 site_c   — all 3 marks at The Forge
+#   /scaena scout load showcase.01 site_d   — all 4 marks at The Long Road
+#   /scaena scout load showcase.01 site_e   — all 4 marks at The Swamp Floor
+#   /scaena scout load showcase.01 site_f   — all 4 marks at The Choice
+#
+# SECONDARY — load by type if you need to revisit a specific category:
+#   /scaena scout load showcase.01 sites    — all 6 site arrival positions
+#   /scaena scout load showcase.01 spawns   — cast positions (home base only)
+#   /scaena scout load showcase.01 props    — entity props (home base only)
+#   /scaena scout load showcase.01 blocks   — BLOCK_STATE targets (furnace + campfires)
+#   /scaena scout load showcase.01 armorer  — Armorer positions (expedition sites B–F)
+#   /scaena scout load showcase.01 drone    — drone start positions (expedition sites B–F)
+#
+#   /scaena scout load showcase.01          — all 24 marks (sidebar will be long)
+#
+# For 'blocks' marks: stand directly ON TOP of the block when running /scaena set <code>.
+# The plugin captures player position; block_xyz in the output is derived (floor(y)-1 for Y).
+# Confirm exact block coordinates in-game before authoring BLOCK_STATE events.
+#
+# Environmental data (biome, light levels, ceiling height, sky type) is auto-captured
+# at every mark — no manual F3 notes needed for those fields.
 #
 # Walk to each position and run: /scaena set <code>
 # Then: /scaena scout save
 
 show: showcase.01
-generated: "2026-03-29"
+generated: "2026-03-30"
 
 objectives:
 
-  # --- Sites (A–F expedition locations) ---
+  # ============================================================
+  # SITE A — Home Base: "The Workshop"
+  # Marks: 1.1  2.1  2.2  3.1  3.2  3.3
+  # ============================================================
 
   - code: "1.1"
     name: home_base
-    tags: [sites]
-    note: "Site A — The Workshop. Near pillager outpost, enclosed outbuilding."
-
-  - code: "1.2"
-    name: high_ground
-    tags: [sites]
-    note: "Site B — The Helmet. Natural mountain peak, open sky."
-
-  - code: "1.3"
-    name: the_forge
-    tags: [sites]
-    note: "Site C — The Chestplate. Badlands, lava present, exposed mineshaft."
-
-  - code: "1.4"
-    name: the_long_road
-    tags: [sites]
-    note: "Site D — The Leggings. Savanna/plains village, armorer shop by road."
-
-  - code: "1.5"
-    name: the_swamp_floor
-    tags: [sites]
-    note: "Site E — The Boots. Swamp terrain — mud/clay/water."
-
-  - code: "1.6"
-    name: the_choice
-    tags: [sites]
-    note: "Site F — The Weapon. Ruin with cleared central flat space."
-
-  # --- Cast positions (home base) ---
+    tags: [sites, site_a]
+    note: "Player arrival at The Workshop. Face toward the armor stand — it should be center-frame on arrival."
 
   - code: "2.1"
     name: companion_spawn
-    tags: [spawns]
-    note: "Armorer Villager — opening position at home base. Capture facing out from building."
+    tags: [spawns, site_a]
+    note: "Armorer Villager — opening position. Face toward the armor stand. Must be fenced in with blast furnace job site nearby."
 
   - code: "2.2"
     name: vindicator_spawn
-    tags: [spawns]
-    note: "Vindicator — reveal position. Behind wall, not visible from companion_spawn."
-
-  # --- Props (home base) ---
+    tags: [spawns, site_a]
+    note: "Vindicator — behind-wall holding position. Must NOT be visible from 1.1 (arrival) or 2.1 (Armorer). Iron door between here and workshop."
 
   - code: "3.1"
     name: armor_stand
-    tags: [props]
-    note: "Armor stand — staged near wall for progressive fill reveals (A1–A-Final)."
+    tags: [props, site_a]
+    note: "Armor stand — on 1-block pedestal, 6–8 blocks from arrival (1.1), center-frame. This is the show's visual spine."
 
   - code: "3.2"
     name: iron_door
-    tags: [props]
-    note: "Iron door — target for REDSTONE open/close. Capture standing in the doorway."
+    tags: [props, site_a]
+    note: "Iron door — stand IN the doorway to capture. Separates workshop from Vindicator holding area. REDSTONE target for open/close."
+
+  - code: "3.3"
+    name: blast_furnace
+    tags: [blocks, site_a]
+    note: "Blast furnace — stand ON TOP of it. BLOCK_STATE target: lit=true at show open (ambient crackle + glow). Visible on arrival but secondary to armor stand."
+
+  # ============================================================
+  # SITE B — The Helmet: "High Ground"
+  # Marks: 1.2  4.1  5.1
+  # ============================================================
+
+  - code: "1.2"
+    name: high_ground
+    tags: [sites, site_b]
+    note: "Player arrival at High Ground. No fall risk at TP-in. Face toward the view or the drop — player should FEEL the height immediately."
+
+  - code: "4.1"
+    name: armorer_high_ground
+    tags: [armorer, site_b]
+    note: "Armorer at Site B. 2–4 blocks from 1.2. Face toward player arrival. Tight spacing at summit — test that both marks fit without crowding."
+
+  - code: "5.1"
+    name: drone_high_ground
+    tags: [drone, site_b]
+    note: "Drone start at Site B. 15–25 blocks back from 4.1, at elevation. Face toward Armorer — this is the camera's travel direction."
+
+  # ============================================================
+  # SITE C — The Chestplate: "The Forge"
+  # Marks: 1.3  4.2  5.2
+  # ============================================================
+
+  - code: "1.3"
+    name: the_forge
+    tags: [sites, site_c]
+    note: "Player arrival at The Forge. Face INTO the space — player enters the forge, doesn't walk past it. No immediate lava hazard at TP-in."
+
+  - code: "4.2"
+    name: armorer_the_forge
+    tags: [armorer, site_c]
+    note: "Armorer at Site C. 2–4 blocks from 1.3. Face toward player arrival. Not adjacent to lava — note lava proximity in manual notes."
+
+  - code: "5.2"
+    name: drone_the_forge
+    tags: [drone, site_c]
+    note: "Drone start at Site C. 15–25 blocks back from 4.2. Face toward Armorer. Keep clear of lava in drone path."
+
+  # ============================================================
+  # SITE D — The Leggings: "The Long Road"
+  # Marks: 1.4  4.3  5.3  6.1
+  # ============================================================
+
+  - code: "1.4"
+    name: the_long_road
+    tags: [sites, site_d]
+    note: "Player arrival at The Long Road. Face DOWN the road or TOWARD the horizon — not across it. Distance is the point."
+
+  - code: "4.3"
+    name: armorer_long_road
+    tags: [armorer, site_d]
+    note: "Armorer at Site D. 2–4 blocks from 1.4. Face toward player arrival. Inside or beside the armorer shop."
+
+  - code: "5.3"
+    name: drone_long_road
+    tags: [drone, site_d]
+    note: "Drone start at Site D. 15–25 blocks back down the road from 4.3. Face toward Armorer. Camera travels along the road."
+
+  - code: "6.1"
+    name: campfire_long_road
+    tags: [blocks, site_d]
+    note: "Regular campfire at Site D. Stand ON TOP of it. BLOCK_STATE target. Also the mob containment anchor (~14-block no-spawn radius). Place campfire first, then capture."
+
+  # ============================================================
+  # SITE E — The Boots: "The Swamp Floor"
+  # Marks: 1.5  4.4  5.4  6.2
+  # ============================================================
+
+  - code: "1.5"
+    name: the_swamp_floor
+    tags: [sites, site_e]
+    note: "Player arrival at The Swamp Floor. Safe altitude — no fall damage. Swamp floor material should be obvious immediately (mud, clay, water patches)."
+
+  - code: "4.4"
+    name: armorer_swamp_floor
+    tags: [armorer, site_e]
+    note: "Armorer at Site E. 2–4 blocks from 1.5. Stable ground only — not in water. Face toward player arrival."
+
+  - code: "5.4"
+    name: drone_swamp_floor
+    tags: [drone, site_e]
+    note: "Drone start at Site E. 15–25 blocks back from 4.4. Face toward Armorer."
+
+  - code: "6.2"
+    name: campfire_swamp_floor
+    tags: [blocks, site_e]
+    note: "Campfire at Site E. Stand ON TOP of it. BLOCK_STATE target. Soul vs. regular campfire TBD — Steve decides after canopy density report. Place it first, then capture. Note campfire type in manual notes."
+
+  # ============================================================
+  # SITE F — The Weapon: "The Choice"
+  # Marks: 1.6  4.5  5.5  6.3
+  # ============================================================
+
+  - code: "1.6"
+    name: the_choice
+    tags: [sites, site_f]
+    note: "Player arrival at The Choice. Ruin with cleared central flat space. Face toward the ruin's visual anchor. This site holds the show's most important silence."
+
+  - code: "4.5"
+    name: armorer_the_choice
+    tags: [armorer, site_f]
+    note: "Armorer at Site F. 2–4 blocks from 1.6. Center of cleared flat space. Face toward player arrival. Slower pacing here — the space should feel weighted."
+
+  - code: "5.5"
+    name: drone_the_choice
+    tags: [drone, site_f]
+    note: "Drone start at Site F. 15–25 blocks back from 4.5. Face toward Armorer. This scene uses slower drone pacing — weight the approach distance accordingly."
+
+  - code: "6.3"
+    name: campfire_the_choice
+    tags: [blocks, site_f]
+    note: "Regular campfire at Site F. Stand ON TOP of it. BLOCK_STATE target + mob containment + particle beat anchor for Effects. Center of cleared space near Armorer. Place it first, then capture."

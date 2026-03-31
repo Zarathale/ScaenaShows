@@ -1,30 +1,40 @@
 ---
 show_id: showcase.01
 document: Scouting Field Guide
-version: v3
-updated: 2026-03-30 (plugin commands added; consistent with 5-expedition structure)
+version: v6
+updated: 2026-03-30 (site-based loading as primary workflow; 24 marks; env auto-capture)
 use: In-game reference — keep open on second screen while scouting
 ---
 
 # Scouting Field Guide — showcase.01 "Preparing for Battle"
 
 > Six locations. One question per site: *does this feel like where this piece was waiting?*
-> Walk to each mark. Capture coordinates with the plugin. Note everything else in F3 and the report.
+> Work one site at a time. Load all marks for the site you're at, capture them, move on.
 
 ---
 
 ## Plugin Workflow — How to Scout
 
-The plugin handles coordinate capture. You do not need to manually copy F3 coordinates.
+Work **one site at a time**. Load all marks for wherever you're standing, capture them all, then move to the next site.
 
-**Start your session:**
+**Load all marks for a site:**
 ```
-/scaena scout load showcase.01          — loads all 10 marks, shows sidebar
-/scaena scout load showcase.01 sites    — just the 6 site marks (start here)
-/scaena scout load showcase.01 spawns  — cast positions (Armorer + Vindicator)
-/scaena scout load showcase.01 props   — set piece positions (armor stand + iron door)
+/scaena scout load showcase.01 site_a   — home base (6 marks: arrival, Armorer, Vindicator, armor stand, door, furnace)
+/scaena scout load showcase.01 site_b   — High Ground (3 marks: arrival, Armorer, drone)
+/scaena scout load showcase.01 site_c   — The Forge (3 marks: arrival, Armorer, drone)
+/scaena scout load showcase.01 site_d   — The Long Road (4 marks: arrival, Armorer, drone, campfire)
+/scaena scout load showcase.01 site_e   — The Swamp Floor (4 marks: arrival, Armorer, drone, campfire)
+/scaena scout load showcase.01 site_f   — The Choice (4 marks: arrival, Armorer, drone, campfire)
 ```
-Recommended: start with `sites` tag, then reload with `spawns` and `props` once you have the home base set up.
+The sidebar shows the site name ("Site A — scout"). Captures the full set for that location.
+
+**Type-based loading (for revisiting a specific category):**
+```
+/scaena scout load showcase.01 spawns   — all cast spawn positions
+/scaena scout load showcase.01 blocks   — all BLOCK_STATE targets (furnace + campfires)
+/scaena scout load showcase.01 armorer  — all Armorer positions
+/scaena scout load showcase.01 drone    — all drone start positions
+```
 
 **Check what's loaded:**
 ```
@@ -34,10 +44,14 @@ Recommended: start with `sites` tag, then reload with `spawns` and `props` once 
 **Capture a mark:**
 Stand at the position. Type:
 ```
-/scaena set 1.1       — captures your exact position for that code
+/scaena set 1.1       — captures your exact position + environmental data for that code
 ```
-Chat confirms: `✓ 1.1 home_base — (x.x, y.y, z.z)`. Mark disappears from sidebar.
-You can re-capture a mark by running `/scaena set <code>` again — it overwrites.
+Chat confirms position and environmental snapshot:
+```
+✓ 1.1 home_base — (x.x, y.y, z.z)
+   biome:PLAINS  light:8 (sky:8 blk:0)  ceiling:open [open_sky]
+```
+Mark disappears from sidebar. You can re-capture by running `/scaena set <code>` again — it overwrites.
 
 **Save when done:**
 ```
@@ -53,49 +67,97 @@ You can re-capture a mark by running `/scaena set <code>` again — it overwrite
 
 After saving: tell Alan you're done. He pulls the capture file from the server and merges coordinates into show-params. You do not need to copy any coordinates manually.
 
-**Still use F3 for:** biome name, sky type, ceiling height, canopy density, light level, visible hazards. Those are descriptive notes — they go in the scouting report, not the plugin.
+**In-game hints:** `/scaena scout status` shows a hint line (↳) under each mark — positioning guidance, what to face, key constraints.
+
+**Environmental data is now auto-captured** at every mark. When you run `/scaena set <code>`, the plugin captures biome, light level (combined, sky, and block), ceiling height, and sky type automatically — alongside your coordinates. The capture file includes all of it. You no longer need F3 notes for those fields.
+
+**Still use F3 / manual notes for:** canopy density description (Site E — Steve's qualitative read for campfire decision), lava proximity in blocks (Site C — Effects assessment), hostile mob hazard notes, theatrical read.
 
 ---
 
-## Mark Reference — showcase.01
+## Mark Reference — showcase.01 (24 marks total)
+
+**Sites — player arrival positions (tag: `sites`)**
 
 | Code | Name | What it is |
 |------|------|-----------|
-| 1.1 | home_base | Site A — player arrival position at The Workshop |
-| 1.2 | high_ground | Site B — player arrival position at High Ground |
-| 1.3 | the_forge | Site C — player arrival position at The Forge |
-| 1.4 | the_long_road | Site D — player arrival position at The Long Road |
-| 1.5 | the_swamp_floor | Site E — player arrival position at The Swamp Floor |
-| 1.6 | the_choice | Site F — player arrival position at The Choice |
-| 2.1 | companion_spawn | Armorer Villager — opening position at home base |
-| 2.2 | vindicator_spawn | Vindicator — behind-wall holding position at home base |
-| 3.1 | armor_stand | Armor stand staging position |
-| 3.2 | iron_door | Iron door target (stand in the doorway) |
+| 1.1 | home_base | Site A — The Workshop |
+| 1.2 | high_ground | Site B — The Helmet |
+| 1.3 | the_forge | Site C — The Chestplate |
+| 1.4 | the_long_road | Site D — The Leggings |
+| 1.5 | the_swamp_floor | Site E — The Boots |
+| 1.6 | the_choice | Site F — The Weapon |
 
-**Not yet in the plugin (capture manually for now):** Armorer mark per expedition site (2–4 blocks from your arrival mark) and drone start position per expedition site (15–25 blocks back from Armorer mark). Note these in the scouting report as separate coordinates.
+**Cast positions at home base (tag: `spawns`)**
+
+| Code | Name | What it is |
+|------|------|-----------|
+| 2.1 | companion_spawn | Armorer Villager — opening position |
+| 2.2 | vindicator_spawn | Vindicator — behind-wall holding position |
+
+**Entity props at home base (tag: `props`)**
+
+| Code | Name | What it is |
+|------|------|-----------|
+| 3.1 | armor_stand | Armor stand — on 1-block pedestal, 6–8 blocks from arrival |
+| 3.2 | iron_door | Iron door — stand in the doorway |
+
+**World block targets — BLOCK_STATE events (tag: `blocks`)**
+*Stand ON TOP of the block when capturing. Plugin derives block coordinates.*
+
+| Code | Name | What it is |
+|------|------|-----------|
+| 3.3 | blast_furnace | Blast furnace at Site A — BLOCK_STATE lit=true at show open |
+| 6.1 | campfire_long_road | Campfire at Site D — BLOCK_STATE + mob containment anchor |
+| 6.2 | campfire_swamp_floor | Campfire at Site E — BLOCK_STATE (soul vs. regular TBD) |
+| 6.3 | campfire_the_choice | Campfire at Site F — BLOCK_STATE + particle beat anchor |
+
+**Armorer standing positions at expedition sites (tag: `armorer`)**
+
+| Code | Name | What it is |
+|------|------|-----------|
+| 4.1 | armorer_high_ground | Armorer at Site B — 2–4 blocks from 1.2 |
+| 4.2 | armorer_the_forge | Armorer at Site C — 2–4 blocks from 1.3 |
+| 4.3 | armorer_long_road | Armorer at Site D — 2–4 blocks from 1.4 |
+| 4.4 | armorer_swamp_floor | Armorer at Site E — 2–4 blocks from 1.5 |
+| 4.5 | armorer_the_choice | Armorer at Site F — 2–4 blocks from 1.6 |
+
+**Drone start positions (tag: `drone`)**
+
+| Code | Name | What it is |
+|------|------|-----------|
+| 5.1 | drone_high_ground | Drone spawn at Site B — 15–25 blocks back from 4.1, facing Armorer |
+| 5.2 | drone_the_forge | Drone spawn at Site C — 15–25 blocks back from 4.2, facing Armorer |
+| 5.3 | drone_long_road | Drone spawn at Site D — 15–25 blocks back from 4.3, facing Armorer |
+| 5.4 | drone_swamp_floor | Drone spawn at Site E — 15–25 blocks back from 4.4, facing Armorer |
+| 5.5 | drone_the_choice | Drone spawn at Site F — 15–25 blocks back from 4.5, facing Armorer |
 
 ---
 
 ## What to capture at every site
 
 ```
-Site code + /scaena set:   ← captures arrival position
-Armorer mark position:      x=    y=    z=    ← note manually (2–4 blocks from arrival)
-Drone start position (far): x=    y=    z=    ← note manually (15–25 blocks back)
-Biome (F3):
-Sky:           open / partial / enclosed / underground
-Ceiling:       open / __ blocks
-Sky clearance above TP: __ blocks  ← Fireworks need this at every site
-Ambient light:
-Hazards:
-Theatrical read (1–2 sentences — why this place fits the piece):
-Status:        recommended / alternate / rejected: [reason]
+Plugin captures (auto — no F3 needed for these):
+  Arrival + env:        /scaena set 1.x   → captures xyz + biome, light, ceiling, sky type
+  Armorer position:     /scaena set 4.x   (2–4 blocks from arrival, facing arrival)
+  Drone start:          /scaena set 5.x   (15–25 blocks back from Armorer, facing Armorer)
+  Block marks (D/E/F):  /scaena set 6.x   (stand ON TOP of campfire block first)
+                        /scaena set 3.3   (at Site A — stand ON TOP of blast furnace)
+
+Manual notes (still go in the scouting report):
+  Canopy density:  open / sparse / moderate / dense  ← Site E especially — Steve's campfire decision
+  Lava proximity:  __ blocks                          ← Site C — Effects fire resistance assessment
+  Hazards / mob notes:
+  Theatrical read (1–2 sentences — why this place fits the piece):
+  Status:        recommended / alternate / rejected: [reason]
 ```
 
+**Environmental data captured automatically at every mark:** biome, combined light level, sky light, block light, ceiling height (blocks), sky type (open_sky / partial / enclosed / underground). All written to the capture YAML — no need to read these from F3.
+
 **Drone start position:** Stand where the camera "opens" — 15–25 blocks back from the
-Armorer mark, in the direction the camera will travel FROM. This is where the invisible
-drone spawns. The drone moves from here toward the Armorer. Note F3 coordinates the same
-way as the arrival mark.
+Armorer mark, in the direction the camera will travel FROM. Face toward the Armorer when
+you run `/scaena set 5.x` — the plugin captures yaw/pitch, and the drone's opening
+facing is exactly what you capture here.
 
 ---
 
@@ -231,62 +293,4 @@ soul campfire (cold blue-teal) at this site. Decision after scouting report is i
 ## Site F — The Weapon: "The Choice" *(final expedition)*
 
 **One quality:** *"I kept coming back to this place. It answers something."* Stillness
-with weight — not emptiness, but a place that has earned its quiet.
-
-**Slot:** Iron axe, Sharpness I — the piece that implies intent. The last piece. The show
-ends here before coming home to the reveal.
-
-**Key lines spoken here:**
-> *"I kept coming back to this place. It answers something."*
->
-> *"Iron axe. I had it sharpened once. That's all you need — one good edge."*
->
-> *"[silence or 'Five. Let's go home.' — Voice decides at intake]*"
-
-**Must-haves:**
-- **Hostile mobs must be answered.** This scene holds the show's most important silence.
-  Active spawning in-frame kills it. If pillager outpost: note patrol AI range.
-- No ambient spectacle — no lava glow, no particle effects, nothing competing with quiet
-- Arrival facing toward the visual anchor (ruin, cleared site, whatever reads as the reason)
-
-**PRE-SCOUT DIRECTION LOCKED 2026-03-29:** Ruin with a cleared central space.
-Flat, open ground surrounded by ruin structure. The cleared space is the scene's
-visual center — the Armorer is in it, the axe is in it, and (pending Effects
-confirmation) particles fire into it at the discovery moment.
-
-**What Zarathale is looking for:** A ruin where some event or force cleared the
-center — a courtyard, a collapsed interior, a blast-cleared area within broken walls.
-The surrounding structure frames the space; the clearing is what you arrive into.
-The ground in the cleared area should be flat and visually simple (dirt, stone,
-ash-covered — nothing that creates visual noise competing with particles).
-
-**Strong candidates:** Pillager outpost courtyard (taking their axe from their own
-ground is its own statement), a surface ruin with collapsed walls, a cleared site
-of past conflict with surviving wall fragments framing it.
-
-**⚠ NO FIREWORK AT THIS SITE.** The find-firework pattern fired at B, C, D, and E.
-The absence here is intentional and now carries maximum force: this is the FINAL expedition.
-Do not compensate. Camera holds; Sound steps back; Effects does nothing. The silence
-after line 2 is the beat — and the last expedition beat the player will feel before the reveal.
-
-**Extra capture:** Every notable structural or terrain feature. Cleared space
-dimensions (width × depth approximately). Ground material in the cleared area.
-Surrounding structure height and framing quality. Mob AI answer (can mobs be
-contained, or is natural spawning suppressed here?). Drone start position.
-Sky clearance (no firework here, but document regardless).
-
----
-
-## After scouting
-
-1. `/scaena scout save` — write the capture file to the server
-2. Tell Alan you're done — he pulls the file and merges coordinates into show-params
-3. Fill in the descriptive fields in `showcase.01.scouting-report.md` and commit
-4. Michael C. translates to Environment Notes in `departments/showcase.01.set.md`
-5. Stage registry entries go in `kb/departments/set/stage-registry.md`
-6. Direction closes Gate 3 and schedules intake conversation
-
-**Six locations total:** home base (A) + five expedition sites (B through F).
-
-**The TBA flags in script-v1** will update to match the confirmed site character
-once scouting delivers. Voice revises to v2 at that point.
+with weight — not emptiness, but a place that has earned its quiet.

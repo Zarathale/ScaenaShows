@@ -1,7 +1,7 @@
 ---
 show_id: showcase.01
 document: Show Parameters
-updated: 2026-03-29
+updated: 2026-03-30
 purpose: >
   Single source of truth for structural facts about this show. Department briefs
   reference this instead of restating shared facts. A value here means it's settled
@@ -77,12 +77,40 @@ Fills in dramatic order, independent of expedition order:
 
 | Site | Name | Biome / Setting | Status |
 |------|------|-----------------|--------|
-| A | Home Base — "The Workshop" | Near pillager outpost, enclosed outbuilding | Pre-scout locked |
+| A | Home Base — "The Workshop" | Near pillager outpost, enclosed outbuilding | ✓ Scouted 2026-03-30 |
 | B | The Helmet — "High Ground" | Natural mountain peak, open sky | Pre-scout locked |
 | C | The Chestplate — "The Forge" | Badlands, lava present, exposed mineshaft | Pre-scout locked |
 | D | The Leggings — "The Long Road" | Savanna/plains village, armorer shop by road | Pre-scout locked |
 | E | The Boots — "The Swamp Floor" | Swamp — mud/clay/water terrain | Pre-scout locked |
 | F | The Weapon — "The Choice" | Ruin with cleared central flat space | Pre-scout direction given — scout to confirm |
+
+---
+
+## Scouted Positions
+
+### Site A — Home Base "The Workshop"
+*Scouted: 2026-03-30 · World: world · Biome: Sparse Jungle*
+
+| Mark | Role | X | Y | Z | Yaw | Pitch | Facing | Sky type |
+|------|------|---|---|---|-----|-------|--------|----------|
+| home_base | Player arrival / sets.site_a | 192.98 | 80.0 | 306.16 | -133.65 | 0.00 | Northeast | underground (ceil: 2) |
+| companion_spawn | Armorer Villager spawn | 196.55 | 80.0 | 302.31 | 53.25 | 13.65 | Southwest | open sky |
+| vindicator_spawn | Vindicator offstage position | 193.52 | 84.0 | 296.38 | -64.35 | 28.50 | Southeast | open sky |
+| armor_stand | Armor stand entity position | 194.54 | 81.0 | 300.49 | 25.50 | 41.25 | South-Southwest | enclosed (ceil: 4) |
+| iron_door | Iron door block target | 190.57 | 80.0 | 300.51 | 4.20 | 40.80 | South | underground (ceil: 0) |
+| blast_furnace | Blast furnace block target | 197.70 | 80.0 | 304.29 | 87.60 | 39.00 | West | open sky |
+
+**Blast furnace block coords** (confirm in-game before BLOCK_STATE authoring): x=198, y=79, z=304
+
+*Full yaw/pitch values in `scout_captures/showcase.01/2026-03-30.yml` — used by YAML authoring and `/scaena scout goto`.*
+
+**Environmental notes:**
+- Main play space (home_base, armor_stand, iron_door) is genuinely enclosed — ceiling of 0–4 blocks confirms the outbuilding reads as interior. No sky fireworks here.
+- Armorer and Vindicator spawn positions are open sky — consistent with positions outside or above the structure.
+- Blast furnace is open sky despite being the warm interior light source. This likely means it's at an exterior wall or courtyard position. Confirm against the light_level read (block_light: 9) before finalizing BLOCK_STATE cue.
+- Biome: Sparse Jungle. No gameplay impact; logged for Set context.
+
+*Sites B–F: coordinates pending scouting runs.*
 
 ---
 
