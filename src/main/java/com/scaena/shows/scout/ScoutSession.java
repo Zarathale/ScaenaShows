@@ -34,6 +34,9 @@ public final class ScoutSession {
     private final Map<String, TextDisplay> markersByName = new LinkedHashMap<>();
     private boolean markersVisible = true;
 
+    /** Snapshot log — all /scaena snap entries this session, in order. */
+    private final List<SnapshotEntry> snapshots = new ArrayList<>();
+
     public ScoutSession(
         String showId,
         String activeScene,
@@ -68,6 +71,8 @@ public final class ScoutSession {
     public boolean priorFlying()                    { return priorFlying; }
     public boolean markersVisible()                 { return markersVisible; }
     public void setMarkersVisible(boolean v)        { this.markersVisible = v; }
+    public List<SnapshotEntry> snapshots()          { return Collections.unmodifiableList(snapshots); }
+    public void addSnapshot(SnapshotEntry entry)    { snapshots.add(entry); }
 
     // ---- Objective lookup ----
 

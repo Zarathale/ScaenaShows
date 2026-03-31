@@ -514,15 +514,20 @@ plugins/ScaenaShows/sessions/[show_id]/[date]/
   snapshot_log.yml       ← new: one entry per /scaena snap call
 ```
 
-Alan pulls both files from Bisect alongside each other. The `timestamp` field cross-references directly to the `.minecraft/screenshots/` filename (which is timestamp-based), so matching is unambiguous.
+Alan pulls both files from Bisect alongside each other. The `timestamp` field is used for **fuzzy matching** against `.minecraft/screenshots/` filenames — not precise sync. Screenshot filenames are timestamp-based, but player reaction time and system lag mean the F2 press happens some seconds after the prompt. Use a **±30 second window** around the logged snap timestamp when matching. Claude does the matching during post-session review; the log entry just needs to narrow the field.
+
+**Retake discipline — last shot wins:**
+Alan may take multiple shots from the same mark position within a session — different angles, retakes, corrections. The log accumulates all snaps for a given label rather than overriding. When Claude matches and exports, only the **last snap entry for each label** (latest timestamp) is used. Earlier entries for the same label are treated as discarded retakes. This means Alan can `/scaena snap door_angle`, adjust position, `/scaena snap door_angle` again, and the earlier one is automatically superseded — no explicit delete needed.
+
+The log entry format reflects this: all entries are written, and a `superseded: true` flag (or equivalent) is applied by Claude at review time to any non-final duplicate label.
 
 **Command surface:**
 ```
-/scaena snap [label]     — log a snapshot moment and prompt F2
-/scaena snap list        — print snapshot log entries for this session to chat
+/scaena snap [label]     — log a snapshot moment, prompt F2 ("📷 Snap now — [label]")
+/scaena snap list        — print snapshot log for this session to chat (shows all entries, flags superseded)
 ```
 
-The label is freeform — `site_a_overview`, `spawn_angle`, `door_sight_line` — whatever is useful for Claude and Alan to identify what the image contains when doing post-session review.
+The label is freeform — `site_a_overview`, `spawn_angle`, `door_sight_line` — whatever is useful for Claude and Alan to identify what the image contains when doing post-session review. Repeated use of the same label is expected and handled.
 
 **Priority:** Low — scouting works without it. High value-to-effort ratio since the server side is just a YAML write + title send. Implement alongside or just after `/scaena scout save`.
 

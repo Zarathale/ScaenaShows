@@ -65,6 +65,7 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
         switch (args[0].toLowerCase()) {
             case "scout" -> handleScout(player, args);
             case "set"   -> handleSet(player, args);
+            case "snap"  -> handleSnap(player, args);
             default      -> sendHelp(player);
         }
         return true;
@@ -145,6 +146,30 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
     }
 
     // -----------------------------------------------------------------------
+    // /scaena snap [label | list]
+    // -----------------------------------------------------------------------
+
+    /**
+     * /scaena snap [label]  — log a snapshot moment and prompt F2
+     * /scaena snap list     — print the snapshot log for this session
+     *
+     * Label is freeform (space-separated words become underscored slug).
+     * If omitted, an auto-generated name is used.
+     */
+    private void handleSnap(Player player, String[] args) {
+        // /scaena snap list
+        if (args.length >= 2 && "list".equalsIgnoreCase(args[1])) {
+            scoutManager.snapList(player);
+            return;
+        }
+        // /scaena snap [label parts...]
+        String rawLabel = args.length >= 2
+            ? String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length))
+            : null;
+        scoutManager.snap(player, rawLabel);
+    }
+
+    // -----------------------------------------------------------------------
     // Help
     // -----------------------------------------------------------------------
 
@@ -180,6 +205,12 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
         player.sendMessage(MM.deserialize(
             "  <white>/scaena scout dismiss</white> "
             + "<gray>— end session and restore state</gray>"));
+        player.sendMessage(MM.deserialize(
+            "  <white>/scaena snap [label]</white> "
+            + "<gray>— log a snapshot moment, prompt F2 (label is optional)</gray>"));
+        player.sendMessage(MM.deserialize(
+            "  <white>/scaena snap list</white> "
+            + "<gray>— show snapshot log for this session</gray>"));
     }
 
     // -----------------------------------------------------------------------
@@ -194,7 +225,7 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
 
         // /scaena <verb>
         if (args.length == 1) {
-            return filter(List.of("scout", "set"), args[0]);
+            return filter(List.of("scout", "set", "snap"), args[0]);
         }
 
         // /scaena scout <subcommand>
@@ -240,6 +271,11 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
         // /scaena set <code>  — suggest pending codes from the active session
         if ("set".equalsIgnoreCase(args[0]) && args.length == 2) {
             return filter(scoutManager.getActiveObjectiveCodes(player), args[1]);
+        }
+
+        // /scaena snap list  — only first arg is completable
+        if ("snap".equalsIgnoreCase(args[0]) && args.length == 2) {
+            return filter(List.of("list"), args[1]);
         }
 
         return List.of();

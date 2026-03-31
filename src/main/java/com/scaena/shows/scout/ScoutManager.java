@@ -10,6 +10,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -24,7 +25,9 @@ import org.bukkit.scoreboard.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Logger;
@@ -592,6 +595,128 @@ public final class ScoutManager {
     }
 
     // -----------------------------------------------------------------------
+    // /scaena snap [label]
+    // -----------------------------------------------------------------------
+
+    /**
+     * Log a snapshot moment. Sends a prominent title/actionbar prompt so Alan knows to
+     * hit F2 at that exact moment. The server-side log entry (position + timestamp) is
+     * used for fuzzy matching against client screenshots (±30 second window) during
+     * post-session review.
+     *
+     * @param rawLabel space-joined label from command args, or null for an auto-generated name
+     */
+    public void snap(Player player, String rawLabel) {
+        ScoutSession session = sessions.get(player.getUniqueId());
+        if (session == null) {
+            player.sendMessage(MM.deserialize(
+                "<red>No active scouting session. "
+                + "Load one with <white>/scaena scout load <showId></white> first.</red>"));
+            return;
+        }
+
+        // Normalise label: spaces → underscores, lowercase, strip non-word chars
+        String label;
+        if (rawLabel == null || rawLabel.isBlank()) {
+            label = "snap_" + (session.snapshots().size() + 1);
+        } else {
+            label = rawLabel.toLowerCase()
+                .replace(' ', '_')
+                .replaceAll("[^a-z0-9_]", "_")
+                .replaceAll("_+", "_")
+                .replaceAll("^_|_$", "");
+            if (label.isEmpty()) label = "snap_" + (session.snapshots().size() + 1);
+        }
+
+        Location loc = player.getLocation();
+        SnapshotEntry entry = new SnapshotEntry(
+            label,
+            LocalDateTime.now(),
+            loc.getWorld() != null ? loc.getWorld().getName() : "unknown",
+            loc.getX(), loc.getY(), loc.getZ(),
+            loc.getYaw(), loc.getPitch(),
+            session.activeScene()
+        );
+        session.addSnapshot(entry);
+
+        // How many entries share this label (including the one we just added)?
+        long labelCount = session.snapshots().stream()
+            .filter(s -> s.label().equals(label))
+            .count();
+
+        // Prominent in-world prompt — title + actionbar so it's impossible to miss
+        player.showTitle(Title.title(
+            Component.empty(),
+            MM.deserialize("<yellow>📷 Snap now — " + label + "</yellow>"),
+            Title.Times.times(Duration.ZERO, Duration.ofMillis(2500), Duration.ofMillis(500))
+        ));
+        player.sendActionBar(MM.deserialize(
+            "<yellow>📷 Snap now — " + label + "</yellow>"));
+
+        // Chat confirmation
+        String retakeNote = labelCount > 1
+            ? " <gray>(retake " + labelCount + " — earlier superseded)</gray>"
+            : "";
+        player.sendMessage(MM.deserialize(
+            "<aqua>📷 Logged: <white>" + label + "</white>"
+            + retakeNote
+            + " <dark_gray>(" + session.snapshots().size()
+            + " total this session)</dark_gray></aqua>"));
+    }
+
+    // -----------------------------------------------------------------------
+    // /scaena snap list
+    // -----------------------------------------------------------------------
+
+    /** Print the snapshot log for the current session, flagging superseded retakes. */
+    public void snapList(Player player) {
+        ScoutSession session = sessions.get(player.getUniqueId());
+        if (session == null) {
+            player.sendMessage(MM.deserialize("<red>No active scouting session.</red>"));
+            return;
+        }
+
+        List<SnapshotEntry> snaps = session.snapshots();
+        if (snaps.isEmpty()) {
+            player.sendMessage(MM.deserialize(
+                "<yellow>No snapshots logged yet. "
+                + "Use <white>/scaena snap [label]</white> then press F2.</yellow>"));
+            return;
+        }
+
+        // Last entry for each label is the keeper; earlier ones are superseded
+        Map<String, Integer> lastIndexByLabel = new LinkedHashMap<>();
+        for (int i = 0; i < snaps.size(); i++) {
+            lastIndexByLabel.put(snaps.get(i).label(), i);
+        }
+
+        DateTimeFormatter timeFmt = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+        player.sendMessage(MM.deserialize(
+            "<gold><bold>Snapshots: " + session.showId() + "</bold></gold> "
+            + "<gray>(" + snaps.size() + " entr" + (snaps.size() == 1 ? "y" : "ies") + ")</gray>"));
+
+        for (int i = 0; i < snaps.size(); i++) {
+            SnapshotEntry s    = snaps.get(i);
+            boolean isFinal    = lastIndexByLabel.get(s.label()) == i;
+            String  time       = s.timestamp().format(timeFmt);
+            String  siteStr    = s.site() != null
+                ? " <dark_gray>[" + formatSceneName(s.site()) + "]</dark_gray>" : "";
+
+            if (isFinal) {
+                player.sendMessage(MM.deserialize(
+                    "  <green>✓</green> <white>" + s.label() + "</white>"
+                    + siteStr
+                    + " <dark_gray>" + time + "</dark_gray>"));
+            } else {
+                player.sendMessage(MM.deserialize(
+                    "  <dark_gray>✗ " + s.label() + siteStr
+                    + " " + time + " (superseded)</dark_gray>"));
+            }
+        }
+    }
+
+    // -----------------------------------------------------------------------
     // /scaena scout save
     // -----------------------------------------------------------------------
 
@@ -625,6 +750,23 @@ public final class ScoutManager {
         player.sendMessage(MM.deserialize(
             "<gold>Saved <white>" + session.captures().size() + "</white> mark(s) → "
             + "<white>" + outFile.getName() + "</white></gold>"));
+
+        // Write snapshot log alongside capture file if any snaps were logged this session
+        if (!session.snapshots().isEmpty()) {
+            String snapName = outFile.getName().replace(".yml", ".snapshots.yml");
+            File   snapFile = new File(captureDir, snapName);
+            try (PrintWriter sw = new PrintWriter(snapFile, "UTF-8")) {
+                writeSnapshotYaml(sw, session, date);
+            } catch (IOException e) {
+                player.sendMessage(MM.deserialize(
+                    "<yellow>Warning: snapshot log save failed: " + e.getMessage() + "</yellow>"));
+                log.warning("[Scout] Failed to write snapshot log: " + e.getMessage());
+            }
+            player.sendMessage(MM.deserialize(
+                "<gray>Snapshot log: <white>" + session.snapshots().size()
+                + "</white> entries → <white>" + snapName + "</white></gray>"));
+        }
+
         player.sendMessage(MM.deserialize(
             "<gray>Session still active — keep capturing, "
             + "or <white>/scaena scout next</white> to advance.</gray>"));
@@ -1012,6 +1154,51 @@ public final class ScoutManager {
                 ? "-1  # open sky" : String.valueOf(c.ceilingHeight());
             w.println("      ceiling_height: " + ceilStr);
             w.println("      sky_type: " + c.skyType());
+        }
+    }
+
+    /**
+     * Write snapshot_log YAML alongside the capture file.
+     *
+     * Format mirrors the spec in ops-inbox.md §Scout session snapshot log:
+     *   - All entries written in order
+     *   - Entries that are not the last for their label get superseded: true
+     *   - Consumer (Claude) reads this during post-session review and uses the
+     *     ±30 second timestamp window to match against .minecraft/screenshots/
+     */
+    private void writeSnapshotYaml(PrintWriter w, ScoutSession session, String date) {
+        w.println("# Scout snapshot log — " + session.showId() + " — " + date);
+        w.println("# Generated by /scaena scout save");
+        w.println("# Match against .minecraft/screenshots/ by timestamp (±30 second window).");
+        w.println("# Last entry for each label is the keeper; earlier entries are discarded retakes.");
+        w.println("show: " + session.showId());
+        w.println("logged_at: \"" + date + "\"");
+        w.println("snapshots:");
+
+        List<SnapshotEntry> snaps = session.snapshots();
+
+        // Compute the final index for each label — only that entry is the keeper
+        Map<String, Integer> lastIndexByLabel = new LinkedHashMap<>();
+        for (int i = 0; i < snaps.size(); i++) {
+            lastIndexByLabel.put(snaps.get(i).label(), i);
+        }
+
+        DateTimeFormatter tsFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
+        for (int i = 0; i < snaps.size(); i++) {
+            SnapshotEntry s         = snaps.get(i);
+            boolean       superseded = lastIndexByLabel.get(s.label()) != i;
+
+            w.println("  - label: \"" + s.label() + "\"");
+            w.println("    timestamp: \"" + s.timestamp().format(tsFmt) + "\"");
+            w.printf ("    position: {x: %.1f, y: %.1f, z: %.1f, yaw: %.1f, pitch: %.1f}%n",
+                s.x(), s.y(), s.z(), (double) s.yaw(), (double) s.pitch());
+            if (s.site() != null) {
+                w.println("    site: " + s.site());
+            }
+            if (superseded) {
+                w.println("    superseded: true");
+            }
         }
     }
 
