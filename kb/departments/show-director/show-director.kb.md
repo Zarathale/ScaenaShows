@@ -127,7 +127,8 @@ Every show follows this sequence before any YAML is written:
 5. Brief each department head
 6. Departments ask their questions and make their decisions
    → Each department's decisions are recorded in departments/[show_id].[dept].md
-7. Authoring begins (YAML)
+   → As decisions lock, push committed choices into [show_id].prompt-book.yml
+7. Authoring begins (YAML) — read from the Prompt Book, not from working notes
 8. Show Director reviews YAML against brief
 9. Send to in-game test (tech stage)
 10. Debrief → update department files with revision notes
@@ -137,6 +138,13 @@ Every show follows this sequence before any YAML is written:
 Steps 1–6 happen before any cue or show YAML is created. The brief is the foundation
 everything else is built on. A weak brief produces a show that is technically correct
 and emotionally incoherent.
+
+**The Prompt Book** (`[show_id].prompt-book.yml`) is the committed-state artifact.
+Discussion and deliberation belong in `direction/` and `departments/`; committed
+choices belong in the Prompt Book. When a value is in the Prompt Book, it means
+"build from this." A TBD in the Prompt Book means it is still in play. Stage
+Management (Kendra) maintains the file; departments push their final decisions in.
+The plugin reads it at TechSession init.
 
 ---
 
@@ -160,8 +168,10 @@ written.
 have not yet been briefed.
 
 **Department Intake:** Each department receives their brief, asks questions, and commits to
-initial decisions. `direction/[show_id].intake.md` is filled in. No YAML has been written. This stage
-is complete when every active department has made their first-pass decisions.
+initial decisions. `direction/[show_id].intake.md` is filled in. Committed decisions are
+pushed into `[show_id].prompt-book.yml`. No YAML has been written. This stage is complete
+when every active department has made their first-pass decisions and the Prompt Book reflects
+the locked state.
 
 **Tech:** First full YAML pass. The show exists on paper. First in-game test. This is a
 structural pass — does everything fire? Is the timeline coherent? Are all departments

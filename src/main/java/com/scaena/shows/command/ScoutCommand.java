@@ -2,6 +2,8 @@ package com.scaena.shows.command;
 
 import com.scaena.shows.runtime.ShowManager;
 import com.scaena.shows.scout.ScoutManager;
+import com.scaena.shows.tech.TechManager;
+import com.scaena.shows.tech.TechPanelBuilder;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -38,10 +40,13 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
 
     private final ScoutManager scoutManager;
     private final ShowManager  showManager;
+    private final TechManager  techManager;
 
-    public ScoutCommand(ScoutManager scoutManager, ShowManager showManager) {
+    public ScoutCommand(ScoutManager scoutManager, ShowManager showManager,
+                        TechManager techManager) {
         this.scoutManager = scoutManager;
         this.showManager  = showManager;
+        this.techManager  = techManager;
     }
 
     // -----------------------------------------------------------------------
@@ -70,6 +75,7 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
             case "set"    -> handleSet(player, args);
             case "snap"   -> handleSnap(player, args);
             case "choose" -> handleChoose(player, args);
+            case "tech"   -> handleTech(player, args);
             default       -> sendHelp(player);
         }
         return true;
@@ -199,6 +205,99 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
     }
 
     // -----------------------------------------------------------------------
+    // /scaena tech <showId> [sceneId]  — enter / control tech session
+    // -----------------------------------------------------------------------
+
+    /**
+     * Routes all /scaena tech ... commands.
+     *
+     * Entry:
+     *   /scaena tech <showId> [sceneId]      — enter tech mode
+     *
+     * Session control (also sent by panel click events):
+     *   /scaena tech dismiss                 — exit (prompts save if dirty)
+     *   /scaena tech discard                 — discard changes + exit
+     *   /scaena tech saveanddismiss          — save + exit
+     *   /scaena tech save                    — save without dismissing
+     *   /scaena tech panel                   — re-send main panel
+     *   /scaena tech params                  — open param panel
+     *   /scaena tech marklist                — open mark list panel
+     *   /scaena tech capture <mark>          — enter capture mode for mark
+     *   /scaena tech toggle <dept>           — toggle department on/off
+     *   /scaena tech focusparam <name>       — focus a param for editing
+     */
+    private void handleTech(Player player, String[] args) {
+        if (args.length < 2) {
+            // Show session summary or brief help
+            if (techManager.hasSession(player)) {
+                var session = techManager.getSession(player);
+                player.sendMessage(MM.deserialize(
+                    "<gold>Tech active:</gold> <white>" + session.showId() + "</white>"
+                    + (session.currentSceneId() != null
+                        ? " @ " + session.currentSceneId() : "")
+                    + (session.hasUnsavedChanges()
+                        ? "  <yellow>✎ unsaved changes</yellow>" : "")));
+                TechPanelBuilder.send(player, session);
+            } else {
+                player.sendMessage(MM.deserialize(
+                    "<gold>Tech Rehearsal Mode</gold> <gray>— /scaena tech <showId> [sceneId]</gray>"));
+            }
+            return;
+        }
+
+        String sub = args[1].toLowerCase();
+        switch (sub) {
+            case "dismiss"        -> techManager.dismiss(player);
+            case "discard"        -> techManager.discardAndDismiss(player);
+            case "saveanddismiss" -> techManager.saveAndDismiss(player);
+            case "save"           -> techManager.save(player);
+            case "panel"          -> {
+                var session = techManager.getSession(player);
+                if (session != null) TechPanelBuilder.send(player, session);
+            }
+            case "params"         -> {
+                var session = techManager.getSession(player);
+                if (session != null) TechPanelBuilder.sendParamPanel(player, session);
+            }
+            case "marklist"       -> {
+                var session = techManager.getSession(player);
+                if (session != null) TechPanelBuilder.sendMarkList(player, session);
+            }
+            case "capture"        -> {
+                if (args.length < 3) {
+                    player.sendMessage(MM.deserialize(
+                        "<red>Usage: /scaena tech capture <markName></red>"));
+                    return;
+                }
+                techManager.startCaptureMode(player, args[2]);
+            }
+            case "captureexit"    -> techManager.exitCaptureMode(player);
+            case "toggle"         -> {
+                if (args.length < 3) {
+                    player.sendMessage(MM.deserialize(
+                        "<red>Usage: /scaena tech toggle <dept></red>"));
+                    return;
+                }
+                techManager.toggleDept(player, args[2].toLowerCase());
+            }
+            case "focusparam"     -> {
+                if (args.length < 3) {
+                    player.sendMessage(MM.deserialize(
+                        "<red>Usage: /scaena tech focusparam <paramName></red>"));
+                    return;
+                }
+                techManager.focusParam(player, args[2]);
+            }
+            default -> {
+                // Treat as /scaena tech <showId> [sceneId]
+                String showId  = args[1];
+                String sceneId = args.length >= 3 ? args[2] : null;
+                techManager.enterTech(player, showId, sceneId);
+            }
+        }
+    }
+
+    // -----------------------------------------------------------------------
     // Help
     // -----------------------------------------------------------------------
 
@@ -254,7 +353,7 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
 
         // /scaena <verb>
         if (args.length == 1) {
-            return filter(List.of("scout", "set", "snap", "choose"), args[0]);
+            return filter(List.of("scout", "set", "snap", "choose", "tech"), args[0]);
         }
 
         // /scaena scout <subcommand>
@@ -305,6 +404,34 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
         // /scaena snap list  — only first arg is completable
         if ("snap".equalsIgnoreCase(args[0]) && args.length == 2) {
             return filter(List.of("list"), args[1]);
+        }
+
+        // /scaena tech <showId> [sceneId]
+        if ("tech".equalsIgnoreCase(args[0])) {
+            if (args.length == 2) {
+                List<String> subs = List.of("dismiss", "save", "discard", "saveanddismiss",
+                    "panel", "params", "marklist", "toggle", "capture", "focusparam");
+                List<String> shows = techManager.getAvailableShowIds();
+                List<String> combined = new java.util.ArrayList<>(subs);
+                combined.addAll(shows);
+                return filter(combined, args[1]);
+            }
+            if (args.length == 3) {
+                String sub = args[1].toLowerCase();
+                if (!List.of("dismiss","save","discard","saveanddismiss",
+                        "panel","params","marklist").contains(sub)) {
+                    // Could be showId + sceneId, or toggle <dept>, or capture <mark>
+                    if ("toggle".equals(sub)) {
+                        return filter(List.of("casting","wardrobe","set","lighting",
+                            "fireworks","script"), args[2]);
+                    }
+                    if ("capture".equals(sub) || "focusparam".equals(sub)) {
+                        return List.of(); // dynamic — skip for now
+                    }
+                    // Treat arg[1] as showId; complete scene IDs
+                    return filter(techManager.getSceneIds(args[1]), args[2]);
+                }
+            }
         }
 
         return List.of();

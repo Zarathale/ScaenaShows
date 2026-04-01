@@ -141,6 +141,21 @@ Kendra enforces this convention. If a new cue is authored without a conforming n
 
 > **Note on `still.*` cue family:** Renamed from `grief.*` on 2026-03-28. Current family: `still.sound.cave`, `still.bloom.cold`, `still.particle.ash`, `still.message.breath`. Motif: `motif.still.chord`. Use for quiet weight, stillness, and depth registers.
 
+### Scene Numbers (in prompt-book.yml)
+
+`scene_number` is a Stage Management field — Kendra assigns all values. It is the sort
+key for scene ordering in Tech Mode and any future scene-indexed features. It is never
+visible to players; the `label` field is the human-readable scene name.
+
+**Convention:** Zero-padded two-digit decimal strings (`"00"`, `"01"`, ..., `"10"`),
+with optional subscene suffixes (`"02.1"`, `"02.2"`) for insertions between existing
+scenes. `"00"` is the reserved prologue slot. Sort is decimal-aware (not raw string sort).
+
+**Full specification:** `kb/departments/stage-management/scene-numbering-convention.md`
+(OPS-028 deliverable). That doc is authoritative — the summary above is the at-a-glance version.
+
+---
+
 ### Show-Internal Cue Numbers (in the run sheet and in briefings)
 
 Within each show, the major sections or moments are numbered sequentially: **C1, C2, C3, …** These numbers appear in:

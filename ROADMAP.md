@@ -111,7 +111,7 @@ Alan moves between shows freely at any point. What matters is that each show's c
 Brief  →  In Development  →  Open
 ```
 
-**Brief** — Show Director writes the brief and per-department briefings. The show folder is scaffolded. The show has a reason to exist.
+**Brief** — Show Director writes the brief and per-department briefings. The show folder is scaffolded. As departments lock decisions, their committed choices are pushed into `[show_id].prompt-book.yml` — the single source of truth for structural facts, cast, wardrobe, set, lighting, params, and script lines. The show has a reason to exist.
 
 **In Development** — The show iterates through Watch Rounds and Redesign Rounds. Direction tracks where it is and what's open.
 

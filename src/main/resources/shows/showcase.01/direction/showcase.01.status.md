@@ -2,47 +2,62 @@
 show_id: showcase.01
 document: Status
 stage: Brief
-last_updated: 2026-03-31
+last_updated: 2026-04-01
 ---
 
 # showcase.01 "Preparing for Battle" — Current Status
 
 ## Stage
-**Brief / R0 Preview** — Gates 1 and 2 closed. Scouting in progress. Sneak preview YAML authored (R0).
+**Brief / R0 Preview** — Gates 1 and 2 closed. Scouting in progress. Sneak preview YAML authored (R0). Tech Rehearsal Mode available (OPS-027, v2.21.0).
 
 ## Last Session
-2026-03-31 (session 7). R0 sneak preview YAML build complete. Four files authored. Run sheet populated. Version bumped to 2.20.0.
+2026-04-01 (session 8). OPS-027 shipped — Tech Rehearsal Mode Phase 1 implemented. Prompt Book created and show-params.md retired.
 
-**Session 7 work (2026-03-31):**
+**Session 8 work (2026-04-01):**
 
-- **R0 sneak preview YAML authored.** Four files created at 2.20.0:
-  - `src/main/resources/shows/showcase.01.preview.yml` — main show (C1 Scene A Open →
-    C2 Preview Bridge → C3 A4 Return → C4 A-Final → C5 PLAYER_CHOICE). 2400 ticks.
-    Non-portable, static anchor, invoker at home_base mark (192.98, 80, 306.16).
-  - `src/main/resources/cues/showcase.01.preview.fight.yml` — fight branch. 5–4–3–2–1
-    countdown (TITLE), AI releases at T=110, BOSS_HEALTH_BAR fires T=115.
-    `victory_cue: showcase.01.coda.victory`.
-  - `src/main/resources/cues/showcase.01.preview.walk_away.yml` — walk away branch.
-    "LATER." → despawn → "The stage is yours."
-  - `src/main/resources/cues/showcase.01.coda.victory.yml` — victory coda placeholder.
-    Levitation amp 0 + existing firework presets. OPEN ITEMS: [A] levitation amplifier
-    TBD (pending ceiling clearance), [B] fireworks pattern TBD (pending Mira/intake).
-- **Run sheet written.** `showcase.01.run-sheet.md` fully populated for R0. Pre-show
-  tech check, entity spawn table, cue reference (C1–C6 + victory coda), 8 open items.
-- **Version bumped to 2.20.0.** `build.gradle.kts` updated. MINOR bump — new cues and
-  show file added.
-- **REDSTONE polarity flagged as OPEN ITEM [2].** `state: on` assumed = door closed;
-  `state: off` assumed = door opens. Must confirm with Set after scouting.
+- **Tech Rehearsal Mode Phase 1 implemented (OPS-027).** New Java subsystem: `TechManager`,
+  `TechSession`, `PromptBook`, `PromptBookLoader`, `PromptBookWriter`, `TechHotbarListener`,
+  `TechPanelBuilder`, `TechSidebarDisplay`, `TechActionbarTask`, `PlayerStateSnapshot`.
+  Entry point: `/scaena tech [show_id] [scene_id]`. Phase 1 scope: scene materialization
+  (Casting, Wardrobe, Set, Lighting, Fireworks), mark capture, param adjustment, save-back
+  to prompt-book.yml.
+- **Prompt Book created.** `showcase.01.prompt-book.yml` authored — single source of truth
+  for all committed structural and content decisions. Migrates all data from show-params.md:
+  6 scenes (site_a–site_f), cast, wardrobe kit, set states, lighting arc, fireworks pattern,
+  script lines, 15 params, readiness block.
+- **show-params.md retired and archived.** `showcase.01.show-params.md` archived to
+  `_archive/show-params/showcase.01.show-params.md`. Prompt Book is the authoritative
+  committed-state file going forward.
+- **Version bumped to 2.21.0.** MINOR bump — new subsystem (Tech Rehearsal Mode).
 
 **What's next:**
 1. **Build and test in-game.** Invoke from home_base: `/show play showcase.01.preview [PlayerName]`.
    Confirm REDSTONE polarity (OPEN ITEM [2]) before first run.
 2. **Gate 3 scouting** — Zarathale scouts Sites B–F per `showcase.01.scouting-field-guide.md`.
    Site A already scouted 2026-03-30.
+3. **Tech mode available.** After scouting delivers coordinates for Sites B–F, enter tech mode
+   (`/scaena tech showcase.01 [scene_id]`) to verify materialization and capture marks.
+
+## YAML Readiness
+
+Tracked in `showcase.01.prompt-book.yml` under `readiness:`. Current state as of 2026-04-01:
+
+- **Scouting (Gate 3):** Site A scouted (2026-03-30). Sites B–F pending.
+- **Intake (Gate 4):** Pending Gate 3. Two TBDs remain:
+  - `victory_fireworks_pattern` — Mira proposes at intake
+  - `victory_levitation_amplifier` — Effects holds pending ceiling clearance confirmation
+- **YAML authoring:** Begins after Gate 4. R0 sneak preview (Scene A + A-Final) authored
+  ahead of full gate sequence — non-portable, static anchor.
 
 ---
 
-**Previously: 2026-03-31 (session 6):**
+**Previously: 2026-03-31 (sessions 6–7):**
+
+**Session 7 (2026-03-31):**
+- R0 sneak preview YAML authored. Four files created at 2.20.0: `showcase.01.preview.yml`, `showcase.01.preview.fight.yml`, `showcase.01.preview.walk_away.yml`, `showcase.01.coda.victory.yml`.
+- Run sheet written. `showcase.01.run-sheet.md` fully populated for R0.
+- Version bumped to 2.20.0. MINOR bump — new cues and show file added.
+- REDSTONE polarity flagged as OPEN ITEM [2].
 
 **Session 6 work (2026-03-31):**
 
@@ -204,7 +219,8 @@ vs. silence).
   at intake); `victory_levitation_amplifier` (Effects holds pending ceiling clearance
   confirmation — fight space confirmed through iron door staging). Health, speed, scale,
   and death line all locked 2026-03-31.
-- **OPS-009** — required before A-Final YAML can be authored (PLAYER_CHOICE, already shipped).
-- **OPS-026** — shipped in 2.19.0. SPAWN_ENTITY attribute support (health, speed, scale) +
-  BOSS_HEALTH_BAR event fully implemented. A-Final YAML authoring now unblocked pending
-  scouting completion and intake conversation.
+- **OPS-009** ✅ shipped. PLAYER_CHOICE implemented.
+- **OPS-026** ✅ shipped (v2.19.0). SPAWN_ENTITY attribute support + BOSS_HEALTH_BAR.
+  A-Final YAML authoring unblocked pending scouting and intake.
+- **OPS-027** ✅ shipped (v2.21.0). Tech Rehearsal Mode Phase 1. Use `/scaena tech showcase.01
+  [scene_id]` to enter. Phase 2 (YAML cue navigation) deferred.

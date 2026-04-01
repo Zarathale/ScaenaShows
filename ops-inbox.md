@@ -12,7 +12,11 @@ Items here are queued for the Java review team. Each entry has enough context to
 
 ---
 
-### OPS-001 [java-gap] Scout sidebar — human-readable display labels for mark positions
+### OPS-001 [superseded] Scout sidebar — human-readable display labels for mark positions
+> **Superseded by OPS-027.** Scout mode is retired when Tech Mode ships. The label
+> display requirement is absorbed into the Tech Mode sidebar (§ Actionbar + Sidebar
+> in the architecture doc). Do not implement OPS-001 as a standalone fix.
+
 
 **Area:** Set Director, Stage Manager
 **Feature:** Scout objectives sidebar (existing feature — label display enhancement)
@@ -64,7 +68,10 @@ experience, especially for sites with 4–6 simultaneous marks loaded.
 
 ---
 
-### OPS-002 [future-capability] Preview Mode — in-world scene preview during scouting and production
+### OPS-002 [superseded] Preview Mode — in-world scene preview during scouting and production
+> **Superseded by OPS-027 (Tech Rehearsal Mode).** `TechSession` replaces `PreviewSession`.
+> There is no longer a separate preview subsystem. See `kb/system/tech-rehearsal-architecture.md`.
+
 
 **Area:** Stage Management (coordinator), Set, Casting, Wardrobe, Lighting, Camera, Voice,
 Sound, Effects, Fireworks, Choreography
@@ -474,7 +481,11 @@ reactive bossbar is ready.
 
 ---
 
-### OPS-010 [future-capability] In-game scout capture — show-params as source of truth, bidirectional sync
+### OPS-010 [superseded] In-game scout capture — show-params as source of truth, bidirectional sync
+> **Superseded by OPS-027 (Tech Rehearsal Mode).** Phase 1 of Tech Mode delivers the
+> bidirectional show-params sync described here as a core feature of TechSession, including
+> direct write-back to show-params.md on save. Scout mode and its command family are retired.
+
 
 **Area:** Set Director, Stage Manager
 **Priority:** Low — aspirational quality-of-life for the scouting workflow
@@ -562,7 +573,11 @@ Claude pulls this file from Bisect (access granted per session as needed), merge
 
 ---
 
-### OPS-011 [future-capability] Scout session snapshot log — screenshot prompts bundled with Bisect export
+### OPS-011 [scope migrated] Scout session snapshot log — screenshot prompts bundled with Bisect export
+> **Scout mode is retired (see OPS-027).** The `/scaena snap` command concept remains valid
+> but is now a Tech Mode enhancement rather than a scout feature. Re-scope and re-file as
+> an addition to OPS-027 when Phase 1 is stable.
+
 
 **Area:** Stage Management, Set Director
 **Command:** `/scaena snap [label]`
@@ -627,7 +642,282 @@ Add a "Human as Designer" preamble to each department KB clarifying the creative
 
 ---
 
+### OPS-027 [shipped] Tech Rehearsal Mode Phase 1 — Prompt Book + in-world scene materialization
+
+**Area:** Stage Management (coordinator), all departments
+**Feature:** New subsystem — `/scaena tech` command family + TechSession
+**Filed:** 2026-04-01
+**Shipped:** 2026-04-01 — v2.21.0
+**Building spec:** `kb/system/ops-027-building-spec.md`
+
+**Phase 1 delivered:**
+- `showcase.01.prompt-book.yml` — authoritative committed state (replaces show-params.md)
+- `PromptBook` data model + `PromptBookLoader` + `PromptBookWriter`
+- `TechSession` + `TechManager` — session lifecycle, LOAD, DISMISS, TOGGLE, CAPTURE, SAVE
+- `TechHotbarListener` — hotbar routing + async chat interception for text params
+- `TechPanelBuilder` — clickable chat panel; `TechActionbarTask` — live actionbar; `TechSidebarDisplay` — scoreboard sidebar
+- `/scaena tech <showId> [sceneId]` entry command; full subcommand surface
+- `show-params.md` retired; archived to `_archive/show-params/showcase.01.show-params.md`
+
+**Phase 2 (not yet filed):** YAML cue navigation — `TechSession` stubs already declared (`currentCueIndex`, `holdActive`).
+
+**OPS-028** (scene numbering convention) filed below per spec §12.
+
+Supersedes `kb/system/tech-rehearsal-architecture.md` and OPS-001, OPS-002, OPS-010, OPS-011.
+
+---
+
+#### Summary
+
+Tech Rehearsal Mode is a stateful, department-aware, interactive rehearsal surface. The
+player enters tech mode from in-world, a scene materializes from Prompt Book data, and
+they can toggle departments on and off, reposition marks, and adjust param values —
+then write changes back to disk. No typing required for any action after the entry command.
+
+This is Phase 1 (Prompt Book integration). Phase 2 (YAML cue navigation and authoring)
+is a separate filing once Phase 1 is stable.
+
+**Architectural note:** `show-params.md` is retired as part of this implementation.
+It is replaced by `[show_id].prompt-book.yml` — a well-organized YAML file that is the
+single source of truth for all committed structural and content decisions about a show.
+Every department pushes their final choices (casting, wardrobe, set, lighting, script
+lines, params) into the Prompt Book. The plugin reads it at TechSession init and writes
+back to it on SAVE. No Markdown parsing, no dual-write. See building spec §2 for full
+Prompt Book architecture and §3 for the schema.
+
+**Retires:** `/scaena scout` command family (OPS-001, OPS-010 superseded; OPS-011 migrated).
+  Also retires `show-params.md` convention — content migrates to prompt-book.yml.
+**Replaces:** `PreviewSession` (OPS-002 superseded). `TechSession` is the new stateful core.
+
+---
+
+#### Command surface
+
+```
+/scaena tech [show_id]             — enter tech mode, load first scene
+/scaena tech [show_id] [scene]     — enter tech mode, load specific scene (e.g. site_a)
+```
+
+Everything after entry is hotbar items and clickable chat. No further typed commands
+required during a session.
+
+---
+
+#### Hotbar layout (slots 5–9)
+
+Slots 1–4 remain free for in-world block work. Slots 5–9 are dedicated to tech mode
+while a TechSession is active. The plugin gives the player named items in these slots
+on entry and restores their original inventory on dismiss.
+
+| Slot | Item | Phase 1 function |
+|------|------|-----------------|
+| 5 | ← Prev | Navigate to previous scene |
+| 6 | Hold | Freeze current state; hold before advancing |
+| 7 | Go → | Navigate to next scene; load and materialize |
+| 8 | Mark Capture | Right-click to capture current position as the focused mark |
+| 9 | Parameter tool | Adjust non-positional param values (see below) |
+
+---
+
+#### Clickable chat panel
+
+On session entry (and after any state change), the plugin sends a refreshed menu to
+chat as a `TextComponent` with `ClickEvent.runCommand()` on each label. The player
+clicks; no typing required.
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  TECH  showcase.01 · Site A — Active
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Departments:
+  [CAST ✓]  [SET ✓]  [WARDROBE ✓]  [LIGHTS ✓]
+  [SOUND ✓]  [CAMERA ✓]  [EFFECTS ✓]  [FX ✓]
+
+  Marks:
+  [Focus Mark...]  [Save]  [Discard]
+
+  [Exit Tech]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+`[Focus Mark...]` expands to a secondary panel listing all marks for the current scene
+with capture status (✓ captured / pending). Clicking a mark name enters capture mode
+for that mark.
+
+---
+
+#### TechSession — key fields
+
+```
+TechSession {
+  show_id              String
+  current_scene        SceneRef                  // "site_a", "site_b", etc.
+  department_mask      Set<Department>           // which departments are active
+  active_entities      Map<UUID, EntityRecord>   // spawned entities + owning dept
+  block_snapshots      Map<Location, BlockData>  // original block state → restore on dismiss
+  modified_params      Map<ParamName, Value>     // param values changed this session
+  modified_marks       Map<MarkName, Position>   // marks repositioned this session
+  player_state         PlayerStateSnapshot       // gamemode, flight → restore on exit
+  focused_mark         String?                   // mark currently selected for capture
+  capture_mode         Boolean
+}
+```
+
+One TechSession per player at a time. Loading a new scene while one is active
+auto-dismisses (with full cleanup) before loading the new scene.
+
+---
+
+#### Four core operations
+
+**LOAD(scene, departments)**
+For each active department in the mask: fire its setup assets against the live world
+immediately (no tick delay) — SPAWN_ENTITY, ENTITY_EQUIP, BLOCK_STATE, TIME_OF_DAY.
+Record spawned entity UUIDs and original block states in the session for stop-safety.
+Player is teleported to the scene's arrival mark.
+
+**DISMISS()**
+Apply full stop-safety: despawn all session entities, restore all original block states,
+restore player inventory and game mode. If modified_params or modified_marks is non-empty,
+send the save prompt before completing cleanup:
+```
+  Tech session complete.
+  [N] params updated  |  [N] marks repositioned
+  [Save to show-params.md]  [Discard changes]
+```
+Choosing Save writes directly to show-params.md (see Write-back below).
+
+**TOGGLE(department)**
+- Currently active → despawn/restore that department's assets immediately. Remove from mask.
+  Refresh clickable panel (✓ → ✗).
+- Currently inactive → re-fire that department's setup events against the live world.
+  Add to mask. Refresh panel (✗ → ✓).
+- Wardrobe dependency: if Casting is toggled off, Wardrobe assets despawn with it. When
+  Casting is re-enabled, entities respawn and Wardrobe re-applies automatically.
+
+**CAPTURE(mark_name, position)**
+Update `modified_marks` with the new position. If an entity is currently spawned at this
+mark, teleport it immediately to the new position. Confirm in actionbar. Does not write
+to disk until SAVE is called.
+
+---
+
+#### Mark Capture workflow
+
+1. Click `[Focus Mark...]` in the clickable panel → secondary list of marks for current scene
+2. Click a mark name → enters capture mode; `focused_mark` set
+3. Actionbar updates: `📍 CAPTURING: companion_spawn | (x, y, z) | right-click to capture`
+   Live coordinates update as the player walks.
+4. Right-click Mark Capture item (slot 8) → `CAPTURE(focused_mark, player.getLocation())`
+5. Actionbar confirms: `✓ companion_spawn updated` — returns to normal mode
+
+---
+
+#### Parameter adjustment (slot 9 — Parameter tool)
+
+**Numeric values** (multipliers, tick counts, durations):
+Right-click Parameter tool → clickable panel lists all numeric params for the current
+scene. Clicking a param enters scroll-wheel mode: scroll up/down increments/decrements
+the value; any entity or effect reflecting that param updates live in-world. Click to
+confirm and record in `modified_params`.
+
+**Text strings** (`death_line`, `choice_prompt`, etc.):
+Clicking a text param opens an anvil GUI. The current value is pre-filled as the item
+name. Player types the new value and confirms. Recorded in `modified_params`.
+
+---
+
+#### Display surfaces
+
+**Actionbar (always-on during session)**
+Normal mode: `TECH · showcase.01 · Site A`
+Capture mode: `📍 CAPTURING: [mark_name] | (x.x, y.y, z.z) | right-click to capture`
+Post-action: brief confirmation message, then returns to normal
+
+**Sidebar (scoreboard)**
+```
+TECH · showcase.01
+──────────────────
+Site A — Active
+Entities: N / N
+Marks modified: N
+──────────────────
+CAST   ✓
+WARDROBE  ✓
+LIGHTS  ✓
+SET    —
+```
+
+---
+
+#### Data sources (Phase 1)
+
+Show-params.md + `scout_captures/[show_id]/[date].yml` (latest capture file).
+No show YAML required. The plugin reads mark positions from the capture file and falls
+back to defaults or omits unset marks with a visual indicator.
+
+Phase 1 does not depend on any show YAML being authored.
+
+---
+
+#### Write-back contract
+
+Changes accumulate in `modified_params` and `modified_marks` during the session.
+Nothing writes to disk until explicit save (via `[Save]` in the panel or on dismiss).
+
+On save: the plugin writes updated mark positions and param values **directly to
+show-params.md**. No intermediate file, no Claude merge step.
+
+Implementation note: the write modifies specific fields/table rows in show-params.md
+in place. The file format is Markdown with YAML frontmatter tables — the writer targets
+named fields rather than replacing the whole file.
+
+---
+
+#### Stop-safety contract — Stage Management owns this
+
+TechSession carries the same cleanup contract as a running show:
+
+- All tech-spawned entities tracked with `despawn_on_dismiss: true`
+- All block state changes record original `BlockData` before modification; restored on dismiss
+- Player inventory snapshot taken at session entry; restored on dismiss
+- Player game mode recorded at entry; restored on dismiss
+- `/scaena tech dismiss` (or `[Exit Tech]` panel button) calls `applyStopSafety()` on the session
+- Server crash or player disconnect while session is active triggers the same safety
+  mechanism as an interrupted show
+
+A Tech Mode session that cannot be fully cleaned up should not ship.
+
+---
+
+#### Superseded by this entry
+
+| OPS | Status |
+|-----|--------|
+| OPS-001 | Superseded — scout sidebar labels absorbed into tech mode sidebar |
+| OPS-002 | Superseded — `TechSession` replaces `PreviewSession` |
+| OPS-010 | Superseded — bidirectional show-params sync is Phase 1 TechSession core feature |
+
+OPS-011 (`/scaena snap`) migrated: re-file as a Phase 1 enhancement to this entry when
+Phase 1 is stable.
+
+---
+
+**Priority:** High — blocks showcase.01 scouting (Sites B–F) and full YAML authoring.
+
+---
+
 ## Resolved
+
+---
+
+### OPS-028 [resolved] Scene Numbering Convention — Stage Management defines and owns ✓
+**Delivered:** 2026-04-01 | **Filed:** 2026-04-01 | **Area:** Stage Management
+
+Convention doc authored at `kb/departments/stage-management/scene-numbering-convention.md`.
+Summary in `stage-management.kb.md §Scene Numbers`. Covers: zero-padded two-digit scheme,
+subscene insertion rules, decimal-aware sort, renumbering protocol, visibility (players
+never see `scene_number`), and assignment authority (Kendra only).
 
 ---
 
@@ -743,3 +1033,22 @@ Added `powerVariation`, `colorVariation`, `gradientFrom`, `gradientTo` fields to
 ### OPS-025 [resolved] Show scanner descends into subdirectories ✓
 **Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Stage Manager, all shows
 `ShowRegistry.load()` now collects both flat `shows/*.yml` and nested `shows/[id]/[id].yml` files before the parse loop. Enables full show-folder-structure adoption. Flat files still load normally; duplicate ID detection prevents double-loading if both exist.
+
+---
+
+### OPS-028 [open] Scene Numbering Convention — Stage Management owns
+
+**Area:** Stage Management
+**Filed:** 2026-04-01
+**Priority:** Medium — needed before prompt-book schema stabilizes across multiple shows
+
+Stage Management defines and documents the decimal scene numbering scheme used in
+`prompt-book.yml` `scene_number` fields. The numbering determines scene sort order in
+Tech Mode navigation and any future scene-indexed features.
+
+Convention currently in use: decimal strings (`"00"`, `"00.1"`, `"01"`, `"10.1"`) sorted
+via `Double.parseDouble()` comparison (so "00.1" = 0.1 < "01" = 1.0 < "10.1" = 10.1).
+Stage Management documents the convention, the rules for inserting subscenes, and how
+renumbering works when scenes are added or removed.
+
+Unblock before: adding a second show with complex scene structure to the prompt-book schema.

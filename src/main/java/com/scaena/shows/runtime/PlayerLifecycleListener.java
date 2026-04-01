@@ -1,6 +1,7 @@
 package com.scaena.shows.runtime;
 
 import com.scaena.shows.scout.ScoutManager;
+import com.scaena.shows.tech.TechManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -15,16 +16,20 @@ public final class PlayerLifecycleListener implements Listener {
 
     private final ShowManager  showManager;
     private final ScoutManager scoutManager;
+    private final TechManager  techManager;
 
-    public PlayerLifecycleListener(ShowManager showManager, ScoutManager scoutManager) {
+    public PlayerLifecycleListener(ShowManager showManager, ScoutManager scoutManager,
+                                   TechManager techManager) {
         this.showManager  = showManager;
         this.scoutManager = scoutManager;
+        this.techManager  = techManager;
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         showManager.onPlayerDisconnect(event.getPlayer());
         scoutManager.onPlayerQuit(event.getPlayer());
+        techManager.onPlayerQuit(event.getPlayer());
     }
 
     @EventHandler

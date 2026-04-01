@@ -11,6 +11,8 @@ import com.scaena.shows.runtime.PlayerLifecycleListener;
 import com.scaena.shows.runtime.ShowManager;
 import com.scaena.shows.runtime.executor.ExecutorRegistry;
 import com.scaena.shows.scout.ScoutManager;
+import com.scaena.shows.tech.TechHotbarListener;
+import com.scaena.shows.tech.TechManager;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -41,6 +43,7 @@ public final class ScaenaShowsPlugin extends JavaPlugin {
     private ExecutorRegistry  executors;
     private ShowManager       showManager;
     private ScoutManager      scoutManager;
+    private TechManager       techManager;
 
     @Override
     public void onEnable() {
@@ -86,6 +89,9 @@ public final class ScaenaShowsPlugin extends JavaPlugin {
         // 8a. Scout manager (needs ShowRegistry for set-based teleport and scene ordering)
         scoutManager = new ScoutManager(this, showRegistry);
 
+        // 8b-tech. Tech manager — OPS-027 Tech Rehearsal Mode
+        techManager = new TechManager(this);
+
         // 8b. Register /show command
         PluginCommand showCmd = getCommand("show");
         if (showCmd != null) {
@@ -100,7 +106,7 @@ public final class ScaenaShowsPlugin extends JavaPlugin {
         // 8c. Register /scaena command
         PluginCommand scaenaCmd = getCommand("scaena");
         if (scaenaCmd != null) {
-            ScoutCommand scoutHandler = new ScoutCommand(scoutManager, showManager);
+            ScoutCommand scoutHandler = new ScoutCommand(scoutManager, showManager, techManager);
             scaenaCmd.setExecutor(scoutHandler);
             scaenaCmd.setTabCompleter(scoutHandler);
         } else {
@@ -109,7 +115,11 @@ public final class ScaenaShowsPlugin extends JavaPlugin {
 
         // 9. Player lifecycle listener
         getServer().getPluginManager().registerEvents(
-            new PlayerLifecycleListener(showManager, scoutManager), this);
+            new PlayerLifecycleListener(showManager, scoutManager, techManager), this);
+
+        // 9b-tech. Tech hotbar + chat listener
+        getServer().getPluginManager().registerEvents(
+            new TechHotbarListener(techManager, this), this);
 
         // 9b. Entity combat listener — drives BOSS_HEALTH_BAR progress + death hooks (OPS-026)
         getServer().getPluginManager().registerEvents(

@@ -1,0 +1,123 @@
+# [show_id].prompt-book.yml
+# The Prompt Book — authoritative committed state of this show.
+# Departments push their final decisions here.
+# Discussion lives in direction/ and departments/. Committed choices live here.
+# Plugin reads at TechSession init. Written back on SAVE (params only).
+# Mark positions live in scout_captures/[show_id]/[date].yml — not here.
+
+show: [show_id]
+title: "[Show Title]"
+stage: brief           # brief | scripted | scouted | yaml-ready | production
+world: overworld
+duration_target: "TBD"
+updated: "[YYYY-MM-DD]"
+
+structure:
+  format: TBD           # e.g. rondo, linear, through-composed
+  sequence: "TBD"
+  notes: ""
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SCENES
+# Ordered by scene_number. Decimal scheme: "00", "01", "01.1", etc.
+# scene_number is the sort key — Stage Management owns the numbering convention.
+# ─────────────────────────────────────────────────────────────────────────────
+scenes:
+
+  - id: scene_01
+    scene_number: "00"
+    label: "[Scene Label]"
+    arrival_mark: TBD             # mark name in scout_captures; player teleports here on LOAD
+    status: pending               # pending | scouted | yaml-ready
+    biome: TBD
+    world: world
+
+    departments:
+
+      casting:
+        # Add cast entries after Casting Director decisions are locked.
+        # - role: [role_name]
+        #   mark: [mark_name]
+        #   entity_type: [MOB_TYPE]
+        #   subtype: TBD
+        #   display_name: "[Name]"
+        #   ai_locked: false
+        #   notes: ""
+
+      wardrobe:
+        # Add wardrobe entries after Wardrobe Director decisions are locked.
+        # - role: [role_name]
+        #   head:        TBD
+        #   chest:       TBD
+        #   legs:        TBD
+        #   feet:        TBD
+        #   mainhand:    TBD
+        #   offhand:     TBD
+
+      set:
+        # Add set entries after Set Scouting and Set Director decisions are locked.
+        # - mark: [mark_name]
+        #   block_type: [BLOCK_TYPE]
+        #   block_state: ""
+        #   notes: ""
+
+      lighting:
+        time_of_day: TBD          # MC ticks; 0=dawn, 6000=noon, 13000=dusk, 18000=midnight
+        notes: ""
+        # sources:
+        #   - mark: [mark_name]
+        #     type: [BLOCK_TYPE]
+        #     light_level: TBD
+
+      fireworks:
+        # pattern_cue: TBD        # cue ID from fireworks.yml; omit if none for this scene
+        notes: ""
+
+      script:
+        # Add script lines after Voice Director decisions are locked.
+        # - cue: TBD
+        #   mode: CHAT             # CHAT | TITLE | ACTIONBAR | SUBTITLE
+        #   speaker: ShowSprite
+        #   text: "TBD"
+        #   color: "#AAAAAA"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MECHANICS
+# Show-level mechanical decisions not tied to individual scenes.
+# ─────────────────────────────────────────────────────────────────────────────
+mechanics:
+  notes: "TBD"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PARAMS
+# Adjustable show values exposed in Tech Mode.
+# Stage Management owns names and types; departments set initial values.
+# Locked params cannot be changed in Tech Mode without file edit.
+# ─────────────────────────────────────────────────────────────────────────────
+params:
+  # - name: [param_name]
+  #   type: numeric              # numeric | text
+  #   value: TBD
+  #   min: 0
+  #   max: 100
+  #   step: 1
+  #   label: "[Human-readable label]"
+  #   description: "[What this controls]"
+  #   locked: false
+
+# ─────────────────────────────────────────────────────────────────────────────
+# READINESS
+# Overall production state tracker. Stage Management owns this block.
+# ─────────────────────────────────────────────────────────────────────────────
+readiness:
+  overall: pending               # pending | in-progress | yaml-ready | production
+  casting: pending               # pending | locked
+  wardrobe: pending
+  set: pending
+  lighting: pending
+  fireworks: pending
+  voice: pending
+  open:
+    # - item: "[Description of open TBD]"
+    #   owner: "[Department or person]"
+    #   blocking: true

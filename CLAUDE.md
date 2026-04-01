@@ -26,7 +26,7 @@ All 12 department KBs are now in folder structure (`kb/departments/[dept-slug]/[
 - Gates 1 (Casting) ✅ and 2 (Wardrobe) ✅ closed. Kit locked, arc staged, script v2 complete.
 - Gate 3 (Set Scouting) open. Zarathale scouts Sites B–F using `direction/showcase.01.scouting-field-guide.md`. Site A scouted 2026-03-30.
 - Gate 4 (Intake) pending Gate 3. Two TBDs remain: victory coda fireworks (Mira) + victory levitation amplifier (Effects, pending ceiling clearance).
-- Engine at 2.20.0 — OPS-026 (SPAWN_ENTITY attributes + BOSS_HEALTH_BAR) and OPS-009 (PLAYER_CHOICE) both shipped. R0 sneak preview YAML authored.
+- Engine at 2.21.0 — OPS-027 (Tech Rehearsal Mode Phase 1) shipped. Prompt Book replaces show-params.md as the authoritative committed-state artifact.
 
 **Not show-specific:**
 - R7 debrief ✅ complete (2026-03-28). R8 not yet scheduled.
@@ -53,12 +53,12 @@ Alan moves between shows freely. There's no lock on which show is primary.
 
 1. Read this file
 2. Read `ROADMAP.md` — the full picture of how this project is structured
-3. **If working on a specific show:** read that show's `direction/[show_id].status.md`, then `[show_id].show-params.md` (if it exists — showcase.01 has one; it's the single source of truth for structural facts). Then read `direction/[show_id].show-direction.md` for creative context.
+3. **If working on a specific show:** read that show's `direction/[show_id].status.md`, then `[show_id].prompt-book.yml` (if it exists — showcase.01 has one; it's the single source of truth for structural facts and committed params). Then read `direction/[show_id].show-direction.md` for creative context.
 4. **If writing shows or cues:** read `kb/production-team.md`, then `kb/departments/show-director/show-director.kb.md`. Write the Show Director brief before any YAML. Read the relevant department KB(s) before writing YAML for their tools.
 5. **If creating cues:** naming is `[category].[archetype].[variant]` per spec §9; add `tags:` per taxonomy spec §10
 6. **If writing Java:** re-skim the relevant spec section first. Capability gaps go in `ops-inbox.md` — that's Alan's list, for plugin-level Java work only.
 
-**[show_id].show-params.md:** Where it exists, this is the show's settled structural facts — kit, sites, structure, key mechanics, firework pattern, and YAML readiness checklist. A value in show-params means "build from this." A TBD means it's still in play. No formal lock ceremony — updating a param IS the lock. Department briefs reference show-params rather than restating facts.
+**[show_id].prompt-book.yml:** Where it exists, this is the show's settled structural facts — cast, wardrobe, set, scenes, key mechanics, params, script lines, and readiness state. Replaces `show-params.md` entirely (OPS-027). A value in the prompt-book means "build from this." A TBD means it's still in play. The plugin reads it at TechSession init; the Parameter tool writes back to it on SAVE. Department briefs reference the prompt-book rather than restating facts.
 
 ---
 
@@ -66,11 +66,11 @@ Alan moves between shows freely. There's no lock on which show is primary.
 
 ### Starting a new show
 Scaffold from `src/main/resources/shows/_template/`. The Show Director writes the brief and per-department briefings before any YAML is authored. Show files live in:
-- `show-params.md` — structural facts, kit, sites, key mechanics, YAML readiness checklist
+- `[show_id].prompt-book.yml` — authoritative committed state: cast, wardrobe, set, scenes, params, script lines, readiness (replaces show-params.md)
 - `direction/` — Show Director's working files (status, show-direction, tone, revision-log)
 - `departments/` — one file per department that has decisions or notes for this show
 
-**There is no formal intake gate.** Decisions get made iteratively across sessions. The YAML Readiness section of show-params.md tracks what's still TBD. When those items are resolved, YAML authoring begins.
+**There is no formal intake gate.** Decisions get made iteratively across sessions. The `readiness.open` section of the prompt-book tracks what's still TBD. When those items are resolved, YAML authoring begins.
 
 ### Calibration and demo shows
 `demo.*` shows are the calibration lab. Each department maintains a **Calibration Backlog** in its KB — specific things they want to develop mastery over. A calibration round picks from that list, builds a demo show, Alan watches, and findings get recorded back in the KB as **patterns** (named configurations with notes on storytelling effect).
@@ -123,7 +123,7 @@ ScaenaShows/
 │               ├── _template/      ← Scaffold for new show folders
 │               └── [show_id]/      ← Show folder
 │                   ├── [show_id].yml
-│                   ├── [show_id].show-params.md   ← Structural facts (where it exists)
+│                   ├── [show_id].prompt-book.yml  ← Committed state: cast, set, params, script (OPS-027)
 │                   ├── [show_id].run-sheet.md
 │                   ├── [show_id].brief.md
 │                   ├── direction/
@@ -189,7 +189,7 @@ Do not reopen these without Alan.
 
 ## Versioning Policy
 
-**Current version:** `2.20.0`
+**Current version:** `2.21.0`
 **Version file:** `build.gradle.kts` — the `version = "x.y.z"` line
 
 Before telling Alan to build, either bump the version or explicitly state why no bump is needed.

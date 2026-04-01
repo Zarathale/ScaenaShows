@@ -31,6 +31,7 @@ The Director sets tone through experiential language — what the player *feels*
 
 Every show has a folder at `src/main/resources/shows/[show_id]/`. The folder contains:
 
+- `[show_id].prompt-book.yml` — **the committed-state artifact.** Single source of truth for all structural and content decisions: cast, wardrobe, set states, lighting, fireworks, script lines, show params, and readiness state. Departments push final decisions here; discussion and working history live in `direction/` and `departments/`. The plugin reads this at TechSession init; the Parameter tool writes back to it on SAVE. Stage Management (Kendra) owns this file.
 - `brief.md` — the Show Director's brief; the entry point everyone reads first
 - `run-sheet.md` — Kendra's document: the human-readable call script, updated each revision
 - `direction/` — the Show Director's working files: `show-direction.md`, `tone.md`, `intake.md`, `revision-log.md`

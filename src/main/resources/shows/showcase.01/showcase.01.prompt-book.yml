@@ -1,0 +1,466 @@
+# showcase.01.prompt-book.yml
+# The Prompt Book — authoritative committed state of this show.
+# Departments push their final decisions here.
+# Discussion lives in direction/ and departments/. Committed choices live here.
+# Plugin reads at TechSession init. Written back on SAVE (params only).
+# Mark positions live in scout_captures/showcase.01/[date].yml — not here.
+
+show: showcase.01
+title: "Preparing for Battle"
+stage: brief           # brief | scripted | scouted | yaml-ready | production
+world: overworld
+duration_target: "6000–8400 ticks"
+updated: "2026-04-01"
+
+structure:
+  format: rondo
+  sequence: "A → B → A₁ → C → A₂ → D → A₃ → E → A₄ → F → A-Final"
+  expedition_count: 5
+  a_sections_total: 6
+  armor_stand_fills: 5
+  notes: "Armor stand fills in dramatic order: boots, leggings, chestplate, helmet, axe."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SCENES
+# Ordered by scene_number. Decimal scheme: "00", "01", etc.
+# scene_number is the sort key — Stage Management owns the numbering convention.
+# ─────────────────────────────────────────────────────────────────────────────
+scenes:
+
+  - id: site_a
+    scene_number: "00"
+    label: "Home Base — The Workshop"
+    arrival_mark: home_base       # mark name in scout_captures; player teleports here on LOAD
+    status: scouted               # pending | scouted | yaml-ready
+    biome: Sparse Jungle
+    world: world
+
+    departments:
+
+      casting:
+        - role: companion
+          mark: companion_spawn
+          entity_type: VILLAGER
+          subtype: ARMORER              # profession for Villagers; variant for Cats, Horses, etc.
+          display_name: "Companion"
+          ai_locked: false
+          notes: >
+            Narrator for all expeditions. Must be fenced with blast furnace job
+            site nearby. Open-sky position despite interior scene.
+        - role: hero
+          mark: vindicator_spawn
+          entity_type: VINDICATOR
+          display_name: "The Vindicator"
+          ai_locked: true
+          notes: >
+            Behind-wall holding position. Must NOT be visible from home_base
+            or companion_spawn. Iron door between here and workshop.
+            Present the entire show — SPAWN_ENTITY fires at Scene A open,
+            never despawns until show ends.
+
+      wardrobe:
+        # Applied to the entity at the named mark. Requires Casting active.
+        - entity_mark: vindicator_spawn
+          helmet: CHAINMAIL_HELMET
+          chestplate: IRON_CHESTPLATE
+          leggings: IRON_LEGGINGS
+          boots: LEATHER_BOOTS
+          boots_dye: "#3B2A1A"          # confirm dye support; fallback: undyed
+          main_hand: IRON_AXE
+          main_hand_enchant: "SHARPNESS:1"  # confirm enchant support; fallback: plain axe
+          notes: >
+            ENTITY_EQUIP mirrors each armor stand fill at same A-section return.
+            Player sees the stand fill; Vindicator is equipped simultaneously behind the wall.
+
+      set:
+        - mark: blast_furnace
+          block_type: BLAST_FURNACE
+          block_state: "lit=true"
+          notes: "Block coords (confirm in-game): x=198, y=79, z=304. Open-sky position."
+        - mark: iron_door
+          block_type: IRON_DOOR
+          block_state: "open=false"
+          notes: >
+            Closes at show open. Opens at branch resolution — fight or walk away.
+            Not at the reveal moment. SM owns stop-safety cleanup cue.
+
+      lighting:
+        time_of_day: 12500
+        notes: "Twilight. Natural clock after show open — no TIME_OF_DAY events until A-Final."
+        sources:
+          - mark: blast_furnace
+            level: 13
+            quality: warm orange
+            role: anchor light source
+          - mark: lanterns
+            status: TBD
+            notes: "Set assesses after scouting."
+
+      fireworks:
+        present: false
+        notes: "No fireworks. Play space is enclosed (ceiling 0–4 blocks)."
+
+      script:
+        lines:
+          - id: companion.a.open.1
+            speaker: companion
+            delivery: CHAT
+            text: "Five pieces. Everything I need is out there — I know where each one is."
+            timing: "Show open"
+          # A-section lines: TBD — require Voice revision with Vindicator-behind-wall staging.
+          # Commit lines here after Voice session delivers them.
+
+  - id: site_b
+    scene_number: "01"
+    label: "High Ground — The Helmet"
+    arrival_mark: high_ground
+    status: pending               # scouting not yet run
+
+    departments:
+      casting:
+        - role: companion
+          mark: armorer_high_ground
+          entity_type: VILLAGER
+          subtype: ARMORER
+          display_name: "Companion"
+          notes: "2–4 blocks from arrival. Face toward player arrival."
+
+      fireworks:
+        present: true
+        pattern: find-firework
+        timing: "Between Armorer line 2 and line 3. Simultaneous with item in hand."
+
+      script:
+        lines: []   # TBD — pending scouting and Voice session
+
+  - id: site_c
+    scene_number: "02"
+    label: "The Forge — The Chestplate"
+    arrival_mark: the_forge
+    status: pending
+
+    departments:
+      casting:
+        - role: companion
+          mark: armorer_the_forge
+          entity_type: VILLAGER
+          subtype: ARMORER
+          display_name: "Companion"
+
+      set:
+        - notes: "Lava as light source if adjacent — Set scouts proximity."
+
+      fireworks:
+        present: true
+        pattern: find-firework
+        notes: "Warmer, badlands sky."
+
+      script:
+        lines: []
+
+  - id: site_d
+    scene_number: "03"
+    label: "The Long Road — The Leggings"
+    arrival_mark: the_long_road
+    status: pending
+
+    departments:
+      casting:
+        - role: companion
+          mark: armorer_long_road
+          entity_type: VILLAGER
+          subtype: ARMORER
+          display_name: "Companion"
+
+      set:
+        - mark: campfire_long_road
+          block_type: CAMPFIRE
+          block_state: "lit=true"
+          notes: "Regular campfire. Mob containment anchor (~14-block no-spawn radius)."
+
+      lighting:
+        notes: "Campfire provides waystation atmosphere + mob containment."
+        sources:
+          - mark: campfire_long_road
+            level: 15
+            quality: warm
+            role: waystation atmosphere + mob containment
+
+      fireworks:
+        present: true
+        pattern: find-firework
+        notes: "Understated, road-quality."
+
+      script:
+        lines: []
+
+  - id: site_e
+    scene_number: "04"
+    label: "The Swamp Floor — The Boots"
+    arrival_mark: the_swamp_floor
+    status: pending
+
+    departments:
+      casting:
+        - role: companion
+          mark: armorer_swamp_floor
+          entity_type: VILLAGER
+          subtype: ARMORER
+          display_name: "Companion"
+
+      set:
+        - mark: campfire_swamp_floor
+          block_type: CAMPFIRE             # soul vs. regular TBD — Steve decides after canopy report
+          block_state: "lit=true"
+          notes: "Soul campfire (L10) recommended. Confirm type after canopy density report."
+
+      fireworks:
+        present: true
+        pattern: find-firework
+        notes: "Tactile, swamp-register."
+
+      script:
+        lines: []
+
+  - id: site_f
+    scene_number: "05"
+    label: "The Choice — The Weapon"
+    arrival_mark: the_choice
+    status: pending
+
+    departments:
+      casting:
+        - role: companion
+          mark: armorer_the_choice
+          entity_type: VILLAGER
+          subtype: ARMORER
+          display_name: "Companion"
+          notes: "Slower pacing here. Space should feel weighted."
+
+      set:
+        - mark: campfire_the_choice
+          block_type: CAMPFIRE
+          block_state: "lit=true"
+          notes: "Mob containment + particle beat anchor for Effects. Center of cleared space."
+
+      fireworks:
+        present: false
+        notes: >
+          Intentional absence. Final expedition — absence carries maximum force.
+          The silence IS the firework moment.
+
+      script:
+        lines:
+          - id: companion.f.3
+            speaker: companion
+            delivery: silence
+            text: ""
+            timing: "F line 3 — silence. Locked 2026-03-29."
+            notes: "The most important line in the show."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MECHANICS
+# Behavioral rules that span scenes or cross departments.
+# Not editable via Tech Mode Parameter tool — informational in the panel.
+# ─────────────────────────────────────────────────────────────────────────────
+mechanics:
+
+  iron_door:
+    summary: >
+      Closes at show open via REDSTONE. Opens at the start of whichever branch the player
+      chooses at A-Final — not at the reveal moment. The reveal is the door, not a spawn.
+    fight_branch: "Door opens → player steps through → Vindicator discovered (AI locked) → countdown → GO."
+    walk_away_branch: "Door opens → Vindicator says LATER. → despawns."
+    owner: Stage Management
+    notes: "SM owns stop-safety cleanup cue."
+
+  vindicator_staging:
+    rule: "SPAWN_ENTITY fires at Scene A open — AI locked, no equipment, behind wall."
+    visibility: "Must NOT be visible from home_base or companion_spawn at any time."
+    equip: "ENTITY_EQUIP mirrors each armor stand fill at same A-section tick window."
+    reveal: "The reveal is the door opening. Never a fresh spawn."
+    despawn: "Despawns only when the show ends (fight death or walk-away branch)."
+
+  armor_stand_fills:
+    rule: "Fills in dramatic order, independent of expedition order."
+    order:
+      - fill: 1
+        slot: boots
+        a_section: A₁
+        after_expedition: B
+      - fill: 2
+        slot: leggings
+        a_section: A₂
+        after_expedition: C
+      - fill: 3
+        slot: chestplate
+        a_section: A₃
+        after_expedition: D
+      - fill: 4
+        slot: helmet
+        a_section: A₄
+        after_expedition: E
+      - fill: 5
+        slot: axe_main_hand
+        a_section: A-Final
+        after_expedition: F
+
+  expeditions:
+    player_mode: SPECTATOR
+    camera: "Drone spectate dolly-in (all 5 scenes). Site F pacing intentionally slower."
+    notes: >
+      Camera KB owns expedition transitions via PLAYER_SPECTATE.
+      Stop-safety restores prior game mode. Plugin support confirmed — no ops-inbox needed.
+
+  lighting_arc:
+    show_start: 12500
+    progression: natural_clock
+    a_final_nudge:
+      time_of_day: 22000
+      trigger: "Hold beat between Armorer's last line and Vindicator reveal"
+      notes: "Pre-dawn — guarantees sunrise during fight if player chooses fight branch."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PARAMS
+# Show-level adjustable values. Exposed via Parameter tool during tech sessions.
+# type: numeric → right-click to increment, shift-right-click to decrement
+# type: text    → chat input prompt (type value, press Enter)
+# locked: true  → display-only in tech panel; not editable without explicit unlock
+# ─────────────────────────────────────────────────────────────────────────────
+params:
+
+  # Battle Sequence
+  - name: foe_health_multiplier
+    type: numeric
+    value: 1.5
+    step: 0.1
+    min: 0.5
+    max: 5.0
+    locked: true
+    notes: "36 HP (24 × 1.5). Locked 2026-03-31."
+
+  - name: foe_speed_multiplier
+    type: numeric
+    value: 0.5
+    step: 0.1
+    min: 0.1
+    max: 2.0
+    locked: true
+    notes: "Half speed — heavy and slow. Locked 2026-03-31."
+
+  - name: foe_scale_multiplier
+    type: numeric
+    value: 1.5
+    step: 0.1
+    min: 0.5
+    max: 3.0
+    locked: true
+    notes: "1.5× size. Effects: flag ceiling clearance at A-Final space."
+
+  - name: countdown_duration_seconds
+    type: numeric
+    value: 5
+    step: 1
+    min: 3
+    max: 10
+    notes: "5-4-3-2-1 countdown before AI releases."
+
+  - name: hold_before_choice_ticks
+    type: numeric
+    value: 120
+    step: 20
+    min: 20
+    max: 400
+    notes: "~6 seconds after Armorer's last line before PLAYER_CHOICE fires."
+
+  - name: choice_timeout_ticks
+    type: numeric
+    value: 300
+    step: 20
+    min: 60
+    max: 1200
+    notes: "15 seconds. Yellow bossbar depletes over this duration."
+
+  - name: walk_away_despawn_ticks
+    type: numeric
+    value: 60
+    step: 5
+    min: 5
+    max: 200
+    notes: "~3 seconds after exit line before Vindicator despawns."
+
+  - name: death_line_to_coda_ticks
+    type: numeric
+    value: 20
+    step: 5
+    min: 5
+    max: 100
+    notes: "~1 second pause after death line before victory coda fires. Let the word land."
+
+  - name: victory_cue_duration
+    type: numeric
+    value: 160
+    step: 20
+    min: 40
+    max: 400
+    notes: "8 seconds."
+
+  - name: victory_levitation_amplifier
+    type: numeric
+    value: 0
+    step: 1
+    min: 0
+    max: 3
+    notes: "TBD — Effects: flag ceiling clearance at A-Final fight space."
+
+  # Choice surface
+  - name: choice_prompt
+    type: text
+    value: "What now?"
+    notes: "PLAYER_CHOICE prompt text. ShowSprite register."
+
+  - name: choice_default
+    type: text
+    value: "walk_away"
+    notes: "Branch that fires on timeout. walk_away is the safer multiplayer default."
+
+  # Script params — adjustable lines that also appear in script section by reference
+  - name: walk_away_exit_line
+    type: text
+    value: "LATER."
+    notes: "ALL CAPS. Deep red #CC2200. CHAT delivery. Vindicator voice."
+
+  - name: death_line
+    type: text
+    value: "WORTHY."
+    locked: true
+    notes: "ALL CAPS. Deep red #CC2200. CHAT delivery. Fires on EntityDeathEvent. Locked 2026-03-31."
+
+  - name: walk_away_sprite_close
+    type: text
+    value: "The stage is yours."
+    locked: true
+    notes: "ShowSprite closing line. Locked 2026-03-31."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# READINESS
+# Open items tracked here, not in a separate checklist doc.
+# ─────────────────────────────────────────────────────────────────────────────
+readiness:
+  open:
+    - "Armorer Villager main-hand targeting — ENTITY_EQUIP confirm"
+    - "Scouting report: Sites B–F (Gate 3)"
+    - "Site F particle beat — Effects confirms viability post-scouting"
+    - "Victory cue fireworks pattern — Mira proposes at intake"
+    - "Victory levitation amplifier — ceiling clearance at A-Final fight space"
+    - "A-section script lines — Voice session to deliver after wall-staging confirmation"
+
+  closed:
+    - "OPS-026 shipped: SPAWN_ENTITY attributes + BOSS_HEALTH_BAR ✓"
+    - "OPS-009 shipped: PLAYER_CHOICE ✓"
+    - "Voice session complete 2026-03-29 — script v2 locked ✓"
+    - "Fireworks finale locked 2026-03-29: grand finale burst ✓"
+    - "Battle sequence multipliers locked 2026-03-31 ✓"
+    - "Death line locked 2026-03-31: WORTHY. ✓"
+    - "Walk away sprite close locked 2026-03-31 ✓"
+    - "Player spectator mode confirmed — Camera KB ✓"
