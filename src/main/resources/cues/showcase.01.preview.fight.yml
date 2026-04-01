@@ -1,0 +1,114 @@
+# ScaenaShows v2 — Cue: showcase.01.preview.fight
+# ─────────────────────────────────────────────────────────────────────
+# Fight branch for showcase.01.preview.
+# Fires when player chooses "Fight" at A-Final PLAYER_CHOICE.
+#
+# Sequence: door opens → 5-4-3-2-1 countdown → GO → AI releases → BOSS_HEALTH_BAR
+# Victory cue: showcase.01.coda.victory (placeholder; final TBD at Gate 4)
+# ─────────────────────────────────────────────────────────────────────
+
+id: showcase.01.preview.fight
+name: "Fight Branch — showcase.01 preview"
+description: >
+  A-Final fight branch. Iron door opens, countdown fires, Vindicator's AI
+  releases, BOSS_HEALTH_BAR tracks HP. On death: "WORTHY." then victory coda.
+duration_ticks: 800
+
+tags: [tone:tense, tone:dramatic, arc:peak, pace:fast, duration:act]
+
+meta:
+  created_by: Kendra
+  created_at: 2026-03-31
+  last_edited_by: Kendra
+  last_edited_at: 2026-03-31
+
+timeline:
+
+  # Iron door opens — fight branch opening beat.
+  # OPEN ITEM: confirm REDSTONE polarity with Set.
+  - at: 0
+    type: REDSTONE
+    world_specific: true
+    target: {x: 190, y: 80, z: 300}
+    state: off
+
+  - at: 0
+    type: MESSAGE
+    audience: invoker
+    message: "<dark_gray>[ fight branch ]</dark_gray>"
+
+  # 5-4-3-2-1 countdown — 1 second per beat (20 ticks).
+  # Each title stays 16 ticks, fades 2 ticks.
+  - at: 10
+    type: TITLE
+    audience: participants
+    title: "<white><bold>5</bold></white>"
+    subtitle: ""
+    fade_in: 2
+    stay: 16
+    fade_out: 2
+
+  - at: 30
+    type: TITLE
+    audience: participants
+    title: "<white><bold>4</bold></white>"
+    subtitle: ""
+    fade_in: 2
+    stay: 16
+    fade_out: 2
+
+  - at: 50
+    type: TITLE
+    audience: participants
+    title: "<white><bold>3</bold></white>"
+    subtitle: ""
+    fade_in: 2
+    stay: 16
+    fade_out: 2
+
+  - at: 70
+    type: TITLE
+    audience: participants
+    title: "<white><bold>2</bold></white>"
+    subtitle: ""
+    fade_in: 2
+    stay: 16
+    fade_out: 2
+
+  - at: 90
+    type: TITLE
+    audience: participants
+    title: "<white><bold>1</bold></white>"
+    subtitle: ""
+    fade_in: 2
+    stay: 16
+    fade_out: 2
+
+  # GO — AI releases on the same tick.
+  - at: 110
+    type: TITLE
+    audience: participants
+    title: "<gold><bold>GO</bold></gold>"
+    subtitle: ""
+    fade_in: 2
+    stay: 30
+    fade_out: 10
+
+  - at: 110
+    type: ENTITY_AI
+    target: entity:spawned:TheVindicator
+    enabled: true
+
+  # BOSS_HEALTH_BAR — live HP tracker.
+  # On Vindicator death: "WORTHY." fires in deep red, then victory coda injects.
+  - at: 115
+    type: BOSS_HEALTH_BAR
+    target: entity:spawned:TheVindicator
+    title: "<red>The Vindicator</red>"
+    color: RED
+    overlay: PROGRESS
+    audience: participants
+    death_line: "WORTHY."
+    death_line_color: "#CC2200"
+    death_line_pause_ticks: 20
+    victory_cue: showcase.01.coda.victory

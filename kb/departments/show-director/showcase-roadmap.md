@@ -1,7 +1,7 @@
 ---
 document: Showcase Series Production Roadmap
 scope: showcase.01 / showcase.02 / showcase.03
-updated: 2026-03-26
+updated: 2026-03-31
 status: active — governs all three Phase 10 shows
 ---
 
@@ -40,27 +40,29 @@ the Director — do not revise silently.
 
 ---
 
-## showcase.01 "The Cabinet"
+## showcase.01 "Preparing for Battle"
 
-*Rondo (ABACADAEAF) — 6 locations — Elevated: Set, Casting, Sound (Vignette F), Fireworks (Vignette E)*
+*Rondo (A → B → A₁ → C → A₂ → D → A₃ → E → A₄ → F → A-Final) — 5 expedition sites + home base — Elevated: Set (scouting), Effects + Fireworks + Camera (expedition tech), Sound + Voice (coordination)*
+
+**Pre-pass gates (complete before P1):**
+- **Gate 1: Casting** ✅ locked 2026-03-28 — Vindicator kit (5 pieces), Armorer Villager cast, armor stand fill order
+- **Gate 2: Wardrobe** ✅ locked 2026-03-28 — Vindicator emotional register, kit confirmed, dark leather boots dye
 
 | Pass | Session type | Department(s) | Receives from prior passes | Produces | Gates |
 |---|---|---|---|---|---|
-| **P1** | Solo | **Set** | Brief, show-direction, tone | All 6 location coordinates + facing; ceiling heights for D & E; contraption trigger XYZ; stage registry entries; sky clearance for E | All subsequent passes |
-| **P2** | Joint | **Effects + Fireworks + Camera** | P1: Vignette E coordinates + sky clearance | Altitude target for Vignette E (locked); Mira's Vignette E y_offset range; Camera's Vignette E philosophy (looks into sky / downward / holds facing) | P4 (Lighting—biome E); P7 (Voice—Vignette E line) |
-| **P3** | Solo | **Casting** | P1: all 6 locations + biomes; P2: Vignette E aerial presence decision | Allay management (persist/respawn); Home Base companion list; Vignette C creature pair; Vignette D Strider details; Vignette E aerial presence (yes/no + species); Vignette F punchline creature (after Set confirms contraption) | P5 (Choreography); P6 (Wardrobe); P8 (Sound—comedy hit) |
-| **P4** | Parallel | **Lighting + Sound** | P1: all 6 biomes + locations; P3: Casting's Vignette C pair + Vignette F creature | Lighting: TIME_OF_DAY per vignette, WEATHER baseline, A-section reset cadence. Sound: ambient beds per biome; Vignette F pre-reveal texture. Sound's Vignette F comedy hit tick is PENDING until P8. | P9 (Stage Management—run sheet) |
-| **P5** | Solo | **Choreography** | P1: all 6 coordinates; P3: all performer decisions | Initial placement for Allay + companions at Home Base; Vignette C initial formation; Vignette D Strider spawn; Vignette E aerial staging (if applicable) | P9 (Stage Management—run sheet) |
-| **P6** | Solo | **Wardrobe** | P3: Home Base companion list | Collection visual language decision (Option A/B/C); ENTITY_GLOW decisions if applicable | P9 (Stage Management—run sheet) |
-| **P7** | Solo | **Voice** | P1–P6: all confirmed location, performer, and atmosphere decisions | All A-section MESSAGE lines; Vignette B–E Sprite observations; BOSSBAR color + structure. Vignette F after-line is PENDING until P8. | P8 (Sound + Voice joint—final Vignette F) |
-| **P8** | Joint | **Sound + Voice** | P3: Vignette F punchline creature confirmed; P1: contraption XYZ confirmed | Vignette F comedy hit sound identified + tick locked; Vignette F Sprite after-line written + Director-reviewed | P9 (Stage Management—run sheet) |
-| **P9** | Solo | **Stage Management** | All prior passes complete | Full run sheet; REDSTONE ↔ SOUND tick alignment confirmed; entity cleanup protocol per vignette; nether world name confirmed | YAML authoring begins |
+| **P1** | Solo | **Set** | show-params (6 sites, biomes, pre-scout notes, field guide), show-direction, tone | All 6 site coordinates + facing; ceiling heights B–F; block light sources per site (campfire positions, lava proximity at C, canopy density at E); Site F cleared space dimensions + ruin character; blast furnace block coords (A) confirmed; stage registry entries for B–F | All subsequent passes |
+| **P2** | Joint | **Effects + Fireworks + Camera** | P1: all 6 coordinates + ceiling heights + Site F dimensions | Camera: expedition dolly template locked (all 5 sites; Site F pacing slower); Fireworks: find-firework y_offset per site B–E; victory coda firework pattern (Mira proposes → Director selects); Effects: Site F particle beat decision (viability confirmed against cleared space + ruin structure); Effects: victory levitation amplifier (confirmed against fight space ceiling) | P3 (Lighting — block light per site confirmed); P5 (Voice + Sound — victory coda pacing for fight sequence coordination) |
+| **P3** | Parallel | **Lighting + Sound** | P1: biomes + block light sources per site; P2: expedition dolly pacing | Lighting: TIME_OF_DAY at show open (MC 12,500 = twilight) confirmed; block light source per site documented (blast furnace A, open sky B, lava C, campfire D, soul or regular campfire E, campfire F); A-Final TIME_OF_DAY nudge (22,000) confirmed; BLOCK_STATE readiness (blast furnace at A). Sound: ambient bed per biome; Vindicator grunt sound ID locked (show open); delivery event decision (CHAT vs ACTIONBAR for Vindicator text lines + Armorer narration) | P5 (Voice + Sound — delivery event confirmed before joint pass) |
+| **P4** | Solo | **Choreography** | P1: all 6 coordinates; Gates 1–2: Armorer + Vindicator decisions | Armorer placement per site (approach mark + observation mark for each expedition); Vindicator staging at Site A (offstage XYZ confirmed against scouted vindicator_spawn mark); armor stand XYZ confirmed | P6 (Stage Management — run sheet) |
+| **P5** | Joint | **Voice + Sound** | P3: delivery event locked + Vindicator sound ID; show-params: script v2; P2: victory coda length + pacing | A-section placeholder lines updated for wall-staging context (Set-dependent word-level tweaks only — not a full rewrite); delivery event locked (CHAT vs ACTIONBAR); Vindicator offstage voice confirmed (grunt at show open; "AXE." at A4 return); fight branch sound coordination (confirm no authored sound events conflict with EntityCombatListener) | P6 (Stage Management — run sheet) |
+| **P6** | Solo | **Stage Management** | All prior passes complete; show-params: full battle sequence parameters | Full run sheet; armor stand fill ↔ Vindicator equip tick alignment confirmed (5 simultaneous fill pairs); fight branch stop-safety protocol; walk-away branch stop-safety protocol; spectator mode restore confirmed; YAML readiness checklist final sign-off | YAML authoring begins |
 
 **showcase.01 sequencing notes:**
-- P2 is the only joint pass before P8. Effects, Fireworks, and Camera must all three be in the same session — the altitude, y_offset range, and Vignette E philosophy are mutually constraining.
-- P3 (Casting) has one open item that cannot be closed at P3: the Vignette F punchline creature. It depends on the contraption design (P1) and the contraption is confirmed at P1, so this should be closable at P3 if Set has confirmed the contraption specifics. Flag if not.
-- P4 (Lighting + Sound) run in parallel but are independent sessions. They do not need to be joint.
-- P8 is the show's precision coordination pass. The comedy hit in Vignette F requires Sound and Voice to be in the same session to lock the tick and the after-line together.
+- Gates 1 and 2 front-loaded character and kit decisions before scouting. This is unusual but correct — the Vindicator's kit was designed to match the expedition sites thematically, so the kit needed to be settled before sites were locked. The pass sequence picks up at P1 (Set scouting).
+- P2 is the show's central technical joint pass. Expedition dolly template, find-firework altitudes, Site F particle beat, and victory coda are all informed by scouted coordinates and ceiling heights. Effects, Fireworks, and Camera must be in the same session — their decisions are mutually constraining.
+- P3 (Lighting + Sound) inputs are both from P1 (scouted data) and they don't constrain each other. They can run as sequential or truly parallel sessions.
+- P5 (Voice + Sound joint) is the show's precision coordination pass. Script v2 is already locked — this is not a writing session. The delivery event decision (CHAT vs ACTIONBAR) requires both departments and must produce a single locked answer before Stage Management writes the run sheet.
+- P6 (Stage Management) has a strict tick-alignment requirement: each armor stand fill must fire in the same tick window as the corresponding Vindicator equip event behind the wall. This is the show's primary mechanical precision constraint.
 
 ---
 
@@ -123,16 +125,16 @@ across the Showcase Series and to cross-reference other shows' relevant decision
 | Department | showcase.01 | showcase.02 | showcase.03 |
 |---|---|---|---|
 | **Set** | P1 (first mover) | P1 (first mover) | P1 (first mover) |
-| **Effects** | P2 (joint — altitude E) | P4 (Section D disorientation) | P2 (joint — altitude contract) |
-| **Fireworks** | P2 (joint — altitude E) | P8 (dawn rocket yes/no) | P2 + P6 (joint — altitude + Celebration light) |
-| **Camera** | P2 (joint — Vignette E philosophy) | P4 (storm philosophy) | P2 (joint — Arrival facing) |
-| **Casting** | P3 | P5 | P3 |
-| **Lighting** | P4 (parallel) | P2 solo → P3 joint (show lead) | P6 (joint with Fireworks) |
-| **Sound** | P4 (parallel) + P8 (joint) | P3 (joint — storm co-design) | P7 |
-| **Choreography** | P5 | P6 | P4 (joint with Casting) |
-| **Wardrobe** | P6 | P9 (minimal) | P5 |
-| **Voice** | P7 + P8 (joint) | P7 (Director review) | P8 (Director review) |
-| **Stage Management** | P9 | P10 | P9 |
+| **Effects** | P2 (joint — expedition tech + victory coda) | P4 (Section D disorientation) | P2 (joint — altitude contract) |
+| **Fireworks** | P2 (joint — find-firework altitudes + victory coda) | P8 (dawn rocket yes/no) | P2 + P6 (joint — altitude + Celebration light) |
+| **Camera** | P2 (joint — expedition dolly template) | P4 (storm philosophy) | P2 (joint — Arrival facing) |
+| **Casting** | Gate 1 ✅ (pre-pass) | P5 | P3 |
+| **Lighting** | P3 (parallel) | P2 solo → P3 joint (show lead) | P6 (joint with Fireworks) |
+| **Sound** | P3 (parallel) + P5 (joint) | P3 (joint — storm co-design) | P7 |
+| **Choreography** | P4 | P6 | P4 (joint with Casting) |
+| **Wardrobe** | Gate 2 ✅ (pre-pass) | P9 (minimal) | P5 |
+| **Voice** | P5 (joint with Sound) | P7 (Director review) | P8 (Director review) |
+| **Stage Management** | P6 | P10 | P9 |
 
 **Patterns to note:**
 
@@ -147,10 +149,7 @@ across the Showcase Series and to cross-reference other shows' relevant decision
   during them. If Stage Management is writing the run sheet before all departments have closed
   their passes, something has been skipped.
 
-- **The joint sessions are the creative core.** In showcase.01: P2 (altitude E) and P8
-  (comedy hit). In showcase.02: P3 (storm peak co-design). In showcase.03: P2 (convergence
-  contract) and P6 (Celebration light). These are where the show's central creative tensions
-  are resolved in real time — they cannot be asynchronous.
+- **The joint sessions are the creative core.** In showcase.01: P2 (expedition tech — altitude, dolly, particle) and P5 (Voice + Sound — delivery event + fight coordination). In showcase.02: P3 (storm peak co-design). In showcase.03: P2 (convergence contract) and P6 (Celebration light). These are where the show's central creative tensions are resolved in real time — they cannot be asynchronous.
 
 - **Fireworks moves early when altitude matters, late when it doesn't.** showcase.01 P2
   (altitude contract = first creative pass); showcase.03 P2 (same reason). showcase.02 P8
@@ -188,15 +187,14 @@ under the `## Decisions` section. The Director notes the pass as complete in `di
 *Updated as passes complete. Mark each pass ✅ when closed.*
 
 ### showcase.01
-- [ ] P1 — Set
+- [x] Gate 1 — Casting (locked 2026-03-28)
+- [x] Gate 2 — Wardrobe (locked 2026-03-28)
+- [ ] P1 — Set (scouting: Sites B–F)
 - [ ] P2 — Effects + Fireworks + Camera
-- [ ] P3 — Casting
-- [ ] P4 — Lighting + Sound
-- [ ] P5 — Choreography
-- [ ] P6 — Wardrobe
-- [ ] P7 — Voice
-- [ ] P8 — Sound + Voice (Vignette F final)
-- [ ] P9 — Stage Management → YAML authoring begins
+- [ ] P3 — Lighting + Sound
+- [ ] P4 — Choreography
+- [ ] P5 — Voice + Sound (coordination)
+- [ ] P6 — Stage Management → YAML authoring begins
 
 ### showcase.02
 - [ ] P1 — Set

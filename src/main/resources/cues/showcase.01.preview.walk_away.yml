@@ -1,0 +1,61 @@
+# ScaenaShows v2 — Cue: showcase.01.preview.walk_away
+# ─────────────────────────────────────────────────────────────────────
+# Walk away branch for showcase.01.preview.
+# Fires when player chooses "Walk away" at A-Final PLAYER_CHOICE
+# (or on timeout — this is the default branch).
+#
+# Sequence: door opens → "LATER." → Vindicator despawns → ShowSprite close
+# ─────────────────────────────────────────────────────────────────────
+
+id: showcase.01.preview.walk_away
+name: "Walk Away Branch — showcase.01 preview"
+description: >
+  A-Final walk away branch. Iron door opens, Vindicator says "LATER." and
+  despawns. ShowSprite delivers the closing line. Show ends.
+duration_ticks: 240
+
+tags: [tone:melancholic, tone:intimate, arc:coda, pace:slow, duration:scene]
+
+meta:
+  created_by: Kendra
+  created_at: 2026-03-31
+  last_edited_by: Kendra
+  last_edited_at: 2026-03-31
+
+timeline:
+
+  # Iron door opens — walk away branch opening beat.
+  # OPEN ITEM: confirm REDSTONE polarity with Set.
+  - at: 0
+    type: REDSTONE
+    world_specific: true
+    target: {x: 190, y: 80, z: 300}
+    state: off
+
+  - at: 0
+    type: MESSAGE
+    audience: invoker
+    message: "<dark_gray>[ walk away branch ]</dark_gray>"
+
+  # Vindicator exit line — one word, deep red, through the open door.
+  - at: 25
+    type: MESSAGE
+    audience: participants
+    message: "<color:#CC2200>LATER.</color>"
+
+  # Vindicator despawns — no particle burst. He was never theatrically present.
+  - at: 85
+    type: DESPAWN_ENTITY
+    target: entity:spawned:TheVindicator
+    particle_burst: false
+
+  # ShowSprite closing line — locked 2026-03-31.
+  - at: 120
+    type: MESSAGE
+    audience: participants
+    message: "<gray>The stage is yours.</gray>"
+
+  - at: 155
+    type: REST
+    duration_ticks: 85
+    name: "walk away close — show ends"

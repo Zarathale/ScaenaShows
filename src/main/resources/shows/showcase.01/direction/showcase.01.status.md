@@ -8,10 +8,41 @@ last_updated: 2026-03-31
 # showcase.01 "Preparing for Battle" — Current Status
 
 ## Stage
-**Brief** — Gates 1 and 2 closed. Scouting prep in progress. No YAML work has begun.
+**Brief / R0 Preview** — Gates 1 and 2 closed. Scouting in progress. Sneak preview YAML authored (R0).
 
 ## Last Session
-2026-03-31 (session 6). Battle sequence params locked. A-Final arc staging corrected. Scale added to OPS-026.
+2026-03-31 (session 7). R0 sneak preview YAML build complete. Four files authored. Run sheet populated. Version bumped to 2.20.0.
+
+**Session 7 work (2026-03-31):**
+
+- **R0 sneak preview YAML authored.** Four files created at 2.20.0:
+  - `src/main/resources/shows/showcase.01.preview.yml` — main show (C1 Scene A Open →
+    C2 Preview Bridge → C3 A4 Return → C4 A-Final → C5 PLAYER_CHOICE). 2400 ticks.
+    Non-portable, static anchor, invoker at home_base mark (192.98, 80, 306.16).
+  - `src/main/resources/cues/showcase.01.preview.fight.yml` — fight branch. 5–4–3–2–1
+    countdown (TITLE), AI releases at T=110, BOSS_HEALTH_BAR fires T=115.
+    `victory_cue: showcase.01.coda.victory`.
+  - `src/main/resources/cues/showcase.01.preview.walk_away.yml` — walk away branch.
+    "LATER." → despawn → "The stage is yours."
+  - `src/main/resources/cues/showcase.01.coda.victory.yml` — victory coda placeholder.
+    Levitation amp 0 + existing firework presets. OPEN ITEMS: [A] levitation amplifier
+    TBD (pending ceiling clearance), [B] fireworks pattern TBD (pending Mira/intake).
+- **Run sheet written.** `showcase.01.run-sheet.md` fully populated for R0. Pre-show
+  tech check, entity spawn table, cue reference (C1–C6 + victory coda), 8 open items.
+- **Version bumped to 2.20.0.** `build.gradle.kts` updated. MINOR bump — new cues and
+  show file added.
+- **REDSTONE polarity flagged as OPEN ITEM [2].** `state: on` assumed = door closed;
+  `state: off` assumed = door opens. Must confirm with Set after scouting.
+
+**What's next:**
+1. **Build and test in-game.** Invoke from home_base: `/show play showcase.01.preview [PlayerName]`.
+   Confirm REDSTONE polarity (OPEN ITEM [2]) before first run.
+2. **Gate 3 scouting** — Zarathale scouts Sites B–F per `showcase.01.scouting-field-guide.md`.
+   Site A already scouted 2026-03-30.
+
+---
+
+**Previously: 2026-03-31 (session 6):**
 
 **Session 6 work (2026-03-31):**
 
@@ -152,7 +183,7 @@ position, Fireworks at finale (Mira proposes burst or silence), Effects at Sites
 E and F (swamp sensation + weapon particle beat viability), Voice F line 3 (line
 vs. silence).
 
-**YAML authoring begins after Gate 4.**
+**YAML authoring begins after Gate 4.** — R0 sneak preview (Scene A + A-Final) authored 2026-03-31 ahead of full gate sequence. Full YAML pass still pending Gate 4.
 
 ## Direction's Open Items
 

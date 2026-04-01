@@ -22,11 +22,16 @@ The engine is built and the production team is in place. We're in the Showcase S
 
 All 12 department KBs are now in folder structure (`kb/departments/[dept-slug]/[dept-slug].kb.md`). Migration is complete.
 
-**Immediate pending (not show-specific):**
-- R7 debrief ✅ complete (2026-03-28). Full findings in `demo.archetype_sampler/demo.archetype_sampler.run-sheet.md §General Findings`. Key issues: C2 too long (24s actual), levitation texture continuous through C7, C12 finale too short (7s), C1 lighting bumps jarring, mob spawning risk identified, voice undirected. R8 not yet scheduled.
-- Next: pick one Showcase, open P1 (Set), begin the scouting brief for Zarathale
+**showcase.01 "Preparing for Battle" — active:**
+- Gates 1 (Casting) ✅ and 2 (Wardrobe) ✅ closed. Kit locked, arc staged, script v2 complete.
+- Gate 3 (Set Scouting) open. Zarathale scouts Sites B–F using `direction/showcase.01.scouting-field-guide.md`. Site A scouted 2026-03-30.
+- Gate 4 (Intake) pending Gate 3. Two TBDs remain: victory coda fireworks (Mira) + victory levitation amplifier (Effects, pending ceiling clearance).
+- Engine at 2.20.0 — OPS-026 (SPAWN_ENTITY attributes + BOSS_HEALTH_BAR) and OPS-009 (PLAYER_CHOICE) both shipped. R0 sneak preview YAML authored.
 
-*Last audit: 2026-03-28 — `kb/audits/2026-03-28_session-audit.md`*
+**Not show-specific:**
+- R7 debrief ✅ complete (2026-03-28). R8 not yet scheduled.
+
+*Last audit: 2026-03-31 — `kb/audits/2026-03-31_post-ops026-audit.md`*
 
 ---
 
@@ -184,7 +189,7 @@ Do not reopen these without Alan.
 
 ## Versioning Policy
 
-**Current version:** `2.19.0`
+**Current version:** `2.20.0`
 **Version file:** `build.gradle.kts` — the `version = "x.y.z"` line
 
 Before telling Alan to build, either bump the version or explicitly state why no bump is needed.

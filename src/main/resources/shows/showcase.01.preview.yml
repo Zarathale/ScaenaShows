@@ -1,0 +1,350 @@
+# ScaenaShows v2 — Show: showcase.01.preview
+# ─────────────────────────────────────────────────────────────────────
+# PREPARING FOR BATTLE — SNEAK PREVIEW  (2026-03-31)
+#
+# Preview scope:
+#   C1 — Scene A (Home Base Open)
+#   C2 — Preview Bridge  [expeditions B–E stubbed; fills 1–3 compressed]
+#   C3 — A4 Return       [helmet fills stand; Vindicator breaks silence]
+#   C4 — A-Final Reveal  [axe fills stand; door opens; Armorer steps back]
+#   C5 — PLAYER_CHOICE   [fight or walk away]
+#
+# World: world · Anchor: home_base (192.98, 80, 306.16)
+# Invoke with player standing at home_base mark. No PLAYER_TELEPORT at T=0;
+# offsets are relative to the player's position at invocation.
+#
+# Branch cues:
+#   showcase.01.preview.fight      — fight branch (countdown + BOSS_HEALTH_BAR)
+#   showcase.01.preview.walk_away  — walk away branch (LATER. + despawn)
+#   showcase.01.coda.victory       — victory coda (placeholder; final TBD at Gate 4)
+#
+# OPEN ITEMS — see run sheet §TBD:
+#   [1] Vindicator sound ID (placeholder: entity.vindicator.ambient)
+#   [2] Iron door REDSTONE polarity — confirm with Set (on=close, off=open assumed)
+#   [3] Delivery event: CHAT vs ACTIONBAR (preview uses MESSAGE pending P5 coord.)
+#   [4] Grand finale fireworks preset — TBD at Gate 4 (Mira proposes; placeholder used)
+#   [5] Leather boots dye (#3B2A1A) — using undyed in preview pending support confirm
+#   [6] Iron axe Sharpness I — using plain axe in preview pending enchant support confirm
+# ─────────────────────────────────────────────────────────────────────
+
+id: showcase.01.preview
+name: "Preparing for Battle — Sneak Preview"
+description: >
+  Preview build: Scene A (home base open) + compressed bridge (expeditions B–E
+  stubbed) + A4 Return + A-Final Reveal + PLAYER_CHOICE (fight / walk away).
+  2026-03-31. Run from home_base mark.
+duration_ticks: 2400
+
+portable: false
+default_mode: static
+default_audience: participants
+group_count: 1
+group_strategy: join_order
+front: north
+
+bossbar:
+  enabled: false
+
+meta:
+  created_by: Kendra
+  created_at: 2026-03-31
+  last_edited_by: Kendra
+  last_edited_at: 2026-03-31
+
+timeline:
+
+  # ═══════════════════════════════════════════════════════════════════
+  # C1 — SCENE A OPEN  (T0 – T245)
+  # ═══════════════════════════════════════════════════════════════════
+  #
+  # Twilight descends on the workshop. The iron door clanks shut — the
+  # show's first sound. The Armorer is already here. So is the Vindicator,
+  # behind the wall, unseen. The armor stand is bare. Everything is about
+  # to begin.
+
+  - at: 0
+    type: TIME_OF_DAY
+    time: 12500
+
+  - at: 0
+    type: MESSAGE
+    audience: invoker
+    message: "<dark_gray>showcase.01.preview · R0 · anchor = home_base mark</dark_gray>"
+
+  # Vindicator — behind wall, AI locked, no equipment.
+  # Attributes: 1.5× health (36 HP), 0.5× speed, 1.5× scale.
+  # Offsets from home_base: (+0.5, +4, -9.8) → vindicator_spawn.
+  - at: 0
+    type: SPAWN_ENTITY
+    entity_type: VINDICATOR
+    name: TheVindicator
+    offset: {x: 0.5, y: 4.0, z: -9.8}
+    despawn_on_end: true
+    attributes:
+      max_health: 36.0
+      speed: 0.175
+      scale: 1.5
+
+  - at: 0
+    type: ENTITY_AI
+    target: entity:spawned:TheVindicator
+    enabled: false
+
+  # Armorer Villager — the companion and narrator.
+  # Offsets from home_base: (+3.6, 0, -3.9) → companion_spawn.
+  - at: 0
+    type: SPAWN_ENTITY
+    entity_type: VILLAGER
+    name: TheArmorer
+    profession: ARMORER
+    variant: PLAINS
+    offset: {x: 3.6, y: 0.0, z: -3.9}
+    despawn_on_end: true
+
+  - at: 0
+    type: ENTITY_AI
+    target: entity:spawned:TheArmorer
+    enabled: false
+
+  # Armor stand prop — starts empty. Five slots to fill.
+  # Offsets from home_base: (+1.6, +1, -5.7) → armor_stand mark.
+  - at: 0
+    type: SPAWN_ENTITY
+    entity_type: ARMOR_STAND
+    name: TheArmorStand
+    offset: {x: 1.6, y: 1.0, z: -5.7}
+    despawn_on_end: true
+
+  # Iron door closes — show's first beat.
+  # OPEN ITEM [2]: confirm polarity. Assumption: state on = door held closed.
+  # Block coords: scouted iron_door at (190.57, 80, 300.51) → block (190, 80, 300).
+  - at: 0
+    type: REDSTONE
+    world_specific: true
+    target: {x: 190, y: 80, z: 300}
+    state: on
+
+  # Armorer faces toward player.
+  - at: 5
+    type: FACE
+    target: entity:spawned:TheArmorer
+    look_at: player
+
+  # Vindicator sound beat — before Armorer's first line.
+  # OPEN ITEM [1]: sound ID TBD with Sound (P3). Placeholder: ambient grunt.
+  - at: 15
+    type: SOUND
+    sound_id: minecraft:entity.vindicator.ambient
+    category: hostile
+    volume: 0.8
+    pitch: 0.9
+
+  # Armorer — opening sequence.
+  # OPEN ITEM [3]: delivery event TBD with Sound/Voice (P5). Using MESSAGE/CHAT.
+  - at: 50
+    type: MESSAGE
+    audience: participants
+    message: "<gray>Five pieces. Everything I need is out there — I know where each one is.</gray>"
+
+  - at: 110
+    type: MESSAGE
+    audience: participants
+    message: "<gray>You'll want to be properly prepared. I've made sure of that.</gray>"
+
+  - at: 165
+    type: MESSAGE
+    audience: participants
+    message: "<gray>Helmet first. Keep up.</gray>"
+
+  - at: 195
+    type: REST
+    duration_ticks: 50
+    name: "C1 close — workshop settles"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # C2 — PREVIEW BRIDGE  (T245 – T335)
+  # ═══════════════════════════════════════════════════════════════════
+  #
+  # Not a show beat — preview scaffolding only.
+  # Expeditions B (helmet), C (chestplate), D (leggings) are complete offstage.
+  # Three pieces go on the stand; the Vindicator receives them behind the wall.
+  # Stand: boots → leggings → chestplate (fills 1–3, dramatic bottom-up order).
+
+  - at: 245
+    type: MESSAGE
+    audience: participants
+    message: "<dark_gray>[ preview — expeditions B, C, D complete — three pieces on the stand ]</dark_gray>"
+
+  # Fills 1–3: boots, leggings, chestplate — stand and Vindicator in sync.
+  - at: 255
+    type: ENTITY_EQUIP
+    target: entity:spawned:TheArmorStand
+    boots: LEATHER_BOOTS
+    leggings: IRON_LEGGINGS
+    chestplate: IRON_CHESTPLATE
+
+  - at: 255
+    type: ENTITY_EQUIP
+    target: entity:spawned:TheVindicator
+    boots: LEATHER_BOOTS
+    leggings: IRON_LEGGINGS
+    chestplate: IRON_CHESTPLATE
+
+  - at: 265
+    type: REST
+    duration_ticks: 70
+    name: "bridge — let fills register"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # C3 — A4 RETURN  (T335 – T600)
+  # ═══════════════════════════════════════════════════════════════════
+  #
+  # Expedition E (Boots) is complete. The Armorer returns.
+  # Fill 4: helmet goes on the stand and on the Vindicator — simultaneously.
+  # Four pieces visible. One slot left.
+  # From behind the wall, one word.
+
+  - at: 335
+    type: MESSAGE
+    audience: invoker
+    message: "<dark_gray>[ C3: A4 Return ]</dark_gray>"
+
+  # Fill 4: helmet — stand and Vindicator in sync.
+  - at: 345
+    type: ENTITY_EQUIP
+    target: entity:spawned:TheArmorStand
+    helmet: CHAINMAIL_HELMET
+
+  - at: 345
+    type: ENTITY_EQUIP
+    target: entity:spawned:TheVindicator
+    helmet: CHAINMAIL_HELMET
+
+  # Vindicator text beat — one word, through the wall.
+  - at: 380
+    type: MESSAGE
+    audience: participants
+    message: "<color:#CC2200>AXE.</color>"
+
+  - at: 420
+    type: MESSAGE
+    audience: participants
+    message: "<gray>Boots. Four pieces. The stand's becoming something.</gray>"
+
+  - at: 480
+    type: MESSAGE
+    audience: participants
+    message: "<gray>Weapon next. I've thought about this one more than the rest.</gray>"
+
+  - at: 540
+    type: MESSAGE
+    audience: participants
+    message: "<gray>I'll go ahead. Take your time.</gray>"
+
+  - at: 570
+    type: REST
+    duration_ticks: 40
+    name: "A4 close — site F ahead"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # C4 — A-FINAL  (T610 – T920)
+  # ═══════════════════════════════════════════════════════════════════
+  #
+  # The axe slot fills. Five pieces. The armor stand is complete.
+  # The sky nudges to pre-dawn.
+  # The iron door opens.
+  # He was always there.
+
+  - at: 610
+    type: MESSAGE
+    audience: invoker
+    message: "<dark_gray>[ C4: A-Final ]</dark_gray>"
+
+  # Pre-dawn nudge — sunrise will come during the fight.
+  - at: 610
+    type: TIME_OF_DAY
+    time: 22000
+
+  # Fill 5: axe — stand and Vindicator in sync. The stand is complete.
+  - at: 620
+    type: ENTITY_EQUIP
+    target: entity:spawned:TheArmorStand
+    main_hand: IRON_AXE
+
+  - at: 620
+    type: ENTITY_EQUIP
+    target: entity:spawned:TheVindicator
+    main_hand: IRON_AXE
+
+  # Iron door opens — the reveal.
+  # OPEN ITEM [2]: confirm polarity. Assumption: state off = door opens.
+  - at: 630
+    type: REDSTONE
+    world_specific: true
+    target: {x: 190, y: 80, z: 300}
+    state: off
+
+  # Grand finale fireworks — fired toward open sky near vindicator_spawn.
+  # OPEN ITEM [4]: final preset TBD at Gate 4 (Mira proposes).
+  # Placeholder: three scae_large_fanfare bursts near vindicator position (open sky).
+  - at: 638
+    type: FIREWORK
+    preset: scae_large_fanfare
+    offset: {x: 1.0, y: 0.0, z: -10.0}
+    y_mode: surface
+    y_offset: 6
+
+  - at: 643
+    type: FIREWORK
+    preset: scae_star_warm
+    offset: {x: -0.5, y: 0.0, z: -8.5}
+    y_mode: surface
+    y_offset: 8
+
+  - at: 649
+    type: FIREWORK
+    preset: scae_large_fanfare
+    offset: {x: 2.0, y: 0.0, z: -11.0}
+    y_mode: surface
+    y_offset: 7
+
+  # Armorer's three final lines.
+  # "You've been good company." — first line explicitly addressed to the player.
+  - at: 660
+    type: MESSAGE
+    audience: participants
+    message: "<gray>Five pieces. Everything where it belongs.</gray>"
+
+  - at: 730
+    type: MESSAGE
+    audience: participants
+    message: "<gray>You've been good company.</gray>"
+
+  - at: 810
+    type: MESSAGE
+    audience: participants
+    message: "<gray>I'll leave you two to it.</gray>"
+
+  - at: 845
+    type: REST
+    duration_ticks: 75
+    name: "reveal hold — last word settles"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # C5 — PLAYER_CHOICE  (T920)
+  # ═══════════════════════════════════════════════════════════════════
+  #
+  # First click wins. 15-second timeout → walk away fires.
+  # The show's duration extends via the chosen branch cue.
+
+  - at: 920
+    type: PLAYER_CHOICE
+    prompt: "What now?"
+    options:
+      - label: "Fight"
+        cue: showcase.01.preview.fight
+      - label: "Walk away"
+        cue: showcase.01.preview.walk_away
+    default: 1
+    timeout_ticks: 300
+    waiting_sound: minecraft:block.note_block.chime

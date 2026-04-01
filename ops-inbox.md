@@ -356,122 +356,7 @@ implementation.
 
 ---
 
-### OPS-009 [future-capability] PLAYER_CHOICE — interactive branching / CYOA foundation
-
-**Area:** Stage Management, Show Direction, all departments
-**Event:** `PLAYER_CHOICE` (new)
-**Filed:** 2026-03-28 (showcase.01 finale design)
-**Updated:** 2026-03-31 (reframed from one-off to full CYOA foundation; design settled)
-
-#### Vision
-
-`PLAYER_CHOICE` is the foundation for choose-your-own-adventure shows. Choices can appear
-anywhere in a show — not just at the end. They can branch firework colors, introduce
-unexpected characters, alter the emotional arc, or take the story in completely different
-directions. The RunningShow stays alive through every branch, so all spawned entities and
-runtime context remain available to any branch cue. Complex narratives with multiple
-choice points and nested branches are supported by design.
-
-Direction owns the branching structure for each show: when choices appear, what the
-options are, and what each branch does. This is planned in the show direction files and
-coordinated with departments as with any other production decision.
-
-#### Hard fork model
-
-`PLAYER_CHOICE` is a **hard fork**. When it fires:
-
-1. Timeline execution stops — no further events in the current cue will fire
-2. The waiting loop begins (bossbar + sound pulse — see below)
-3. The first participant click resolves the choice for all participants (first click wins)
-4. The chosen branch cue fires inside the same `RunningShow`, with full access to all
-   show context (spawned entities, groups, anchor, runtime state)
-5. The branch cue is a normal cue — it can contain any events, including another
-   `PLAYER_CHOICE` for nested branching
-
-Control never returns to the parent cue after the fork. If events need to follow
-the choice, they belong in the branch cue (or a shared continuation cue fired from
-the tail of each branch).
-
-#### YAML schema
-
-```yaml
-- at: 240
-  type: PLAYER_CHOICE
-  prompt: "Fight, or let them go?"
-  options:
-    - label: "Fight"
-      cue: showcase.01.epilogue.fight
-    - label: "Walk away"
-      cue: showcase.01.epilogue.release
-  default: 1          # 0-indexed — fires on timeout; "Walk away" in this example
-  timeout_ticks: 300  # 15 seconds; set to 0 for no timeout
-  waiting_sound: block.note_block.chime  # optional — has a sensible default
-```
-
-`Stop` is **always injected** as the final option — authors never include it. Clicking
-Stop calls the show's full stop-safety contract, same as `/show stop`.
-
-#### Waiting loop
-
-While suspended, two things run continuously:
-
-**Bossbar (visible):** Displays the prompt text. Progress bar depletes from 1.0 → 0.0
-over `timeout_ticks`. Color: YELLOW. This is the primary "show is waiting" signal — it's
-always on screen and impossible to miss. If `timeout_ticks` is 0, the bar holds at full.
-
-**Sound pulse (audible):** Plays `waiting_sound` to all participants every 40 ticks
-(~2 seconds). Soft, not distracting, but clearly indicates the show is alive and
-waiting. Stops the moment a choice is made.
-
-**Chat links** are displayed once when the choice fires:
-```
-❓  Fight, or let them go?
-  [A] Fight      [B] Walk away      [■ Stop]
-```
-Each label is a clickable component that runs `/scaena choose <n>` internally.
-Players never type this command — it's behind the link.
-
-#### Multi-participant
-
-All participants see the same bossbar and chat links. The first click from any
-participant resolves the choice for the whole show. Late clicks from other participants
-are silently ignored.
-
-#### Runtime model
-
-`RunningShow` gains:
-- `suspended` flag — the scheduler skips event dispatch and tick advance while true
-- `activeChoice` — holds the live `ChoiceSession` (one at a time)
-- `durationOverride` — allows branch cue to extend the show's effective duration
-
-`ShowScheduler` gains:
-- Suspension check at the top of each tick
-- `injectBranchCue(Cue)` — clears future events from the map, expands the branch
-  cue's timeline at `currentTick`, sets `durationOverride`, resumes execution
-
-`ChoiceSession` is a new runtime object that owns the bossbar, pulse task, timeout
-task, option list, and resolution logic. `resolve(int optionIndex)` is idempotent —
-first call wins, subsequent calls are no-ops.
-
-#### Command routing
-
-`/scaena choose <n>` is the internal command behind each chat link.
-`/scaena choose stop` routes to the show's stop-safety.
-`ScoutCommand` handles these verbs and routes via `ShowManager.resolveChoice()`.
-
-#### Future: story map authoring
-
-For shows with 3+ choice points and many branches, Direction will need a visual map of
-the branching structure — a `[show_id].story-map.md` in `direction/` using Mermaid
-flowchart syntax, mapping choice moments to cue IDs. This is a **deferred authoring
-tool** — the engine supports CYOA from day one, but the story-map documentation
-convention is defined when the first multi-branch show enters production.
-
-#### Priority
-
-Medium — showcase.01 doesn't need it, but the pattern should be established before
-any show that has designed a branching narrative. The implementation is self-contained
-and doesn't touch existing show behavior for shows without `PLAYER_CHOICE` events.
+### OPS-009 ~~[future-capability]~~ → **RESOLVED** — see Resolved section below
 
 ---
 
@@ -743,6 +628,21 @@ Add a "Human as Designer" preamble to each department KB clarifying the creative
 ---
 
 ## Resolved
+
+---
+
+### OPS-009 [resolved] PLAYER_CHOICE — interactive branching / CYOA foundation ✓
+**Shipped:** 2.19.0 or earlier | **Filed:** 2026-03-28 | **Area:** Stage Management, Show Direction, all departments
+
+**Hard fork model** — when `PLAYER_CHOICE` fires, timeline execution stops, a bossbar + sound pulse waiting loop begins, and the first participant click resolves the choice for all. The chosen branch cue fires inside the same `RunningShow` with full access to show context (spawned entities, groups, anchor). Control never returns to the parent cue.
+
+**Runtime additions:** `RunningShow.suspended` flag + `activeChoice` (ChoiceSession) + `durationOverride`. `ShowScheduler` suspension check + `injectBranchCue(Cue)`. `ChoiceSession` owns bossbar, pulse task, timeout task, option list, and idempotent `resolve()`. `/scaena choose <n>` command routes through `ShowManager.resolveChoice()`.
+
+**Waiting loop:** YELLOW bossbar depletes over `timeout_ticks`; sound pulse every 40 ticks; chat links displayed once on choice fire. `Stop` always injected as final option.
+
+**`[show_id].story-map.md` convention** (Mermaid flowchart, `direction/`) deferred until first multi-branch show enters production.
+
+*showcase.01 A-Final uses this for the fight/walk-away branch.*
 
 ---
 
