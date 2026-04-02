@@ -191,6 +191,7 @@ before showcase.01 enters YAML authoring.
 **Area:** Fireworks Director
 **Schema field:** `launch:` block in `fireworks.yml` presets
 **Filed:** 2026-03-26 (Fireworks KB build)
+**Decision:** Remove `launch:` — Option A (see below)
 
 `FireworkPreset` fully parses the `launch:` block (mode: above/random/feet, y_offset, spread)
 and stores it in `FireworkLaunch`. However, `FireworkEventExecutor.spawnFirework()` receives
@@ -202,12 +203,31 @@ the rocket to spawn relative to the player's feet or at a random XZ spread, but 
 position is entirely controlled by the event's coordinate fields. The preset's `launch:` block
 is a convincing-looking no-op.
 
-**Fix scope:** Decision required: (a) remove `launch:` from the preset schema and document that
-spawn position is always event-controlled, or (b) apply `launch.mode` in `spawnFirework()` as
-a secondary adjustment — e.g., `mode: feet` overrides the Y of the resolved Location to the
-anchor's foot Y + `launch.y_offset`, `mode: random` adds a random XZ spread using `launch.spread`.
-Option (a) is simpler; option (b) enables preset-level spawn personality. Bring to Show Director
-for a design decision before implementing.
+#### Design decision — Option A: remove `launch:` from the preset schema
+
+The preset owns the rocket's *appearance* — stars, colors, power, trail, flicker. Spawn
+position is the event's responsibility, already fully expressed via `offset` + `y_mode`.
+Keeping `launch:` in the preset creates dual authority over spawn position with no clear
+resolution order — a source of confusion for authors and a latent bug surface.
+
+`mode: above` is already default behavior. `mode: feet` is expressible as `y_mode: relative,
+y_offset: 0` on the event. `mode: random` scatter is what `FIREWORK_RANDOM` is for. Option B
+unlocks nothing genuinely new.
+
+#### Fix scope
+
+- Remove `launch:` block from the preset schema in `fireworks.yml` and from the spec
+- Remove `FireworkLaunch` model class and `launch()` accessor from `FireworkPreset`
+- No changes to `spawnFirework()` — it already ignores launch; the dead read path is simply removed
+- Update `fireworks.kb.md`: remove `launch:` from preset structure example; remove the gap
+  entry from the capability status table
+- Update `kb/system/spec.md` fireworks preset schema section to remove `launch:`
+
+#### Migration
+
+The number of existing preset files is small. At implementation time, review `fireworks.yml`
+presets individually and remove any `launch:` blocks by hand. No runtime warning or
+load-time migration path needed — direct file cleanup is sufficient.
 
 ---
 
@@ -227,19 +247,41 @@ for a design decision before implementing.
 
 ### OPS-005 [java-gap] No smooth yaw rotation (ROTATE event)
 
-**Area:** Effects Director (Camera specialty)
+**Area:** Effects Director (Camera specialty), Choreography
 **Event:** (new — does not exist)
+**Filed:** 2026-03-25
 
 `FACE` is instant. No first-class primitive exists for gradual camera panning (yaw rotation without position movement). Current workaround is rapid PLAYER_TELEPORT sequences, which is imprecise.
 
-**Proposed:** Add a `ROTATE` bar event:
+#### Schema
+
+**ROTATE** — bar; smoothly rotate target's yaw to a destination angle
 ```yaml
 type: ROTATE
-target: player | entity:spawned:Name
-yaw: 90.0           # absolute target yaw, or delta: +90 for relative
-duration_ticks: 40
+target: player | entity:spawned:Herald | group_1
+yaw: 270.0          # absolute target yaw in degrees
+                    # OR
+delta: +90.0        # relative rotation from current yaw (+ = clockwise, – = counter-clockwise)
+duration_ticks: 40  # 0 or omitted = instant (point-in-time; same effect as FACE compass:...)
 ```
-Implementation: BukkitRunnable interpolating yaw per tick, changing only the yaw component without altering XYZ — parallel to `smoothMovePlayer`.
+
+`yaw` and `delta` are mutually exclusive. If both are present, `delta` wins.
+
+**Yaw convention:** matches Minecraft's — 0.0 = south, 90.0 = west, 180.0 = north, 270.0 = east.
+
+#### Implementation notes
+
+`BukkitRunnable` fires once per tick from current yaw toward target yaw, linear interpolation across `duration_ticks`. XYZ is not touched — pure rotation only. On completion the task self-cancels; on `/show stop`, the RunningShow cleanup loop cancels any active rotate tasks.
+
+**Wrap-around:** when `yaw:` (absolute) is used, normalize the delta to [−180, +180] before stepping so the interpolator always takes the shorter arc. With `delta:` the author has explicit control and the sign is respected as-written — a `delta: +350.0` really does spin 350° clockwise.
+
+**For entities:** `entity.teleport(entity.getLocation())` with only yaw updated each tick — same approach as CROSS_TO's repeated-teleport path but yaw-only. **For players:** same repeated-teleport approach; no NMS required.
+
+**Stop-safety:** active ROTATE tasks go in `RunningShow.activeRotateTasks` (Set<BukkitTask>), cancelled in `stopShow()` alongside other bar tasks. No state restoration needed — yaw is left wherever the pan ends.
+
+**Relationship to FACE:** `ROTATE` with `duration_ticks: 0` or omitted is functionally identical to `FACE`. No deprecation — FACE remains the readable choice for snap cuts. ROTATE is for pans.
+
+**Priority:** Low — no current show is blocked. High value-to-effort once camera work begins on showcase.02 or showcase.03.
 
 ---
 
@@ -277,7 +319,7 @@ resolving from the stored UUID list.
 
 ---
 
-### OPS-007 [java-gap] No native item frame content event (SET_ITEM_DISPLAY)
+### OPS-007 [java-gap] No native item frame content event (SET_ITEM_FRAME)
 
 **Area:** Set Director, Stage Manager
 **Event:** (new — does not exist)
@@ -293,20 +335,28 @@ hatch:
 This works, but COMMAND is outside the stop-safety contract and requires precise entity
 naming discipline.
 
-**Proposed:** Add a `SET_ITEM_FRAME` (or more general `SET_ENTITY_DISPLAY`) point-in-time
-event that sets the displayed item of a targeted item frame entity:
+#### Schema
+
+**SET_ITEM_FRAME** — point-in-time
 ```yaml
 type: SET_ITEM_FRAME
-target: entity:world:frame_B   # or entity:spawned:Name
-item: minecraft:saddle
+target: entity:world:frame_east | entity:spawned:frame_east
+item: minecraft:saddle          # namespaced item ID; minecraft:air clears the frame
+# optional
+visible: true                   # show/hide the frame border; default: no change
+fixed: true                     # lock frame so players can't interact; default: no change
+rotation: 0                     # 0–7, maps to Rotation enum (NONE through CLOCKWISE_315)
 ```
-Implementation: resolve the target entity, cast to `ItemFrame`, call `setItem(ItemStack)`.
-Alternatively, if `SPAWN_ENTITY` gains an `entity_data:` NBT passthrough field, item frames
-could be spawned with items already in them — which would also solve Wardrobe and Casting's
-need for entity variant control.
 
-**Priority:** Low — no current show depends on this. Worth addressing before a show
-uses progressive item frame display as a core mechanic.
+`visible`, `fixed`, and `rotation` are no-change when omitted — authors only touch what they care about. `item: minecraft:air` calls `frame.setItem(null)` (empty frame), consistent with Minecraft's own representation.
+
+#### Implementation notes
+
+Resolve target entity via existing `entity:world` / `entity:spawned` path → cast to `ItemFrame` → `frame.setItem(new ItemStack(Material.matchMaterial(item)))`. Apply `visible`, `fixed`, and `rotation` fields when present.
+
+**Stop-safety for `entity:world` targets:** before modifying, snapshot original item (`frame.getItem().clone()`), `visible`, and `rotation` into a new `RunningShow.itemFrameRestoreMap` (Map<UUID, ItemFrameSnapshot>). Restore all entries in `stopShow()`. For `entity:spawned` targets the frame is despawned at show end — no snapshot needed.
+
+**Priority:** Low — no current show depends on this. Worth addressing before any show uses progressive item frame display as a core mechanic. Replaces the `COMMAND` NBT workaround and brings item frame state into the stop-safety contract.
 
 ---
 
@@ -1161,21 +1211,3 @@ Added `powerVariation`, `colorVariation`, `gradientFrom`, `gradientTo` fields to
 **Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Stage Manager, all shows
 `ShowRegistry.load()` now collects both flat `shows/*.yml` and nested `shows/[id]/[id].yml` files before the parse loop. Enables full show-folder-structure adoption. Flat files still load normally; duplicate ID detection prevents double-loading if both exist.
 
----
-
-### OPS-028 [open] Scene Numbering Convention — Stage Management owns
-
-**Area:** Stage Management
-**Filed:** 2026-04-01
-**Priority:** Medium — needed before prompt-book schema stabilizes across multiple shows
-
-Stage Management defines and documents the decimal scene numbering scheme used in
-`prompt-book.yml` `scene_number` fields. The numbering determines scene sort order in
-Tech Mode navigation and any future scene-indexed features.
-
-Convention currently in use: decimal strings (`"00"`, `"00.1"`, `"01"`, `"10.1"`) sorted
-via `Double.parseDouble()` comparison (so "00.1" = 0.1 < "01" = 1.0 < "10.1" = 10.1).
-Stage Management documents the convention, the rules for inserting subscenes, and how
-renumbering works when scenes are added or removed.
-
-Unblock before: adding a second show with complex scene structure to the prompt-book schema.
