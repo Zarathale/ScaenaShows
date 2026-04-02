@@ -581,9 +581,8 @@ TechSession {
   boolean                   captureMode
   boolean                   paramScrollMode  // true when player is in numeric param scroll
   String                    focusedParam     // nullable; the param currently being scrolled
-  // Phase 2 stubs (declared, unused in Phase 1):
-  int                       currentCueIndex
-  boolean                   holdActive
+  // Phase 2 state is owned by TechCueSession (separate class, separate lifecycle).
+  // No Phase 2 stubs belong in TechSession.
 }
 ```
 

@@ -1,17 +1,19 @@
 ---
 document: Tech Rehearsal Mode — Phase 2 Spec
 area: Plugin-wide
-status: Design spec — v1, 2026-04-01
+status: Design spec — v2, 2026-04-02
 ---
 
 # Tech Rehearsal Mode — Phase 2: Cue-to-Cue
 
 > This document specifies Phase 2 of Tech Rehearsal Mode: an in-world, cue-to-cue
-> authoring and rehearsal surface that runs on the same execution stack as production.
+> refinement surface that runs on the same execution stack as production.
 >
 > **Spec only. No code authorized until open questions in §8 are resolved.**
 >
-> Prerequisite: Phase 1 shipped (OPS-027). Phase 2 builds on top of TechSession and
+> **Prerequisites:** Phase 1 active (TechSession materialized with scene context) AND
+> show YAML exists. Phase 2 is a refinement tool for YAML authored in a prior pass —
+> not a blank-canvas authoring environment. Phase 2 builds on top of TechSession and
 > TechManager without replacing them.
 
 ---
@@ -86,7 +88,7 @@ RunningShow stop-safety fires on exit (entity cleanup, block restore).
     │  see results in world
     │  PREV (slot 5) exits preview, or [Exit Preview]
     ▼
-[Edit Mode]  ← dirty flag set if in-world edits were made during preview
+[Edit Mode]  ← dirty if ShowYamlEditor mutations were made in this session
     │  [Save to YAML]  or  [Discard]
 ```
 
@@ -166,13 +168,16 @@ Phase 2 steps through the timeline on top of it.
 
 ### ShowYamlEditor
 
-Thin helper that knows how to read and write the `raw_yaml` map for specific edits:
-event timing adjustments, param value changes, event addition/removal. Provides the
-"structured YAML edit" surface that `TechManager` calls when the player uses slot 9
-or the clickable panel.
+Targeted refinement helper. Knows how to navigate and mutate the `raw_yaml` map for
+exactly four operations:
 
-`ShowYamlEditor` does not execute anything. It only mutates `TechCueSession.raw_yaml`
-and sets `dirty = true`.
+1. **Param patch** — change a specific param value on an existing event (e.g., `scale: 1.5 → 1.2`)
+2. **Tick shift** — move an event from one tick to another within its cue
+3. **Event insert** — add a single event to an existing cue (constrained to event types the panel can guide through; does not create new cues)
+4. **Event remove** — delete a single event from an existing cue
+
+`ShowYamlEditor` does not create new named cues, restructure the timeline, or build
+cue content from scratch. It only mutates `TechCueSession.raw_yaml` and sets `dirty = true`.
 
 ---
 
@@ -219,6 +224,12 @@ reflect the state at that moment.
 
 This is exact — it uses the same execution stack, so the world state is bit-for-bit
 what it would be if the show had run naturally to that point.
+
+**Editorial intent:** PREV always means "I want to fix what I just saw." When PREV
+returns to Edit mode, the panel drops cursor focus at the cue just rewound from —
+pre-selected for editing. The player should not need to navigate to find it. This is
+the core refinement loop: GO → watch → PREV → panel already shows that cue → edit →
+GO again.
 
 ### Jump to Cue
 
@@ -344,19 +355,22 @@ show authors to pre-author narrative pause points without any production risk.
 
 ---
 
-### Q2 — In-game cue creation (deferred from Phase 1 — design TBD)
+### Q2 — In-game cue creation (OUT OF SCOPE for Phase 2 — resolved 2026-04-02)
 
-Alan's direction: Phase 2 should support **creating new cues** from within the tech
-environment, not just editing existing ones. Design deferred to Phase 2 development.
-Questions to answer before the OPS item is filed:
+**Decision:** Phase 2 is a refinement tool for YAML that was authored in a prior pass
+(typically by Claude from Prompt Book + show direction). In-game cue creation — naming
+new cues, building their event structure from scratch — is **not Phase 2 scope**.
 
-- What is the in-game creation flow? (Walk through department → event type →
-  parameter entry? Template-based? Wizard steps?)
-- How does the new cue get named and placed in the show YAML structure?
-- Can the player fire the new cue immediately to preview it before committing?
+**Rationale:** The value of being in-game for Phase 2 is spatial and temporal refinement:
+seeing timing, seeing spatial params, adjusting what was authored. Building cue structure
+from scratch does not benefit meaningfully from the in-game context and would require a
+substantially more complex in-game authoring UI.
 
-These questions do not block Phase 2 step navigation or param editing. Cue creation
-can be a Phase 2.1 follow-on.
+`ShowYamlEditor` supports inserting individual events into *existing* cues (one of its
+four targeted operations) but does not create new named cues or restructure the timeline.
+
+**Phase 2.1** (separate, future filing): in-game cue creation. Design deferred until
+Phase 2 refinement tooling is stable and its limitations are understood in practice.
 
 ---
 
@@ -375,6 +389,29 @@ Options:
 
 Snapshot model is significantly more complex. Recommend accepting the stutter until
 it becomes a real problem in practice.
+
+---
+
+### Q4 — Partial / early YAML handling (OPEN — to explore next session)
+
+Phase 2 requires show YAML to exist. In the early-authoring scenario (just past Gate 4,
+first YAML pass), the show file may be sparse: a few scenes, rough cue structure, some
+placeholder events. Phase 2 stepping through that partial YAML should work without
+crashing or degraded behavior.
+
+Questions to answer before implementation:
+
+- What does Phase 2 do if the timeline has no PAUSE events authored? (Pause points fall
+  back to top-level CUE references only — should be fine, but confirm.)
+- What does PREV do at tick 0 / the first cue? (Should be a no-op or a graceful edge case.)
+- If a cue references an entity that Phase 1 did not materialize (e.g., the scene for
+  that cue hasn't been scouted yet), how does Phase 2 handle the execution gap?
+- Does Phase 2 need a minimum-viable show YAML format before it can be entered? Or is
+  any parseable YAML acceptable as a starting point?
+
+**Related:** Does the "prior authoring pass" always produce a complete structured YAML,
+or can it produce a skeleton that Phase 2 is expected to fill in? This scope question
+shapes how robust TechCueSession's YAML loading needs to be.
 
 ---
 
@@ -411,3 +448,38 @@ A full tech rehearsal session would naturally flow:
 
 The Phase 1 TechSession and Phase 2 TechCueSession have independent lifecycles and
 independent stop-safety contracts. TechManager coordinates both.
+
+---
+
+## 11. Session Log
+
+### 2026-04-02 — Spec review and scoping session
+
+**Decisions closed:**
+
+- **Phase 2 spec is canonical.** `tech-rehearsal-architecture.md` (v3) marked inactive/superseded.
+  Phase 2 state lives in `TechCueSession` (separate class, separate lifecycle from `TechSession`).
+  Phase 2 stubs (`currentCueIndex`, `holdActive`) removed from `TechSession` in the Phase 1
+  building spec.
+- **Phase 2 requires Phase 1 active.** Phase 2 cannot be entered standalone. The in-world
+  scene context (entities, marks, block states) from Phase 1 is the reason to be in-game
+  for Phase 2 work.
+- **Phase 2 is a refinement tool, not a creation tool.** Primary use case confirmed: "I have
+  YAML from a prior authoring pass and I want to finalize/tweak it in the world." Blank-canvas
+  authoring is out of scope.
+- **Q2 (in-game cue creation) locked out of Phase 2 scope.** `ShowYamlEditor` handles four
+  targeted operations only: param patch, tick shift, event insert (into existing cue), event
+  remove. New named cue creation is Phase 2.1.
+- **PREV editorial intent added.** PREV returns to Edit mode pre-focused on the cue just
+  rewound from. The panel drops there; no navigation required. This is the core refinement loop.
+- **Dirty flag annotation corrected.** Stale note ("set during preview") removed. `dirty` is
+  set by `ShowYamlEditor` mutations in Edit mode only.
+
+**Open for next session:**
+
+- **Q4 — Partial/early YAML handling.** Does Phase 2 need a minimum-viable YAML structure to
+  enter, or does it handle any parseable YAML gracefully? What are the edge cases when the
+  show file is sparse (early Gate 4 authoring pass)?
+- **Panel mockup.** Deferred until Q4 and entry-path questions are fully resolved.
+- **OPS-029 update.** Inbox entry to be updated with narrowed ShowYamlEditor scope and Q2
+  resolution once Q4 is settled.

@@ -12,177 +12,11 @@ Items here are queued for the Java review team. Each entry has enough context to
 
 ---
 
-### OPS-001 [superseded] Scout sidebar — human-readable display labels for mark positions
-> **Superseded by OPS-027.** Scout mode is retired when Tech Mode ships. The label
-> display requirement is absorbed into the Tech Mode sidebar (§ Actionbar + Sidebar
-> in the architecture doc). Do not implement OPS-001 as a standalone fix.
-
-
-**Area:** Set Director, Stage Manager
-**Feature:** Scout objectives sidebar (existing feature — label display enhancement)
-**Filed:** 2026-03-30 (showcase.01 scouting session — marker quality feedback)
-
-The scout sidebar currently displays mark codes (`1.1`, `2.1`) and raw names
-(`home_base`, `companion_spawn`). The codes are useful for capture commands but are not
-descriptive enough to read at a glance in-world, especially when a scout has multiple
-mark types loaded simultaneously.
-
-**Requested:** Add a `display_label` field to the objectives file format. The sidebar
-uses `display_label` for human-readable role description when present, falling back to
-`name`. Claude generates these labels when it builds the objectives file from show-params.
-
-**Example objectives format with labels:**
-```yaml
-objectives:
-  "1.1":
-    name: home_base
-    label: "Player Spawn : Site A"
-  "2.1":
-    name: companion_spawn
-    label: "Armorer — Opening Position"
-  "2.2":
-    name: vindicator_spawn
-    label: "Vindicator — Hold Position"
-  "3.1":
-    name: armor_stand
-    label: "Armor Stand — Pedestal"
-  "3.2":
-    name: iron_door
-    label: "Iron Door — Control Point"
-  "3.3":
-    name: blast_furnace
-    label: "Blast Furnace — Stand On Top"
-```
-
-**Sidebar display:** Each entry shows as `[code]  [label]` — e.g., `1.1  Player Spawn — Site A`.
-The code stays visible for capture command reference. The label replaces the raw name.
-
-**Fix scope:** Extend the objectives file YAML schema to accept either a plain string
-(existing format) or a map with `name:` + `label:`. The sidebar renderer checks for `label:`
-and uses it if present. Backward compatible — objectives files without `label:` continue to
-work as before. Claude regenerates the showcase.01 objectives file with labels once this
-ships.
-
-**Priority:** Low-medium — cosmetic but meaningfully improves the in-world scouting
-experience, especially for sites with 4–6 simultaneous marks loaded.
+### OPS-001 ~~[superseded]~~ → absorbed by OPS-027 — see Resolved section below
 
 ---
 
-### OPS-002 [superseded] Preview Mode — in-world scene preview during scouting and production
-> **Superseded by OPS-027 (Tech Rehearsal Mode).** `TechSession` replaces `PreviewSession`.
-> There is no longer a separate preview subsystem. See `kb/system/tech-rehearsal-architecture.md`.
-
-
-**Area:** Stage Management (coordinator), Set, Casting, Wardrobe, Lighting, Camera, Voice,
-Sound, Effects, Fireworks, Choreography
-**Event:** New subsystem — `/scaena preview` command family
-**Filed:** 2026-03-30
-
-A production mode that materializes a show scene in-world so the builder or scout can see
-what the show has designed for that location — entities at their marks, blocks in their show
-state, optionally time of day set — without running the full show timeline. Stage Management
-coordinates: preview stop-safety mirrors the show's cleanup contract.
-
-**Why this matters:** During scouting, being able to see the Armorer Villager standing at
-their mark and the Vindicator behind the wall answers staging questions that coordinates alone
-can't. During production, standing in a scene with the full entity set and block state active
-is the fastest way to catch problems before the show runs.
-
----
-
-#### Command surface
-
-```
-/scaena preview load [show_id] [scene]   — materialize a scene's setup bundle in-world
-/scaena preview dismiss                  — clean up all preview assets (full stop-safety)
-/scaena preview status                   — list what's currently active in preview
-```
-
-Scene labels match the scout load nomenclature: `site_a`, `site_b`, … `site_f` for
-showcase.01. The plugin resolves these to the appropriate scene definition.
-
----
-
-#### Data source — two phases
-
-**Phase 1 — Pre-YAML (scouting and brief stage):**
-Data comes from `show-params.md` + `scout_captures/[show_id]/[date].yml`. Preview reads
-scouted mark positions and entity role definitions from show-params and materializes what
-it knows: entities spawned at their captured positions, block states applied, time of day
-set to the show's opening tick.
-
-This phase is explicitly limited to what show-params defines — no YAML authoring is
-required to use preview mode during scouting.
-
-**Phase 2 — Post-YAML:**
-Data comes from the show YAML. Preview executes the "setup bundle" — the events that
-establish scene state (SPAWN_ENTITY, BLOCK_STATE, ENTITY_EQUIP, TIME_OF_DAY) — immediately
-as a point-in-time snapshot rather than on the tick timeline. Sequence events (the show's
-narrative progression) are not fired in preview mode.
-
----
-
-#### Department scope
-
-| Department | Phase | What preview shows |
-|---|---|---|
-| Set | Phase 1 | Scout markers already visible via sidebar; no additional preview behavior |
-| Casting | Phase 1 | Entities spawned at scouted positions with correct species and profession |
-| Wardrobe | Phase 1 | Entities equipped from show-params kit definition at spawn |
-| Lighting | Phase 1 (partial) | TIME_OF_DAY set to show's opening tick; BLOCK_STATE when that event lands |
-| Camera | Phase 1 (partial) | Drone entity (e.g., a named Bat with AI off) spawned at drone start mark |
-| Voice | Phase 2 | Scene's lines printed to player chat in sequence while preview is active |
-| Sound | Phase 2 | Scene's ambient sounds play once on preview load |
-| Effects | Phase 2 | Particle events fire once at their positions |
-| Fireworks | Phase 2 | One-shot test burst at Mira's computed position |
-| Choreography | Phase 2 | Entities positioned as authored in YAML |
-
-**Out of scope for all phases:** Tick-sequenced narrative events (the show progressing
-through its arc). Preview mode is a snapshot of scene state, not a partial show run.
-
----
-
-#### Stop-safety contract — Stage Management owns this
-
-Preview is covered by the same cleanup contract as the show:
-
-- All preview-spawned entities are tracked in `PreviewSession` with `despawn_on_dismiss: true`
-- All block state changes record the original `BlockData` before modification; restored on dismiss
-- Player game mode is recorded at preview load and restored on dismiss
-- `/scaena preview dismiss` calls `applyStopSafety()` on the `PreviewSession` — identical
-  behavior to `/show stop`
-- If the server crashes or the player disconnects with preview active, the same safety
-  mechanism applies as for interrupted shows
-
-The Stage Manager owns the preview cleanup contract. A preview that cannot be fully cleaned
-up should not ship.
-
----
-
-#### Implementation notes
-
-`PreviewSession` is a stripped-down analogue of `RunningShow`:
-- Tracks spawned entities (UUID list with despawn flag), block change records (location →
-  original `BlockData`), player state snapshot (gamemode, flight), and active preview scope
-  (show ID + scene label)
-- `previewLoad()` builds a `PreviewSession` by reading scene data (Phase 1: show-params
-  parser; Phase 2: a filtered pass over the show YAML that extracts setup events) and
-  fires those events immediately against the live world
-- `previewDismiss()` calls `applyStopSafety()` on the session — despawn entities, restore
-  blocks, restore player state
-- Reuse existing executors (`EntityEventExecutor`, `BlockStateEventExecutor` when it
-  exists, `TextEventExecutor` for Voice preview) — preview is not a separate execution
-  path, it's a different scheduling mode
-
-**One preview session per player at a time.** Loading a new scene while one is active
-auto-dismisses the current one first (with cleanup) before loading the new scene.
-
----
-
-**Priority:** Medium-high — meaningfully improves both the scouting workflow and production
-review. Phase 1 (pre-YAML, entity + block spawn) is the high-value piece; Phase 2 (YAML
-integration) can follow once Phase 1 is established. Raise with Java review for scoping
-before showcase.01 enters YAML authoring.
+### OPS-002 ~~[superseded]~~ → absorbed by OPS-027 — see Resolved section below
 
 ---
 
@@ -370,266 +204,13 @@ Resolve target entity via existing `entity:world` / `entity:spawned` path → ca
 
 ### OPS-026 ~~[future-capability]~~ → **RESOLVED in 2.19.0** — see Resolved section below
 
-**Area:** Stage Management, Sprite Voice Director, Casting Director
-**Event:** New subsystem — `BOSS_HEALTH_BAR` + `SPAWN_ENTITY` health attribute support
-**Filed:** 2026-03-31 (showcase.01 A-Final battle sequence design)
-**Parallel to:** OPS-009 (PLAYER_CHOICE) — implement OPS-009 first; OPS-026 builds on it
+---
 
-#### Need
-
-The current `BOSSBAR` event is scripted — progress depletes on a timer, not tied to entity
-health. A combat boss fight needs a reactive health bar: displays the foe's current HP as a
-fraction of max HP, updating in real time as the entity takes damage.
-
-Two capabilities are required together:
-
-**1. `SPAWN_ENTITY` attribute support** (health, speed, scale)
-Add optional attribute fields to the `SPAWN_ENTITY` event schema. All three are in the
-same implementation family — resolve together:
-
-```yaml
-type: SPAWN_ENTITY
-...
-max_health: 36.0    # generic.max_health — 24 HP base × 1.5 multiplier for showcase.01
-speed: 0.5          # generic.movement_speed — 0.5 for showcase.01 (heavy and slow)
-scale: 1.5          # generic.scale — 1.5× visual/physical size for showcase.01
-```
-
-Implementation notes:
-- `max_health`: `entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(value)` then `entity.setHealth(value)`
-- `speed`: `entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(value)`
-- `scale`: `entity.getAttribute(Attribute.GENERIC_SCALE).setBaseValue(value)` — Paper 1.20.5+ / MC 1.21 attribute. Verify Paper version supports `GENERIC_SCALE` before implementing. `generic.scale` affects both visual size and hitbox.
-
-**Effects note (showcase.01):** A 1.5× Vindicator in the workshop (ceil 0–4) may clip the ceiling. Effects flags this at intake — levitation amplifier for the victory coda may need adjustment or the fight may naturally carry the player to a more open space through the iron door. Stage Management confirms fight space clearance.
-
-Without attribute support, `foe_health_multiplier`, `foe_speed_multiplier`, and `foe_scale_multiplier` in show-params have no runtime effect.
-
-**2. `BOSS_HEALTH_BAR` event**
-A new bar event that links a bossbar's progress to an entity's live health ratio:
-```yaml
-type: BOSS_HEALTH_BAR
-target: entity:spawned:The Vindicator
-title: "The Vindicator"
-color: RED         # from show-params bossbar_color
-overlay: PROGRESS  # from show-params bossbar_overlay
-audience: participants
-```
-
-**Lifecycle:**
-- Fires at start of the fight branch (at or just after the GO beat)
-- Progress = `currentHP / maxHP` — updates on each `EntityDamageByEntityEvent` or
-  `EntityRegainHealthEvent` targeting the tracked entity
-- Dismisses on entity death (progress reaches 0, bar fades out)
-- Dismissed on `/show stop` via stop-safety (same cleanup contract as BOSSBAR)
-
-**Runtime model:**
-`RunningShow` gains:
-- `activeBossBars` map: entity UUID → `BossBar` instance
-- `registerBossBar(UUID entityId, BossBar bar)` — adds to cleanup list
-- `EntityDamageByEntityEvent` listener: if damaged entity UUID is in `activeBossBars`,
-  recompute progress and update bar
-- `EntityDeathEvent` listener: if killed entity UUID is in `activeBossBars`, animate bar
-  to 0 then dismiss
-
-**YAML hook (from fight branch cue):**
-```yaml
-- at: 0
-  type: BOSS_HEALTH_BAR
-  target: entity:spawned:The Vindicator
-  title: "The Vindicator"
-  color: RED
-  overlay: PROGRESS
-  audience: participants
-```
-
-#### Death line + victory hook
-
-When the tracked entity dies, two things fire in sequence:
-
-**1. Death line** (immediate, on `EntityDeathEvent`):
-The show fires a `MESSAGE` event in the Vindicator's text format — ALL CAPS, deep red
-`#CC2200`, CHAT — to all participants. The entity is dead; this is Sprite-delivered text
-in his register, not entity speech. `death_line_to_coda_ticks` pause follows.
-
-**2. Victory cue** (fires after the pause):
-The `victory_cue` ID from show-params is injected as a branch cue into the running show
-(same mechanism as `PLAYER_CHOICE` branch injection in OPS-009). It runs inside the same
-`RunningShow` with full show context. For showcase.01, the victory coda is:
-- `ENTITY_EFFECT: levitation` applied to the player for `victory_cue_duration` (160 ticks)
-- Fireworks bursts during the levitation window (Fireworks Director designs the pattern)
-- Show closes naturally at end of coda duration; stop-safety cleans up
-
-**Runtime:** `BOSS_HEALTH_BAR` listener handles `EntityDeathEvent`:
-1. Animate bar to 0 and dismiss
-2. Fire death line MESSAGE to participants
-3. Schedule `victory_cue` injection after `death_line_to_coda_ticks`
-4. `injectBranchCue(victoryCue)` runs the coda; show closes at coda end
-
-#### showcase.01 parameters (from show-params §Battle Sequence)
-
-- `foe_name`: "The Vindicator" (entity custom name at spawn + bossbar title)
-- `foe_health_multiplier`: `1.5` → 36 HP *(locked 2026-03-31)*
-- `foe_speed_multiplier`: `0.5` — heavy and slow *(locked 2026-03-31)*
-- `foe_scale_multiplier`: `1.5` — 1.5× size *(locked 2026-03-31)*
-- `death_line`: "WORTHY." *(locked 2026-03-31)*
-- `bossbar_color`: RED
-- `bossbar_overlay`: PROGRESS
-
-**Priority:** Medium — required for showcase.01 A-Final YAML authoring. Implement
-after OPS-009 is in place. `SPAWN_ENTITY` health attribute is the simpler half;
-implement it first as it unblocks setting `foe_health_multiplier` even before the
-reactive bossbar is ready.
+### OPS-010 ~~[superseded]~~ → absorbed by OPS-027 — see Resolved section below
 
 ---
 
-### OPS-010 [superseded] In-game scout capture — show-params as source of truth, bidirectional sync
-> **Superseded by OPS-027 (Tech Rehearsal Mode).** Phase 1 of Tech Mode delivers the
-> bidirectional show-params sync described here as a core feature of TechSession, including
-> direct write-back to show-params.md on save. Scout mode and its command family are retired.
-
-
-**Area:** Set Director, Stage Manager
-**Priority:** Low — aspirational quality-of-life for the scouting workflow
-**Filed:** 2026-03-29
-
-Currently, scouting a set requires manually noting coordinates from the F3 screen and transferring them into show-params by hand. This is error-prone and breaks the in-world flow.
-
-**Architecture:**
-
-The objectives file is not separately authored — it is **generated from show-params**. Every named mark or site defined in show-params becomes an objective. The in-game interface is a persistent, always-accurate reflection of what show-params expects. The capture save is the return path: positions set in-game flow back into show-params via a file Claude can pull from the server.
-
-```
-show-params (repo)
-    ↓  Claude generates
-scout_objectives/[show_id].yml  (pushed to Bisect server)
-    ↓  plugin loads, scoreboard sidebar shown in-game
-Zarathale walks and captures marks
-    ↓  /scaena scout save
-scout_captures/[show_id]/[date].yml  (on Bisect server)
-    ↓  Claude pulls, merges
-show-params (repo) — updated coordinates
-```
-
-**The objectives file (generated, not authored)**
-Claude reads show-params, extracts all named marks/sites, assigns short numeric codes, and writes:
-```yaml
-# AUTO-GENERATED from showcase.01.show-params.md — do not edit by hand
-# Regenerate by asking Claude to sync scout objectives for showcase.01
-show: showcase.01
-objectives:
-  "1.1": stage_center
-  "1.2": mark_A
-  "1.3": entry_wing_L
-  "1.4": entry_wing_R
-  "1.5": companion_spawn
-  "1.6": vindicator_spawn
-```
-When show-params gains a new mark, Claude regenerates this file and pushes to the server. The codes are stable as long as the mark names don't change — order is alphabetical by mark name within each site group so codes are predictable across regenerations.
-
-**In-game sidebar display (scoreboard)**
-`/scaena scout load showcase.01` loads the objectives file and registers a scoreboard sidebar for the player. The sidebar title is the show ID; each line shows the shortcode and mark name. The native Minecraft scoreboard sidebar appears on the right side of the screen — no mod required.
-
-Zarathale can load this at any time, not just during initial scouting. If a position needs to change mid-production, he loads, walks to the new location, captures the one mark, saves. This is the **persistent interface** — it stays valid across the whole life of the show.
-
-**Capture command**
-With the sidebar loaded, Zarathale walks to each location and enters:
-```
-/scaena set 1.1
-```
-The plugin records `player.getLocation()` (X/Y/Z + yaw/pitch) against objective `1.1`, removes (or strikes through) that entry from the sidebar, and confirms in chat. Partial captures are fine — only changed marks need to be captured on a given session.
-
-**Full command surface:**
-```
-/scaena scout load <show_id>    # load objectives from file, show sidebar
-/scaena set <code>              # capture current position for that objective code
-/scaena scout save              # write all captures this session to file on server
-/scaena scout status            # list captured vs. still outstanding
-/scaena scout dismiss           # hide sidebar without saving
-```
-
-**Save output**
-`/scaena scout save` writes to `plugins/ScaenaShows/scout_captures/[show_id]/[date].yml`:
-```yaml
-# Scout capture — showcase.01 — 2026-03-29
-show: showcase.01
-captured:
-  stage_center:    {x: 112, y: 64, z: -88,  yaw: 0.0,   pitch: 0.0}
-  entry_wing_L:    {x: 108, y: 64, z: -91,  yaw: 90.0,  pitch: 0.0}
-```
-Only marks captured this session appear — a partial save is valid and merges cleanly with show-params (existing values for uncaptured marks are preserved).
-
-Claude pulls this file from Bisect (access granted per session as needed), merges updated coordinates into show-params, and commits. That's the full loop — no manual transcription at any point.
-
-**Sync discipline:**
-- show-params is the canonical source. Objectives file is derived.
-- When show-params marks change: regenerate objectives file, push to server.
-- When in-game positions change: pull capture file, merge into show-params, commit.
-- The objectives file has a `# AUTO-GENERATED` header to prevent accidental hand-edits.
-
-**Implementation notes:**
-- Sidebar: `Bukkit.getScoreboardManager()`, new `Scoreboard` with `DisplaySlot.SIDEBAR`. Remove entries on capture via `score.resetScore()`.
-- `/scaena set <code>` is intentionally short — no `scout` prefix once objectives are loaded.
-- Plugin reads objectives file on `load` command — no restart required.
-- Captures held in memory (per-player map) until `save`.
-
----
-
-### OPS-011 [scope migrated] Scout session snapshot log — screenshot prompts bundled with Bisect export
-> **Scout mode is retired (see OPS-027).** The `/scaena snap` command concept remains valid
-> but is now a Tech Mode enhancement rather than a scout feature. Re-scope and re-file as
-> an addition to OPS-027 when Phase 1 is stable.
-
-
-**Area:** Stage Management, Set Director
-**Command:** `/scaena snap [label]`
-**Filed:** 2026-03-30
-**Context:** Scouting workflow — on location at a set site (Site A, Site B, etc.)
-
-When scouting a set, there's no record of what Alan was looking at when he took a screenshot. Screenshots land in `.minecraft/screenshots/` on the client — the server has no access to them and cannot trigger F2. The goal isn't to capture images server-side; it's to create a log entry that travels with the Bisect export bundle so Alan can match client-side screenshots to scout positions when he pulls the session data.
-
-**How it works:**
-
-`/scaena snap [label]` does two things:
-1. Sends a prominent title/actionbar cue to the player — "📷 Snap now — [label]" — so Alan knows to hit F2 at that exact moment
-2. Logs the moment to `snapshot_log.yml` in the session folder:
-
-```yaml
-# Scout snapshot log — showcase.01 — 2026-03-30
-show: showcase.01
-snapshots:
-  - label: "site_a_overview"
-    timestamp: "2026-03-30T14:22:11"
-    position: {x: 112, y: 68, z: -88, yaw: 180.0, pitch: -22.0}
-    site: site_a
-  - label: "companion_spawn_angle"
-    timestamp: "2026-03-30T14:23:44"
-    position: {x: 108, y: 64, z: -91, yaw: 90.0, pitch: 0.0}
-    site: site_a
-```
-
-**Bisect export bundle — session folder layout:**
-```
-plugins/ScaenaShows/sessions/[show_id]/[date]/
-  scout_captures.yml     ← mark positions (existing)
-  snapshot_log.yml       ← new: one entry per /scaena snap call
-```
-
-Alan pulls both files from Bisect alongside each other. The `timestamp` field is used for **fuzzy matching** against `.minecraft/screenshots/` filenames — not precise sync. Screenshot filenames are timestamp-based, but player reaction time and system lag mean the F2 press happens some seconds after the prompt. Use a **±30 second window** around the logged snap timestamp when matching. Claude does the matching during post-session review; the log entry just needs to narrow the field.
-
-**Retake discipline — last shot wins:**
-Alan may take multiple shots from the same mark position within a session — different angles, retakes, corrections. The log accumulates all snaps for a given label rather than overriding. When Claude matches and exports, only the **last snap entry for each label** (latest timestamp) is used. Earlier entries for the same label are treated as discarded retakes. This means Alan can `/scaena snap door_angle`, adjust position, `/scaena snap door_angle` again, and the earlier one is automatically superseded — no explicit delete needed.
-
-The log entry format reflects this: all entries are written, and a `superseded: true` flag (or equivalent) is applied by Claude at review time to any non-final duplicate label.
-
-**Command surface:**
-```
-/scaena snap [label]     — log a snapshot moment, prompt F2 ("📷 Snap now — [label]")
-/scaena snap list        — print snapshot log for this session to chat (shows all entries, flags superseded)
-```
-
-The label is freeform — `site_a_overview`, `spawn_angle`, `door_sight_line` — whatever is useful for Claude and Alan to identify what the image contains when doing post-session review. Repeated use of the same label is expected and handled.
-
-**Priority:** Low — scouting works without it. High value-to-effort ratio since the server side is just a YAML write + title send. Implement alongside or just after `/scaena scout save`.
+### OPS-011 ~~[closed]~~ — `/scaena snap` concept not re-filed; scouting workflow absorbed by OPS-027 TechSession
 
 ---
 
@@ -984,7 +565,7 @@ boolean steppingMode;
 | Class | Role |
 |-------|------|
 | `TechCueSession` | Editor state: mutable raw YAML, cursor tick, source file, dirty flag, preview RunningShow ref |
-| `ShowYamlEditor` | Structured YAML mutation helper — event timing, param values, add/remove events |
+| `ShowYamlEditor` | Targeted refinement helper — four operations only: param patch, tick shift, event insert (into existing cue), event remove. Does not create new cues. |
 | `TechCuePanel` | Clickable chat panel renderer for Phase 2 state (timeline list, params, mode buttons) |
 
 `TechManager` gains Phase 2 lifecycle methods: `startPhase2()`, `enterPreview()`,
@@ -1011,9 +592,13 @@ Actionbar in preview: `[PREVIEW]  C2 · cast.arrival.zarathale  ·  tick 340`
 
 Q1 — HOLD duality: **resolved** — new `PAUSE` event type (see above).
 
-Q2 — In-game cue *creation*: **deferred to Phase 2.1.** Editing existing cues and
-stepping through the timeline does not require cue creation. File a follow-on OPS
-item when Phase 2 navigator is stable.
+Q2 — In-game cue *creation*: **out of scope for Phase 2 — resolved 2026-04-02.**
+Phase 2 is a refinement tool for YAML from a prior authoring pass. Blank-canvas cue
+creation belongs to Phase 2.1. See spec §8 Q2 for full rationale.
+
+Q4 — Partial/early YAML handling: **open — to explore next session.** Does Phase 2
+handle sparse show YAMLs gracefully? What are the edge cases when the file is a rough
+first-pass skeleton rather than a complete authored timeline? See spec §8 Q4.
 
 Q3 — PREV rewind cost: **accept the stutter.** Tech mode is not performance-critical.
 Revisit if it becomes a real problem in a long show.
@@ -1035,6 +620,34 @@ Revisit if it becomes a real problem in a long show.
 ---
 
 ## Resolved
+
+---
+
+### OPS-001 [resolved] Scout sidebar display labels — superseded by OPS-027 ✓
+**Resolved:** 2026-04-01 | **Filed:** 2026-03-30 | **Area:** Set Director, Stage Manager
+
+Superseded by OPS-027. Scout mode retired; display label requirement absorbed into the Tech Mode sidebar (TechSidebarDisplay). No standalone implementation.
+
+---
+
+### OPS-002 [resolved] Preview Mode — in-world scene preview — superseded by OPS-027 ✓
+**Resolved:** 2026-04-01 | **Filed:** 2026-03-30 | **Area:** Stage Management, all departments
+
+Superseded by OPS-027. `TechSession` replaces `PreviewSession` as the stateful in-world materialization surface. The PreviewSession design was the direct predecessor; its stop-safety contract and department-scope model carried forward into TechSession.
+
+---
+
+### OPS-010 [resolved] In-game scout capture / bidirectional show-params sync — superseded by OPS-027 ✓
+**Resolved:** 2026-04-01 | **Filed:** 2026-03-29 | **Area:** Set Director, Stage Manager
+
+Superseded by OPS-027. Bidirectional write-back to the Prompt Book is Phase 1 TechSession's core SAVE operation. Scout command family retired.
+
+---
+
+### OPS-011 [closed] `/scaena snap` screenshot log — not re-filed ✓
+**Closed:** 2026-04-02 | **Filed:** 2026-03-30 | **Area:** Stage Management, Set Director
+
+Concept was migrated when scout mode retired, pending re-filing as a Tech Mode enhancement. Closed without re-filing — scouting workflow is now covered by TechSession; the screenshot-to-position matching use case did not surface as a real need during Phase 1. Can be re-opened if it becomes relevant to the Tech Mode UX.
 
 ---
 
@@ -1172,42 +785,4 @@ Added `entity:world:` branch to `EntityEventExecutor.resolveEntity()`. Scans wor
 ---
 
 ### OPS-019 [resolved] ENTITY_AI / behavior events — group resolution fixed ✓
-**Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Casting Director, Wardrobe
-Added `resolveEntities()` (plural) to `EntityEventExecutor`. All six behavior handlers (`ENTITY_AI`, `ENTITY_SPEED`, `ENTITY_EFFECT`, `ENTITY_EQUIP`, `ENTITY_INVISIBLE`, `ENTITY_VELOCITY`) now loop over the full group list instead of calling the singular `resolveEntity()`.
-
----
-
-### OPS-020 [resolved] ENTITY_SPEED group resolution fixed ✓
-**Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Choreography
-Covered by the group resolution fix above — `handleEntitySpeed()` is now one of the six looped handlers.
-
----
-
-### OPS-021 [resolved] ENTER equipment fields added ✓
-**Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Choreography, Wardrobe
-Added six equipment fields (`helmet`, `chestplate`, `leggings`, `boots`, `main_hand`, `off_hand`) to `EnterEvent`, parsed from an `equipment:` sub-map. Added equipment-apply block and `itemOf()` helper to `StageEventExecutor.handleEnter()`.
-
----
-
-### OPS-022 [resolved] RETURN_HOME supports non-Player entities ✓
-**Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Choreography
-Added `spawnedEntityHomes` map to `RunningShow`; `registerSpawnedEntity()` now records spawn location as home automatically. `handleReturnHome()` now has a non-Player branch: instant teleport or pathfinder.moveTo() for mobs depending on `duration_ticks`.
-
----
-
-### OPS-023 [resolved] FIREWORK: `min_clearance` enforced ✓
-**Shipped:** 2.13.0 | **Filed:** 2026-03-26 | **Area:** Fireworks Director
-Added clearance check in `handleFirework()` after resolving `loc`. Compares `world.getHighestBlockYAt(loc)` against `anchor.getY() + minClearance`. Skips launch with `log.fine()` debug entry when clearance is insufficient. Sentinel value −1 bypasses the check.
-
----
-
-### OPS-024 [resolved] FIREWORK_FAN: `power_variation` and `color_variation` added ✓
-**Shipped:** 2.13.0 | **Filed:** 2026-03-26 | **Area:** Fireworks Director
-Added `powerVariation`, `colorVariation`, `gradientFrom`, `gradientTo` fields to `FireworkFanEvent`. Refactored `handleFan()` to apply variation via `resolvePower()` and `resolveColorVariation()` across the full combined arm position sequence, matching CIRCLE/LINE behavior.
-
----
-
-### OPS-025 [resolved] Show scanner descends into subdirectories ✓
-**Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Stage Manager, all shows
-`ShowRegistry.load()` now collects both flat `shows/*.yml` and nested `shows/[id]/[id].yml` files before the parse loop. Enables full show-folder-structure adoption. Flat files still load normally; duplicate ID detection prevents double-loading if both exist.
-
+**Shipped:** 2.13.0 | **Filed:** 2026-03-25 | **Area:** Castin
