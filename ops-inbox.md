@@ -610,7 +610,7 @@ Add a "Human as Designer" preamble to each department KB clarifying the creative
 - `/scaena tech <showId> [sceneId]` entry command; full subcommand surface
 - `show-params.md` retired; archived to `_archive/show-params/showcase.01.show-params.md`
 
-**Phase 2 (not yet filed):** YAML cue navigation — `TechSession` stubs already declared (`currentCueIndex`, `holdActive`).
+**Phase 2:** Filed as OPS-029. YAML cue navigation, cue-to-cue step mode, `PAUSE` event type, YAML write-back. `TechSession` stubs already declared (`currentCueIndex`, `holdActive`).
 
 **OPS-028** (scene numbering convention) filed below per spec §12.
 
@@ -855,6 +855,132 @@ Phase 1 is stable.
 ---
 
 **Priority:** High — blocks showcase.01 scouting (Sites B–F) and full YAML authoring.
+
+---
+
+### OPS-029 [java-gap] Tech Rehearsal Mode Phase 2 — Cue-to-Cue navigator and YAML authoring surface
+
+**Area:** Stage Management (coordinator), all departments
+**Feature:** Phase 2 of `/scaena tech` — step-mode show execution, cue-to-cue navigation, in-world param editing, YAML write-back
+**Filed:** 2026-04-01
+**Spec:** `kb/system/tech-rehearsal-phase2-spec.md`
+**Depends on:** OPS-027 (Phase 1, shipped v2.21.0)
+
+#### What Phase 2 adds
+
+Phase 1 answered *"do we have the scene assembled correctly?"* — entities at marks,
+blocks in place, params committed to the Prompt Book.
+
+Phase 2 answers *"does the show play correctly, moment to moment?"* — step through
+authored cues, preview event sequences live in-world, edit timing and params, and
+write changes back to the show YAML without leaving the game.
+
+#### The execution invariant
+
+Phase 2 preview execution **is** the show. It uses `RunningShow`, `ShowScheduler`,
+and `ExecutorRegistry` without modification or subclassing. No adapter. No
+`TechRunningShow`. What changes is how the scheduler is driven: production uses a
+BukkitRunnable game-tick clock; Phase 2 uses demand-driven dispatch.
+
+#### Two modes
+
+**Edit mode** — mutable in-memory YAML (`TechCueSession`), clickable panel for param
+edits, nothing executing. Dirty-tracked. Explicit save writes back to disk.
+
+**Preview mode** — `RunningShow` + `ShowScheduler` constructed from current in-memory
+YAML, scheduler in step mode. Player navigates with hotbar items, sees results live.
+Exit triggers full stop-safety (entity cleanup, block restore).
+
+#### Cue-to-cue navigation model
+
+Navigation jumps between **pause points**: top-level `CUE` references in the show
+timeline, `PAUSE` events (new event type, see below), and end-of-show.
+
+- **GO (slot 7):** dispatch all events up to the next pause point (`dispatchEventsUpTo(nextPauseTick)`). Auto-follow event bursts fire as a unit — same as tight cue sequences in theatre.
+- **HOLD (slot 6):** interrupt mid-sequence; gate further dispatch.
+- **PREV (slot 5):** rewind — stop RunningShow (stop-safety), construct fresh instance, fast-forward synchronously to previous pause point, hold.
+- **Jump to cue:** from the clickable panel; same mechanism as PREV targeting a named cue.
+
+#### New event type: PAUSE
+
+`HOLD` retains its current meaning (entity freeze). A new `PAUSE` event type is the
+show-level narrative pause point for Phase 2 navigation. It has a no-op executor —
+safe to author in a production YAML, harmless if the scheduler is not in step mode.
+
+```yaml
+- at: 120
+  type: PAUSE
+  label: "After the declaration"   # optional — shown in sidebar and panel
+```
+
+`PAUSE` is recognized by the step scheduler as a navigation stop. `ExecutorRegistry`
+registers it with a no-op executor.
+
+#### ShowScheduler additions
+
+```java
+// Dispatch all events at the next scheduled tick; advance cursor. Returns tick or -1 if done.
+public long dispatchNextEventTick();
+
+// Fast-forward: dispatch all events from current tick up to and including targetTick. Synchronous.
+public void dispatchEventsUpTo(long targetTick);
+
+// Gates the BukkitRunnable tick-advance loop when true.
+boolean steppingMode;
+```
+
+#### New classes
+
+| Class | Role |
+|-------|------|
+| `TechCueSession` | Editor state: mutable raw YAML, cursor tick, source file, dirty flag, preview RunningShow ref |
+| `ShowYamlEditor` | Structured YAML mutation helper — event timing, param values, add/remove events |
+| `TechCuePanel` | Clickable chat panel renderer for Phase 2 state (timeline list, params, mode buttons) |
+
+`TechManager` gains Phase 2 lifecycle methods: `startPhase2()`, `enterPreview()`,
+`stepForward()`, `stepBack()`, `exitPreview()`, `saveYaml()`.
+
+#### Sidebar — preview mode
+
+Rolling timeline cursor: last events fired, current hold position, next on GO.
+
+```
+─ CUE-TO-CUE ─────────────────
+  ✓ cast.arrival.zarathale   C2
+  ✓ ENTITY_EQUIP × 4
+  ✓ ACTION_BAR  "Warrior."
+  ━ HOLDING ─────────────────
+  ▷ lights.snap.battle_ready  C3
+────────────────────────────────
+  Events: 12   Tick: 340
+```
+
+Actionbar in preview: `[PREVIEW]  C2 · cast.arrival.zarathale  ·  tick 340`
+
+#### Open questions (resolved before Java)
+
+Q1 — HOLD duality: **resolved** — new `PAUSE` event type (see above).
+
+Q2 — In-game cue *creation*: **deferred to Phase 2.1.** Editing existing cues and
+stepping through the timeline does not require cue creation. File a follow-on OPS
+item when Phase 2 navigator is stable.
+
+Q3 — PREV rewind cost: **accept the stutter.** Tech mode is not performance-critical.
+Revisit if it becomes a real problem in a long show.
+
+#### Deliverables checklist
+
+- [ ] `EventType` — add `PAUSE`
+- [ ] `EventParser` — map `PAUSE` to minimal model (tick + optional label)
+- [ ] `ExecutorRegistry` — register `PAUSE` with no-op executor
+- [ ] `ShowScheduler` — `steppingMode`, `dispatchNextEventTick()`, `dispatchEventsUpTo()`
+- [ ] `TechCueSession` — editor state model
+- [ ] `ShowYamlEditor` — YAML mutation helper
+- [ ] `TechManager` — Phase 2 lifecycle methods
+- [ ] `TechCuePanel` — panel renderer for Phase 2 state
+- [ ] Sidebar scoreboard — timeline cursor display in preview mode
+
+**Priority:** Medium — Phase 1 must be stable in production before Phase 2 Java begins.
 
 ---
 

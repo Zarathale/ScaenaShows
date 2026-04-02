@@ -215,15 +215,20 @@ fire individual cues, and create new cues from within the environment.
 Navigation shifts from scene-level to cue-level. Hold (slot 6) now freezes between
 cues rather than between scenes. The five-slot layout carries forward without remapping.
 
+**See `kb/system/tech-rehearsal-phase2-spec.md` for the full Phase 2 architecture.**
+
+Key architectural invariant: Phase 2 preview execution uses the same `RunningShow` +
+`ShowScheduler` + `ExecutorRegistry` stack as production — no adapter, no separate
+path. `ShowScheduler` gains a step mode with demand-driven dispatch.
+
 **Phase 2 adds:**
 - YAML as the data source for scene loading
-- Cue navigator: Back / Hold / Go operating at cue level
-- "Immediate mode" — tick delays collapsed to zero; scene appears as a point-in-time
-  snapshot
-- "Watch mode" (stretch goal) — fire from current cue position at authored show tempo;
-  player can call Hold at any time
+- Cue-to-cue navigation: Back (rewind+replay) / Hold (interrupt) / Go (next pause point)
+- `TechCueSession` — lightweight editor state (mutable raw YAML, cursor, dirty flag)
+- `ShowYamlEditor` — structured YAML mutation helper
+- Sidebar timeline cursor: which event just fired, what's coming next
 - Cue parameter adjustment via slot 9 and clickable panel
-- New cue creation from within the tech environment (see §8, Q2)
+- New cue creation from within the tech environment (see §8, Q2; deferred to Phase 2.1)
 - Direct write-back to show YAML on save
 
 ### Phase 3 — Variant management
