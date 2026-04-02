@@ -208,22 +208,68 @@ public final class PromptBookLoader {
     // -----------------------------------------------------------------------
 
     @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     private PromptBook.DeptSet parseSet(Map<String, Object> depts) {
         if (depts == null) return null;
         Object raw = depts.get("set");
-        if (!(raw instanceof List<?> list)) return null;
-        List<PromptBook.SetEntry> entries = new ArrayList<>();
-        for (Object item : list) {
-            Map<String, Object> m = castMap(item);
-            if (m == null) continue;
-            String mark = str(m, "mark", null);
-            String blockType  = str(m, "block_type", null);
-            String blockState = str(m, "block_state", null);
-            String notes      = str(m, "notes", null);
-            // Include even if mark is null (notes-only entries)
-            entries.add(new PromptBook.SetEntry(mark, blockType, blockState, notes));
+        if (raw == null) return null;
+
+        List<?>              entryList   = null;
+        PromptBook.BboxPoint bboxMin     = null;
+        PromptBook.BboxPoint bboxMax     = null;
+        String               activeBuild = null;
+
+        if (raw instanceof List<?> list) {
+            // Legacy format: set: [- mark: ..., ...]
+            entryList = list;
+        } else if (raw instanceof Map<?, ?> rawMap) {
+            // New format: set: {bbox_min: ..., bbox_max: ..., active_build: ..., entries: [...]}
+            Map<String, Object> m = (Map<String, Object>) rawMap;
+            Object rawEntries = m.get("entries");
+            if (rawEntries instanceof List<?> el) entryList = el;
+
+            bboxMin     = parseBboxPoint(m.get("bbox_min"));
+            bboxMax     = parseBboxPoint(m.get("bbox_max"));
+            activeBuild = str(m, "active_build", null);
+        } else {
+            return null;
         }
-        return entries.isEmpty() ? null : new PromptBook.DeptSet(entries);
+
+        List<PromptBook.SetEntry> entries = new ArrayList<>();
+        if (entryList != null) {
+            for (Object item : entryList) {
+                Map<String, Object> m = castMap(item);
+                if (m == null) continue;
+                entries.add(new PromptBook.SetEntry(
+                    str(m, "mark", null),
+                    str(m, "block_type", null),
+                    str(m, "block_state", null),
+                    str(m, "notes", null)
+                ));
+            }
+        }
+
+        // Return null only if there are no entries AND no bbox — a set section with just
+        // a bbox (no entries yet) is still valid and must survive the round-trip.
+        if (entries.isEmpty() && bboxMin == null && bboxMax == null && activeBuild == null) {
+            return null;
+        }
+        return new PromptBook.DeptSet(entries, bboxMin, bboxMax, activeBuild);
+    }
+
+    /** Parse a bbox point from a YAML list [world, x, y, z] or null. */
+    private static PromptBook.BboxPoint parseBboxPoint(Object raw) {
+        if (!(raw instanceof List<?> list) || list.size() < 4) return null;
+        String world = list.get(0) != null ? list.get(0).toString() : null;
+        if (world == null) return null;
+        try {
+            int x = ((Number) list.get(1)).intValue();
+            int y = ((Number) list.get(2)).intValue();
+            int z = ((Number) list.get(3)).intValue();
+            return new PromptBook.BboxPoint(world, x, y, z);
+        } catch (ClassCastException | NullPointerException e) {
+            return null;
+        }
     }
 
     // -----------------------------------------------------------------------

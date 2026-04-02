@@ -3,6 +3,8 @@ package com.scaena.shows.runtime;
 import com.scaena.shows.model.Show;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -116,6 +118,14 @@ public final class RunningShow {
 
     /** Track spectate prior gamemodes per player (UUID → prior GameMode) */
     private final Map<UUID, org.bukkit.GameMode> spectateRestoreMap = new LinkedHashMap<>();
+
+    // -----------------------------------------------------------------------
+    // Block state restore (OPS-004, OPS-008)
+    // Keyed by "world:x:y:z" — original BlockData before this show touched the block.
+    // putIfAbsent semantics: only the first modification is recorded so the true
+    // pre-show state is preserved even if the same block is modified multiple times.
+    // -----------------------------------------------------------------------
+    private final Map<String, BlockData> blockStateRestoreMap = new LinkedHashMap<>();
 
     // -----------------------------------------------------------------------
     // Flight state (captured on first PLAYER_FLIGHT hover per participant)
@@ -391,6 +401,25 @@ public final class RunningShow {
 
     public Map<UUID, FlightState> getFlightRestoreMap() {
         return flightRestoreMap;
+    }
+
+    // -----------------------------------------------------------------------
+    // Block state restore (OPS-004, OPS-008)
+    // -----------------------------------------------------------------------
+
+    /**
+     * Record a block's original BlockData before this show first modifies it.
+     * Uses putIfAbsent — only the true pre-show state is retained even if the
+     * same block is targeted more than once during the show.
+     */
+    public void recordBlockRestore(World world, int x, int y, int z, BlockData originalData) {
+        String key = world.getName() + ":" + x + ":" + y + ":" + z;
+        blockStateRestoreMap.putIfAbsent(key, originalData.clone());
+    }
+
+    /** All blocks that need to be restored on show end. Key = "world:x:y:z". */
+    public Map<String, BlockData> getBlockStateRestoreMap() {
+        return Collections.unmodifiableMap(blockStateRestoreMap);
     }
 
     // -----------------------------------------------------------------------

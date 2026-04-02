@@ -272,6 +272,28 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
                 techManager.startCaptureMode(player, args[2]);
             }
             case "captureexit"    -> techManager.exitCaptureMode(player);
+            case "build"          -> techManager.toggleBuildMode(player);
+            case "bbox"           -> {
+                if (args.length < 3 || (!args[2].equalsIgnoreCase("min")
+                                     && !args[2].equalsIgnoreCase("max"))) {
+                    player.sendMessage(MM.deserialize(
+                        "<red>Usage: /scaena tech bbox <min|max></red>"));
+                    return;
+                }
+                techManager.setBboxCorner(player, args[2].equalsIgnoreCase("min"));
+            }
+            case "buildsave"      -> techManager.saveBuild(player);
+            case "builddiscard"   -> techManager.discardBuild(player);
+            case "buildrestore"   -> techManager.restoreBuildRemovals(player);
+            case "builds"         -> techManager.sendBuildVersions(player);
+            case "setbuild"       -> {
+                if (args.length < 3) {
+                    player.sendMessage(MM.deserialize(
+                        "<red>Usage: /scaena tech setbuild <versionStem></red>"));
+                    return;
+                }
+                techManager.setActiveBuild(player, args[2]);
+            }
             case "toggle"         -> {
                 if (args.length < 3) {
                     player.sendMessage(MM.deserialize(
@@ -410,7 +432,7 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
         if ("tech".equalsIgnoreCase(args[0])) {
             if (args.length == 2) {
                 List<String> subs = List.of("dismiss", "save", "discard", "saveanddismiss",
-                    "panel", "params", "marklist", "toggle", "capture", "focusparam");
+                    "panel", "params", "marklist", "toggle", "capture", "focusparam", "build");
                 List<String> shows = techManager.getAvailableShowIds();
                 List<String> combined = new java.util.ArrayList<>(subs);
                 combined.addAll(shows);
@@ -419,7 +441,7 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
             if (args.length == 3) {
                 String sub = args[1].toLowerCase();
                 if (!List.of("dismiss","save","discard","saveanddismiss",
-                        "panel","params","marklist").contains(sub)) {
+                        "panel","params","marklist","build").contains(sub)) {
                     // Could be showId + sceneId, or toggle <dept>, or capture <mark>
                     if ("toggle".equals(sub)) {
                         return filter(List.of("casting","wardrobe","set","lighting",

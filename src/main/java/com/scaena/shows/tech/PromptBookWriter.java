@@ -13,16 +13,22 @@ import java.util.logging.Logger;
 /**
  * Writes-back tech session changes to disk.
  *
- * Two responsibilities:
+ * Responsibilities:
  *
- *   writeParams  — updates param value: lines in [show_id].prompt-book.yml in-place,
- *                  preserving all comments and surrounding structure.
+ *   writeParams     — updates param value: lines in [show_id].prompt-book.yml in-place,
+ *                     preserving all comments and surrounding structure.
  *
- *   writeCaptures — writes a new dated file to scout_captures/[show_id]/[date].yml,
- *                   merging with the most recent existing capture file so no prior
- *                   captures are lost.
+ *   writeCaptures   — writes a new dated file to scout_captures/[show_id]/[date].yml,
+ *                     merging with the most recent existing capture file so no prior
+ *                     captures are lost.
  *
- * Both methods return the count of items actually written.
+ *   writeBbox       — writes/updates bbox_min + bbox_max fields in the scene's set:
+ *                     section of the prompt-book. Handles both legacy list format
+ *                     (auto-migrates to map format) and existing map format.
+ *
+ *   writeActiveBuild — updates active_build: in the scene's set: section.
+ *
+ * All prompt-book writes use a comment-preserving line-scan approach.
  */
 public final class PromptBookWriter {
 
@@ -231,6 +237,228 @@ public final class PromptBookWriter {
 
         log.info("[Tech] Wrote " + merged.size() + " capture(s) to " + outFile.getName());
         return modifiedMarks.size();
+    }
+
+    // -----------------------------------------------------------------------
+    // writeBbox — update/add bbox_min + bbox_max in the scene's set: section
+    // -----------------------------------------------------------------------
+
+    /**
+     * Writes bbox_min and bbox_max into the target scene's set: department block.
+     *
+     * If the set: block is in legacy list format, this method migrates it to the
+     * new map format first (wrapping entries under an `entries:` sub-key).
+     *
+     * @param bookFile  the prompt-book.yml file
+     * @param sceneId   target scene id
+     * @param min       bbox minimum corner
+     * @param max       bbox maximum corner
+     * @return true on success
+     */
+    public boolean writeBbox(File bookFile, String sceneId,
+                              PromptBook.BboxPoint min, PromptBook.BboxPoint max) {
+        return writeSetFields(bookFile, sceneId,
+            "bbox_min: " + bboxStr(min),
+            "bbox_max: " + bboxStr(max),
+            null);
+    }
+
+    /**
+     * Updates active_build: in the target scene's set: department block.
+     */
+    public boolean writeActiveBuild(File bookFile, String sceneId, String buildStem) {
+        return writeSetFields(bookFile, sceneId, null, null, buildStem);
+    }
+
+    /**
+     * Core line-scanner: finds the target scene's set: section and writes
+     * bbox_min, bbox_max, and/or active_build as directed.
+     * null arguments are skipped. At least one non-null argument is required.
+     *
+     * Handles both old (flat list) and new (map) set formats.
+     * Old format is auto-migrated in-place.
+     */
+    private boolean writeSetFields(File bookFile, String sceneId,
+                                    String bboxMinLine,   // e.g. "bbox_min: [world, 1, 2, 3]"
+                                    String bboxMaxLine,
+                                    String activeBuild) {
+        if (bboxMinLine == null && bboxMaxLine == null && activeBuild == null) return false;
+        if (!bookFile.exists()) {
+            log.warning("[Tech] Cannot write set fields — file not found: " + bookFile.getPath());
+            return false;
+        }
+
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(bookFile.toPath(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            log.severe("[Tech] Failed to read prompt book: " + e.getMessage());
+            return false;
+        }
+
+        List<String> result = new ArrayList<>(lines);
+
+        // ── Phase 1: find the target scene block ──────────────────────────
+        int sceneStart = -1;
+        for (int i = 0; i < result.size(); i++) {
+            String t = result.get(i).stripLeading();
+            if (t.startsWith("- id:") || t.startsWith("-id:")) {
+                String idVal = t.replaceFirst("^-\\s*id:\\s*", "").trim()
+                                .replaceAll("\\s*#.*$", "").replace("\"","");
+                if (sceneId.equals(idVal)) { sceneStart = i; break; }
+            }
+        }
+        if (sceneStart < 0) {
+            log.warning("[Tech] Scene not found in prompt book: " + sceneId);
+            return false;
+        }
+
+        // The scene block's indent level (the "- id:" line)
+        int sceneIndent = indentOf(result.get(sceneStart));
+
+        // ── Phase 2: find "departments:" within this scene block ──────────
+        int deptsLine = -1;
+        for (int i = sceneStart + 1; i < result.size(); i++) {
+            String line = result.get(i);
+            if (isNewSceneOrTopLevel(line, sceneIndent)) break;
+            String t = line.stripLeading();
+            if (t.startsWith("departments:") && indentOf(line) > sceneIndent) {
+                deptsLine = i; break;
+            }
+        }
+        if (deptsLine < 0) {
+            log.warning("[Tech] departments: not found in scene " + sceneId);
+            return false;
+        }
+        int deptsIndent = indentOf(result.get(deptsLine));
+
+        // ── Phase 3: find "set:" within departments ───────────────────────
+        int setLine = -1;
+        for (int i = deptsLine + 1; i < result.size(); i++) {
+            String line = result.get(i);
+            if (indentOf(line) <= deptsIndent && !line.isBlank() && !line.stripLeading().startsWith("#"))
+                break;
+            String t = line.stripLeading();
+            if (t.startsWith("set:") && indentOf(line) > deptsIndent) {
+                setLine = i; break;
+            }
+        }
+        if (setLine < 0) {
+            log.warning("[Tech] set: not found in scene " + sceneId + "'s departments");
+            return false;
+        }
+
+        int setIndent    = indentOf(result.get(setLine));   // indent of "set:" key
+        int childIndent  = setIndent + 2;                   // standard 2-space child indent
+
+        // ── Phase 4: determine if set: is a list or map ───────────────────
+        // Peek at the first non-blank child line after set:
+        int firstChild = -1;
+        for (int i = setLine + 1; i < result.size(); i++) {
+            String line = result.get(i);
+            if (line.isBlank() || line.stripLeading().startsWith("#")) continue;
+            if (indentOf(line) <= setIndent) break;
+            firstChild = i; break;
+        }
+
+        boolean isListFormat = firstChild >= 0
+            && result.get(firstChild).stripLeading().startsWith("- ");
+
+        if (isListFormat) {
+            // ── Migrate: wrap existing list items under "entries:" ────────
+            // Collect all lines that belong to the set list (up to next same-or-lower-indent)
+            int listStart = firstChild;
+            int listEnd   = firstChild;
+            for (int i = firstChild; i < result.size(); i++) {
+                String line = result.get(i);
+                if (line.isBlank() || line.stripLeading().startsWith("#")) { listEnd = i; continue; }
+                if (indentOf(line) <= setIndent) break;
+                listEnd = i;
+            }
+
+            // Build replacement: set: \n  entries: \n    - ... (re-indented +2)
+            List<String> migrated = new ArrayList<>();
+            migrated.add(" ".repeat(childIndent) + "entries:");
+            for (int i = listStart; i <= listEnd; i++) {
+                String orig = result.get(i);
+                if (orig.isBlank()) { migrated.add(""); continue; }
+                // Shift each line right by 2 spaces to sit under "entries:"
+                migrated.add("  " + orig);
+            }
+            // Remove old list lines, insert migrated block
+            for (int i = listEnd; i >= listStart; i--) result.remove(i);
+            result.addAll(listStart, migrated);
+
+            // Recompute setLine (unchanged), but firstChild is now the "entries:" line
+        }
+
+        // ── Phase 5: update/add bbox_min, bbox_max, active_build ─────────
+        // Look for existing keys within set: block; update if found, else insert after set:
+        String[] keysToWrite = { "bbox_min", "bbox_max", "active_build" };
+        String[] valuesToWrite = {
+            bboxMinLine  != null ? bboxMinLine  : null,
+            bboxMaxLine  != null ? bboxMaxLine  : null,
+            activeBuild  != null ? "active_build: " + activeBuild : null
+        };
+
+        // Determine the end of the set: block (exclusive)
+        int setBlockEnd = result.size();
+        for (int i = setLine + 1; i < result.size(); i++) {
+            String line = result.get(i);
+            if (line.isBlank() || line.stripLeading().startsWith("#")) continue;
+            if (indentOf(line) <= setIndent) { setBlockEnd = i; break; }
+        }
+
+        for (int ki = 0; ki < keysToWrite.length; ki++) {
+            if (valuesToWrite[ki] == null) continue;
+            String key      = keysToWrite[ki];
+            String fullLine = " ".repeat(childIndent) + valuesToWrite[ki];
+
+            // Search for existing key within set block
+            boolean found = false;
+            for (int i = setLine + 1; i < setBlockEnd; i++) {
+                String t = result.get(i).stripLeading();
+                if (t.startsWith(key + ":") && indentOf(result.get(i)) == childIndent) {
+                    result.set(i, fullLine);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                // Insert after the set: line (before entries or other children)
+                result.add(setLine + 1, fullLine);
+                setBlockEnd++; // block grew by one line
+            }
+        }
+
+        // ── Phase 6: write back ───────────────────────────────────────────
+        try (PrintWriter pw = new PrintWriter(
+                new OutputStreamWriter(new FileOutputStream(bookFile), StandardCharsets.UTF_8))) {
+            for (String l : result) pw.println(l);
+        } catch (IOException e) {
+            log.severe("[Tech] Failed to write prompt book: " + e.getMessage());
+            return false;
+        }
+
+        log.info("[Tech] Wrote set fields (bbox/active_build) for scene "
+            + sceneId + " to " + bookFile.getName());
+        return true;
+    }
+
+    private static String bboxStr(PromptBook.BboxPoint p) {
+        return "[" + p.world() + ", " + p.x() + ", " + p.y() + ", " + p.z() + "]";
+    }
+
+    private static int indentOf(String line) {
+        int i = 0;
+        while (i < line.length() && line.charAt(i) == ' ') i++;
+        return i;
+    }
+
+    private static boolean isNewSceneOrTopLevel(String line, int sceneIndent) {
+        if (line.isBlank() || line.stripLeading().startsWith("#")) return false;
+        return indentOf(line) <= sceneIndent
+            && (line.stripLeading().startsWith("- id:") || !line.startsWith(" "));
     }
 
     // -----------------------------------------------------------------------

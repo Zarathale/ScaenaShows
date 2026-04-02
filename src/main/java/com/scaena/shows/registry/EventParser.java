@@ -67,9 +67,12 @@ public final class EventParser {
                 case FIREWORK_FAN    -> new FireworkEvents.FireworkFanEvent(m);
                 case FIREWORK_RANDOM -> new FireworkEvents.FireworkRandomEvent(m);
                 // §6.6 World
-                case WEATHER     -> new WorldEvents.WeatherEvent(m);
-                case TIME_OF_DAY -> new WorldEvents.TimeOfDayEvent(m);
-                case REDSTONE    -> new WorldEvents.RedstoneEvent(m);
+                case WEATHER      -> new WorldEvents.WeatherEvent(m);
+                case TIME_OF_DAY  -> new WorldEvents.TimeOfDayEvent(m);
+                case REDSTONE     -> new WorldEvents.RedstoneEvent(m);
+                case BLOCK_PLACE  -> new WorldEvents.BlockPlaceEvent(m);
+                case BLOCK_REMOVE -> new WorldEvents.BlockRemoveEvent(m);
+                case BLOCK_STATE  -> new WorldEvents.BlockStateEvent(m);
                 // §6.7 Entity management
                 case SPAWN_ENTITY      -> new EntityMgmtEvents.SpawnEntityEvent(m);
                 case DESPAWN_ENTITY    -> new EntityMgmtEvents.DespawnEntityEvent(m);

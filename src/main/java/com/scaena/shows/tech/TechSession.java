@@ -3,6 +3,7 @@ package com.scaena.shows.tech;
 import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
@@ -40,6 +41,20 @@ public final class TechSession {
     private final Map<String, Object> modifiedParams = new LinkedHashMap<>();
     /** mark name → new Location (from CAPTURE) */
     private final Map<String, Location> modifiedMarks = new LinkedHashMap<>();
+
+    // ---- Known captured marks (loaded from scout_captures at scene load; updated on confirm) ----
+    private final Set<String> capturedMarkNames = new LinkedHashSet<>();
+
+    // ---- In-world TextDisplay markers at captured mark positions ----
+    private final Map<String, TextDisplay> markMarkers = new LinkedHashMap<>();
+
+    // ---- Build mode (SURVIVAL toggle for set-dressing work) ----
+    private boolean         buildMode         = false;
+    private SetBuildSession activeBuildSession = null;
+
+    // ---- Pending bbox corners (in-memory until written to prompt-book on save) ----
+    private Location pendingBboxMin = null;
+    private Location pendingBboxMax = null;
 
     // ---- Capture mode ----
     private String  focusedMark  = null;
@@ -152,6 +167,58 @@ public final class TechSession {
     public boolean hasUnsavedChanges() {
         return !modifiedParams.isEmpty() || !modifiedMarks.isEmpty();
     }
+
+    // -----------------------------------------------------------------------
+    // Accessors — capture mode
+    // -----------------------------------------------------------------------
+
+    // -----------------------------------------------------------------------
+    // Accessors — known captured marks
+    // -----------------------------------------------------------------------
+
+    public Set<String> capturedMarkNames() { return capturedMarkNames; }
+
+    public void setCapturedMarkNames(java.util.Collection<String> marks) {
+        capturedMarkNames.clear();
+        capturedMarkNames.addAll(marks);
+    }
+
+    public void addCapturedMark(String mark) { capturedMarkNames.add(mark); }
+
+    // -----------------------------------------------------------------------
+    // Accessors — mark markers
+    // -----------------------------------------------------------------------
+
+    public void addMarkMarker(String markName, TextDisplay display) {
+        TextDisplay old = markMarkers.put(markName, display);
+        if (old != null && old.isValid()) old.remove();
+    }
+
+    public void removeMarkMarker(String markName) {
+        TextDisplay old = markMarkers.remove(markName);
+        if (old != null && old.isValid()) old.remove();
+    }
+
+    public void clearMarkMarkers() {
+        markMarkers.values().forEach(d -> { if (d.isValid()) d.remove(); });
+        markMarkers.clear();
+    }
+
+    // -----------------------------------------------------------------------
+    // Accessors — build mode
+    // -----------------------------------------------------------------------
+
+    public boolean buildMode()              { return buildMode; }
+    public void    setBuildMode(boolean on) { this.buildMode = on; }
+
+    public SetBuildSession activeBuildSession()                    { return activeBuildSession; }
+    public void            setActiveBuildSession(SetBuildSession s){ this.activeBuildSession = s; }
+    public void            clearBuildSession()                     { this.activeBuildSession = null; }
+
+    public Location pendingBboxMin()               { return pendingBboxMin; }
+    public Location pendingBboxMax()               { return pendingBboxMax; }
+    public void     setPendingBboxMin(Location loc){ this.pendingBboxMin = loc != null ? loc.clone() : null; }
+    public void     setPendingBboxMax(Location loc){ this.pendingBboxMax = loc != null ? loc.clone() : null; }
 
     // -----------------------------------------------------------------------
     // Accessors — capture mode

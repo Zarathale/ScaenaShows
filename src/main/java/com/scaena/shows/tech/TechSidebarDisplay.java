@@ -58,14 +58,9 @@ public final class TechSidebarDisplay {
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         PromptBook.SceneSpec scene = session.book().findScene(session.currentSceneId());
-        String sceneLabel = scene != null ? scene.label() : "—";
-
-        // Count active entities and total entity marks in scene
-        int activeEntities = session.activeEntities().size();
-        int totalMarks     = session.modifiedMarks().size();
 
         // Build lines top-to-bottom; assign descending scores (higher = top)
-        String[] lines = buildLines(session, scene, sceneLabel, activeEntities, totalMarks);
+        String[] lines = buildLines(session, scene);
 
         // Assign scores in descending order (line 0 = top = highest score)
         // We need unique strings — pad with invisible color codes if duplicates exist
@@ -85,26 +80,64 @@ public final class TechSidebarDisplay {
     // Line building
     // -----------------------------------------------------------------------
 
-    private static String[] buildLines(TechSession session, PromptBook.SceneSpec scene,
-                                        String sceneLabel, int entityCount, int markCount) {
+    private static String[] buildLines(TechSession session, PromptBook.SceneSpec scene) {
         boolean dirty = session.hasUnsavedChanges();
+        java.util.List<String> lines = new java.util.ArrayList<>();
 
-        return new String[]{
-            // Title area
-            GRAY + "──────────────────",
-            WHITE + sceneLabel,
-            GRAY + "Entities: " + WHITE + entityCount,
-            GRAY + "Marks mod: " + (markCount > 0 ? YELLOW : WHITE) + markCount
-                + (dirty ? " " + YELLOW + "✎" : ""),
-            DARK_GRAY + "──────────────────",
-            // Department status
-            deptLine("CAST",    "casting",   session, scene),
-            deptLine("WARDROBE","wardrobe",  session, scene),
-            deptLine("SET",     "set",       session, scene),
-            deptLine("LIGHTS",  "lighting",  session, scene),
-            deptLine("FX",      "fireworks", session, scene),
-            deptLine("SCRIPT",  "script",    session, scene),
-        };
+        // ── Scene header ──
+        lines.add(GRAY + "──────────────────");
+
+        // Scene number + mode indicators
+        String sceneNum = (scene != null && scene.sceneNumber() != null)
+            ? scene.sceneNumber() : "—";
+        String sceneLine = WHITE + "Scene " + sceneNum;
+        if (session.buildMode()) sceneLine += "  " + RED + "🔨";
+        if (dirty)               sceneLine += "  " + YELLOW + "✎";
+        lines.add(sceneLine);
+
+        // Scene label (trim at 22 chars) — yellow ⚠ prefix when arrival mark is not set
+        String label = scene != null ? scene.label() : "—";
+        if (label != null && label.length() > 22) label = label.substring(0, 21) + "…";
+        boolean arrivalMissing = scene != null
+            && scene.arrivalMark() != null
+            && !session.capturedMarkNames().contains(scene.arrivalMark())
+            && !session.modifiedMarks().containsKey(scene.arrivalMark());
+        lines.add(arrivalMissing
+            ? YELLOW + "⚠ " + (label != null ? label : "—")
+            : GRAY   + (label != null ? label : "—"));
+
+        // ── Mob roster (from casting entries) ──
+        if (scene != null && scene.hasCasting()
+                && scene.casting().entries() != null
+                && !scene.casting().entries().isEmpty()) {
+            lines.add(DARK_GRAY + "──────────────────");
+            for (PromptBook.CastingEntry mob : scene.casting().entries()) {
+                String name = mob.displayName() != null ? mob.displayName() : mob.role();
+                if (name != null && name.length() > 14) name = name.substring(0, 13) + "…";
+                String padded = String.format("%-14s", name != null ? name : "?");
+
+                boolean modified = mob.mark() != null
+                    && session.modifiedMarks().containsKey(mob.mark());
+                boolean captured = mob.mark() != null
+                    && session.capturedMarkNames().contains(mob.mark());
+
+                String status = modified ? YELLOW + "✎"
+                              : captured  ? GREEN  + "✓"
+                              :             YELLOW + "⚠";
+                lines.add(GRAY + " " + padded + " " + status);
+            }
+        }
+
+        // ── Department status ──
+        lines.add(DARK_GRAY + "──────────────────");
+        lines.add(deptLine("CAST",    "casting",   session, scene));
+        lines.add(deptLine("WARDROBE","wardrobe",  session, scene));
+        lines.add(deptLine("SET",     "set",       session, scene));
+        lines.add(deptLine("LIGHTS",  "lighting",  session, scene));
+        lines.add(deptLine("FX",      "fireworks", session, scene));
+        lines.add(deptLine("SCRIPT",  "script",    session, scene));
+
+        return lines.toArray(new String[0]);
     }
 
     private static String deptLine(String label, String dept,

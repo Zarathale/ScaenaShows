@@ -640,8 +640,9 @@ public final class ScoutManager {
         session.addSnapshot(entry);
 
         // How many entries share this label (including the one we just added)?
+        final String finalLabel = label;
         long labelCount = session.snapshots().stream()
-            .filter(s -> s.label().equals(label))
+            .filter(s -> s.label().equals(finalLabel))
             .count();
 
         // Prominent in-world prompt — title + actionbar so it's impossible to miss

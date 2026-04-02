@@ -219,16 +219,7 @@ for a design decision before implementing.
 
 ---
 
-### OPS-004 [java-gap] No BLOCK_PLACE / BLOCK_REMOVE event type
-
-**Area:** Set Director, Stage Manager
-**Event:** (new — does not exist)
-
-Block modifications currently require the `COMMAND` escape hatch. COMMAND-placed blocks are outside the show's stop-safety contract and are not restored if the show is interrupted.
-
-**Impact:** Set Director cannot use block-based set dressing safely in rehearsal or production shows. Any block modification carries permanent-world risk on interruption.
-
-**Proposed:** Add `BLOCK_PLACE` and `BLOCK_REMOVE` event types. On `BLOCK_PLACE`, record the original block type at the target location in `RunningShow`. On show end (natural or interrupted), `applyStopSafety` restores original blocks. This brings block modification inside the cleanup contract.
+### OPS-004 ~~[java-gap]~~ → **RESOLVED in 2.23.0** — see Resolved section below
 
 ---
 
@@ -319,47 +310,7 @@ uses progressive item frame display as a core mechanic.
 
 ---
 
-### OPS-008 [java-gap] No BLOCK_STATE event — cannot set block lit/active states via YAML
-
-**Area:** Sound Designer, Set Director
-**Event:** (new — does not exist)
-**Filed:** 2026-03-29 (showcase.01 "Preparing for Battle" — home base workshop design)
-
-No event type currently allows the show to set a block's state (e.g., `lit=true` on a blast
-furnace or furnace). Block state changes can only be done via the COMMAND escape hatch, which
-is outside the stop-safety contract.
-
-**showcase.01 use case:** The Armorer's home base workshop contains a blast furnace. The show
-needs to activate it (set `lit=true`) at show open to produce both the glow (light emission)
-and the ambient crackle sound in-world. On show end / stop-safety, the furnace should return
-to its prior state (`lit=false`).
-
-**Proposed:** Add a `BLOCK_STATE` point-in-time event:
-```yaml
-type: BLOCK_STATE
-target: {x: 100, y: 64, z: 200}
-world_specific: true
-state:
-  lit: true   # block-state key/value pairs; applied via block.setBlockData()
-```
-Implementation: resolve the target block, read current `BlockData`, apply the specified state
-fields, call `block.setBlockData(data)`. At show start, record the original `BlockData` for
-each targeted block in `RunningShow`. On show end (natural or interrupted), `applyStopSafety`
-restores original block data. This brings block state changes inside the cleanup contract.
-
-**Note:** The existing `BLOCK_PLACE` / `BLOCK_REMOVE` ops-inbox item handles adding/removing
-blocks. This item is narrower and distinct — it only changes the state of an already-present
-block (lit, open, powered, etc.) without altering block type.
-
-**Priority:** Medium — showcase.01 will use sound-only (`block.blastfurnace.fire_crackle`) as
-a bridge until this is implemented. Visual furnace glow at home base is blocked on this fix.
-
-**Cross-use note:** When BLOCK_STATE is implemented for the blast furnace, campfire
-lighting-on-arrival (setting `lit: true` on a pre-placed, unlit campfire) is a natural
-secondary use case for the same event type. Any campfire-as-set-piece that should arrive
-dark and then light when the scene begins can be handled by the same `BLOCK_STATE`
-mechanism. Worth documenting as a second scenario when this item is scoped for
-implementation.
+### OPS-008 ~~[java-gap]~~ → **RESOLVED in 2.23.0** — see Resolved section below
 
 ---
 
@@ -908,6 +859,56 @@ Phase 1 is stable.
 ---
 
 ## Resolved
+
+---
+
+### OPS-004 [resolved] BLOCK_PLACE / BLOCK_REMOVE — block modification inside stop-safety contract ✓
+**Shipped:** 2.23.0 | **Filed:** (pre-existing) | **Area:** Set Director, Stage Manager
+
+Two new event types bring block placement and removal inside the show's stop-safety contract.
+
+**`BLOCK_PLACE`** — places a fully specified blockstate at an absolute world coordinate. Block type and all state properties in a single Minecraft blockstate string.
+```yaml
+type: BLOCK_PLACE
+at: 10
+world_specific: true
+target: {x: 100, y: 64, z: 200}
+block: "minecraft:blast_furnace[facing=north,lit=false]"
+```
+
+**`BLOCK_REMOVE`** — sets the target block to AIR.
+```yaml
+type: BLOCK_REMOVE
+at: 20
+world_specific: true
+target: {x: 100, y: 64, z: 200}
+```
+
+**Stop-safety:** Before any modification, the original `BlockData` is recorded in `RunningShow.blockStateRestoreMap` using `putIfAbsent` semantics — the true pre-show state is preserved even if the same block is targeted multiple times. On `stopShow()` (natural end or `/show stop`), all recorded blocks are restored via `block.setBlockData(original, false)`.
+
+**Implementation:** `WorldEvents.BlockPlaceEvent` + `BlockRemoveEvent` (model), `WorldEventExecutor.handleBlockPlace/Remove()` (execution), `RunningShow.recordBlockRestore()` / `getBlockStateRestoreMap()` (tracking), `ShowManager.stopShow()` restore loop. Wired in `EventParser` and `ExecutorRegistry`.
+
+---
+
+### OPS-008 [resolved] BLOCK_STATE — set block lit/active states via YAML ✓
+**Shipped:** 2.23.0 | **Filed:** 2026-03-29 | **Area:** Sound Designer, Set Director
+
+New event type for patching state properties on an existing block without changing its type (e.g., `lit=true` on a blast furnace, `powered=true` on a pressure plate).
+
+```yaml
+type: BLOCK_STATE
+at: 5
+world_specific: true
+target: {x: 100, y: 64, z: 200}
+state:
+  lit: true
+```
+
+Multiple state keys can be patched in a single event. Implementation uses a blockstate string round-trip: decompose the current `getAsString()` result, merge in the overrides, rebuild the string, and call `Bukkit.createBlockData()`. Works generically across all block types without interface casting. Invalid merged states log a warning and skip the change.
+
+**Stop-safety:** Same `recordBlockRestore()` / restore loop as OPS-004 — the original `BlockData` is captured before the patch is applied and restored on show end.
+
+**Unblocked:** blast furnace `lit=true` at Scene A open (home base workshop glow + crackle sound). Campfire `lit=true` on arrival at expedition sites is a direct secondary use case — same event, same stop-safety.
 
 ---
 

@@ -3,6 +3,7 @@ package com.scaena.shows.tech;
 import com.scaena.shows.registry.YamlLoader;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
@@ -10,6 +11,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -109,8 +111,9 @@ public final class TechManager {
         TechSession session = new TechSession(showId, player, book, snapshot);
         sessions.put(player.getUniqueId(), session);
 
-        // Switch to creative + flight
-        player.setGameMode(GameMode.CREATIVE);
+        // Switch to adventure + flight
+        // Adventure: prevents accidental block break/place; right-click hotbar still works.
+        player.setGameMode(GameMode.ADVENTURE);
         player.setAllowFlight(true);
         player.setFlying(true);
 
@@ -171,8 +174,9 @@ public final class TechManager {
             session.confirmTask().cancel();
         }
 
-        // Despawn all entities
+        // Despawn all entities and mark markers
         despawnAll(session);
+        session.clearMarkMarkers();
 
         // Restore all blocks
         restoreAllBlocks(session);
@@ -230,24 +234,37 @@ public final class TechManager {
 
         // Load scout captures for this show
         Map<String, CaptureEntry> captures = readCaptures(session.showId());
+        session.setCapturedMarkNames(captures.keySet());
 
-        // Teleport to arrival mark (Q8: Option A — stay put if not captured)
+        // Resolve player before any operations that need it
+        Player player = session.player();
+
+        // Teleport to arrival mark
         String arrivalMark = scene.arrivalMark();
         if (arrivalMark != null) {
             CaptureEntry arrival = captures.get(arrivalMark);
             if (arrival != null) {
-                session.player().teleport(captureToLocation(arrival));
+                Location dest    = captureToLocation(arrival);
+                Location current = player.getLocation();
+                // Teleport only if in a different world or outside the ~10-block perimeter
+                boolean sameWorld        = java.util.Objects.equals(current.getWorld(), dest.getWorld());
+                boolean outsidePerimeter = !sameWorld || current.distanceSquared(dest) > 100.0;
+                if (outsidePerimeter) {
+                    player.teleport(dest);
+                }
             } else {
-                session.player().sendActionBar(MM.deserialize(
-                    "<yellow>⚠ " + arrivalMark + " not captured — teleport skipped</yellow>"));
+                // Arrival mark not captured — auto-enter capture mode so the player can set it now
+                session.enterCaptureMode(arrivalMark);
             }
         }
 
         // Materialize active departments
-        Player player = session.player();
         for (String dept : session.departmentMask()) {
             materializeDept(session, scene, dept, captures, player);
         }
+
+        // Spawn in-world markers at captured mark positions
+        spawnMarkMarkers(session, scene, captures);
 
         // Update displays
         TechSidebarDisplay.show(player, session);
@@ -346,6 +363,11 @@ public final class TechManager {
         Location loc = player.getLocation();
         String markName = session.focusedMark();
         session.modifiedMarks().put(markName, loc.clone());
+        session.addCapturedMark(markName);
+
+        // Spawn/update in-world marker at the captured position
+        PromptBook.SceneSpec currentScene = session.book().findScene(session.currentSceneId());
+        spawnMarkMarkerForName(session, currentScene, markName, loc.clone());
 
         // If an entity is at this mark, teleport it
         UUID entityUuid = session.findEntityAtMark(markName);
@@ -384,6 +406,25 @@ public final class TechManager {
                 "shows/" + session.showId() + "/" + session.showId() + ".prompt-book.yml");
             paramCount = writer.writeParams(bookFile, session.modifiedParams());
             session.modifiedParams().clear();
+        }
+
+        // Write pending bbox corners to the prompt-book (stored separately from mark captures)
+        boolean hasBbox = session.pendingBboxMin() != null && session.pendingBboxMax() != null;
+        if (hasBbox) {
+            Location mn = session.pendingBboxMin();
+            Location mx = session.pendingBboxMax();
+            PromptBook.BboxPoint bboxMin = new PromptBook.BboxPoint(
+                mn.getWorld().getName(), mn.getBlockX(), mn.getBlockY(), mn.getBlockZ());
+            PromptBook.BboxPoint bboxMax = new PromptBook.BboxPoint(
+                mx.getWorld().getName(), mx.getBlockX(), mx.getBlockY(), mx.getBlockZ());
+            PromptBookWriter writer = new PromptBookWriter(log);
+            File bookFile = promptBookFile(session.showId());
+            writer.writeBbox(bookFile, session.currentSceneId(), bboxMin, bboxMax);
+            session.setPendingBboxMin(null);
+            session.setPendingBboxMax(null);
+            // Remove the sentinel mark used to flag dirty state
+            session.modifiedMarks().remove("__bbox__");
+            paramCount++; // count it so the "saved N changes" message is accurate
         }
 
         // Write mark captures to a new dated scout_captures file
@@ -766,6 +807,368 @@ public final class TechManager {
     }
 
     // -----------------------------------------------------------------------
+    // BUILD MODE — SURVIVAL toggle for set-dressing with change tracking
+    // -----------------------------------------------------------------------
+
+    public void toggleBuildMode(Player player) {
+        TechSession session = sessions.get(player.getUniqueId());
+        if (session == null) return;
+
+        if (!session.buildMode()) {
+            // ── Entering build mode ──────────────────────────────────────────
+            PromptBook.SceneSpec scene = session.book().findScene(session.currentSceneId());
+            boolean hasBbox = scene != null && scene.hasSet() && scene.set().hasBbox();
+            boolean hasPendingBbox = session.pendingBboxMin() != null && session.pendingBboxMax() != null;
+
+            if (!hasBbox && !hasPendingBbox) {
+                // No bbox defined — prompt the player to set one before tracking anything
+                player.sendMessage(MM.deserialize(
+                    "<yellow>⚠ No bounding box set for this scene's set.</yellow>"));
+                player.sendMessage(MM.deserialize(
+                    "<gray>Stand at one corner of the set area and run "
+                    + "<white>/scaena tech bbox min</white>, "
+                    + "then at the opposite corner run "
+                    + "<white>/scaena tech bbox max</white>.</gray>"));
+                player.sendMessage(MM.deserialize(
+                    "<gray>Then enter build mode again. "
+                    + "Changes outside the box are allowed but won't be tracked.</gray>"));
+                return;
+            }
+
+            session.setBuildMode(true);
+            session.setActiveBuildSession(new SetBuildSession(session.currentSceneId()));
+            player.setGameMode(GameMode.SURVIVAL);
+            flashConfirm(session, "🔨 BUILD MODE — tracking changes in set bounds");
+
+        } else {
+            // ── Exiting build mode ──────────────────────────────────────────
+            player.setGameMode(GameMode.ADVENTURE);
+            session.setBuildMode(false);
+
+            SetBuildSession build = session.activeBuildSession();
+            if (build == null || build.isEmpty()) {
+                session.clearBuildSession();
+                flashConfirm(session, "🔒 TECH MODE — no changes recorded");
+            } else if (build.hasRemovals()) {
+                // Removals present → ask what to do with them before offering save
+                sendRemovalPrompt(player, session, build);
+            } else {
+                // Only additions → go straight to save prompt
+                sendBuildSavePrompt(player, session, build);
+            }
+        }
+        TechSidebarDisplay.show(player, session);
+    }
+
+    /**
+     * Set one corner of the bounding box for the current scene's set.
+     * Stored in-session immediately; written to the prompt-book on SAVE.
+     *
+     * @param isMin true for bbox_min, false for bbox_max
+     */
+    public void setBboxCorner(Player player, boolean isMin) {
+        TechSession session = sessions.get(player.getUniqueId());
+        if (session == null) return;
+
+        Location loc = player.getLocation();
+        if (isMin) {
+            session.setPendingBboxMin(loc);
+            flashConfirm(session, "📐 bbox_min set — " + locStr(loc));
+        } else {
+            session.setPendingBboxMax(loc);
+            flashConfirm(session, "📐 bbox_max set — " + locStr(loc));
+        }
+
+        // If both corners are now set, confirm and mark session dirty
+        if (session.pendingBboxMin() != null && session.pendingBboxMax() != null) {
+            player.sendMessage(MM.deserialize(
+                "<green>✓ Bounding box complete.</green> "
+                + "<gray>Run <white>/scaena tech save</white> to write it to the prompt-book.</gray>"));
+            // Mark dirty so the save prompt catches it
+            session.modifiedMarks().put("__bbox__", loc); // sentinel to flag dirty state
+        }
+
+        TechSidebarDisplay.show(player, session);
+    }
+
+    /**
+     * Save the current build session as a new versioned file.
+     * Called from the "Save" option in the build-exit prompt, or directly.
+     */
+    public void saveBuild(Player player) {
+        TechSession session = sessions.get(player.getUniqueId());
+        if (session == null) return;
+        SetBuildSession build = session.activeBuildSession();
+        if (build == null || build.isEmpty()) {
+            player.sendMessage(MM.deserialize("<yellow>No build changes to save.</yellow>"));
+            return;
+        }
+
+        File buildDir = new File(plugin.getDataFolder(),
+            "set_builds/" + session.showId());
+        SetBuildWriter writer = new SetBuildWriter(log);
+        String stem = writer.write(buildDir, session.showId(), build);
+
+        if (stem != null) {
+            // Update active_build pointer in the prompt-book (via writer)
+            File bookFile = promptBookFile(session.showId());
+            PromptBookWriter pbWriter = new PromptBookWriter(log);
+            pbWriter.writeActiveBuild(bookFile, session.currentSceneId(), stem);
+
+            flashConfirm(session, "💾 Set build saved: " + stem);
+            player.sendMessage(MM.deserialize(
+                "<green>✓ Saved as <white>" + stem + "</white>. "
+                + "This is now the active set build for this scene.</green>"));
+        }
+
+        session.clearBuildSession();
+        TechSidebarDisplay.show(player, session);
+    }
+
+    /**
+     * Discard the current build session without saving.
+     * Does NOT restore removed blocks — that must be done first via restoreBuildRemovals().
+     */
+    public void discardBuild(Player player) {
+        TechSession session = sessions.get(player.getUniqueId());
+        if (session == null) return;
+        session.clearBuildSession();
+        flashConfirm(session, "🗑 Build session discarded");
+        TechSidebarDisplay.show(player, session);
+    }
+
+    /**
+     * Restore all blocks removed during the current build session, then
+     * proceed to the save/discard prompt.
+     */
+    public void restoreBuildRemovals(Player player) {
+        TechSession session = sessions.get(player.getUniqueId());
+        if (session == null) return;
+        SetBuildSession build = session.activeBuildSession();
+        if (build == null) return;
+
+        int count = build.removals().size();
+        build.restoreRemovals();
+        flashConfirm(session, "↩ " + count + " block(s) restored");
+
+        // After restoring, offer save/discard for remaining additions
+        if (!build.isEmpty()) {
+            sendBuildSavePrompt(player, session, build);
+        } else {
+            player.sendMessage(MM.deserialize(
+                "<gray>No remaining changes. Build session cleared.</gray>"));
+            session.clearBuildSession();
+        }
+        TechSidebarDisplay.show(player, session);
+    }
+
+    /**
+     * Send the version list panel for the current scene's set builds.
+     */
+    public void sendBuildVersions(Player player) {
+        TechSession session = sessions.get(player.getUniqueId());
+        if (session == null) return;
+
+        File buildDir = new File(plugin.getDataFolder(),
+            "set_builds/" + session.showId());
+        java.util.List<String> versions =
+            SetBuildWriter.listVersions(buildDir, session.currentSceneId());
+
+        if (versions.isEmpty()) {
+            player.sendMessage(MM.deserialize(
+                "<yellow>No saved set builds for this scene yet.</yellow>"));
+            return;
+        }
+
+        PromptBook.SceneSpec scene = session.book().findScene(session.currentSceneId());
+        String active = (scene != null && scene.hasSet())
+            ? scene.set().activeBuild() : null;
+
+        player.sendMessage(MM.deserialize(
+            "<gold>Set builds — " + session.currentSceneId() + "</gold>"));
+        for (String stem : versions) {
+            boolean isCurrent = stem.equals(active);
+            net.kyori.adventure.text.Component line =
+                net.kyori.adventure.text.Component.text(
+                    (isCurrent ? "  ✓ " : "  ○ ") + stem,
+                    isCurrent
+                        ? net.kyori.adventure.text.format.TextColor.color(0x55FF55)
+                        : net.kyori.adventure.text.format.TextColor.color(0x55FFFF))
+                .clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand(
+                    "/scaena tech setbuild " + stem))
+                .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(
+                    net.kyori.adventure.text.Component.text(
+                        isCurrent ? "Active version — click to re-confirm"
+                                  : "Click to make this the active version")));
+            player.sendMessage(line);
+        }
+        player.sendMessage(MM.deserialize(
+            "<gray>Click a version to make it active. "
+            + "Active version is applied when the show's SET cue fires.</gray>"));
+    }
+
+    /**
+     * Set the active build version for the current scene.
+     */
+    public void setActiveBuild(Player player, String stem) {
+        TechSession session = sessions.get(player.getUniqueId());
+        if (session == null) return;
+
+        File buildDir = new File(plugin.getDataFolder(),
+            "set_builds/" + session.showId());
+        File buildFile = new File(buildDir, stem + ".yml");
+        if (!buildFile.exists()) {
+            player.sendMessage(MM.deserialize(
+                "<red>Set build not found: <white>" + stem + "</white></red>"));
+            return;
+        }
+
+        File bookFile = promptBookFile(session.showId());
+        PromptBookWriter pbWriter = new PromptBookWriter(log);
+        pbWriter.writeActiveBuild(bookFile, session.currentSceneId(), stem);
+
+        flashConfirm(session, "✓ Active build set: " + stem);
+        TechSidebarDisplay.show(player, session);
+    }
+
+    // -----------------------------------------------------------------------
+    // Private: build mode prompts
+    // -----------------------------------------------------------------------
+
+    private void sendRemovalPrompt(Player player, TechSession session, SetBuildSession build) {
+        int removals  = build.removals().size();
+        int additions = build.additions().size();
+        player.sendMessage(MM.deserialize(
+            "<gold>Build session complete.</gold> "
+            + "<gray>" + build.totalCount() + " net change(s): "
+            + additions + " placed, " + removals + " removed.</gray>"));
+        player.sendMessage(MM.deserialize(
+            "<gray>Removed blocks are currently gone from the world.</gray>"));
+
+        player.sendMessage(
+            net.kyori.adventure.text.Component.text("[Restore removed blocks]",
+                net.kyori.adventure.text.format.TextColor.color(0x55FFFF))
+            .clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand(
+                "/scaena tech buildrestore"))
+            .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(
+                net.kyori.adventure.text.Component.text(
+                    "Put the " + removals + " removed block(s) back now.\n"
+                    + "They will be removed again when the show's SET cue fires.")))
+            .append(net.kyori.adventure.text.Component.text("   "))
+            .append(net.kyori.adventure.text.Component.text("[Keep removed + Save]",
+                net.kyori.adventure.text.format.TextColor.color(0x55FF55))
+            .clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand(
+                "/scaena tech buildsave"))
+            .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(
+                net.kyori.adventure.text.Component.text(
+                    "Leave the world as-is and save the full diff.\n"
+                    + "The show engine will restore these blocks at show end."))))
+            .append(net.kyori.adventure.text.Component.text("   "))
+            .append(net.kyori.adventure.text.Component.text("[Discard]",
+                net.kyori.adventure.text.format.TextColor.color(0xFF5555))
+            .clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand(
+                "/scaena tech builddiscard"))
+            .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(
+                net.kyori.adventure.text.Component.text(
+                    "Discard this build session without saving.\n"
+                    + "World stays as-is (removed blocks remain gone)."))))
+        );
+    }
+
+    private void sendBuildSavePrompt(Player player, TechSession session, SetBuildSession build) {
+        int additions = build.additions().size();
+        player.sendMessage(MM.deserialize(
+            "<gold>Build session complete.</gold> "
+            + "<gray>" + additions + " block(s) placed.</gray>"));
+
+        player.sendMessage(
+            net.kyori.adventure.text.Component.text("[Save as new version]",
+                net.kyori.adventure.text.format.TextColor.color(0x55FF55))
+            .clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand(
+                "/scaena tech buildsave"))
+            .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(
+                net.kyori.adventure.text.Component.text("Save this as a new versioned set build.")))
+            .append(net.kyori.adventure.text.Component.text("   "))
+            .append(net.kyori.adventure.text.Component.text("[Discard]",
+                net.kyori.adventure.text.format.TextColor.color(0xFF5555))
+            .clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand(
+                "/scaena tech builddiscard"))
+            .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(
+                net.kyori.adventure.text.Component.text("Discard without saving."))))
+        );
+    }
+
+    private static String locStr(Location loc) {
+        return String.format("%d, %d, %d",
+            loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+    }
+
+    /** Resolve the prompt-book file for a given showId. */
+    private File promptBookFile(String showId) {
+        return new File(plugin.getDataFolder(),
+            "shows/" + showId + "/" + showId + ".prompt-book.yml");
+    }
+
+    // -----------------------------------------------------------------------
+    // Private: mark markers — TextDisplay entities at captured positions
+    // -----------------------------------------------------------------------
+
+    /**
+     * Spawn TextDisplay markers for every captured mark in the current scene.
+     * Called after scene load when captures have been read and set on the session.
+     */
+    private void spawnMarkMarkers(TechSession session, PromptBook.SceneSpec scene,
+                                   Map<String, CaptureEntry> captures) {
+        if (scene == null) return;
+        for (String markName : session.capturedMarkNames()) {
+            CaptureEntry cap = captures.get(markName);
+            if (cap == null) continue;
+            spawnMarkMarkerForName(session, scene, markName, captureToLocation(cap));
+        }
+    }
+
+    /**
+     * Spawn (or replace) a single TextDisplay marker.
+     * Determines label and color from the mark's role in the scene.
+     */
+    void spawnMarkMarkerForName(TechSession session, PromptBook.SceneSpec scene,
+                                String markName, Location loc) {
+        World world = loc.getWorld();
+        if (world == null) return;
+
+        // Determine label + color from mark role
+        String label = "◼ " + markName;
+        TextColor color = TextColor.color(0x55FFFF); // aqua default (set/block marks)
+
+        if (scene != null) {
+            if (markName.equals(scene.arrivalMark())) {
+                label = "📍 " + markName;
+                color = TextColor.color(0xFFD700); // gold — arrival
+            } else if (scene.hasCasting()) {
+                for (PromptBook.CastingEntry mob : scene.casting().entries()) {
+                    if (markName.equals(mob.mark())) {
+                        String name = mob.displayName() != null ? mob.displayName() : mob.role();
+                        label = "👤 " + name;
+                        color = TextColor.color(0x55FF55); // lime — mob spawn
+                        break;
+                    }
+                }
+            }
+        }
+
+        Location dispLoc = loc.clone().add(0, 0.5, 0);
+        TextDisplay display = (TextDisplay) world.spawnEntity(dispLoc, EntityType.TEXT_DISPLAY);
+        display.setPersistent(false);
+        display.setInvulnerable(true);
+        display.setBillboard(Display.Billboard.CENTER);
+        display.setViewRange(0.5f); // ~32 blocks
+        display.text(Component.text(label).color(color));
+        display.setBackgroundColor(Color.fromARGB(80, 0, 0, 0));
+
+        session.addMarkMarker(markName, display);
+    }
+
+    // -----------------------------------------------------------------------
     // Private: tear-down helpers
     // -----------------------------------------------------------------------
 
@@ -773,6 +1176,7 @@ public final class TechManager {
     private void tearDownScene(TechSession session) {
         despawnAll(session);
         restoreAllBlocks(session);
+        session.clearMarkMarkers();
         session.departmentMask().clear();
     }
 

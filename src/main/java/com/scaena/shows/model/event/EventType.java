@@ -23,6 +23,7 @@ public enum EventType {
 
     // §6.6 World and Environment
     WEATHER, TIME_OF_DAY, REDSTONE,
+    BLOCK_PLACE, BLOCK_REMOVE, BLOCK_STATE,
 
     // §6.7 Entity Management
     SPAWN_ENTITY, DESPAWN_ENTITY, CAPTURE_ENTITIES, RELEASE_ENTITIES,

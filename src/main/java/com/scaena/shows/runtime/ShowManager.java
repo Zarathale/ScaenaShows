@@ -226,6 +226,22 @@ public final class ShowManager {
             }
         }
 
+        // Restore block states modified by BLOCK_PLACE / BLOCK_REMOVE / BLOCK_STATE (OPS-004, OPS-008)
+        for (var entry : running.getBlockStateRestoreMap().entrySet()) {
+            String[] parts = entry.getKey().split(":", 4);
+            if (parts.length < 4) continue;
+            org.bukkit.World world = Bukkit.getWorld(parts[0]);
+            if (world == null) continue;
+            try {
+                int x = Integer.parseInt(parts[1]);
+                int y = Integer.parseInt(parts[2]);
+                int z = Integer.parseInt(parts[3]);
+                world.getBlockAt(x, y, z).setBlockData(entry.getValue(), false);
+            } catch (NumberFormatException ignored) {
+                log.warning("[ScaenaShows] Block restore: malformed key '" + entry.getKey() + "'");
+            }
+        }
+
         runningShows.remove(running.instanceId);
         log.info("[ScaenaShows] Show '" + running.show.id + "' (" + running.instanceId + ") ended.");
     }

@@ -158,7 +158,28 @@ public record PromptBook(
     // Set
     // -----------------------------------------------------------------------
 
-    public record DeptSet(List<SetEntry> entries) {}
+    /**
+     * World-scoped integer coordinate triple used for bbox corners.
+     * Stored in the prompt-book under set.bbox_min / set.bbox_max.
+     */
+    public record BboxPoint(String world, int x, int y, int z) {}
+
+    /**
+     * Set department for a scene.
+     *
+     * entries      — authored block changes (mark-positioned, always present if set is active)
+     * bboxMin/Max  — bounding box corners for build-mode change tracking; null if not yet defined
+     * activeBuild  — filename stem of the active set build version (no extension); null if none
+     */
+    public record DeptSet(
+        List<SetEntry> entries,
+        BboxPoint      bboxMin,
+        BboxPoint      bboxMax,
+        String         activeBuild
+    ) {
+        /** True if both bbox corners are defined. */
+        public boolean hasBbox() { return bboxMin != null && bboxMax != null; }
+    }
 
     /**
      * A block change at a named mark position.

@@ -76,9 +76,12 @@ public final class ExecutorRegistry {
         executors.put(EventType.FIREWORK_RANDOM, fw);
 
         // §6.6 World and Environment
-        executors.put(EventType.WEATHER,     world);
-        executors.put(EventType.TIME_OF_DAY, world);
-        executors.put(EventType.REDSTONE,    world);
+        executors.put(EventType.WEATHER,      world);
+        executors.put(EventType.TIME_OF_DAY,  world);
+        executors.put(EventType.REDSTONE,     world);
+        executors.put(EventType.BLOCK_PLACE,  world);
+        executors.put(EventType.BLOCK_REMOVE, world);
+        executors.put(EventType.BLOCK_STATE,  world);
 
         // §6.7 Entity Management
         executors.put(EventType.SPAWN_ENTITY,     entity);

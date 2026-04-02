@@ -197,24 +197,61 @@ public final class TechPanelBuilder {
             return;
         }
 
-        List<String> marks = collectMarkNames(scene);
-        if (marks.isEmpty()) {
-            player.sendMessage(MM.deserialize("<yellow>No marks defined for this scene.</yellow>"));
-            return;
+        TextColor COL_WARN   = TextColor.color(0xFFAA00);
+        TextColor COL_MODDED = TextColor.color(0xFFFF55);
+
+        player.sendMessage(Component.text("─── Mobs & Marks — click to capture ───", COL_SEP));
+
+        // ── Mob lines (casting entries) ──
+        if (scene.hasCasting() && !scene.casting().entries().isEmpty()) {
+            player.sendMessage(Component.text("  Mobs:", COL_ACTION));
+            for (PromptBook.CastingEntry mob : scene.casting().entries()) {
+                String name = mob.displayName() != null ? mob.displayName() : mob.role();
+                String mark = mob.mark();
+                boolean modified = mark != null && session.modifiedMarks().containsKey(mark);
+                boolean captured = mark != null && session.capturedMarkNames().contains(mark);
+
+                String statusSymbol = modified ? " ✎" : captured ? " ✓" : " ⚠";
+                TextColor statusColor = modified ? COL_MODDED : captured ? COL_ACTIVE : COL_WARN;
+                String hoverMsg = modified ? "modified this session"
+                                : captured  ? "captured — click to re-capture"
+                                :             "NOT YET CAPTURED — walk to spawn point, right-click slot 8";
+
+                Component line = Component.text("    ")
+                    .append(Component.text("[" + name + "]", COL_MARK)
+                        .clickEvent(mark != null
+                            ? ClickEvent.runCommand("/scaena tech capture " + mark)
+                            : ClickEvent.runCommand("/scaena tech panel"))
+                        .hoverEvent(HoverEvent.showText(Component.text(hoverMsg))))
+                    .append(Component.text(
+                        "  " + (mob.entityType() != null ? mob.entityType().toLowerCase() : ""),
+                        COL_INACTIVE))
+                    .append(Component.text(statusSymbol, statusColor));
+                player.sendMessage(line);
+            }
         }
 
-        player.sendMessage(Component.text("Mark list — click to enter capture mode:", COL_HEADER));
-        for (String mark : marks) {
-            boolean modified = session.modifiedMarks().containsKey(mark);
-            Component btn = Component.text("  [" + mark + "]",
-                    modified ? TextColor.color(0xFFFF55) : COL_MARK)
-                .clickEvent(ClickEvent.runCommand("/scaena tech capture " + mark))
-                .hoverEvent(HoverEvent.showText(
-                    Component.text("Focus \"" + mark + "\" — walk to position and right-click slot 8")));
-            player.sendMessage(btn);
+        // ── Other marks (arrival + set) ──
+        List<String> otherMarks = collectNonCastingMarkNames(scene);
+        if (!otherMarks.isEmpty()) {
+            player.sendMessage(Component.text("  Other marks:", COL_ACTION));
+            for (String mark : otherMarks) {
+                boolean modified = session.modifiedMarks().containsKey(mark);
+                boolean captured = session.capturedMarkNames().contains(mark);
+                String statusSymbol = modified ? " ✎" : captured ? " ✓" : " ⚠";
+                TextColor col = modified ? COL_MODDED : captured ? COL_ACTIVE : COL_WARN;
+
+                player.sendMessage(
+                    Component.text("    [" + mark + "]", COL_MARK)
+                        .append(Component.text(statusSymbol, col))
+                        .clickEvent(ClickEvent.runCommand("/scaena tech capture " + mark))
+                        .hoverEvent(HoverEvent.showText(Component.text("Capture mark: " + mark))));
+            }
         }
+
+        player.sendMessage(Component.text("  ✓ captured  ⚠ missing  ✎ modified", COL_INACTIVE));
         player.sendMessage(
-            Component.text("  [Cancel]", COL_DISCARD)
+            Component.text("  [← Back]", COL_DISCARD)
                 .clickEvent(ClickEvent.runCommand("/scaena tech panel"))
                 .hoverEvent(HoverEvent.showText(Component.text("Return to main panel"))));
     }
@@ -304,6 +341,18 @@ public final class TechPanelBuilder {
                 .map(PromptBook.CastingEntry::mark)
                 .filter(m -> m != null).forEach(marks::add);
         }
+        if (scene.hasSet()) {
+            scene.set().entries().stream()
+                .map(PromptBook.SetEntry::mark)
+                .filter(m -> m != null).forEach(marks::add);
+        }
+        return List.copyOf(marks);
+    }
+
+    /** Arrival mark + set marks — everything except casting mob spawns. */
+    private static List<String> collectNonCastingMarkNames(PromptBook.SceneSpec scene) {
+        java.util.LinkedHashSet<String> marks = new java.util.LinkedHashSet<>();
+        if (scene.arrivalMark() != null) marks.add(scene.arrivalMark());
         if (scene.hasSet()) {
             scene.set().entries().stream()
                 .map(PromptBook.SetEntry::mark)

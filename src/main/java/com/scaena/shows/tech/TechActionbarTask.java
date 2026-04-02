@@ -8,10 +8,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 /**
  * Repeating task (every 5 ticks) that keeps the actionbar updated during a tech session.
  *
- * Three display modes:
- *   Normal    — "TECH · [show_id] · [scene_label]"
- *   Capture   — "📍 CAPTURING: [mark_name] | (x.x, y.y, z.z) | right-click to capture"
- *   Confirm   — brief confirmation message, clears after 2 seconds (managed by confirmTask)
+ * Display modes (priority order):
+ *   Confirm      — brief confirmation flash, clears after 2 seconds
+ *   Capture      — "📍 [mark] | x, y, z | Use slot 8 to [set arrival point | capture]"
+ *   Param scroll — "⚙ [param] = [value]  [controls]"
+ *   Normal       — "TECH · [show_id] · [scene_label]  [✎ if dirty]"
  */
 public final class TechActionbarTask extends BukkitRunnable {
 
@@ -50,16 +51,20 @@ public final class TechActionbarTask extends BukkitRunnable {
 
         // Capture mode — live coordinates
         if (session.captureMode()) {
-            Location loc = session.player().getLocation();
-            String mark  = session.focusedMark();
+            Location loc  = session.player().getLocation();
+            String mark   = session.focusedMark();
             String coords = String.format("%.1f, %.1f, %.1f",
                 loc.getX(), loc.getY(), loc.getZ());
+            boolean isArrival = isArrivalMark(mark);
 
-            return Component.text("📍 CAPTURING: ", COL_CAPTURE)
+            return Component.text("📍 ", COL_CAPTURE)
                 .append(Component.text(mark != null ? mark : "?", COL_WARN))
                 .append(Component.text(" | ", COL_SEP))
                 .append(Component.text(coords, COL_SCENE))
-                .append(Component.text(" | right-click slot 8 to capture", COL_SEP));
+                .append(Component.text(
+                    isArrival ? " | Use slot 8 to set arrival point"
+                              : " | Use slot 8 to capture",
+                    COL_SEP));
         }
 
         // Param scroll mode
@@ -105,5 +110,15 @@ public final class TechActionbarTask extends BukkitRunnable {
 
     private static String formatDouble(double d) {
         return d == Math.floor(d) ? String.valueOf((long) d) : String.valueOf(d);
+    }
+
+    /**
+     * Returns true if the given mark name is the arrival mark for the current scene.
+     * Used to pick the right prompt text in capture mode.
+     */
+    private boolean isArrivalMark(String markName) {
+        if (markName == null) return false;
+        PromptBook.SceneSpec scene = session.book().findScene(session.currentSceneId());
+        return scene != null && markName.equals(scene.arrivalMark());
     }
 }

@@ -11,6 +11,7 @@ import com.scaena.shows.runtime.PlayerLifecycleListener;
 import com.scaena.shows.runtime.ShowManager;
 import com.scaena.shows.runtime.executor.ExecutorRegistry;
 import com.scaena.shows.scout.ScoutManager;
+import com.scaena.shows.tech.BlockBuildListener;
 import com.scaena.shows.tech.TechHotbarListener;
 import com.scaena.shows.tech.TechManager;
 import org.bukkit.command.PluginCommand;
@@ -120,6 +121,10 @@ public final class ScaenaShowsPlugin extends JavaPlugin {
         // 9b-tech. Tech hotbar + chat listener
         getServer().getPluginManager().registerEvents(
             new TechHotbarListener(techManager, this), this);
+
+        // 9c-tech. Block build listener — tracks placed/removed blocks during build mode
+        getServer().getPluginManager().registerEvents(
+            new BlockBuildListener(techManager), this);
 
         // 9b. Entity combat listener — drives BOSS_HEALTH_BAR progress + death hooks (OPS-026)
         getServer().getPluginManager().registerEvents(
