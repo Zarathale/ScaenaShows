@@ -2,7 +2,7 @@
 show_id: showcase.01
 document: Status
 stage: Brief
-last_updated: 2026-04-01
+last_updated: 2026-04-02
 ---
 
 # showcase.01 "Preparing for Battle" — Current Status
@@ -11,7 +11,24 @@ last_updated: 2026-04-01
 **Brief / R0 Preview** — Gates 1 and 2 closed. Scouting in progress. Sneak preview YAML authored (R0). Tech Rehearsal Mode available (OPS-027, v2.21.0).
 
 ## Last Session
-2026-04-01 (session 8). OPS-027 shipped — Tech Rehearsal Mode Phase 1 implemented. Prompt Book created and show-params.md retired.
+2026-04-02 (session 9). Phase 2 spec refinement — no show changes. See below.
+
+**Session 9 work (2026-04-02):**
+
+- **Ops-inbox cleanup.** OPS-001, OPS-002, OPS-010 moved to Resolved (superseded by OPS-027);
+  OPS-011 closed (not re-filed); OPS-026 stale placeholder removed.
+- **Phase 2 spec (tech-rehearsal-phase2-spec.md) updated to v2.** Key decisions:
+  - Phase 2 requires Phase 1 active AND show YAML exists — not standalone
+  - Phase 2 is a **refinement tool** for YAML from a prior authoring pass, not blank-canvas creation
+  - `ShowYamlEditor` narrowed to four targeted operations: param patch, tick shift, event insert, event remove
+  - Q2 (in-game cue creation) locked out of Phase 2 scope; Phase 2.1 item
+  - PREV editorial intent: returns to Edit mode pre-focused on the cue just rewound from
+  - Dirty flag stale annotation corrected
+  - Q4 opened: partial/early YAML handling — to explore next session
+- **`tech-rehearsal-architecture.md` marked inactive** (superseded by Phase 1 building spec + Phase 2 spec)
+- **Phase 2 stubs removed from TechSession** in `ops-027-building-spec.md` (TechCueSession owns Phase 2 state)
+
+**Previously: 2026-04-01 (session 8):** OPS-027 shipped — Tech Rehearsal Mode Phase 1 implemented. Prompt Book created and show-params.md retired.
 
 **Session 8 work (2026-04-01):**
 
