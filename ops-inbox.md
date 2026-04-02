@@ -230,6 +230,16 @@ Block modifications currently require the `COMMAND` escape hatch. COMMAND-placed
 
 **Proposed:** Add `BLOCK_PLACE` and `BLOCK_REMOVE` event types. On `BLOCK_PLACE`, record the original block type at the target location in `RunningShow`. On show end (natural or interrupted), `applyStopSafety` restores original blocks. This brings block modification inside the cleanup contract.
 
+**OPS-027 note (2026-04-01):** The implementation pattern for this is fully proven in
+`TechManager.materializeSet()`. That method builds `"minecraft:" + blockType + "[" + blockState + "]"`,
+applies it via `block.setBlockData()`, and records a `BlockSnapshot` (original `BlockData` + coords)
+for restore on DISMISS. The remaining gap is lifting this into `EventExecutor` + `RunningShow.applyStopSafety()`
+for show-time execution. **Implementation cost is now low — the architecture is solved.**
+
+Also note: OPS-004 and OPS-008 could be consolidated into a single `BLOCK_SET` event type using the
+same unified model (blockType + blockState) rather than separate PLACE/REMOVE/STATE events.
+Worth considering when scoping implementation.
+
 ---
 
 ---
@@ -349,17 +359,25 @@ restores original block data. This brings block state changes inside the cleanup
 
 **Note:** The existing `BLOCK_PLACE` / `BLOCK_REMOVE` ops-inbox item handles adding/removing
 blocks. This item is narrower and distinct — it only changes the state of an already-present
-block (lit, open, powered, etc.) without altering block type.
+block (lit, open, powered, etc.) without altering block type. However, see OPS-027 note below —
+consolidating both into a single `BLOCK_SET` event is worth considering.
 
-**Priority:** Medium — showcase.01 will use sound-only (`block.blastfurnace.fire_crackle`) as
-a bridge until this is implemented. Visual furnace glow at home base is blocked on this fix.
+**Priority:** Low-medium — showcase.01 bridge: the blast furnace `lit=true` state is defined
+in `showcase.01.prompt-book.yml` under `site_a.departments.set` and can be pre-applied via
+`/scaena tech showcase.01 site_a` before running the show. This covers the use case without
+a show-YAML event type during scouting and early development. The visual furnace glow is
+unblocked for production once sites are scouted and tech mode is exercised.
 
-**Cross-use note:** When BLOCK_STATE is implemented for the blast furnace, campfire
-lighting-on-arrival (setting `lit: true` on a pre-placed, unlit campfire) is a natural
-secondary use case for the same event type. Any campfire-as-set-piece that should arrive
-dark and then light when the scene begins can be handled by the same `BLOCK_STATE`
-mechanism. Worth documenting as a second scenario when this item is scoped for
-implementation.
+**OPS-027 note (2026-04-01):** The implementation pattern for this is fully proven in
+`TechManager.materializeSet()`. The same unified `blockType + blockState` model (building
+`"minecraft:blast_furnace[lit=true]"` → `setBlockData()` with a `BlockSnapshot` for restore)
+is exactly what a `BLOCK_STATE` show event would use. **Implementation cost is now low — the
+architecture is solved.** The remaining work is wiring it into `EventExecutor` and
+`RunningShow.applyStopSafety()`. See also OPS-004 for consolidation note.
+
+**Cross-use note:** Campfire lighting-on-arrival (`lit: true` on a pre-placed, unlit campfire)
+is a natural secondary use case. Any campfire-as-set-piece that should arrive dark and light
+when the scene begins uses the same mechanism.
 
 ---
 
@@ -1036,19 +1054,4 @@ Added `powerVariation`, `colorVariation`, `gradientFrom`, `gradientTo` fields to
 
 ---
 
-### OPS-028 [open] Scene Numbering Convention — Stage Management owns
-
-**Area:** Stage Management
-**Filed:** 2026-04-01
-**Priority:** Medium — needed before prompt-book schema stabilizes across multiple shows
-
-Stage Management defines and documents the decimal scene numbering scheme used in
-`prompt-book.yml` `scene_number` fields. The numbering determines scene sort order in
-Tech Mode navigation and any future scene-indexed features.
-
-Convention currently in use: decimal strings (`"00"`, `"00.1"`, `"01"`, `"10.1"`) sorted
-via `Double.parseDouble()` comparison (so "00.1" = 0.1 < "01" = 1.0 < "10.1" = 10.1).
-Stage Management documents the convention, the rules for inserting subscenes, and how
-renumbering works when scenes are added or removed.
-
-Unblock before: adding a second show with complex scene structure to the prompt-book schema.
+### OPS-028 ~~[open]~~ → **RESOLVED** — see Resolved section above
