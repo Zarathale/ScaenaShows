@@ -38,68 +38,10 @@ Items here are queued for the Java review team. Each entry has enough context to
 
 ---
 
-### OPS-005 [java-gap] No smooth yaw rotation (ROTATE event)
-
-**Area:** Effects Director (Camera specialty), Choreography
-**Event:** (new — does not exist)
-**Filed:** 2026-03-25
-
-`FACE` is instant. No first-class primitive exists for gradual camera panning (yaw rotation without position movement). Current workaround is rapid PLAYER_TELEPORT sequences, which is imprecise.
-
-#### Schema
-
-**ROTATE** — bar; smoothly rotate target's yaw to a destination angle
-```yaml
-type: ROTATE
-target: player | entity:spawned:Herald | group_1
-yaw: 270.0          # absolute target yaw in degrees
-                    # OR
-delta: +90.0        # relative rotation from current yaw (+ = clockwise, – = counter-clockwise)
-duration_ticks: 40  # 0 or omitted = instant (point-in-time; same effect as FACE compass:...)
-```
-
-`yaw` and `delta` are mutually exclusive. If both are present, `delta` wins.
-
-**Yaw convention:** matches Minecraft's — 0.0 = south, 90.0 = west, 180.0 = north, 270.0 = east.
-
-#### Implementation notes
-
-`BukkitRunnable` fires once per tick from current yaw toward target yaw, linear interpolation across `duration_ticks`. XYZ is not touched — pure rotation only. On completion the task self-cancels; on `/show stop`, the RunningShow cleanup loop cancels any active rotate tasks.
-
-**Wrap-around:** when `yaw:` (absolute) is used, normalize the delta to [−180, +180] before stepping so the interpolator always takes the shorter arc. With `delta:` the author has explicit control and the sign is respected as-written — a `delta: +350.0` really does spin 350° clockwise.
-
-**For entities:** `entity.teleport(entity.getLocation())` with only yaw updated each tick — same approach as CROSS_TO's repeated-teleport path but yaw-only. **For players:** same repeated-teleport approach; no NMS required.
-
-**Stop-safety:** active ROTATE tasks go in `RunningShow.activeRotateTasks` (Set<BukkitTask>), cancelled in `stopShow()` alongside other bar tasks. No state restoration needed — yaw is left wherever the pan ends.
-
-**Relationship to FACE:** `ROTATE` with `duration_ticks: 0` or omitted is functionally identical to `FACE`. No deprecation — FACE remains the readable choice for snap cuts. ROTATE is for pans.
-
-**Priority:** Low — no current show is blocked. High value-to-effort once camera work begins on showcase.02 or showcase.03.
-
+### OPS-005 ~~[java-gap]~~ → **RESOLVED in 2.26.0** — see Resolved section below
 ---
 
----
-
----
-
-### OPS-006 [java-gap] `capture_mode: live` parsed but not implemented
-
-**Area:** Casting Director
-**Event:** `CAPTURE_ENTITIES`
-**Filed:** 2026-03-25 (Casting KB build)
-
-`CaptureEntitiesEvent` stores `captureMode` as a string, but `EntityEventExecutor.handleCapture()`
-always performs a one-time snapshot sweep into a UUID list, regardless of the field value.
-There is no re-sweep logic for `live` mode.
-
-**Impact:** `capture_mode: live` behaves identically to `capture_mode: snapshot`. The field is
-a silent no-op.
-
-**Fix scope:** Add a runtime mechanism for live-mode groups: store the original sweep parameters
-(entityType, radius, anchor) alongside the group in `RunningShow`. When a live-mode group is
-targeted, perform a fresh `getNearbyEntities()` sweep at the time of event execution rather than
-resolving from the stored UUID list.
-
+### OPS-006 ~~[java-gap]~~ → **RESOLVED in 2.26.0** — see Resolved section below
 ---
 
 ---
@@ -112,47 +54,7 @@ resolving from the stored UUID list.
 
 ---
 
-### OPS-007 [java-gap] No native item frame content event (SET_ITEM_FRAME)
-
-**Area:** Set Director, Stage Manager
-**Event:** (new — does not exist)
-**Filed:** 2026-03-28 (showcase.01 — original context was "The Cabinet"; show direction
-has since changed, but the capability gap remains valid for any future show using
-progressive item frame display as a mechanic)
-
-Currently the only way to set an item frame's displayed item is via the COMMAND escape
-hatch:
-```
-/data modify entity @e[type=item_frame,name="frame_B",limit=1] Item set value {id:"...",Count:1b}
-```
-This works, but COMMAND is outside the stop-safety contract and requires precise entity
-naming discipline.
-
-#### Schema
-
-**SET_ITEM_FRAME** — point-in-time
-```yaml
-type: SET_ITEM_FRAME
-target: entity:world:frame_east | entity:spawned:frame_east
-item: minecraft:saddle          # namespaced item ID; minecraft:air clears the frame
-# optional
-visible: true                   # show/hide the frame border; default: no change
-fixed: true                     # lock frame so players can't interact; default: no change
-rotation: 0                     # 0–7, maps to Rotation enum (NONE through CLOCKWISE_315)
-```
-
-`visible`, `fixed`, and `rotation` are no-change when omitted — authors only touch what they care about. `item: minecraft:air` calls `frame.setItem(null)` (empty frame), consistent with Minecraft's own representation.
-
-#### Implementation notes
-
-Resolve target entity via existing `entity:world` / `entity:spawned` path → cast to `ItemFrame` → `frame.setItem(new ItemStack(Material.matchMaterial(item)))`. Apply `visible`, `fixed`, and `rotation` fields when present.
-
-**Stop-safety for `entity:world` targets:** before modifying, snapshot original item (`frame.getItem().clone()`), `visible`, and `rotation` into a new `RunningShow.itemFrameRestoreMap` (Map<UUID, ItemFrameSnapshot>). Restore all entries in `stopShow()`. For `entity:spawned` targets the frame is despawned at show end — no snapshot needed.
-
-**Priority:** Low — no current show depends on this. Worth addressing before any show uses progressive item frame display as a core mechanic. Replaces the `COMMAND` NBT workaround and brings item frame state into the stop-safety contract.
-
----
-
+### OPS-007 ~~[java-gap]~~ → **RESOLVED in 2.26.0** — see Resolved section below
 ### OPS-008 ~~[java-gap]~~ → **RESOLVED in 2.23.0** — see Resolved section below
 
 ---
@@ -614,6 +516,59 @@ No new event types needed. Scaffold output uses existing `CUE` references. The g
 ---
 
 ## Resolved
+
+---
+
+### OPS-005 [resolved] ROTATE — smooth yaw rotation event ✓
+**Resolved:** 2026-04-03 | **Filed:** 2026-03-25 | **Area:** Effects Director, Choreography
+**Version:** 2.26.0
+
+Implementation was already complete in the codebase; ticket not previously closed.
+
+**What shipped:**
+- `StageEvents.RotateEvent` — data class with `target`, `yaw` (absolute), `delta` (relative, signed), `durationTicks`; `isDelta()` helper; mutual exclusivity enforced (`delta` wins if both present)
+- `StageEventExecutor.handleRotate()` — resolves all entities in target; instant snap if `durationTicks ≤ 0`; smooth pan via `BukkitRunnable` (1-tick interval) with linear interpolation across `durationTicks` steps; shorter-arc normalisation for absolute `yaw:` targets; signed `delta:` respected as-written
+- `RunningShow.activeRotateTasks` + `addRotateTask()` + `cancelRotateTasks()` — task set registered for stop-safety cleanup
+- `ShowManager.stopShow()` — calls `running.cancelRotateTasks()` before block/frame restore loops
+- `EventType.ROTATE`, `EventParser` entry, `ExecutorRegistry` routing — all wired
+
+**Contract:** `yaw:` (absolute) always takes the shorter arc via normalisation to [−180, +180]. `delta:` (relative) applies the signed rotation as-written — authors control direction explicitly. `duration_ticks: 0` or omitted = instant snap, identical to `FACE`. No state restoration on stop — yaw is left wherever the pan ends.
+
+---
+
+### OPS-006 [resolved] `capture_mode: live` for CAPTURE_ENTITIES ✓
+**Resolved:** 2026-04-03 | **Filed:** 2026-03-25 | **Area:** Casting Director
+**Version:** 2.26.0
+
+Implementation was already complete in the codebase; ticket not previously closed.
+
+**What shipped:**
+- `RunningShow.LiveGroupSpec` record — stores `entityType`, `radius`, `maxCount`, `captureAnchor` instead of a UUID list
+- `RunningShow.liveEntityGroups` map — parallel to `entityGroups`; populated by `setLiveEntityGroup()`
+- `RunningShow.resolveEntityGroup()` — checks `liveEntityGroups` first; if found, performs a fresh `getNearbyEntities()` sweep at the frozen capture-time anchor on every call; falls back to snapshot UUID list otherwise
+- `RunningShow.releaseEntityGroup()` — clears both maps (covers live and snapshot modes)
+- `EntityEventExecutor.handleCapture()` — branches on `"live".equalsIgnoreCase(captureMode)`: registers `LiveGroupSpec` via `setLiveEntityGroup()`, skips the UUID sweep entirely
+- `resolveEntity()` and `resolveEntities()` in EntityEventExecutor — both call `show.resolveEntityGroup()` for `entity_group:` targets, transparently getting live or snapshot resolution
+
+**Contract:** `capture_mode: snapshot` (default) — UUID list frozen at capture time, unchanged. `capture_mode: live` — no UUID list; fresh spatial sweep at the frozen anchor on every use, respecting `max_count`.
+
+---
+
+### OPS-007 [resolved] SET_ITEM_FRAME — native item frame content event ✓
+**Resolved:** 2026-04-03 | **Filed:** 2026-03-28 | **Area:** Set Director, Stage Manager
+**Version:** 2.26.0
+
+Implementation was already complete in the codebase; ticket not previously closed.
+
+**What shipped:**
+- `WorldEvents.SetItemFrameEvent` — data class with `target`, `item`, `visible`, `fixed`, `rotation` (all optional except target)
+- `WorldEventExecutor.handleSetItemFrame()` — resolves frame via `entity:world` or `entity:spawned`; applies item + optional state fields; snapshots originals for stop-safety
+- `RunningShow.ItemFrameSnapshot` record + `itemFrameRestoreMap` — per-UUID snapshots taken before first modification (`putIfAbsent` = original state always wins)
+- `ShowManager.stopShow()` restore loop — iterates `getItemFrameRestoreMap()`, restores item, visible, fixed, rotation on all world-targeted frames
+- `ExecutorRegistry` routing: `SET_ITEM_FRAME → WorldEventExecutor`
+- `EventType.SET_ITEM_FRAME` + `EventParser` entry — fully wired
+
+**Contract:** `entity:world` targets fully stop-safe. `entity:spawned` targets despawned at show end, no restore needed. All optional fields use null = no-change semantics. `item: minecraft:air` clears the frame (`frame.setItem(null)`).
 
 ---
 
