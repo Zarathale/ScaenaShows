@@ -36,6 +36,7 @@ public final class StageEventExecutor implements EventExecutor {
         switch (event.type()) {
             case HOLD        -> handleHold((HoldEvent) event, show);
             case FACE        -> handleFace((FaceEvent) event, show);
+            case ROTATE      -> handleRotate((RotateEvent) event, show);
             case CROSS_TO    -> handleCrossTo((CrossToEvent) event, show);
             case RETURN_HOME -> handleReturnHome((ReturnHomeEvent) event, show);
             case ENTER       -> handleEnter((EnterEvent) event, show);
@@ -75,6 +76,66 @@ public final class StageEventExecutor implements EventExecutor {
             newLoc.setYaw(yaw);
             newLoc.setPitch(pitch);
             entity.teleport(newLoc);
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // ROTATE — smoothly rotate target's yaw to a destination angle (OPS-005)
+    //
+    // Supports absolute yaw: or relative delta: (sign = direction; spec §OPS-005).
+    // duration_ticks: 0 or omitted = instant snap (same effect as FACE compass:...).
+    // Wrap-around: for absolute yaw, normalise the interpolation delta to [−180, +180]
+    // so the route is always the shorter arc.
+    // With delta: the sign is respected as-written — authors control the direction.
+    // ------------------------------------------------------------------
+    private void handleRotate(RotateEvent e, RunningShow show) {
+        for (Entity entity : resolveEntities(e.target, show)) {
+            float currentYaw = entity.getLocation().getYaw();
+            float targetYaw;
+
+            if (e.isDelta()) {
+                // Relative: apply signed delta directly
+                targetYaw = currentYaw + e.delta;
+            } else {
+                // Absolute: take the shorter arc to reach the target yaw
+                targetYaw = e.yaw;
+            }
+
+            if (e.durationTicks <= 0) {
+                // Instant snap
+                Location loc = entity.getLocation();
+                loc.setYaw(targetYaw);
+                entity.teleport(loc);
+            } else {
+                // Smooth pan: compute per-tick yaw step, linear interpolation
+                float rawDelta = targetYaw - currentYaw;
+                if (!e.isDelta()) {
+                    // Normalise to [−180, +180] for the shorter arc
+                    rawDelta = ((rawDelta + 180f) % 360f + 360f) % 360f - 180f;
+                }
+                final float totalDelta = rawDelta;
+                final int steps = e.durationTicks;
+                final float startYaw = currentYaw;
+                final Entity target = entity;
+
+                BukkitTask task = new BukkitRunnable() {
+                    int step = 0;
+                    @Override
+                    public void run() {
+                        if (!show.isRunning() || !target.isValid() || ++step > steps) {
+                            cancel();
+                            return;
+                        }
+                        float fraction = (float) step / steps;
+                        float newYaw = startYaw + totalDelta * fraction;
+                        Location loc = target.getLocation();
+                        loc.setYaw(newYaw);
+                        target.teleport(loc);
+                    }
+                }.runTaskTimer(plugin, 1L, 1L);
+
+                show.addRotateTask(task);
+            }
         }
     }
 
@@ -286,7 +347,7 @@ public final class StageEventExecutor implements EventExecutor {
         if (target.startsWith("entity_group:")) {
             String name = target.substring(13);
             List<Entity> out = new java.util.ArrayList<>();
-            for (UUID uid : show.getEntityGroup(name)) {
+            for (UUID uid : show.resolveEntityGroup(name)) {   // OPS-006: handles live + snapshot
                 Entity e = Bukkit.getEntity(uid);
                 if (e != null) out.add(e);
             }

@@ -226,6 +226,21 @@ public final class ShowManager {
             }
         }
 
+        // Cancel any in-progress ROTATE tasks (OPS-005)
+        running.cancelRotateTasks();
+
+        // Restore item frames modified by SET_ITEM_FRAME (OPS-007)
+        for (var entry : running.getItemFrameRestoreMap().entrySet()) {
+            org.bukkit.entity.Entity frameEntity = Bukkit.getEntity(entry.getKey());
+            if (frameEntity instanceof org.bukkit.entity.ItemFrame frame) {
+                RunningShow.ItemFrameSnapshot snap = entry.getValue();
+                frame.setItem(snap.item());
+                frame.setVisible(snap.visible());
+                frame.setFixed(snap.fixed());
+                frame.setRotation(snap.rotation());
+            }
+        }
+
         // Restore block states modified by BLOCK_PLACE / BLOCK_REMOVE / BLOCK_STATE (OPS-004, OPS-008)
         for (var entry : running.getBlockStateRestoreMap().entrySet()) {
             String[] parts = entry.getKey().split(":", 4);

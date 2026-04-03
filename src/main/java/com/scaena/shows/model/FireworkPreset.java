@@ -12,8 +12,7 @@ public record FireworkPreset(
     String id,
     String displayName,
     int power,
-    List<FireworkStar> stars,
-    FireworkLaunch launch
+    List<FireworkStar> stars
 ) {
     @SuppressWarnings("unchecked")
     public static FireworkPreset from(String id, Map<String, Object> m) {
@@ -30,8 +29,7 @@ public record FireworkPreset(
             }
         }
 
-        FireworkLaunch launch = FireworkLaunch.from(m.get("launch"));
-        return new FireworkPreset(id, displayName, power, List.copyOf(stars), launch);
+        return new FireworkPreset(id, displayName, power, List.copyOf(stars));
     }
 
     private static String str(Map<String, Object> m, String key, String def) {

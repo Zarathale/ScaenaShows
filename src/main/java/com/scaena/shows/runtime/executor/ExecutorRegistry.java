@@ -76,12 +76,13 @@ public final class ExecutorRegistry {
         executors.put(EventType.FIREWORK_RANDOM, fw);
 
         // §6.6 World and Environment
-        executors.put(EventType.WEATHER,      world);
-        executors.put(EventType.TIME_OF_DAY,  world);
-        executors.put(EventType.REDSTONE,     world);
-        executors.put(EventType.BLOCK_PLACE,  world);
-        executors.put(EventType.BLOCK_REMOVE, world);
-        executors.put(EventType.BLOCK_STATE,  world);
+        executors.put(EventType.WEATHER,         world);
+        executors.put(EventType.TIME_OF_DAY,     world);
+        executors.put(EventType.REDSTONE,        world);
+        executors.put(EventType.BLOCK_PLACE,     world);
+        executors.put(EventType.BLOCK_REMOVE,    world);
+        executors.put(EventType.BLOCK_STATE,     world);
+        executors.put(EventType.SET_ITEM_FRAME,  world);   // OPS-007
 
         // §6.7 Entity Management
         executors.put(EventType.SPAWN_ENTITY,     entity);
@@ -100,6 +101,7 @@ public final class ExecutorRegistry {
         // §6.9 Stage Directions
         executors.put(EventType.HOLD,        stage);
         executors.put(EventType.FACE,        stage);
+        executors.put(EventType.ROTATE,      stage);   // OPS-005
         executors.put(EventType.CROSS_TO,    stage);
         executors.put(EventType.RETURN_HOME, stage);
         executors.put(EventType.ENTER,       stage);

@@ -70,9 +70,10 @@ public final class EventParser {
                 case WEATHER      -> new WorldEvents.WeatherEvent(m);
                 case TIME_OF_DAY  -> new WorldEvents.TimeOfDayEvent(m);
                 case REDSTONE     -> new WorldEvents.RedstoneEvent(m);
-                case BLOCK_PLACE  -> new WorldEvents.BlockPlaceEvent(m);
-                case BLOCK_REMOVE -> new WorldEvents.BlockRemoveEvent(m);
-                case BLOCK_STATE  -> new WorldEvents.BlockStateEvent(m);
+                case BLOCK_PLACE    -> new WorldEvents.BlockPlaceEvent(m);
+                case BLOCK_REMOVE   -> new WorldEvents.BlockRemoveEvent(m);
+                case BLOCK_STATE    -> new WorldEvents.BlockStateEvent(m);
+                case SET_ITEM_FRAME -> new WorldEvents.SetItemFrameEvent(m);    // OPS-007
                 // §6.7 Entity management
                 case SPAWN_ENTITY      -> new EntityMgmtEvents.SpawnEntityEvent(m);
                 case DESPAWN_ENTITY    -> new EntityMgmtEvents.DespawnEntityEvent(m);
@@ -88,6 +89,7 @@ public final class EventParser {
                 // §6.9 Stage directions
                 case HOLD        -> new StageEvents.HoldEvent(m);
                 case FACE        -> new StageEvents.FaceEvent(m);
+                case ROTATE      -> new StageEvents.RotateEvent(m);              // OPS-005
                 case CROSS_TO    -> new StageEvents.CrossToEvent(m);
                 case RETURN_HOME -> new StageEvents.ReturnHomeEvent(m);
                 case ENTER       -> new StageEvents.EnterEvent(m);

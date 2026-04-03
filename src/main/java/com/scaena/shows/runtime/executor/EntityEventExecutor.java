@@ -163,11 +163,24 @@ public final class EntityEventExecutor implements EventExecutor {
 
     // ------------------------------------------------------------------
     // CAPTURE_ENTITIES
+    // capture_mode: snapshot (default) — UUID list frozen at capture time.
+    // capture_mode: live (OPS-006)     — sweep params stored; fresh sweep on use.
     // ------------------------------------------------------------------
     private void handleCapture(CaptureEntitiesEvent e, RunningShow show) {
         Location anchor = show.getAnchorLocation();
         if (anchor == null) return;
 
+        if ("live".equalsIgnoreCase(e.captureMode)) {
+            // Register live group: store sweep params, defer actual sweep to resolution time
+            RunningShow.LiveGroupSpec spec = new RunningShow.LiveGroupSpec(
+                e.entityType, e.radius, e.maxCount, anchor.clone());
+            show.setLiveEntityGroup(e.groupName, spec);
+            log.fine("[ScaenaShows] CAPTURE_ENTITIES: registered live group '" + e.groupName
+                + "' (type=" + e.entityType + ", radius=" + e.radius + ")");
+            return;
+        }
+
+        // Snapshot mode: one-time sweep into UUID list
         EntityType type;
         try { type = EntityType.valueOf(e.entityType.toUpperCase()); }
         catch (IllegalArgumentException ex) {
@@ -345,7 +358,8 @@ public final class EntityEventExecutor implements EventExecutor {
 
     /**
      * Resolve a target string to an Entity.
-     * Supported: entity:spawned:Name, entity_group:Name (returns first member)
+     * Supported: entity:spawned:Name, entity_group:Name (returns first member), entity:world:Name
+     * entity_group: resolution uses resolveEntityGroup() to handle live + snapshot modes (OPS-006).
      */
     private Entity resolveEntity(String target, RunningShow show) {
         if (target == null) return null;
@@ -355,7 +369,7 @@ public final class EntityEventExecutor implements EventExecutor {
         }
         if (target.startsWith("entity_group:")) {
             String groupName = target.substring("entity_group:".length());
-            List<UUID> group = show.getEntityGroup(groupName);
+            List<UUID> group = show.resolveEntityGroup(groupName);   // OPS-006
             if (group.isEmpty()) return null;
             return Bukkit.getEntity(group.get(0));
         }
@@ -373,6 +387,7 @@ public final class EntityEventExecutor implements EventExecutor {
 
     /**
      * Resolve a target string to a list of entities (supports entity_group).
+     * entity_group: uses resolveEntityGroup() to handle live + snapshot modes (OPS-006).
      */
     private List<Entity> resolveEntities(String target, RunningShow show) {
         if (target == null) return List.of();
@@ -382,7 +397,7 @@ public final class EntityEventExecutor implements EventExecutor {
         }
         if (target.startsWith("entity_group:")) {
             String groupName = target.substring("entity_group:".length());
-            List<UUID> uuids = show.getEntityGroup(groupName);
+            List<UUID> uuids = show.resolveEntityGroup(groupName);   // OPS-006
             List<Entity> out = new ArrayList<>();
             for (UUID uid : uuids) {
                 Entity e = Bukkit.getEntity(uid);

@@ -24,6 +24,7 @@ public enum EventType {
     // §6.6 World and Environment
     WEATHER, TIME_OF_DAY, REDSTONE,
     BLOCK_PLACE, BLOCK_REMOVE, BLOCK_STATE,
+    SET_ITEM_FRAME,
 
     // §6.7 Entity Management
     SPAWN_ENTITY, DESPAWN_ENTITY, CAPTURE_ENTITIES, RELEASE_ENTITIES,
@@ -33,7 +34,7 @@ public enum EventType {
     ENTITY_INVISIBLE, ENTITY_VELOCITY,
 
     // §6.9 Stage Directions
-    HOLD, FACE, CROSS_TO, RETURN_HOME, ENTER, EXIT,
+    HOLD, FACE, ROTATE, CROSS_TO, RETURN_HOME, ENTER, EXIT,
 
     // §6.10 Player Movement
     PLAYER_TELEPORT, PLAYER_VELOCITY, PLAYER_SPECTATE,

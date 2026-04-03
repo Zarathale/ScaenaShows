@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.scaena"
-version = "2.23.0"
+version = "2.25.0"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
@@ -35,7 +35,7 @@ tasks {
     }
 
     shadowJar {
-        archiveClassifier.set("")  // Output: ScaenaShows-2.23.0.jar (no "-all" suffix)
+        archiveClassifier.set("")  // Output: ScaenaShows-2.25.0.jar (no "-all" suffix)
     }
 
     build {

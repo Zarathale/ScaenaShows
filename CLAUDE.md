@@ -189,7 +189,7 @@ Do not reopen these without Alan.
 
 ## Versioning Policy
 
-**Current version:** `2.23.0`
+**Current version:** `2.25.0`
 **Version file:** `build.gradle.kts` — the `version = "x.y.z"` line
 
 Before telling Alan to build, either bump the version or explicitly state why no bump is needed.

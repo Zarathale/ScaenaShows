@@ -2,11 +2,15 @@ package com.scaena.shows.runtime;
 
 import com.scaena.shows.model.Show;
 import net.kyori.adventure.bossbar.BossBar;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
@@ -118,6 +122,32 @@ public final class RunningShow {
 
     /** Track spectate prior gamemodes per player (UUID → prior GameMode) */
     private final Map<UUID, org.bukkit.GameMode> spectateRestoreMap = new LinkedHashMap<>();
+
+    // -----------------------------------------------------------------------
+    // Active ROTATE tasks (OPS-005)
+    // Each smooth yaw-rotation BukkitTask registers here so stopShow() can
+    // cancel them explicitly in addition to the show.isRunning() self-cancel.
+    // -----------------------------------------------------------------------
+    private final Set<BukkitTask> activeRotateTasks = new LinkedHashSet<>();
+
+    // -----------------------------------------------------------------------
+    // Item frame restore (OPS-007)
+    // Snapshot taken before SET_ITEM_FRAME modifies an entity:world item frame.
+    // entity:spawned frames are despawned at show end — no snapshot needed.
+    // -----------------------------------------------------------------------
+    public record ItemFrameSnapshot(ItemStack item, boolean visible, boolean fixed,
+                                    org.bukkit.entity.ItemFrame.Rotation rotation) {}
+    private final Map<UUID, ItemFrameSnapshot> itemFrameRestoreMap = new LinkedHashMap<>();
+
+    // -----------------------------------------------------------------------
+    // Live entity group capture parameters (OPS-006)
+    // When capture_mode: live, sweep params are stored here rather than a UUID
+    // snapshot. resolveEntityGroup() performs a fresh getNearbyEntities() sweep
+    // from the capture-time anchor on every call.
+    // -----------------------------------------------------------------------
+    public record LiveGroupSpec(String entityType, double radius, int maxCount,
+                                Location captureAnchor) {}
+    private final Map<String, LiveGroupSpec> liveEntityGroups = new LinkedHashMap<>();
 
     // -----------------------------------------------------------------------
     // Block state restore (OPS-004, OPS-008)
@@ -327,10 +357,7 @@ public final class RunningShow {
         return entityGroups.getOrDefault(groupName, List.of());
     }
 
-    /** Remove an entity group from show tracking (called by RELEASE_ENTITIES). Entities remain in the world. */
-    public void releaseEntityGroup(String groupName) {
-        entityGroups.remove(groupName);
-    }
+    // releaseEntityGroup() — see accessor section below (handles both live and snapshot modes, OPS-006)
 
     // -----------------------------------------------------------------------
     // Bossbars
@@ -420,6 +447,83 @@ public final class RunningShow {
     /** All blocks that need to be restored on show end. Key = "world:x:y:z". */
     public Map<String, BlockData> getBlockStateRestoreMap() {
         return Collections.unmodifiableMap(blockStateRestoreMap);
+    }
+
+    // -----------------------------------------------------------------------
+    // ROTATE task tracking (OPS-005)
+    // -----------------------------------------------------------------------
+
+    public void addRotateTask(BukkitTask task) { activeRotateTasks.add(task); }
+
+    /** Cancels and clears all active ROTATE tasks. Called from ShowManager.stopShow(). */
+    public void cancelRotateTasks() {
+        for (BukkitTask task : activeRotateTasks) {
+            try { task.cancel(); } catch (Exception ignored) {}
+        }
+        activeRotateTasks.clear();
+    }
+
+    // -----------------------------------------------------------------------
+    // Item frame restore (OPS-007)
+    // -----------------------------------------------------------------------
+
+    /**
+     * Record pre-show item frame state before this show first modifies it.
+     * putIfAbsent semantics — only the true pre-show state is preserved.
+     */
+    public void recordItemFrameRestore(UUID frameUuid, ItemFrameSnapshot snapshot) {
+        itemFrameRestoreMap.putIfAbsent(frameUuid, snapshot);
+    }
+
+    public Map<UUID, ItemFrameSnapshot> getItemFrameRestoreMap() {
+        return Collections.unmodifiableMap(itemFrameRestoreMap);
+    }
+
+    // -----------------------------------------------------------------------
+    // Live entity group capture (OPS-006)
+    // -----------------------------------------------------------------------
+
+    /** Register a live-mode entity group — sweep params stored instead of UUID list. */
+    public void setLiveEntityGroup(String groupName, LiveGroupSpec spec) {
+        liveEntityGroups.put(groupName, spec);
+        // Ensure no stale snapshot entry exists for this name
+        entityGroups.remove(groupName);
+    }
+
+    /**
+     * Resolve an entity group by name: returns a fresh live sweep if the group
+     * was captured in live mode; otherwise returns the stored UUID snapshot list.
+     * Callers use this instead of getEntityGroup() for entity_group: targets.
+     */
+    public List<UUID> resolveEntityGroup(String groupName) {
+        LiveGroupSpec spec = liveEntityGroups.get(groupName);
+        if (spec != null) {
+            // Live sweep: re-query at the frozen capture-time anchor
+            EntityType type;
+            try { type = EntityType.valueOf(spec.entityType().toUpperCase()); }
+            catch (IllegalArgumentException e) { return List.of(); }
+
+            Location anchor = spec.captureAnchor();
+            if (anchor == null || anchor.getWorld() == null) return List.of();
+
+            List<UUID> out = new ArrayList<>();
+            for (Entity ent : anchor.getWorld().getNearbyEntities(
+                    anchor, spec.radius(), spec.radius(), spec.radius())) {
+                if (ent.getType() == type) {
+                    out.add(ent.getUniqueId());
+                    if (out.size() >= spec.maxCount()) break;
+                }
+            }
+            return out;
+        }
+        // Snapshot mode
+        return entityGroups.getOrDefault(groupName, List.of());
+    }
+
+    /** Remove a group from show tracking (covers both live and snapshot modes). */
+    public void releaseEntityGroup(String groupName) {
+        entityGroups.remove(groupName);
+        liveEntityGroups.remove(groupName);
     }
 
     // -----------------------------------------------------------------------

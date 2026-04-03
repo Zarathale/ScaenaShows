@@ -283,10 +283,6 @@ presets:
         fades: []
         trail: false
         flicker: true
-    launch:
-      mode: above
-      y_offset: 1.0
-      spread: 0.0
 
   texture_white_gold:
     display_name: "White + Gold Texture"
@@ -298,10 +294,6 @@ presets:
         fades: []
         trail: false
         flicker: false
-    launch:
-      mode: above
-      y_offset: 1.0
-      spread: 0.0
 ```
 
 ---

@@ -162,4 +162,35 @@ public final class WorldEvents {
 
         @Override public EventType type() { return EventType.BLOCK_STATE; }
     }
+
+    // ------------------------------------------------------------------
+    // SET_ITEM_FRAME — point-in-time item frame content and state control (OPS-007)
+    //
+    // target: entity:world:Name | entity:spawned:Name
+    // item:   namespaced item ID (minecraft:saddle), or minecraft:air to clear
+    // visible: show/hide frame border; omitted = no change
+    // fixed:   lock frame against player interaction; omitted = no change
+    // rotation: 0–7 mapped to Rotation enum; omitted = no change
+    //
+    // Stop-safety: entity:world targets are snapshotted and restored on show end.
+    //              entity:spawned targets are despawned on show end — no restore needed.
+    // ------------------------------------------------------------------
+    public static final class SetItemFrameEvent extends ShowEvent {
+        public final String target;
+        public final String item;        // namespaced item ID; null = no change
+        public final Boolean visible;    // null = no change
+        public final Boolean fixed;      // null = no change
+        public final Integer rotation;   // null = no change; 0–7 → Rotation enum
+
+        public SetItemFrameEvent(Map<String, Object> m) {
+            super(intVal(m, "at", 0));
+            this.target   = str(m, "target", "");
+            this.item     = m.containsKey("item") ? str(m, "item", null) : null;
+            this.visible  = m.containsKey("visible")  ? boolVal(m, "visible", true)  : null;
+            this.fixed    = m.containsKey("fixed")     ? boolVal(m, "fixed", false)   : null;
+            this.rotation = m.containsKey("rotation")  ? intVal(m,  "rotation", 0)    : null;
+        }
+
+        @Override public EventType type() { return EventType.SET_ITEM_FRAME; }
+    }
 }

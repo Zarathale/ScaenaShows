@@ -31,6 +31,41 @@ public final class StageEvents {
         @Override public EventType type() { return EventType.FACE; }
     }
 
+    // ------------------------------------------------------------------
+    // ROTATE — smoothly rotate target's yaw to a destination angle (OPS-005)
+    // ------------------------------------------------------------------
+    public static final class RotateEvent extends ShowEvent {
+        public final String target;
+        public final float yaw;           // absolute target yaw; NaN if using delta
+        public final float delta;         // relative yaw change; NaN if using yaw
+        public final int durationTicks;   // 0 or omitted = instant (same as FACE)
+
+        public RotateEvent(Map<String, Object> m) {
+            super(intVal(m, "at", 0));
+            this.target        = str(m, "target", "player");
+            this.durationTicks = intVal(m, "duration_ticks", 0);
+            // delta wins over yaw if both are present — per spec
+            boolean hasDelta = m.containsKey("delta");
+            boolean hasYaw   = m.containsKey("yaw");
+            if (hasDelta) {
+                this.delta = fltVal(m, "delta", 0f);
+                this.yaw   = Float.NaN;
+            } else if (hasYaw) {
+                this.yaw   = fltVal(m, "yaw", 0f);
+                this.delta = Float.NaN;
+            } else {
+                // Neither supplied — treat as no-op; delta=0 instant
+                this.delta = 0f;
+                this.yaw   = Float.NaN;
+            }
+        }
+
+        /** True if this event uses relative delta; false = absolute yaw. */
+        public boolean isDelta() { return !Float.isNaN(delta); }
+
+        @Override public EventType type() { return EventType.ROTATE; }
+    }
+
     public static final class CrossToEvent extends ShowEvent {
         public final String target;
         public final String destination; // mark:Name | home | home+{...} | {x,z}

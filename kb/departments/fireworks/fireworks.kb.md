@@ -79,7 +79,7 @@ y_mode: relative   # relative: Y offset from anchor's feet
 **Limitations and gaps:**
 
 - `min_clearance:` is parsed but **not applied at runtime** — the executor ignores it. See ops-inbox.md: *[java-gap] FIREWORK min_clearance parsed but not enforced*.
-- The `launch:` block in the preset (mode: above / random / feet, spread) is parsed into the model but **not used by the executor**. The rocket's spawn position comes entirely from the event's `offset` and `y_mode` — the preset's launch mode has no effect. See ops-inbox.md: *[java-gap] FIREWORK preset launch mode not applied*.
+- Spawn position is entirely controlled by the event's `offset` and `y_mode` fields — the preset owns appearance only (power, stars, colors, trail, flicker).
 - No power variation on single FIREWORK — that's a pattern feature.
 
 **Storytelling contexts:** An arrival. A punctuation mark after a long silence. The only sound in the room. A single gold star in an otherwise dark sky. Use it when one burst means more than twelve.
@@ -289,18 +289,10 @@ preset_id:
       fades: ["#RRGGBB", ...]     # fade-to colors (optional)
       trail: true                 # spark trail on ascent
       flicker: true               # twinkle on burst
-  launch:
-    mode: above       # above | random | feet  ← NOTE: not applied by executor (see gap note below)
-    y_offset: 1.2
-    spread: 2.0       # only for mode: random
 ```
 
-> **⚠️ Gap — `launch:` mode not applied:** The `launch:` block in a preset (mode, y_offset,
-> spread) is parsed and stored in the `FireworkPreset` model, but the executor's `spawnFirework()`
-> method receives a pre-resolved `Location` and never consults `preset.launch()`. Rocket spawn
-> position is entirely determined by the event's `offset`/`y_mode` fields, not the preset's
-> launch configuration. The `launch:` block has no runtime effect. See ops-inbox.md:
-> *[java-gap] FIREWORK preset launch mode not applied*.
+> **Presets own appearance, not position.** Spawn position is entirely determined by the event's
+> `offset` and `y_mode` fields. There is no `launch:` block — that field was removed in OPS-003.
 
 ### Star shape register
 
@@ -427,4 +419,4 @@ The `descent-through-fireworks` arrangement is the one confirmed pattern to date
 | FIREWORK_FAN power_variation / color_variation | ⚠️ Gapped | Not parsed or applied on FAN. All arm positions fire at preset.power() with no color override. Filed: ops-inbox.md |
 | FIREWORK_FAN per-arm independent chase | ⚠️ Behavioral note | Simultaneous mode fires all positions at once; per-arm independent sequencing not implemented |
 | FIREWORK min_clearance | ⚠️ Gapped | Field parsed but never read in handleFirework(). Silently ignored. Filed: ops-inbox.md |
-| FIREWORK preset launch mode | ⚠️ Gapped | launch: block parsed but executor uses pre-resolved Location; mode/spread have no runtime effect. Filed: ops-inbox.md |
+| FIREWORK preset launch mode | ✅ Resolved | launch: block removed (OPS-003). Spawn position is the event's responsibility via offset/y_mode. |

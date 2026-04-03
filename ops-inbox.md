@@ -20,48 +20,7 @@ Items here are queued for the Java review team. Each entry has enough context to
 
 ---
 
-### OPS-003 [java-gap] FIREWORK preset `launch:` mode not applied by executor
-
-**Area:** Fireworks Director
-**Schema field:** `launch:` block in `fireworks.yml` presets
-**Filed:** 2026-03-26 (Fireworks KB build)
-**Decision:** Remove `launch:` — Option A (see below)
-
-`FireworkPreset` fully parses the `launch:` block (mode: above/random/feet, y_offset, spread)
-and stores it in `FireworkLaunch`. However, `FireworkEventExecutor.spawnFirework()` receives
-a pre-computed `Location` and never reads `preset.launch()`. The launch mode has no runtime
-effect — rockets always spawn at the position determined by the event's `offset` and `y_mode`.
-
-**Impact:** Authors adding `launch: mode: feet` or `launch: mode: random` to a preset expect
-the rocket to spawn relative to the player's feet or at a random XZ spread, but the spawn
-position is entirely controlled by the event's coordinate fields. The preset's `launch:` block
-is a convincing-looking no-op.
-
-#### Design decision — Option A: remove `launch:` from the preset schema
-
-The preset owns the rocket's *appearance* — stars, colors, power, trail, flicker. Spawn
-position is the event's responsibility, already fully expressed via `offset` + `y_mode`.
-Keeping `launch:` in the preset creates dual authority over spawn position with no clear
-resolution order — a source of confusion for authors and a latent bug surface.
-
-`mode: above` is already default behavior. `mode: feet` is expressible as `y_mode: relative,
-y_offset: 0` on the event. `mode: random` scatter is what `FIREWORK_RANDOM` is for. Option B
-unlocks nothing genuinely new.
-
-#### Fix scope
-
-- Remove `launch:` block from the preset schema in `fireworks.yml` and from the spec
-- Remove `FireworkLaunch` model class and `launch()` accessor from `FireworkPreset`
-- No changes to `spawnFirework()` — it already ignores launch; the dead read path is simply removed
-- Update `fireworks.kb.md`: remove `launch:` from preset structure example; remove the gap
-  entry from the capability status table
-- Update `kb/system/spec.md` fireworks preset schema section to remove `launch:`
-
-#### Migration
-
-The number of existing preset files is small. At implementation time, review `fireworks.yml`
-presets individually and remove any `launch:` blocks by hand. No runtime warning or
-load-time migration path needed — direct file cleanup is sufficient.
+### OPS-003 ~~[java-gap]~~ → **RESOLVED in 2.24.0** — see Resolved section below
 
 ---
 
@@ -620,6 +579,21 @@ Revisit if it becomes a real problem in a long show.
 ---
 
 ## Resolved
+
+---
+
+### OPS-003 [resolved] Remove `launch:` from firework preset schema ✓
+**Resolved:** 2026-04-02 | **Filed:** 2026-03-26 | **Area:** Fireworks Director
+**Version:** 2.24.0
+
+`launch:` block was a convincing-looking no-op — parsed into `FireworkLaunch` and stored in `FireworkPreset`, but `spawnFirework()` received a pre-resolved `Location` and never consulted `preset.launch()`. Removed per Option A decision: presets own appearance (power, stars, colors, trail, flicker); spawn position is the event's responsibility via `offset` + `y_mode`.
+
+**Changes shipped:**
+- Deleted `FireworkLaunch.java` model class
+- Removed `FireworkLaunch launch` field and `FireworkLaunch.from()` call from `FireworkPreset.java`
+- Stripped all `launch:` blocks from `fireworks.yml` (12 presets cleaned)
+- Updated `fireworks.kb.md`: preset structure example, limitations note, capability table row
+- Updated `kb/system/spec.md`: removed `launch:` from both preset schema examples
 
 ---
 
