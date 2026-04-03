@@ -574,11 +574,74 @@ Revisit if it becomes a real problem in a long show.
 - [ ] `TechCuePanel` — panel renderer for Phase 2 state
 - [ ] Sidebar scoreboard — timeline cursor display in preview mode
 
+**UX design note (2026-04-02):** A separate design document — `kb/system/timeline-editor-ux.md` — proposes a significantly different hotbar model for this surface: 7 cue slots + Library Wand (slot 8) + Cue Sheet (slot 9), replacing the Prev/Hold/Go/Mark Capture/Parameter layout above. The two models need to be reconciled before Phase 2 Java begins. The timeline-editor-ux.md design is more developed and more aligned with the current product framing (directing tool, not YAML editor), but it is not yet confirmed. Treat `kb/system/ux-review-2026-04-02.md` and `kb/system/timeline-editor-ux.md` as working design documents — inputs to the decision, not the decision itself.
+
 **Priority:** Medium — Phase 1 must be stable in production before Phase 2 Java begins.
 
 ---
 
+### OPS-030 [future-capability] Scaffold Generator — `/scaena scaffold [show_id]`
+
+**Area:** Stage Management
+**Filed:** 2026-04-02
+**Depends on:** OPS-027 (Prompt Book, shipped v2.21.0)
+
+#### What it is
+
+The scaffold generator is a deterministic projection of the Prompt Book into a minimal valid show YAML. It is not creative. It is a bridge: it gives the director a runnable timeline with scene structure intact and cue slots empty, so staging can begin in-world without manually authoring skeleton YAML first.
+
+**Input:** `[show_id].prompt-book.yml` — scenes, scene timing, and scene labels.
+**Output:** `[show_id].yml` — a valid show YAML with one `CUE` stub per scene at the correct tick offset, labeled, and marked with a `# SCAFFOLD` comment so the author knows which stubs are placeholders.
+
+If `[show_id].yml` already exists and contains non-scaffold content, the command refuses and prints a warning rather than overwriting. Once the timeline has real cues, the scaffold is no longer safe to regenerate.
+
+#### Why it matters
+
+Without the scaffold, the gap between "Prompt Book complete" and "first in-world preview" requires manual YAML authoring. The scaffold closes that gap automatically. It is the first step in the Layer 1 → Layer 3 transition described in the ROADMAP product model.
+
+**Interim:** Claude can generate the scaffold manually from the Prompt Book. The plugin command is a quality-of-life improvement — not a blocker.
+
+#### Schema note
+
+No new event types needed. Scaffold output uses existing `CUE` references. The generated YAML is valid and plugin-loadable immediately.
+
+**Priority:** Low — Claude handles this in the interim. Worth implementing once OPS-029 is stable, as part of the full Show Composition Surface.
+
+---
+
+### OPS-032 ~~[future-capability]~~ → **RESOLVED in 2.27.0** — see Resolved section below
+
+---
+
 ## Resolved
+
+---
+
+### OPS-032 [resolved] MarkVisualizationTask — in-world marks visible in tech mode ✓
+**Resolved:** 2026-04-03 | **Filed:** 2026-04-02 | **Area:** Stage Management, Set Director
+**Version:** 2.27.0
+
+**Changes shipped:**
+- Extended `TechManager.spawnMarkMarkers()` — now spawns two categories of markers: captured marks at their known positions (existing behavior, unchanged), and uncaptured scene marks as red `?` placeholders near the player's position, spread 1.5 blocks apart in X so they don't stack
+- New `TechManager.allMarkNamesInScene(SceneSpec)` — collects every mark name referenced by the scene across arrival, casting entries, and set entries; used to identify the uncaptured gap
+- New `TechManager.spawnUncapturedMarkMarker(TechSession, String, Location)` — spawns a red TextDisplay placeholder (`? markName`, dark red background) that registers via `session.addMarkMarker()`, so it's automatically replaced by a real marker when the mark is captured
+- Teardown unchanged — `clearMarkMarkers()` in `tearDownScene()` handles both captured and uncaptured markers correctly via the existing `markMarkers` map
+
+**Scope note:** The spec called for a standalone `MarkVisualizationTask` class. The actual implementation landed as extensions to the existing `spawnMarkMarkers()` / `spawnMarkMarkerForName()` pattern in `TechManager` — cleaner given that the state (markMarkers map) and lifecycle (loadScene / tearDownScene) were already fully wired. No new class needed.
+
+**Not included:** `/scaena tech markers` toggle command — deferred; spatial feedback is on by default which covers the core need.
+
+---
+
+### OPS-031 [resolved] Show Status Dashboard — `/scaena <showId>` ✓
+**Resolved:** 2026-04-03 | **Filed:** 2026-04-02 | **Area:** Stage Management
+**Version:** 2.26.0
+
+**Changes shipped:**
+- New `ShowDashboardBuilder.java` — stateless panel builder parallel to `TechPanelBuilder`; renders scenes, marks, open readiness items, timeline cue count, and action buttons from the prompt-book
+- `TechManager.sendDashboard(Player, showId)` — loads prompt-book, reads latest scout captures, pulls timeline cue count from ShowRegistry, delegates to builder
+- `TechManager.setShowRegistry(ShowRegistry)` — optional wiring for cue count; called from plugin on enable
+- `ScoutCommand`: bare show ID (`/scaena showcase.01`) routes to dashboard; tab completion at top level now includes show IDs alongside verbs
 
 ---
 

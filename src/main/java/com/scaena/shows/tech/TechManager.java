@@ -1,5 +1,6 @@
 package com.scaena.shows.tech;
 
+import com.scaena.shows.registry.ShowRegistry;
 import com.scaena.shows.registry.YamlLoader;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -51,6 +52,7 @@ public final class TechManager {
     private final JavaPlugin      plugin;
     private final PromptBookLoader loader;
     private final Logger          log;
+    private ShowRegistry          showRegistry;   // optional — set after construction via setShowRegistry()
 
     /** Active sessions keyed by player UUID. */
     private final Map<UUID, TechSession> sessions = new HashMap<>();
@@ -59,6 +61,11 @@ public final class TechManager {
         this.plugin = plugin;
         this.loader = new PromptBookLoader(plugin.getLogger());
         this.log    = plugin.getLogger();
+    }
+
+    /** Wire in the ShowRegistry so the dashboard can report timeline cue counts. */
+    public void setShowRegistry(ShowRegistry registry) {
+        this.showRegistry = registry;
     }
 
     // -----------------------------------------------------------------------
@@ -71,6 +78,41 @@ public final class TechManager {
 
     public boolean hasSession(Player player) {
         return getSession(player) != null;
+    }
+
+    // -----------------------------------------------------------------------
+    // sendDashboard — /scaena <showId>  (OPS-031)
+    // -----------------------------------------------------------------------
+
+    /**
+     * Build and send the Show Status Dashboard for the given showId.
+     * Reads the prompt-book, scout captures, and timeline cue count.
+     * No active TechSession required — this is a read-only status query.
+     */
+    public void sendDashboard(Player player, String showId) {
+        // Load prompt book
+        PromptBook book = loader.load(plugin.getDataFolder(), showId);
+        if (book == null) {
+            player.sendMessage(MM.deserialize(
+                "<red>No prompt book found for <white>" + showId + "</white>. "
+                + "Expected: shows/" + showId + "/" + showId + ".prompt-book.yml</red>"));
+            return;
+        }
+
+        // Read captured mark names from the latest scout_captures file for this show
+        Map<String, CaptureEntry> captures = readCaptures(showId);
+        Set<String> capturedMarkNames = captures.keySet();
+
+        // Timeline cue count — from ShowRegistry if the flat YAML is loaded
+        int timelineCueCount = -1;
+        if (showRegistry != null) {
+            var show = showRegistry.get(showId);
+            if (show != null) {
+                timelineCueCount = show.timeline.size();
+            }
+        }
+
+        ShowDashboardBuilder.send(player, book, capturedMarkNames, timelineCueCount);
     }
 
     // -----------------------------------------------------------------------
@@ -1114,17 +1156,59 @@ public final class TechManager {
     // -----------------------------------------------------------------------
 
     /**
-     * Spawn TextDisplay markers for every captured mark in the current scene.
-     * Called after scene load when captures have been read and set on the session.
+     * Spawn TextDisplay markers for every mark in the current scene.
+     *
+     * Captured marks (those present in scout_captures) are shown at their known
+     * positions with role-based colors (gold = arrival, lime = mob, aqua = set/other).
+     *
+     * Uncaptured marks (defined in the scene but never captured) are shown as red
+     * "? markName" placeholders near the player's current position, offset slightly
+     * so they don't stack. These placeholders exist only to surface the gap — they
+     * carry no spatial meaning until the mark is actually captured.
      */
     private void spawnMarkMarkers(TechSession session, PromptBook.SceneSpec scene,
                                    Map<String, CaptureEntry> captures) {
         if (scene == null) return;
+
+        // Captured marks — spawn at known position with role-based coloring
         for (String markName : session.capturedMarkNames()) {
             CaptureEntry cap = captures.get(markName);
             if (cap == null) continue;
             spawnMarkMarkerForName(session, scene, markName, captureToLocation(cap));
         }
+
+        // Uncaptured marks — spawn red placeholder near player so the gap is visible
+        Set<String> allSceneMarks = allMarkNamesInScene(scene);
+        Location anchor = session.player().getLocation().clone().add(0, 0.5, 0);
+        int offset = 0;
+        for (String markName : allSceneMarks) {
+            if (session.capturedMarkNames().contains(markName)) continue;
+            // Spread placeholders 1.5 blocks apart in X so they don't overlap
+            Location placeholderLoc = anchor.clone().add(offset * 1.5, 0, 0);
+            spawnUncapturedMarkMarker(session, markName, placeholderLoc);
+            offset++;
+        }
+    }
+
+    /**
+     * Returns all mark names explicitly referenced by this scene, across all departments.
+     * Does not include wardrobe entries — those reference casting marks that are already
+     * collected from the casting department.
+     */
+    private Set<String> allMarkNamesInScene(PromptBook.SceneSpec scene) {
+        Set<String> marks = new LinkedHashSet<>();
+        if (scene.arrivalMark() != null) marks.add(scene.arrivalMark());
+        if (scene.hasCasting()) {
+            for (PromptBook.CastingEntry mob : scene.casting().entries()) {
+                if (mob.mark() != null) marks.add(mob.mark());
+            }
+        }
+        if (scene.hasSet()) {
+            for (PromptBook.SetEntry entry : scene.set().entries()) {
+                if (entry.mark() != null) marks.add(entry.mark());
+            }
+        }
+        return marks;
     }
 
     /**
@@ -1164,6 +1248,29 @@ public final class TechManager {
         display.setViewRange(0.5f); // ~32 blocks
         display.text(Component.text(label).color(color));
         display.setBackgroundColor(Color.fromARGB(80, 0, 0, 0));
+
+        session.addMarkMarker(markName, display);
+    }
+
+    /**
+     * Spawn a red placeholder marker for a mark that exists in the scene definition
+     * but has never been captured. The location is near the player (anchor-relative),
+     * not the true mark position (which is unknown).
+     *
+     * Visual: dim red `? markName` with a dark red background — clearly a placeholder,
+     * not a real captured position. Replaced by a proper marker when the mark is captured.
+     */
+    private void spawnUncapturedMarkMarker(TechSession session, String markName, Location loc) {
+        World world = loc.getWorld();
+        if (world == null) return;
+
+        TextDisplay display = (TextDisplay) world.spawnEntity(loc, EntityType.TEXT_DISPLAY);
+        display.setPersistent(false);
+        display.setInvulnerable(true);
+        display.setBillboard(Display.Billboard.CENTER);
+        display.setViewRange(0.5f); // ~32 blocks
+        display.text(Component.text("? " + markName).color(TextColor.color(0xFF5555))); // red
+        display.setBackgroundColor(Color.fromARGB(140, 80, 0, 0)); // dark red bg
 
         session.addMarkMarker(markName, display);
     }

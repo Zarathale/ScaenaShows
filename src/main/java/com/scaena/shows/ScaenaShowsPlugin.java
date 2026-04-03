@@ -92,6 +92,7 @@ public final class ScaenaShowsPlugin extends JavaPlugin {
 
         // 8b-tech. Tech manager — OPS-027 Tech Rehearsal Mode
         techManager = new TechManager(this);
+        techManager.setShowRegistry(showRegistry);  // OPS-031: supplies timeline cue count for dashboard
 
         // 8b. Register /show command
         PluginCommand showCmd = getCommand("show");

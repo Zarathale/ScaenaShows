@@ -6,7 +6,7 @@
 
 ## Project Identity
 
-**ScaenaShows** is a data-driven choreography engine for Minecraft Paper servers.
+**ScaenaShows** is a live directing tool for Minecraft Paper servers — a stage director's tool built on top of a reusable cue library. Players stage shows; they don't author YAML.
 **Owner:** Alan (alytle@thearcoregon.org)
 **Repo:** ScaenaShows
 **Branch:** `feature/ai-show-generation` ← active development branch
@@ -189,7 +189,7 @@ Do not reopen these without Alan.
 
 ## Versioning Policy
 
-**Current version:** `2.25.0`
+**Current version:** `2.27.0`
 **Version file:** `build.gradle.kts` — the `version = "x.y.z"` line
 
 Before telling Alan to build, either bump the version or explicitly state why no bump is needed.

@@ -76,7 +76,8 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
             case "snap"   -> handleSnap(player, args);
             case "choose" -> handleChoose(player, args);
             case "tech"   -> handleTech(player, args);
-            default       -> sendHelp(player);
+            // OPS-031: /scaena <showId> — bare show ID shorthand opens the Show Status Dashboard
+            default       -> handleShowDashboard(player, args[0]);
         }
         return true;
     }
@@ -320,6 +321,18 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
     }
 
     // -----------------------------------------------------------------------
+    // /scaena <showId> — Show Status Dashboard (OPS-031)
+    // -----------------------------------------------------------------------
+
+    /**
+     * Treat an unrecognised first argument as a show ID and render the dashboard.
+     * /scaena showcase.01  →  Show Status Dashboard for showcase.01
+     */
+    private void handleShowDashboard(Player player, String showId) {
+        techManager.sendDashboard(player, showId);
+    }
+
+    // -----------------------------------------------------------------------
     // Help
     // -----------------------------------------------------------------------
 
@@ -373,9 +386,13 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
     ) {
         if (!(sender instanceof Player player)) return List.of();
 
-        // /scaena <verb>
+        // /scaena <verb>  — also offer show IDs for the dashboard shorthand (/scaena <showId>)
         if (args.length == 1) {
-            return filter(List.of("scout", "set", "snap", "choose", "tech"), args[0]);
+            List<String> verbs  = List.of("scout", "set", "snap", "choose", "tech");
+            List<String> shows  = techManager.getAvailableShowIds();
+            List<String> combined = new java.util.ArrayList<>(verbs);
+            combined.addAll(shows);
+            return filter(combined, args[0]);
         }
 
         // /scaena scout <subcommand>

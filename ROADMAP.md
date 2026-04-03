@@ -1,6 +1,6 @@
 # ScaenaShows — Roadmap
 
-This is a hobby project, and the best kind: one where the process is the point. We're building something genuinely good — a choreography engine for Minecraft that creates real theatrical experiences — and we're figuring out how to build it in collaboration with Claude as we go.
+This is a hobby project, and the best kind: one where the process is the point. We're building something genuinely good — a live directing tool for Minecraft that creates real theatrical experiences — and we're figuring out how to build it in collaboration with Claude as we go.
 
 No dates. No deadlines. Sequence matters; schedule doesn't. When in doubt, lean into the theatre metaphor. It has held up.
 
@@ -34,6 +34,68 @@ The KB standard (what a calibration-ready KB looks like):
 - The KB has been read and used in at least one show session
 
 **Reference:** `kb/production-team.md` — full team roster, role definitions, and cross-department relationships.
+
+---
+
+## What ScaenaShows Is
+
+ScaenaShows is not a YAML authoring tool. It is a **live directing tool** built on top of a cue library.
+
+Players don't author YAML. They stage shows. If a player has to think about YAML, the UX has failed. If a player has to leave the world to try an idea, the creative loop is broken.
+
+Two guiding rules, in order:
+1. *If a player needs to think about YAML, the UX has failed.*
+2. *If a player has to leave the world to try an idea, the loop is broken.*
+
+This distinction clarifies almost every UX decision. Cue authoring is complex, schema-heavy, and belongs outside the game — that's a design activity handled by Claude and (eventually) Composer. Show composition is creative directing work and belongs *inside* the game, in real time, in the world.
+
+### The Three-Layer Model
+
+**Layer 1 — Prompt Book** *(what the show is)*
+Scenes, marks, casting, params, spatial truth, narrative intent. This is the structural contract that the rest of the show is built from. Authored outside the game; committed to `[show_id].prompt-book.yml`.
+
+**Layer 2 — Cue Library** *(what can happen)*
+Pre-authored, reusable building blocks. Complex, schema-heavy, stable. Tagged and categorized. This is where craft lives. Never authored inside the game.
+
+**Layer 3 — Timeline** *(what actually happens)*
+The sequence of cues over time — which cues, in what order, at what timing. This is directing. This is the actual creative loop. *This belongs inside the game.*
+
+The gap we've been filling with YAML hand-authoring is the transition from Layer 1 to Layer 3. The scaffold closes that gap automatically.
+
+### The Scaffold
+
+The scaffold is not a feature. It is not optional. It is not a creative act.
+
+The scaffold is a deterministic projection of the Prompt Book into a minimal valid show YAML — a runnable timeline with scene structure intact but cue slots empty. It gives the director a stage to work from without requiring them to author YAML first.
+
+Once the timeline has content, the scaffold is no longer safe to regenerate. Before that point, it is always safe.
+
+### The Two Modes of YAML Authoring
+
+These are fundamentally different activities and should be treated as such:
+
+**Cue-level authoring** — fireworks, sound events, parameters, nested structures. Designing building blocks. Belongs outside the game. Handled by the cue library + Claude (+ eventually Composer).
+
+**Show-level authoring** — which cues, in what order, at what timing. Directing. Belongs inside the game. This is what the Timeline Editor is for.
+
+---
+
+## The Composition Surface *(what gets built next)*
+
+The engine is complete. The production team is in place. The next build horizon is the in-game composition surface — the UX layer that makes real-time directing possible.
+
+Three components, in dependency order:
+
+**1. Scaffold Generator**
+Input: Prompt Book. Output: minimal valid show YAML with scene structure and timing stubs. Zero creativity — purely deterministic. Regenerable until the timeline has content.
+
+**2. Timeline Editor** *(this is the real product)*
+Inside Minecraft: insert cue, move cue, adjust timing, preview, repeat. This is where the creative loop lives. The UX goal is zero friction between "I want to try this" and "let me see what it does."
+
+**3. Cue Library Browser**
+Categorized, eventually searchable, eventually previewable. Replaces YAML entirely for most authoring decisions. The director browses, picks, and places — no schema knowledge required.
+
+Phase 2 is not "refinement." It is the composition surface. Creation happens here.
 
 ---
 
