@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.Rotation;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
@@ -136,7 +137,7 @@ public final class RunningShow {
     // entity:spawned frames are despawned at show end — no snapshot needed.
     // -----------------------------------------------------------------------
     public record ItemFrameSnapshot(ItemStack item, boolean visible, boolean fixed,
-                                    org.bukkit.entity.ItemFrame.Rotation rotation) {}
+                                    Rotation rotation) {}
     private final Map<UUID, ItemFrameSnapshot> itemFrameRestoreMap = new LinkedHashMap<>();
 
     // -----------------------------------------------------------------------

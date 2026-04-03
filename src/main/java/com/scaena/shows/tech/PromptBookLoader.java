@@ -208,7 +208,6 @@ public final class PromptBookLoader {
     // -----------------------------------------------------------------------
 
     @SuppressWarnings("unchecked")
-    @SuppressWarnings("unchecked")
     private PromptBook.DeptSet parseSet(Map<String, Object> depts) {
         if (depts == null) return null;
         Object raw = depts.get("set");

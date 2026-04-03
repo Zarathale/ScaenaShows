@@ -209,7 +209,7 @@ public final class WorldEventExecutor implements EventExecutor {
         if (e.visible  != null) frame.setVisible(e.visible);
         if (e.fixed    != null) frame.setFixed(e.fixed);
         if (e.rotation != null) {
-            ItemFrame.Rotation[] rotations = ItemFrame.Rotation.values();
+            Rotation[] rotations = Rotation.values();
             int idx = Math.max(0, Math.min(e.rotation, rotations.length - 1));
             frame.setRotation(rotations[idx]);
         }
