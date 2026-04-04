@@ -515,6 +515,37 @@ No new event types needed. Scaffold output uses existing `CUE` references. The g
 
 ---
 
+### OPS-033 [java-gap] Tech Session display cleanup — noise audit and rework
+
+**Area:** Stage Management (TechSidebarDisplay, action bar, scoreboard output)
+**Filed:** 2026-04-04
+**Priority:** Medium — functional but visually cluttered; defer until after Gate 3
+
+**Problem observed (screenshots 2026-04-04):**
+The Tech Session in-game display is generating several output layers that feel like noise rather than signal:
+
+1. **Red scoreboard sidebar numbers** — A vertical column of red numbers (13 → 1) runs down the right edge of the screen. Source and intent unclear — may be a scoreboard sidebar being registered by the plugin unintentionally, or a side effect of a subsystem that hasn't been audited since TechMode shipped.
+
+2. **Persistent lower-center action bar** — A bar reading `TECH · showcase.01 | Home Base — The Workshop` is refreshed continuously at the bottom-center of the screen. It overlaps the chat input box when chat is open. Its "you are here" context is already covered by the top-right panel; the persistent bar appears redundant.
+
+3. **Overall density** — With the open-items checklist (top-left), department readiness grid + cast panel (top-right), action buttons (bottom-left), and the two noisy outputs above, the screen is crowded. No single element is wrong, but the combination is more control-panel than stage monitor.
+
+**What is confirmed working and should be preserved:**
+- Top-right panel: scene number, home base label, cast list with captured indicators
+- Department readiness grid (CAST / WARDROBE / SET / LIGHTS / FX / SCRIPT with ✓ / · indicators)
+- Top-left open-items checklist
+- Bottom-left action buttons ([Enter Setup →], [Quick-play])
+- Setup view: marks list with captured/missing/modified status indicators
+
+**Suggested investigation (not yet decided):**
+- Audit what is registering the red right-side scoreboard. Is it intentional? If so, what does it represent?
+- Determine if the lower-center action bar serves a purpose not covered by the top-right panel. If not, suppress or remove.
+- Consider whether the department readiness grid belongs in the persistent view or only in the Setup view.
+
+**No changes yet.** Audit first; redesign in a follow-up session.
+
+---
+
 ## Resolved
 
 ---
