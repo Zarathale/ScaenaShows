@@ -1,5 +1,6 @@
 package com.scaena.shows.tech;
 
+import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
@@ -56,6 +57,7 @@ public final class TechSidebarDisplay {
             OBJ_NAME, Criteria.DUMMY,
             GOLD + "TECH" + GRAY + " · " + WHITE + session.showId());
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+        obj.numberFormat(NumberFormat.blank()); // suppress red score numbers (OPS-033)
 
         PromptBook.SceneSpec scene = session.book().findScene(session.currentSceneId());
 

@@ -476,9 +476,26 @@ Revisit if it becomes a real problem in a long show.
 - [ ] `TechCuePanel` — panel renderer for Phase 2 state
 - [ ] Sidebar scoreboard — timeline cursor display in preview mode
 
-**UX design note (2026-04-02):** A separate design document — `kb/system/timeline-editor-ux.md` — proposes a significantly different hotbar model for this surface: 7 cue slots + Library Wand (slot 8) + Cue Sheet (slot 9), replacing the Prev/Hold/Go/Mark Capture/Parameter layout above. The two models need to be reconciled before Phase 2 Java begins. The timeline-editor-ux.md design is more developed and more aligned with the current product framing (directing tool, not YAML editor), but it is not yet confirmed. Treat `kb/system/ux-review-2026-04-02.md` and `kb/system/timeline-editor-ux.md` as working design documents — inputs to the decision, not the decision itself.
+**⚑ Prerequisite: Authoring Surface Architecture Decision** — Must be resolved before Phase 2 Java begins.
 
-**Priority:** Medium — Phase 1 must be stable in production before Phase 2 Java begins.
+Two working design documents exist: `kb/system/timeline-editor-ux.md` (Director Mode model) and `kb/system/ux-review-2026-04-02.md` (the full UX audit that produced it). Together they describe not just a different hotbar — a different session architecture for the entire authoring surface:
+
+| Dimension | Current spec (this entry) | `timeline-editor-ux.md` model |
+|---|---|---|
+| Session type | Extends `TechSession` | New Director Mode (separate session) |
+| Entry command | `/scaena tech <showId>` | `/scaena <showId> timeline` |
+| Hotbar layout | Prev / Hold / Go / Mark Capture / Param (slots 5–9) | 7 cue slots / Library Wand / Cue Sheet (slots 1–9) |
+| Display surfaces | Sidebar + actionbar (Phase 1 pattern) | Sidebar + actionbar + boss bar |
+| Show Dashboard | Not included | Phase 1 entry point (`/scaena <showId>`) |
+| Cue library | Not included | First-class `CueLibraryBrowser` |
+
+The `timeline-editor-ux.md` model is more developed and more aligned with the product framing (directing tool, not YAML editor). It is not yet confirmed. **Do not begin Phase 2 Java until this decision is made.**
+
+Treat both documents as inputs to the decision, not the decision itself.
+
+*See also: OPS-033 — the Phase 1 display noise issues are entangled with this decision. If Phase 2 adopts the Director Mode model, TechSidebarDisplay and TechActionbarTask get redesigned anyway. OPS-033's audit findings are direct input here.*
+
+**Priority:** Medium — Phase 1 must be stable in production before Phase 2 Java begins. Authoring surface architecture decision is the immediate pre-work.
 
 ---
 
@@ -542,7 +559,51 @@ The Tech Session in-game display is generating several output layers that feel l
 - Determine if the lower-center action bar serves a purpose not covered by the top-right panel. If not, suppress or remove.
 - Consider whether the department readiness grid belongs in the persistent view or only in the Setup view.
 
-**No changes yet.** Audit first; redesign in a follow-up session.
+**Dependency: OPS-029** — This ticket's redesign scope is entangled with OPS-029's pending authoring surface architecture decision. If Phase 2 adopts the Director Mode model (`kb/system/timeline-editor-ux.md`), TechSidebarDisplay and TechActionbarTask get redesigned as part of Phase 2 anyway. Cleaning up Phase 1 display surfaces that are about to be replaced would be wasted motion.
+
+This ticket's scope is therefore split:
+
+**Part A — Audit (independent, can proceed):** Identify what is registering the red right-side scoreboard and whether it is intentional. Determine whether the lower-center action bar serves a purpose not already covered by the top-right panel. These findings are useful input to OPS-029's architecture decision regardless of which model wins.
+
+**Part B — Redesign (blocked on OPS-029):** Decisions about what to suppress, remove, or reorganize should wait until the authoring surface architecture decision is made.
+
+---
+
+#### Part A Audit Findings — 2026-04-04
+
+**Red scoreboard numbers (13→1)**
+
+Source: `TechSidebarDisplay` — fully intentional, not a rogue system.
+
+`TechSidebarDisplay.show()` assigns descending integer scores (N, N-1, … 1) to each sidebar line to control their vertical order. Minecraft's scoreboard sidebar always renders score values in the right column — in red — as standard behavior. There is no secondary scoreboard registered; the numbers are the line-ordering mechanism for the existing sidebar, visible as a rendering artifact of the Bukkit scoreboard API.
+
+The line count (and thus the max score) varies with the scene's casting entries. For showcase.01's scenes with several cast members, the total reaches ~13 lines.
+
+Fix path (Part B, when unblocked): Paper 1.20.4+ exposes `Objective#numberFormat(BlankFormat.blankFormat())` which suppresses the score column entirely. One call after `registerNewObjective` makes the numbers disappear without changing any line content or ordering logic.
+
+**Persistent lower-center action bar**
+
+Source: `TechActionbarTask` — a `BukkitRunnable` running every 5 ticks, started in `TechManager.enterTech()`, cancelled in `forceDismiss()`. Lifecycle is clean; it does not leak.
+
+The task operates in four modes (priority order):
+1. **Confirm flash** — brief success/error message; clears automatically
+2. **Capture mode** — live `📍 [mark] | x, y, z | Use slot 8 to capture`
+3. **Param scroll mode** — `⚙ [param] = [value]  [controls]`
+4. **Normal mode** — `TECH · [showId] · [sceneLabel]  [✎ if dirty]`
+
+Modes 1–3 are essential: they surface transient, high-priority state that has no other home. The coordinate display in capture mode is genuinely not redundant — the sidebar doesn't show live coordinates.
+
+Normal mode (mode 4) is the redundancy concern. It shows show ID and scene label — both already visible in the sidebar. It also overlaps the chat input box when chat is open, which is a known Minecraft limitation (action bar renders at the same vertical position as the chat input).
+
+**Assessment summary**
+
+| Issue | Source | Intentional? | Redundant? | Resolution |
+|---|---|---|---|---|
+| Red sidebar numbers | `TechSidebarDisplay` score column | Yes — ordering mechanism | N/A — rendering artifact | ✅ Fixed in 2.28.0 — `NumberFormat.blank()` suppresses score column |
+| Persistent action bar (capture/param/confirm modes) | `TechActionbarTask` modes 1–3 | Yes | No | ✅ Kept as-is — essential, not redundant |
+| Persistent action bar (normal mode) | `TechActionbarTask` mode 4 | Yes | Yes — duplicates sidebar | ✅ Fixed in 2.28.0 — suppressed; actionbar now quiet in normal mode, shows `✎ unsaved changes` only when dirty |
+
+**Part A complete — shipped in 2.28.0.** Part B (broader display redesign) remains blocked on OPS-029 authoring surface architecture decision.
 
 ---
 

@@ -83,22 +83,14 @@ public final class TechActionbarTask extends BukkitRunnable {
                     COL_SEP));
         }
 
-        // Normal mode
-        PromptBook.SceneSpec scene = session.book().findScene(session.currentSceneId());
-        String sceneLabel = scene != null ? scene.label() : "—";
-        boolean dirty = session.hasUnsavedChanges();
-
-        Component bar = Component.text("TECH", COL_TECH)
-            .append(Component.text(" · ", COL_SEP))
-            .append(Component.text(session.showId(), COL_SCENE))
-            .append(Component.text(" · ", COL_SEP))
-            .append(Component.text(sceneLabel, COL_SCENE));
-
-        if (dirty) {
-            bar = bar.append(Component.text("  ✎", COL_WARN));
+        // Normal mode — sidebar already shows show ID and scene label.
+        // Only surface the actionbar when there is genuinely new information: unsaved changes.
+        // OPS-033: redundant context suppressed; transient modes (capture/param/confirm) unaffected.
+        if (session.hasUnsavedChanges()) {
+            return Component.text("✎  unsaved changes", COL_WARN);
         }
 
-        return bar;
+        return Component.empty();
     }
 
     private String currentValue(PromptBook.ParamSpec spec) {
