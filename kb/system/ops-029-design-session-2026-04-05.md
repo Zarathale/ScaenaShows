@@ -13,6 +13,80 @@ and will be incorporated into the building spec once the department walk is comp
 
 ---
 
+## Where We Left Off (pickup point for next session)
+
+**Last action:** §12 Span architecture updated — multi-param interpolations, `equal_temperament`
+curve, glissando. §12a PHRASE primitive added. MELODY_SPAN superseded. Then: naming discussion
+— SPAN → PATTERN rename proposed and almost rejected (fireworks conflict), but Alan's reframe
+clarified the concept. See ⚑16 below — this is the active open decision.
+
+**Active naming decision (⚑16) — do not build until resolved:**
+
+The current doc uses "SPAN" throughout. Alan has proposed renaming SPAN → PATTERN based on this
+reframe: the existing fireworks spatial patterns (FIREWORK_CIRCLE, FIREWORK_LINE, etc.) are
+already generative/computed primitives — you define rules/endpoints and the engine generates
+individual events. A musical "pattern" (pitch sweep from start to end) is the same concept over
+a different axis (time/pitch instead of space). PATTERN unifies these as one architectural idea.
+
+Two-primitive model under the proposed rename:
+
+| Primitive | What you define | Engine generates | Examples |
+|---|---|---|---|
+| **PATTERN** (was: SPAN) | Rules / endpoints (start, end, curve, shape) | Individual events | FIREWORK_CIRCLE → burst positions; SOUND_PATTERN → note pitches in a sweep |
+| **PHRASE** | Every step explicitly | Nothing — you wrote it | Authored melody; motif cue; firework salvo with explicit volleys |
+
+This naming is consistent with (not in conflict with) the existing fireworks terminology —
+spatial patterns and temporal/pitch patterns are both instances of the generative primitive.
+
+**To resume next session:** Confirm PATTERN rename (or keep SPAN), then do a find/replace
+through the session doc, then continue the department walk at Effects.
+
+**Department walk status:**
+
+| Department | Status |
+|---|---|
+| Set | ✅ Locked |
+| Casting | ✅ Locked |
+| Wardrobe | ✅ Locked |
+| Sound | ✅ Locked (2026-04-05) |
+| Lighting | ✅ Locked (2026-04-05) |
+| Effects | 📋 Not yet walked |
+| Fireworks | 📋 Not yet walked |
+| Camera | 📋 Not yet walked |
+| Voice | 📋 Not yet walked |
+| Choreography | 📋 Not yet walked |
+
+**Next department to walk:** Effects (Mira) — when ready.
+
+**Key architectural decisions locked this session:**
+- Span is a YAML primitive (§12) — SOUND_SPAN, EFFECT_SPAN, TIME_OF_DAY_SPAN in Phase 2
+- Levitation calibrated patterns (HOVER/CLIMB/RELEASE) migrate to EFFECT_SPAN presets
+- Text input: text GUI, not anvil (cross-plugin preference, §9)
+- Auto-preview mode: session-level toggle, cross-department (§9)
+- Melody/motif cues (`motif.*`, `gracie.*`) are NOT Spans — discrete authored sequences, untouched
+- `world_preview: LIVE | VALUES_ONLY` — session-level param for server-wide instruments (§9)
+- LIGHTNING dual-anchor model: `scene_origin` (current behavior) + `player` (OPS-034) (§11)
+- TIME_OF_DAY_SPAN presets: yes. WEATHER presets: no. Individual TIME_OF_DAY snap presets: no. (§11)
+- LIGHTNING presets: yes — anchor type + offset is a repeatable pattern worth naming (§11)
+- SPAN field set updated: `interpolations:` map replaces single `interpolated_param`; supports simultaneous multi-param interpolation; `equal_temperament` curve added for pitch (§12)
+- PHRASE primitive added (§12a): explicit authored sequence — Steps with vertical grouping via events array; cross-department (Sound: chord, Fireworks: volley/salvo); tempo_bpm + subdivision for beat-based addressing
+- MELODY_SPAN concept superseded: glissando → SOUND_SPAN; explicit melody → PHRASE (§12a, item 13 closed)
+
+**Blocking open items before any Java starts (see §15 for full list):**
+⚑ 1 Edit target (show YAML vs. cue file loaded)
+⚑ 2 Partial YAML handling
+⚑ 3 Panel mockup
+⚑ 4 Department walk (5 departments remain)
+⚑ 5 Preset library file structure
+⚑ 6 Span schema section in spec.md
+⚑ 7 Span type list confirmation
+⚑ 8 Cross-plugin text input UI pattern
+**To resume:** Read this file top-to-bottom, then read `tech-rehearsal-phase2-spec.md`
+for the underlying spec context. First: confirm ⚑16 (SPAN → PATTERN rename), then resume
+Effects walk.
+
+---
+
 ## Legend
 
 - ✅ Locked — decision closed, build from this
@@ -278,6 +352,32 @@ sessions.
 
 Colons used throughout, not em dashes. Example: `tick 340: warrior_enters_scene`
 
+### ✅ World preview param — server-wide effect behavior (cross-department)
+
+A session-level param `world_preview: LIVE | VALUES_ONLY` controls behavior for instruments that
+affect the entire server (TIME_OF_DAY, WEATHER).
+
+- **LIVE** — every param change immediately applies to the world. The world is the preview.
+- **VALUES_ONLY** — editing updates raw_yaml only. World is not touched during edit. An explicit
+  `[▶ Apply to world]` button is available for spot-checking the current value.
+
+Plugin config default: `LIVE` (you're already in-scene; see the world as it actually is by default).
+
+The contextual toggle appears **only** in edit panels for affected instruments (TIME_OF_DAY, WEATHER):
+
+```
+World preview: LIVE  [Toggle]  [Remember this]
+```
+
+- `[Toggle]` — flips LIVE ↔ VALUES_ONLY immediately within the current session
+- `[Remember this]` — writes the setting to plugin config as the default for all future Phase 2 sessions
+
+LIGHTNING is **not** subject to this param — strikes fire and disappear; their `[▶ Preview]` button
+is the normal auto-preview mechanism and has no server-wide persistence.
+
+Departments where this param is relevant: TIME_OF_DAY, TIME_OF_DAY_SPAN, WEATHER.
+All other departments: param not shown.
+
 ### ✅ Text input: text GUI, not anvil (cross-plugin preference)
 
 Anywhere the player needs to enter a short string (sound ID, custom slug, etc.), use a
@@ -450,7 +550,127 @@ authored note sequences and remain as named cues. No conflict.
 - Examples: `sound.hostile.low.warden_presence`, `sound.ambient.natural.cave_under`,
   `sound.master.high.arrival_bell`
 
-### 📋 Lighting — not yet walked
+### ✅ Lighting (Steve N.) — locked 2026-04-05
+
+**Instruments:** TIME_OF_DAY (point), TIME_OF_DAY_SPAN (fade-type Span), WEATHER (bar), LIGHTNING (point).
+
+**Server-wide constraint:** TIME_OF_DAY and WEATHER affect all players on the server — not just
+show participants. This is Steve's central discipline constraint in production and carries into Phase 2
+unchanged. The `world_preview` param (§9) is the mechanism for managing this during editing.
+
+---
+
+#### TIME_OF_DAY edit mode
+
+**Interaction model:** Panel-based, inherently live (subject to `world_preview` setting). No game
+mode switch.
+
+**Panel fields:**
+- `time` — scroll wheel. Per notch: ±1000 ticks. Shift+scroll: ±100 ticks (fine-tune between
+  named points).
+- As you scroll, the actionbar shows value and nearest named sky state:
+  `time: 13200 — near Dusk (13000)`
+- Snap offer: when within ~200 ticks of a named point, chat shows
+  `[Snap to: Dusk (13000)]` — click to lock. Same snap mechanic as timing nudge (§5).
+- World preview toggle line shown in panel (§9):
+  `World preview: VALUES_ONLY  [Toggle]  [Remember this]`
+
+**No preview button** — in LIVE mode, every scroll notch is a world change. In VALUES_ONLY mode,
+`[▶ Apply to world]` fires the current value once.
+
+**Exit:** `[Save]  [Save as Preset]  [Cancel]`
+
+**Preset:** No preset for individual TIME_OF_DAY snaps — single field, too trivial to name.
+Span presets cover the reusable use case (see TIME_OF_DAY_SPAN below).
+
+---
+
+#### TIME_OF_DAY_SPAN edit mode
+
+**Interaction model:** Panel-based. Auto-preview OFF by default for Spans (a full transition fires
+on every param change — disruptive). Explicit `[▶ Preview]` only.
+
+**Panel fields:**
+- `start_value` — scroll wheel, same arc label display as TIME_OF_DAY
+- `end_value` — scroll wheel, same arc label display
+- `steps` — scroll wheel; actionbar shows step interval: `every 27t (~1.3s)`
+- `total_duration` — scroll wheel ±20t per notch, Shift ±100t; shown as `240t (12s)`
+- `curve` — panel selector: `linear / ease_in / ease_out`
+- World preview toggle line shown in panel (§9)
+
+**`[▶ Preview]`** — fires the full Span expansion. World actually transitions through all N steps
+in real time. Steve watches the sky move and judges whether it reads as atmospheric.
+
+**Preset:** ✅ Yes — full Span config (start_value, end_value, steps, total_duration, curve) is
+reusable and worth naming.
+
+**Preset naming:** `lighting.[direction].[slug]`
+- Direction auto-component inferred from start/end: `dawn` (toward 0), `dusk` (toward 18000),
+  `midnight` (landing at 18000), `noon` (toward 6000)
+- Examples: `lighting.dawn.earned_sunrise`, `lighting.dusk.long_night_open`, `lighting.dusk.battle_open`
+
+---
+
+#### WEATHER edit mode
+
+**Interaction model:** Panel-based, inherently live (subject to `world_preview` setting).
+Single field.
+
+**Panel fields:**
+- `state` — panel selector: `clear / storm / thunder`. Single click to change.
+- `duration_ticks` — scroll wheel (optional). `[Clear]` removes the field (persistent weather).
+- World preview toggle line shown in panel (§9)
+
+**No preset for WEATHER** — single field, same reasoning as STOP_SOUND. Too trivial to name.
+
+**Note:** Every weather change is also a Sound design event. Sound Designer coordination is a
+production concern, not a Phase 2 UI concern — documented in the Lighting KB.
+
+---
+
+#### LIGHTNING edit mode
+
+**Interaction model:** Panel-based. No world-state persistence — strike fires and disappears.
+Auto-preview is meaningful here.
+
+**Dual-anchor model:**
+LIGHTNING supports two anchor types:
+
+| Anchor | Behavior |
+|---|---|
+| `scene_origin` | Offset from scene set origin mark — consistent world position |
+| `player` | Offset from player's position at event-fire time — follows the player |
+
+`anchor: player` requires a Java capability not yet implemented (OPS-034). The Phase 2 panel
+supports both anchor types; `player` anchor is editable and saveable to presets, but fires in
+production only after OPS-034 is resolved.
+
+**Panel fields:**
+- `anchor` — panel selector: `scene_origin / player`
+- `x`, `y`, `z` — scroll wheel per field. Per notch: ±1 tick. Shift+scroll: ±5.
+- `[▶ Preview]` — fires a test strike at current offset relative to current anchor. In
+  `player` anchor mode, fires relative to player's current standing position — useful for
+  walking the bolt around to dial in proximity.
+- Auto-preview toggle applies (§9): when ON, a strike fires on each scroll notch change.
+
+**Exit:** `[Save]  [Save as Preset]  [Cancel]`
+
+**Preset:** ✅ Yes — anchor type + offset is a reusable named pattern.
+
+**Preset naming:** `lighting.lightning.[anchor_type].[slug]`
+- Examples:
+  - `lighting.lightning.player.surprise_close` — `{anchor: player, x: 1, y: 0, z: 1}`
+  - `lighting.lightning.player.side_crack` — `{anchor: player, x: 4, y: 0, z: 0}`
+  - `lighting.lightning.scene.throne_strike` — `{anchor: scene_origin, x: -3, y: 0, z: 2}`
+
+**Preset captures:** `anchor` + `x`, `y`, `z`. Mark is not stored (scene-specific context
+resolved at fire time by anchor type).
+
+**Multi-strike patterns:** Each LIGHTNING event in a cue is edited independently. There is no
+pattern-group edit mode for lightning sequences. A repeatable chaos burst is a cue-level authoring
+choice; named presets cover the individual-event level.
+
+---
 
 ### 📋 Effects — not yet walked
 
@@ -477,34 +697,120 @@ The human and Phase 2 editor work with the Span; the scheduler works with expand
 ExecutorRegistry, and RunningShow never see Spans — they receive only expanded individual
 events. The production execution path is unchanged.
 
-### ✅ Two behavioral modes
+### ✅ Three behavioral modes
 
-**Fade-type Span** (`start_value ≠ end_value`): interpolates a param from start to end
-across N steps. Examples: Sound simulated fade (volume), Lighting time transition (time).
+**Fade-type Span** (any param where `start ≠ end`): interpolates one or more params from
+start to end across N steps. Examples: Sound simulated fade (volume), Lighting time
+transition (time).
 
-**Pulse-type Span** (`start_value == end_value`): repeats a fixed config N times at
+**Glissando-type Span** (pitch interpolated with `equal_temperament` curve): a fade-type
+Span whose pitch param uses logarithmic (multiplicative) spacing so each step sounds like
+an equal musical interval. Pitch sounds like an even glide up or down; arithmetic linear
+spacing sounds uneven to the ear and should not be used for pitch. Volume may be
+interpolated simultaneously (crescendo into or out of the glissando).
+
+**Pulse-type Span** (all params with `start == end`): repeats a fixed config N times at
 calibrated cycle timing. Example: Effects levitation patterns (HOVER, CLIMB, RELEASE).
 
 ### ✅ Span field set
 
+`interpolated_param`, `start_value`, and `end_value` are replaced by an `interpolations:`
+map, supporting simultaneous interpolation of any number of params. Each param entry
+specifies its own `start`, `end`, and optional `curve`.
+
 | Field | Required | Description |
 |---|---|---|
-| `interpolated_param` | Yes | Which param varies (e.g., `volume`, `amplifier`, `time`) |
-| `start_value` | Yes | Value at step 0 |
-| `end_value` | Yes | Value at final step (== start_value for pulse-type) |
+| `interpolations` | Yes | Map of `param: {start, end, curve}` — one entry per interpolated param |
 | `steps` | Yes | Number of events to distribute |
 | `total_duration` | Yes | Total tick length of the Span |
-| `curve` | Yes | `linear` (default) \| `ease_in` \| `ease_out` |
+| `curve` | No | Span-level default curve: `linear` (default) \| `ease_in` \| `ease_out` \| `equal_temperament` — overridden per-param |
 | `step_duration` | No | For event types with internal duration (EFFECT): how long each step event lasts |
 | `gap` | No | Ticks between step end and next step start (interval = step_duration + gap) |
+
+**Per-param curve options:**
+
+| Curve | Behavior | Use for |
+|---|---|---|
+| `linear` | Equal arithmetic steps (default) | Volume, amplifier, time |
+| `ease_in` | Slow start, accelerating change | Swells, tension builds |
+| `ease_out` | Fast start, decelerating change | Release, fading |
+| `equal_temperament` | Multiplicative steps — equal musical intervals | Pitch only — sounds like a smooth glide |
+
+**`equal_temperament` math:** SpanExpander multiplies the previous value by
+`(end/start)^(1/(steps-1))` at each step rather than adding a linear increment.
+This produces semitone-spaced values when spanning the full two-octave note block range
+(pitch 0.5 → 2.0 = 24 semitones). Default and recommended curve for any pitch
+interpolation.
+
+**Note block pitch reference:**
+
+Minecraft note blocks span exactly two octaves: F#3 (pitch 0.5) to F#5 (pitch 2.0),
+25 discrete semitone positions. Formula: `pitch = 2^((semitone - 12) / 12)` where
+semitone 0 = F#3, 12 = F#4 (natural), 24 = F#5.
+
+| Scale | Semitone step | Pitches in 2 octaves | Notes |
+|---|---|---|---|
+| Chromatic | 1 | 25 | Full range — maximum resolution |
+| Whole-tone | 2 | 13 | Gracie's native vocabulary — characteristic sound |
+| Major / minor | varies | 8 per octave | Tonal glissando — specific key feel |
+
+**Glissando example — whole-tone harp sweep (ascending):**
+
+```yaml
+type: SOUND_SPAN
+sound_id: minecraft:block.note_block.harp
+steps: 13                  # 13 whole-tone steps across 2 octaves
+total_duration: 130        # 10 ticks per note (~120 BPM eighth note feel)
+interpolations:
+  pitch:
+    start: 0.5             # F#3 — lowest note block pitch
+    end: 2.0               # F#5 — highest note block pitch
+    curve: equal_temperament
+  volume:
+    start: 0.9
+    end: 0.9               # constant — omit for same effect
+    curve: linear
+```
+
+**Crescendo glissando — pitch rises while volume builds:**
+
+```yaml
+type: SOUND_SPAN
+sound_id: minecraft:block.note_block.harp
+steps: 13
+total_duration: 130
+interpolations:
+  pitch:
+    start: 0.5
+    end: 2.0
+    curve: equal_temperament
+  volume:
+    start: 0.3
+    end: 1.0
+    curve: ease_in         # volume accelerates into the peak
+```
+
+**Simulated volume fade (original SOUND_SPAN use case — unchanged):**
+
+```yaml
+type: SOUND_SPAN
+sound_id: minecraft:block.note_block.harp
+steps: 6
+total_duration: 120
+interpolations:
+  volume:
+    start: 0.9
+    end: 0.1
+    curve: linear
+```
 
 ### ✅ Phase 2 Span types
 
 Three Span types ship in Phase 2:
 
-| Type | Department | Interpolated param | Primary use |
+| Type | Department | Interpolatable params | Primary use |
 |---|---|---|---|
-| `SOUND_SPAN` | Sound | `volume` | Simulated fade |
+| `SOUND_SPAN` | Sound | `pitch` (equal_temperament), `volume` (linear/ease) | Glissando, simulated fade, crescendo |
 | `EFFECT_SPAN` | Effects | `amplifier` | Levitation hover/climb/release cycles |
 | `TIME_OF_DAY_SPAN` | Lighting | `time` | Gradual time transition |
 
@@ -544,27 +850,210 @@ Spans appear as collapsed groups in the cue detail panel:
 `[Edit ▸]` on any step within a Span opens Span edit mode (not single-event edit).
 Span edit mode shows step context: `Step 3 of 6 in span`. `[▶ Preview]` fires 1–2 cycles.
 
-### ✅ Melody/motif cues are NOT Spans
+### ✅ Melodic content: SPAN vs. PHRASE
 
-Musical riffs, melodies, and Gracie gestures (`motif.*`, `gracie.*`) are discrete authored
-note sequences — each pitch is a specific authored value that cannot be computed by
-interpolation. They remain as named cues (sequences of SOUND events). The existing motif
-cue library is complete and aligned. Span does not replace or conflict with it.
+The previous position ("melody/motif cues are NOT Spans") is corrected. The model is now:
 
-A `MELODY_SPAN` type (explicit note array primitive for authoring melodies in-game) is
-acknowledged as a future aspirational item — not Phase 2 scope.
+**A melody CAN be a Span** — when the pitch sequence is computed (interpolated across steps).
+A glissando is the clearest example: define start pitch, end pitch, step count, and
+`equal_temperament` curve; the engine generates every note. Gracie's whole-tone sweeps are
+natural SOUND_SPANs. Any musical figure whose notes follow a smooth, calculable arc belongs here.
 
-### Java layer sizing estimate
+**A melody is a PHRASE** — when each note is explicitly authored and intentional. A specific
+melodic line where note 3 is a deliberate D# and note 5 is an intentional rest is not
+computable; it must be written out. PHRASEs are the in-game authoring primitive for this.
+See §12a for the PHRASE specification.
+
+**Existing `motif.*` and `gracie.*` cues** remain as-is — hand-authored sequences of SOUND
+events in cue YAML. They are valid, complete, and do not need migration. SPAN and PHRASE are
+new authoring primitives; they don't replace working cues.
+
+**The design question going forward:** when adding new melodic material to the library,
+choose the right primitive:
+- Interpolated sweep (glissando, chromatic scale, whole-tone run) → SOUND_SPAN
+- Specific authored line (riff, motif, melody) → PHRASE
+- Repeating rhythmic figure (pulse, arpeggio with fixed pitches) → PHRASE with repeated steps
+
+### Java layer sizing estimate (updated)
 
 | Layer | Work | Rough size |
 |---|---|---|
 | Spec (spec.md Span section) | Documentation | 1 session |
-| Model classes (SpanEvent + 3 subtypes) | Java | ~200 lines |
-| SpanExpander (expansion math + curves) | Java | ~250 lines |
+| Model classes (SpanEvent + 3 subtypes) | Java | ~250 lines (multi-param interpolations map) |
+| SpanExpander (expansion math + curves, incl. equal_temperament) | Java | ~300 lines |
 | EventParser routing | Java | ~50 lines |
 | ShowYamlEditor 5th operation | Java | ~150 lines |
 | TechCuePanel Span display + edit | Java/UI | ~300 lines |
-| **Total** | | **~4–6 weeks** |
+| PHRASE model + PhraseExpander (§12a) | Java | ~300 lines |
+| PHRASE in TechCuePanel (step editor, beat grid) | Java/UI | ~400 lines |
+| **Total** | | **~6–8 weeks** |
+
+---
+
+## 12a. PHRASE Event Architecture
+
+### ✅ PHRASE is a YAML primitive — the explicit sequence counterpart to SPAN
+
+A PHRASE is a first-class event type in the ScaenaShows YAML schema. Where SPAN computes
+its steps (interpolated from start/end), PHRASE contains explicitly authored steps — each
+event is intentional. The engine expands a PHRASE to individual events at show-load time,
+the same way SPANs are expanded. Scheduler and executors see only the expanded events.
+
+**The two primitives, distinguished:**
+
+| | SPAN | PHRASE |
+|---|---|---|
+| Step values | Computed (interpolated from start/end) | Explicit (authored per step) |
+| Author's work | Define endpoints and let the engine fill the middle | Write each event |
+| Use for | Glissandi, fades, levitation cycles, time transitions | Melodies, rhythmic figures, salvos, volleys |
+| Expressiveness | Low — defined by endpoints and curve | High — fully specified |
+
+### ✅ PHRASE field set
+
+| Field | Required | Description |
+|---|---|---|
+| `tempo_bpm` | No | Enables beat-based step addressing (`at_beat:`). If absent, steps use `at:` in raw ticks |
+| `subdivision` | No | Smallest rhythmic unit available in the beat grid: `4` = quarter notes, `8` = eighth notes (default), `16` = sixteenth notes |
+| `steps` | Yes | Ordered list of step entries |
+
+**Step entry fields:**
+
+| Field | Required | Description |
+|---|---|---|
+| `at:` | Yes (if no tempo_bpm) | Step offset in ticks from PHRASE start |
+| `at_beat:` | Yes (if tempo_bpm set) | Step offset in beats (e.g., `1.5` = eighth note after beat 1) |
+| `events:` | Yes | Array of one or more event configs — multiple = vertical grouping |
+
+### ✅ Tempo, subdivision, and tick math
+
+When `tempo_bpm` is present, PhraseExpander converts `at_beat:` positions to ticks at
+load time: `tick = (at_beat - 1) × (60 / tempo_bpm × 20)`.
+
+| BPM | Quarter note | Eighth note | Sixteenth note |
+|---|---|---|---|
+| 60 | 20t | 10t | 5t |
+| 90 | 13t | 7t | 3t |
+| 120 | 10t | 5t | 3t (floor) |
+| 180 | 7t | 3t | 2t (floor) |
+
+Note: at fast tempos, sixteenth notes approach the 1t minimum. The Minecraft tick is the
+hard floor for all timing.
+
+`subdivision` constrains the Phase 2 beat-grid editor — in-game step placement snaps to
+the available positions for that subdivision. At `subdivision: 8`, beat positions of `1.25`
+(sixteenth) are unavailable until subdivision is changed.
+
+**Rests** are implicit — the absence of a step at a beat position is silence.
+
+### ✅ Vertical grouping — events array
+
+A step with a single entry in `events:` fires one event. A step with multiple entries fires
+all of them at the same tick. This is the vertical grouping mechanism — the structural
+equivalent of a chord in music or a volley in fireworks.
+
+No special keyword is required. The array length is the signal:
+
+```yaml
+# Single note
+- at_beat: 1.0
+  events:
+    - {type: SOUND, sound_id: minecraft:block.note_block.harp, pitch: 1.0, volume: 0.8}
+
+# Chord — three notes at once (vertical grouping)
+- at_beat: 2.0
+  events:
+    - {type: SOUND, sound_id: minecraft:block.note_block.harp, pitch: 1.0, volume: 0.7}
+    - {type: SOUND, sound_id: minecraft:block.note_block.harp, pitch: 1.26, volume: 0.6}
+    - {type: SOUND, sound_id: minecraft:block.note_block.harp, pitch: 1.5, volume: 0.5}
+```
+
+### ✅ PHRASE vocabulary by department
+
+| Department | Single event | Vertical grouping | Container |
+|---|---|---|---|
+| Sound | Note | Chord | Phrase |
+| Fireworks | Burst | Volley | Salvo |
+| Effects (particle) | Pulse | Cluster | Pattern |
+| General | Event | Grouping | Phrase |
+
+The vocabulary is documentation and UI language only — the YAML structure is identical
+across departments.
+
+### ✅ SOUND PHRASE example — explicit melodic line
+
+```yaml
+type: PHRASE
+tempo_bpm: 120
+subdivision: 8
+steps:
+  - at_beat: 1.0
+    events:
+      - {type: SOUND, sound_id: minecraft:block.note_block.harp, pitch: 1.0, volume: 0.8}
+  - at_beat: 1.5
+    events:
+      - {type: SOUND, sound_id: minecraft:block.note_block.harp, pitch: 1.12, volume: 0.8}
+  - at_beat: 2.0    # chord
+    events:
+      - {type: SOUND, sound_id: minecraft:block.note_block.harp, pitch: 1.0, volume: 0.7}
+      - {type: SOUND, sound_id: minecraft:block.note_block.harp, pitch: 1.26, volume: 0.6}
+      - {type: SOUND, sound_id: minecraft:block.note_block.harp, pitch: 1.5, volume: 0.5}
+  - at_beat: 2.5
+    events:
+      - {type: SOUND, sound_id: minecraft:block.note_block.harp, pitch: 0.89, volume: 0.9}
+```
+
+### ✅ FIREWORKS PHRASE example — salvo with volleys
+
+```yaml
+type: PHRASE
+tempo_bpm: 80
+steps:
+  - at_beat: 1.0         # single burst
+    events:
+      - {type: FIREWORK, preset_id: fireworks.burst.gold.high}
+  - at_beat: 2.0         # volley — simultaneous bursts
+    events:
+      - {type: FIREWORK, preset_id: fireworks.burst.gold.high}
+      - {type: FIREWORK, preset_id: fireworks.burst.silver.mid}
+      - {type: FIREWORK, preset_id: fireworks.burst.red.low}
+  - at_beat: 3.0
+    events:
+      - {type: FIREWORK, preset_id: fireworks.burst.white.finale}
+```
+
+### ✅ SPAN vs. PHRASE decision guide for melodic content
+
+| Musical figure | Primitive | Reasoning |
+|---|---|---|
+| Harp glissando (ascending whole-tone sweep) | SOUND_SPAN | Pitches are computed — equal_temperament curve |
+| Chromatic scale passage | SOUND_SPAN | Computed — linear semitone steps |
+| Specific authored riff (each note intentional) | PHRASE | Not computable |
+| Arpeggio with fixed pitches | PHRASE | Pitches are specific, not interpolated |
+| Firework salvo (timed sequence of bursts) | PHRASE | Each burst explicitly placed |
+| Levitation hover/climb/release | EFFECT_SPAN | Repeating pulse — computed cycling |
+| Volume fade | SOUND_SPAN | Single param interpolated — no note pitch needed |
+| Crescendo glissando (pitch + volume both change) | SOUND_SPAN | Both params interpolated simultaneously |
+
+### ✅ PHRASE in TechCueSession (Phase 2)
+
+Same invariant as SPAN: `TechCueSession.raw_yaml` stores PHRASEs in unexpanded form.
+PhraseExpander runs at `enterPreview()`. ShowYamlEditor gains a **6th operation:**
+`editPhrase(phraseYamlNode, stepIndex, PhraseStepParams)` — mutates a specific step's
+events in raw_yaml.
+
+Phase 2 panel displays PHRASEs as expandable groups:
+
+```
+  tick 240: arrival_motif                         [Phrase ▾]
+    beat 1.0   harp  pitch: 1.0  vol: 0.8         [Edit ▸]
+    beat 1.5   harp  pitch: 1.12 vol: 0.8         [Edit ▸]
+    beat 2.0   CHORD  3 notes                     [Edit ▸]
+    beat 2.5   harp  pitch: 0.89 vol: 0.9         [Edit ▸]
+```
+
+`[Edit ▸]` on any step opens the step editor. For a chord step, the editor shows all
+events in the vertical grouping with individual `[Edit]` and `[Remove]` per event, plus
+`[+ Add note]`.
 
 ---
 
@@ -630,7 +1119,10 @@ is clear.
 | 📋 10 | Auto-name fallback logic: per-department inference rules when slug is absent | No — slug is required; fallback is a safety net only |
 | 📋 11 | Leather color palette: define the curated named color list for Wardrobe | No — design asset, not blocking |
 | 📋 12 | OPS-033 (display noise cleanup): still blocked on Phase 2 architecture decision — that decision is now made (extend TechSession). OPS-033 Part B can proceed. | No |
-| 📋 13 | MELODY_SPAN type: explicit note array primitive for authoring melodies in-game — acknowledged as future aspirational item, not Phase 2 scope | No |
+| ✅ 13 | MELODY_SPAN concept superseded (2026-04-05): melodic content is now covered by two primitives. SOUND_SPAN with `equal_temperament` curve handles interpolated pitch sequences (glissandi, whole-tone sweeps). PHRASE (§12a) handles explicitly authored note sequences. No standalone MELODY_SPAN type needed. | Closed |
+| ✅ 14 | `world_preview` param: default confirmed as `LIVE` (2026-04-05). In-scene editing shows reality by default; toggle available contextually to suppress when needed. | Closed |
+| 📋 15 | OPS-034 (player-anchored LIGHTNING): Java capability gap filed 2026-04-05. Player anchor presets can be authored and saved in Phase 2; they require OPS-034 to fire correctly in production. Not blocking Phase 2 panel work. | No |
+| ⚑ 16 | SPAN → PATTERN rename: confirm before updating all references throughout this doc, the building spec, and the Java model names. Alan's reframe: PATTERN is consistent with existing fireworks spatial patterns — both are generative primitives (rules in, events out). If confirmed: find/replace SPAN→PATTERN throughout, update §12 and §12a headers, update Java class name estimates. | Yes — before any Java work on SpanExpander / SpanEvent |
 
 ---
 
@@ -649,6 +1141,7 @@ These items from `tech-rehearsal-phase2-spec.md` remain as-is:
 
 ---
 
-*Session continues — department walk in progress. Sound locked 2026-04-05. Span
-architecture locked 2026-04-05. Remaining: Lighting, Effects, Fireworks, Camera,
-Voice, Choreography.*
+*Session paused 2026-04-05 — account transition. Sound locked. Lighting locked. Span
+architecture updated (multi-param, equal_temperament, glissando). PHRASE primitive added.
+OPS-034 filed. Active decision: ⚑16 SPAN → PATTERN rename. Department walk paused at
+Effects. Remaining: Effects, Fireworks, Camera, Voice, Choreography.*

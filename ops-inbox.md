@@ -569,6 +569,50 @@ This ticket's scope is therefore split:
 
 ---
 
+### OPS-034 [java-gap] Player-anchored LIGHTNING executor — resolve target position at fire time
+
+**Area:** Execution engine (`VisualEventExecutor.handleLightning()`)
+**Filed:** 2026-04-05
+**Priority:** Low — not blocking Phase 2 (scene-origin anchoring ships first); needed before player-anchored LIGHTNING presets can be used in production
+
+**Problem:**
+The current spatial anchor model locks the anchor at show invocation time (`Static mode: Anchor locked at invocation time`). LIGHTNING events currently resolve their offset from that single invocation-time anchor. This means a LIGHTNING strike cannot target a position relative to where the player is standing *when the event fires* — only relative to where they were when `/show play` was called.
+
+**Desired capability:**
+LIGHTNING events (and presets) should support a dual-anchor model:
+
+| Anchor type | Behavior |
+|---|---|
+| `scene_origin` | Current behavior — offset from scene origin mark, locked at invocation time |
+| `player` | New — offset resolved from the player's actual position at event-fire time |
+
+**Use case:**
+A `lightning.player.surprise_close` preset — `{anchor: player, x: 1, y: 0, z: 1}` — fires a cosmetic strike just in front of the player regardless of their current position. This is a repeatable, named pattern with legitimate show value.
+
+**Design note:**
+`anchor: player` requires the executor to call `player.getLocation()` at the moment the event fires (not at `RunningShow` init). This is a targeted change to `VisualEventExecutor.handleLightning()` only — no changes to `ShowScheduler`, `RunningShow`, or the spatial anchor model for other event types. The dual-anchor flag should be carried in the `LightningEvent` model.
+
+**YAML field (proposed):**
+```yaml
+type: LIGHTNING
+anchor: player   # scene_origin | player — default: scene_origin
+offset:
+  x: 1
+  y: 0
+  z: 1
+```
+
+**Preset field format (proposed):**
+```yaml
+id: lighting.lightning.player.surprise_close
+anchor: player
+offset: {x: 1, y: 0, z: 1}
+```
+
+**Dependency:** Phase 2 preset library file structure (OPS-029 §14 open item) — `lighting-configs.yml` is where these presets will live.
+
+---
+
 #### Part A Audit Findings — 2026-04-04
 
 **Red scoreboard numbers (13→1)**

@@ -30,6 +30,10 @@ All 12 department KBs are now in folder structure (`kb/departments/[dept-slug]/[
 
 **Not show-specific:**
 - R7 debrief ✅ complete (2026-03-28). R8 not yet scheduled.
+- **OPS-029 Phase 2 design session active (2026-04-05).** Department walk in progress
+  (4 of 10 departments locked). Span Event Architecture locked. Read
+  `kb/system/ops-029-design-session-2026-04-05.md` before any Phase 2 work — the
+  "Where We Left Off" block at the top is the pickup point. Next: Lighting walk.
 
 *Last audit: 2026-03-31 — `kb/audits/2026-03-31_post-ops026-audit.md`*
 
