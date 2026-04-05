@@ -15,21 +15,19 @@ and will be incorporated into the building spec once the department walk is comp
 
 ## Where We Left Off (pickup point for next session)
 
-**Last action (2026-04-05):** Effects (Felix) department walk complete and locked. Covers:
-EFFECT (point, preset library), PLAYER_TELEPORT (panel, no preset), CROSS_TO (panel, no
-preset), PLAYER_VELOCITY (panel, named vector presets), PLAYER_FLIGHT (panel, release presets),
-EFFECT_PATTERN (cycle_ticks field set locked, 3 calibrated levitation presets: hover/climb/release),
-PARTICLE (single + atmospheric inline, deferred PARTICLE_PATTERN, named atmospheric presets),
-EFFECT_PHRASE (mixed EFFECT + PARTICLE steps, cluster support, step-list panel). Preset naming
-`effects.[type].[slug]`. Auto-preview ON for EFFECT/PARTICLE, OFF for movement types.
-PARTICLE_PATTERN deferred. EFFECT_PATTERN amplifier sweep deferred to Phase 3.
+**Last action (2026-04-05):** Fireworks (Mira) locked. Dual-anchor model, panel design for all
+event types (FIREWORK single, FIREWORK_PATTERN CIRCLE/LINE/RANDOM, FIREWORK_PHRASE), FIREWORK_RANDOM
+enhancements (y_variation OPS-035, presets pool OPS-036), named FIREWORK_PATTERN presets for all
+three subtypes, auto-preview ON. FAN deferred. 5 of 10 departments now locked.
 
-Prior actions same session: PATTERN rename confirmed (⚑16), department scan complete,
-Effects PHRASE vocabulary resolved (⚑18), MUSIC event type spec written into §12b (⚑17
-design complete), OPS-035 migration scoped.
+Prior actions same session: Effects (Felix) locked. PATTERN rename confirmed (⚑16). Department
+scan complete. Effects PHRASE vocabulary resolved (⚑18). MUSIC event type spec written into §12b
+(⚑17 design complete). MUSIC migration scoped (future OPS item, not yet filed).
 
-**To resume next session:** Department walk at Fireworks. Read this file top-to-bottom, then
-read `kb/departments/fireworks/fireworks.kb.md` for instrument context.
+**To resume next session:** Department walk at Camera. Read this file top-to-bottom, then read
+`kb/departments/camera/camera.kb.md` for instrument context.
+
+**Next department to walk:** Camera.
 
 **Department walk status:**
 
@@ -41,7 +39,7 @@ read `kb/departments/fireworks/fireworks.kb.md` for instrument context.
 | Sound | ✅ Locked (2026-04-05) |
 | Lighting | ✅ Locked (2026-04-05) |
 | Effects | ✅ Locked (2026-04-05) |
-| Fireworks | 📋 Orientation captured — walk pending |
+| Fireworks | ✅ Locked (2026-04-05) |
 | Camera | 📋 Orientation captured — walk pending |
 | Voice | 📋 Orientation captured — walk pending |
 | Choreography | 📋 Orientation captured — walk pending |
@@ -64,6 +62,14 @@ read `kb/departments/fireworks/fireworks.kb.md` for instrument context.
 - Melody/motif cues (`motif.*`, `gracie.*`) are NOT Patterns — discrete authored sequences, untouched
 - `world_preview: LIVE | VALUES_ONLY` — session-level param for server-wide instruments (§9)
 - LIGHTNING dual-anchor model: `scene_origin` (current behavior) + `player` (OPS-034) (§11)
+- FIREWORK dual-anchor model: `anchor: scene_origin | player` — matches LIGHTNING field name and
+  semantics. Default `scene_origin`. FIREWORK_PHRASE anchor is phrase-level; no per-step override.
+  Player-anchor panel shows OPS-034 dependency warning. (See §Fireworks, item 24.)
+- FIREWORK_PATTERN named presets: all three subtypes (CIRCLE, LINE, RANDOM). Presets capture
+  character (radius, count, chase, power/color variation, y_mode, y_offset, y_variation for RANDOM).
+  Show event provides placement (anchor, origin_offset/angle/start_offset, rocket appearance preset,
+  pool, seed). Naming: `fireworks.circle.[slug]`, `fireworks.line.[slug]`, `fireworks.random.[slug]`.
+  Distinct from rocket appearance presets in `fireworks.yml`. (See §Fireworks.)
 - TIME_OF_DAY_PATTERN presets: yes. WEATHER presets: no. Individual TIME_OF_DAY snap presets: no. (§11)
 - LIGHTNING presets: yes — anchor type + offset is a repeatable pattern worth naming (§11)
 - Pattern field set: `interpolations:` map replaces single `interpolated_param`; supports
@@ -77,7 +83,7 @@ read `kb/departments/fireworks/fireworks.kb.md` for instrument context.
 ⚑ 1 Edit target (show YAML vs. cue file loaded)
 ⚑ 2 Partial YAML handling
 ⚑ 3 Panel mockup
-⚑ 4 Department walk (4 departments remain — Fireworks next)
+⚑ 4 Department walk (3 departments remain — Camera next)
 ⚑ 5 Preset library file structure
 ⚑ 6 Pattern schema section in spec.md
 ⚑ 7 ✅ Pattern type list confirmed (2026-04-05): SOUND_PATTERN, EFFECT_PATTERN, TIME_OF_DAY_PATTERN
@@ -998,7 +1004,7 @@ reference effect/particle presets, but the phrase as a whole is authored per-sho
 
 ---
 
-### 📋 Fireworks — not yet walked
+### 📋 Fireworks — walk in progress
 
 **Orientation confirmed (2026-04-05 department scan):**
 
@@ -1011,7 +1017,252 @@ reference effect/particle presets, but the phrase as a whole is authored per-sho
   Examples already documented in §12a.
 - Both PATTERN and PHRASE apply cleanly to Fireworks from the gate.
 
-**Walk pending.**
+**Walk in progress — 2026-04-05:**
+
+#### ✅ Dual-anchor model
+
+All FIREWORK event types carry `anchor: scene_origin | player`. Field name matches LIGHTNING (§11).
+
+- **Default: `scene_origin`** — offset computed from stage mark. Standard authoring posture for
+  all show-level pyrotechnics. Most fireworks shows are staged relative to a fixed world position.
+- **`player`** — offset computed from player's position at cue invocation time. Static; does not
+  interpolate per-tick. Architectural decision: anchor locked at invocation, same as all other
+  player-anchored events. Use for one-offs where the burst should originate near wherever the
+  player is standing when the cue fires.
+- **FIREWORK_PHRASE**: anchor lives at phrase level. All steps (volleys) share the single locked
+  origin resolved at invocation. No per-step anchor override.
+- **Panel**: when `anchor: player` is selected, panel shows OPS-034 dependency warning.
+  Authoring and saving is fully valid; live execution requires OPS-034 to resolve correctly.
+- **Java gap**: player-anchor fireworks require the same capability as OPS-034 (player position
+  resolved at invocation time). Not a new gap — OPS-034 dependency. (See item 24.)
+
+```yaml
+# FIREWORK (single) — player-anchored one-off
+type: FIREWORK
+anchor: player          # default: scene_origin
+preset: scae_star_warm
+offset: {x: 0, y: 2, z: 0}
+y_mode: relative
+
+# FIREWORK_CIRCLE — stage-anchored (typical show use)
+type: FIREWORK_CIRCLE
+anchor: scene_origin    # explicit; this is the default
+preset: scae_large_fanfare
+radius: 8
+count: 8
+origin_offset: {x: 0, z: 0}
+y_mode: relative
+y_offset: 0
+
+# FIREWORK_PHRASE (salvo) — anchor at phrase level
+type: PHRASE
+anchor: player          # all volleys share this locked origin
+tempo_bpm: 120
+subdivision: quarter
+steps:
+  - at_beat: 1.0
+    events:
+      - {type: FIREWORK, preset: scae_star_warm}
+  - at_beat: 2.0
+    events:
+      - {type: FIREWORK, preset: scae_burst_leaf}
+      - {type: FIREWORK, preset: scae_star_warm}
+```
+
+#### ✅ Panel design
+
+**FIREWORK (single) — point panel**
+
+Simplest Fireworks panel. Fields: anchor selector, preset picker (single ID from
+fireworks.yml), offset {x / y / z} as three numeric fields, y_mode dropdown
+(relative | surface). No power_variation, no color_variation — those are PATTERN
+features. Auto-preview ON: fires the rocket once on demand.
+
+**FIREWORK_PATTERN — subtype panel with selector**
+
+Subtype selector at top: `CIRCLE | LINE | RANDOM`. (FAN deferred — possible Phase 3
+addition. Note in panel as unavailable.) Panel body changes per subtype. Common header
+across all three:
+
+- anchor (scene_origin | player — OPS-034 warning if player)
+- y_mode (relative | surface)
+- y_offset (numeric)
+- power_variation (UNIFORM | RAMP_UP | RAMP_DOWN | ALTERNATE | RANDOM)
+- color_variation (UNIFORM | RAINBOW | GRADIENT | ALTERNATE)
+  - when GRADIENT selected: gradient_from + gradient_to hex pickers appear
+
+Subtype-specific fields below the common header:
+
+| Field | CIRCLE | LINE | RANDOM |
+|---|---|---|---|
+| radius | ✅ | — | ✅ |
+| count | ✅ | ✅ | ✅ |
+| origin_offset {x, z} | ✅ | — | ✅ |
+| start_offset {x, z} | — | ✅ | — |
+| angle (compass bearing) | — | ✅ | — |
+| length | — | ✅ | — |
+| chase (enabled / interval_ticks / direction) | ✅ | ✅ | — |
+| y_variation | — | — | ✅ (new) |
+| preset (single) | ✅ | ✅ | ✅ |
+| presets (pool list) | — | — | ✅ (new) |
+| seed | — | — | ✅ |
+
+**Known-gap warning on LINE + GRADIENT:** when subtype is LINE and color_variation
+is GRADIENT, panel displays an inline warning: "gradient_from/to not currently applied
+on LINE — always defaults to red→blue (ops-inbox gap)." Authoring still permitted;
+warning is informational.
+
+**FIREWORK_RANDOM — two new fields (Java work required):**
+
+`y_variation` — randomizes each rocket's Y within a range. Floor is `y_offset`;
+ceiling is `y_offset + y_variation`. Rockets spawn at random heights in that band.
+Flat behavior (current) is y_variation absent or 0.
+
+```yaml
+y_offset: 2
+y_variation: 4     # rockets spawn between Y+2 and Y+6
+```
+
+`presets` (pool) — list of preset IDs; one drawn at random per rocket. Mutually
+exclusive with `preset` (single); if `presets:` is present, it wins. `color_variation`
+stacks on top — applies per-rocket after the preset is drawn from the pool, overriding
+that preset's primary colors per the normal color_variation rules.
+
+```yaml
+# pool + color_variation stacked
+presets:
+  - scae_star_warm
+  - bday_confetti_ball
+  - pride_burst_rainbow
+color_variation: RAINBOW    # overrides primary colors of whichever preset is drawn
+```
+
+Panel behavior: `preset` and `presets` are mutually exclusive selector modes — toggle
+or radio (single preset | preset pool). Pool mode shows a multi-select list of
+fireworks.yml entries; single mode shows a single picker. `color_variation` row always
+visible regardless of mode; stacking behavior is the runtime rule, no warning needed.
+
+Both `y_variation` and `presets` pool are new Java fields — not currently implemented
+in `FireworkEventExecutor`. Filed in ops-inbox (items below). Phase 2 panel authors
+and saves valid YAML; execution of these fields requires Java work.
+
+**FIREWORK_PHRASE (salvo) — step-list panel**
+
+Same model as EFFECT_PHRASE. Anchor at phrase level (top of panel). Steps addressed
+by beat (tempo_bpm + subdivision). Each step is a volley — a list of FIREWORK events
+firing simultaneously. Panel rows: add step, add event to step, reorder steps.
+Individual FIREWORK events within a step reference a single preset (no pool per
+step-event — pool is a RANDOM-mode feature only).
+
+Auto-preview ON: fires the phrase from the beginning on demand.
+
+#### ✅ Named FIREWORK_PATTERN presets — all three subtypes
+
+CIRCLE, LINE, and RANDOM all get named configuration presets. Presets capture the
+*character* of the arrangement — spatial density, sequencing, variation. The show event
+provides placement and context. All three are reusable across shows once you separate
+those concerns.
+
+**Field split — what belongs in the preset vs. the show event:**
+
+| Field | CIRCLE | LINE | RANDOM |
+|---|---|---|---|
+| radius | preset | — | preset |
+| count | preset | preset | preset |
+| length | — | preset | — |
+| chase (enabled / interval_ticks / direction) | preset | preset | — |
+| power_variation | preset | preset | preset |
+| color_variation | preset | preset | preset |
+| y_mode | preset | preset | preset |
+| y_offset | preset | preset | preset |
+| y_variation | — | — | preset |
+| origin_offset {x, z} | show event | — | show event |
+| start_offset {x, z} | — | show event | — |
+| angle | — | show event | — |
+| anchor | show event | show event | show event |
+| rocket appearance preset | show event | show event | show event |
+| gradient_from / gradient_to | show event | show event | — |
+| presets pool | — | — | show event |
+| seed | — | — | show event |
+
+`anchor` is always show-level — it's a deployment decision, not a character decision.
+A "victory crown" isn't inherently `scene_origin` or `player`.
+
+Rocket appearance preset (`preset: id`) stays show-level — the pattern preset defines
+the shape and energy of the arrangement; which rocket fires is a separate creative call.
+
+**Preset naming:** `fireworks.circle.[slug]`, `fireworks.line.[slug]`,
+`fireworks.random.[slug]` — distinct from rocket appearance presets in `fireworks.yml`
+(which retain their existing IDs or get migrated separately).
+
+**Examples:**
+
+```yaml
+# fireworks.circle.victory_crown
+id: fireworks.circle.victory_crown
+radius: 8
+count: 8
+chase:
+  enabled: true
+  interval_ticks: 3
+  direction: FL
+power_variation: UNIFORM
+color_variation: UNIFORM
+y_mode: relative
+y_offset: 0
+
+# fireworks.line.slow_sweep
+id: fireworks.line.slow_sweep
+count: 6
+length: 14
+chase:
+  enabled: true
+  interval_ticks: 5
+  direction: FL
+power_variation: RAMP_UP
+color_variation: UNIFORM
+y_mode: relative
+y_offset: 1
+
+# fireworks.random.celebration_scatter
+id: fireworks.random.celebration_scatter
+count: 12
+radius: 6
+y_variation: 3
+power_variation: RANDOM
+color_variation: UNIFORM
+y_mode: surface
+y_offset: 0
+```
+
+These presets live in the FIREWORK_PATTERN preset file (location TBD — part of ⚑5,
+preset library file structure). They are distinct from `fireworks.yml` rocket presets.
+
+#### ✅ Auto-preview
+
+ON for all Fireworks event types — FIREWORK (single), all FIREWORK_PATTERN subtypes,
+FIREWORK_PHRASE. Consistent with all other departments. Rocket travel time before burst
+is a player expectation, not a panel design issue. No special handling.
+
+---
+
+### ✅ Fireworks — locked (2026-04-05)
+
+**Summary of locked decisions:**
+- Dual-anchor model: `anchor: scene_origin | player`, default `scene_origin`
+- FIREWORK_PHRASE anchor is phrase-level; no per-step override
+- Player-anchor panel shows OPS-034 dependency warning (item 24)
+- Panel: FIREWORK (single) = point panel; FIREWORK_PATTERN = subtype selector shell
+  (CIRCLE | LINE | RANDOM; FAN deferred); FIREWORK_PHRASE = step-list panel
+- power_variation + color_variation on CIRCLE, LINE, and RANDOM
+- LINE + GRADIENT shows known-gap warning in panel
+- FIREWORK_RANDOM: `y_variation` (floor → floor+variation) — OPS-035
+- FIREWORK_RANDOM: `presets` pool, stacks with `color_variation` — OPS-036
+- Pool is RANDOM-mode only; step-events in FIREWORK_PHRASE use single preset
+- Named FIREWORK_PATTERN presets: all three subtypes (CIRCLE, LINE, RANDOM)
+  — presets capture character; show event provides placement + rocket appearance
+  — naming: `fireworks.circle.[slug]`, `fireworks.line.[slug]`, `fireworks.random.[slug]`
+- Auto-preview ON across all Fireworks event types
 
 ---
 
@@ -1978,6 +2229,7 @@ is clear.
 | 📋 20 | Camera walk: orientation captured (2026-04-05). CAMERA_PATTERN (PTZ start/end interpolation) and CAMERA_PHRASE (authored position sequence) confirmed. Full field set TBD. | No |
 | 📋 21 | Voice walk: orientation captured (2026-04-05). VOICE_PHRASE (lines as steps with timing, location, color, intensity, duration) confirmed. Scene editing mode (Add/Insert/Reorder lines) scoped. | No |
 | 📋 22 | Choreography walk: orientation captured (2026-04-05). Dual-anchor model (scene_origin / player). CHOREO_PATTERN and CHOREO_PHRASE confirmed. | No |
+| 📋 24 | Fireworks player-anchor Java dependency: `anchor: player` on any FIREWORK/* event type requires the same Java capability as OPS-034 (resolve player position at invocation time). Not a new gap — OPS-034 dependency. Phase 2 panel writes valid YAML and shows a warning; live execution requires OPS-034 to ship. | No — not blocking Phase 2 panel |
 
 ---
 

@@ -613,6 +613,180 @@ offset: {x: 1, y: 0, z: 1}
 
 ---
 
+### OPS-035 [java-gap] FIREWORK_RANDOM: y_variation field — randomized Y height per rocket
+
+**Area:** Execution engine (`FireworkEventExecutor.handleRandom()`)
+**Filed:** 2026-04-05
+**Priority:** Low — not blocking Phase 2 panel; needed before y_variation YAML authors correctly in production
+
+**Problem:**
+`FIREWORK_RANDOM` currently launches all rockets at a uniform Y offset (`y_offset` field).
+There is no way to vary burst altitude within a scatter — all rockets in a scatter spawn
+at the same height, producing a flat plane of bursts even when `y_mode: surface` would
+otherwise suggest terrain variation.
+
+**Desired capability:**
+Add `y_variation` field to `FIREWORK_RANDOM`. Each rocket's Y position is randomized
+between `y_offset` (floor) and `y_offset + y_variation` (ceiling). Absent or zero
+`y_variation` preserves current flat behavior exactly.
+
+**YAML field (proposed):**
+```yaml
+type: FIREWORK_RANDOM
+y_offset: 2
+y_variation: 4     # each rocket spawns between Y+2 and Y+6 — textured scatter
+```
+
+**Implementation note:**
+In `handleRandom()`, per-rocket Y is currently `anchorY + y_offset`. With this change:
+`anchorY + y_offset + random.nextDouble() * y_variation`. Seeded random should be used
+if `seed` is set, for reproducibility.
+
+---
+
+### OPS-036 [java-gap] FIREWORK_RANDOM: preset pool — draw from multiple presets per rocket
+
+**Area:** Execution engine (`FireworkEventExecutor.handleRandom()`), YAML model (`FireworkRandomEvent`)
+**Filed:** 2026-04-05
+**Priority:** Low — not blocking Phase 2 panel; needed before preset pool YAML executes correctly
+
+**Problem:**
+`FIREWORK_RANDOM` currently accepts a single `preset` ID. Every rocket in the scatter
+uses the same rocket appearance. There is no way to produce a multi-color scatter from
+a named set of presets — the author must either use `color_variation` (which overrides
+preset colors) or manually stack multiple pattern events.
+
+**Desired capability:**
+Add `presets` (list) field to `FIREWORK_RANDOM` as a pool mode. When `presets:` is
+present, each rocket draws one preset at random from the list. `preset` (single) and
+`presets` (pool) are mutually exclusive; `presets` wins if both are present.
+
+`color_variation` stacks on top of the pool draw — color_variation applies per-rocket
+after the preset is selected, overriding that preset's primary colors per normal
+color_variation rules.
+
+**YAML field (proposed):**
+```yaml
+# pool mode — each of 12 rockets draws one preset at random
+type: FIREWORK_RANDOM
+count: 12
+radius: 6
+presets:
+  - scae_star_warm
+  - bday_confetti_ball
+  - pride_burst_rainbow
+color_variation: RAINBOW    # stacks — overrides primary colors after pool draw
+```
+
+**Implementation note:**
+`FireworkRandomEvent` needs a `List<String> presets` field alongside the existing
+`String preset`. In `handleRandom()`, per-rocket preset selection: if `presets` is
+non-empty, draw `presets.get(random.nextInt(presets.size()))`. Seeded random used if
+`seed` set, for reproducibility.
+
+---
+
+### OPS-037 [future-capability] Land ownership plugin integration — auto-claim and cleanup
+
+**Area:** Plugin integration, show lifecycle (`ShowManager` or equivalent), ops/admin tooling
+**Filed:** 2026-04-05
+**Priority:** Medium — not blocking current development; needed before any multi-operator or
+public-facing server deployment where land grief is a concern
+
+**Problem:**
+ScaenaShows materializes physical scenes in the world — block states, entities, marks. There is
+currently no integration with server land-ownership plugins (e.g. GriefPrevention, Lands,
+WorldGuard regions). A show's scene footprint is unprotected: other players or operators can
+modify blocks, kill entities, or grief the space during a show. There is also no mechanism to
+identify or clean up land claims associated with a show that has been removed.
+
+**Desired capability:**
+When a show's scene is loaded or initialized, ScaenaShows automatically claims the scene's
+spatial bounding box with the server's land ownership plugin. Claims are:
+
+- **Named consistently** — a deterministic naming convention based on show ID and scene ID,
+  e.g. `scaena.[show_id].[scene_id]` or similar. Human-readable, collision-resistant.
+- **Metadata-tagged** — enough cross-reference data attached to each claim to identify it as
+  belonging to ScaenaShows and to a specific show. This allows a future cleanup command to
+  find and delete all claims associated with a removed or retired show without manual search.
+- **Scoped to the scene box** — claim boundaries should match (or conservatively wrap) the
+  scene's spatial footprint as defined by the show's set marks, not a fixed arbitrary area.
+
+**Cleanup path:**
+A `/scaena admin unclaim [show_id]` command (or equivalent) should be able to locate all
+land claims tagged to a given show and release them — either via plugin API or by querying
+the metadata index. This is the primary driver for consistent naming and metadata: deletion
+must be automatable, not manual.
+
+**Design questions before implementation:**
+- Which land ownership plugin(s) to target? Integration API varies significantly between
+  GriefPrevention, Lands, WorldGuard, and others. May need an adapter layer or plugin-config
+  selection.
+- Claim timing: on show load, on TechSession LOAD, or on first `/show play`? Different
+  lifecycle hooks have different tradeoffs (e.g. claiming at authoring time vs. performance time).
+- Claim ownership: under a dedicated server account / admin UUID, or under the show director's
+  UUID? Admin UUID is cleaner for automated cleanup.
+- Bounding box calculation: does the plugin need the full scene volume (including overhead
+  clearance for fireworks), or just the floor footprint?
+- Dependency handling: what happens if the land ownership plugin is absent? ScaenaShows should
+  degrade gracefully — log a warning, skip claim, continue normally.
+
+**Not dependent on:** OPS-038 (scene safety / mob exclusion), though the two may share
+bounding-box infrastructure if implemented together.
+
+---
+
+### OPS-038 [future-capability] Scene safety — mob exclusion during nighttime / show-edit
+
+**Area:** Scene lifecycle, TechSession, show execution, world management
+**Filed:** 2026-04-05
+**Priority:** Medium — quality-of-life and safety issue for show editors and players; more
+urgent for nighttime scenes or servers without peaceful mode
+
+**Problem:**
+During both TechSession (show editing in-world) and live show playback, the player is
+physically present in the scene. At night or in poorly-lit environments, hostile mobs
+can wander into the scene footprint and attack the player or interfere with entities and
+blocks that the show depends on. Mobs spawned by the show itself (via `SPAWN_ENTITY`)
+are intentional and must not be excluded — only ambient/wandering hostiles are the concern.
+
+**Desired capability:**
+A mechanism that prevents ambient hostile mobs from entering the scene's spatial bounding
+box unless they were spawned by an active `RunningShow` or TechSession. Two candidate
+approaches (not mutually exclusive):
+
+**Option A — Mob exclusion boundary:**
+Define a no-spawn / no-entry zone around the scene box. Hostile mobs that wander into
+the boundary are either denied spawn or immediately removed. Show-spawned entities (tagged
+at spawn time with show metadata) are exempt. Implementation could use WorldGuard mob flags
+if present, or a custom `EntityMoveEvent` / `CreatureSpawnEvent` listener scoped to the
+scene volume.
+
+**Option B — Environmental control during session:**
+When TechSession or RunningShow is active, apply time/weather/difficulty controls that
+suppress hostile spawns for the session duration and restore on exit. Less precise than
+Option A (affects the whole world or a broader region), but simpler to implement without
+a region plugin dependency. Could be combined with `TIME_OF_DAY` and `WEATHER` management
+already in the plugin.
+
+**Design questions before implementation:**
+- Should exclusion be active during TechSession only, RunningShow only, or both?
+- How is "show-spawned" distinguished from "ambient"? SPAWN_ENTITY executor should tag
+  entities with persistent metadata at spawn time (e.g. a PersistentDataContainer key)
+  — these entities are exempt from exclusion logic.
+- Option A vs. B vs. hybrid? Option A is more surgical; Option B is simpler. A config
+  flag per show (`scene_safety: boundary | environment | none`) may be the right model.
+- Bounding box: same scene footprint used by OPS-037 if implemented, or independently
+  defined?
+- Cleanup: exclusion must be fully lifted when TechSession exits or RunningShow stops,
+  including stop-safety contract compliance (no lingering listeners or tasks).
+
+**Relationship to OPS-037:** Independent — mob exclusion does not require land ownership
+integration. However, if both are implemented, they likely share scene bounding-box
+infrastructure and it's worth coordinating the implementation.
+
+---
+
 #### Part A Audit Findings — 2026-04-04
 
 **Red scoreboard numbers (13→1)**
