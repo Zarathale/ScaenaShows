@@ -278,6 +278,28 @@ sessions.
 
 Colons used throughout, not em dashes. Example: `tick 340: warrior_enters_scene`
 
+### ✅ Text input: text GUI, not anvil (cross-plugin preference)
+
+Anywhere the player needs to enter a short string (sound ID, custom slug, etc.), use a
+text GUI modal — not the anvil GUI. The anvil has labeling limitations that make it
+unsuitable as a general text input. This is a plugin-wide UI preference established
+during the Sound department walk. Applies to all departments wherever string input is
+needed (sound_id, custom ID entry, etc.).
+
+### ✅ Auto-preview mode toggle (cross-department)
+
+A session-level toggle (`auto-preview: on/off`) persists across cues for the full Phase 2
+session. Applies to any department edit mode where a param change has a perceptible
+in-game result.
+
+- **ON:** any param change immediately refires the relevant event so the designer hears
+  or sees the result in real time.
+- **OFF:** an explicit `[▶ Preview]` button fires the event once on demand.
+
+Departments where this toggle applies: Sound (hear param changes), Effects (re-apply
+potion effects), Fireworks (refire burst), Particle (refire burst). Camera and Wardrobe
+are inherently live-swap-on-change and are unaffected by the toggle.
+
 ---
 
 ## 10. Editor Mode: Survival vs. Creative
@@ -380,7 +402,53 @@ trim state (pattern + material). Complete snapshot.
 
 ---
 
-### 📋 Sound — not yet walked
+### ✅ Sound
+
+**Interaction model:** Panel-based param changes. No game mode switch. No world capture.
+Two distinct panel views depending on event type.
+
+**SOUND event panel fields:**
+- `sound_id` — panel list organized by Sound KB curated registers (Presence, Atmosphere,
+  Warmth, Tension, etc.) + `[Enter custom ID →]` opens text GUI (not anvil — see §9)
+- `category` — panel selector: `ambient / hostile / music / record / weather / block /
+  master / player / voice`
+- `volume` — scroll wheel, 0.1 increments
+- `pitch` — scroll wheel, 0.05 increments; auto-inferred pitch register label shown
+  alongside the numeric value: `low / mid-low / natural / mid-high / high`
+- `max_duration_ticks` — scroll wheel (optional; `[Clear]` removes the field)
+
+**Pitch register inference ranges:**
+
+| Label | Pitch range |
+|---|---|
+| `low` | 0.5–0.7 |
+| `mid-low` | 0.7–0.9 |
+| `natural` | 0.9–1.1 |
+| `mid-high` | 1.1–1.5 |
+| `high` | 1.5–2.0 |
+
+**STOP_SOUND event panel fields:**
+Single-field panel: `source` channel selector (`ambient / hostile / music / record /
+weather / block / master / player / voice / all`). Single click to change. No preview
+button. No preset (too trivial to warrant naming — it's one field).
+
+**Live preview:** Governed by the session-level auto-preview toggle (§9). When ON, any
+SOUND param change refires the sound event so the designer hears it immediately. When OFF,
+explicit `[▶ Hear it]` button fires on demand. Applies to SOUND only — STOP_SOUND has no
+meaningful preview in edit mode.
+
+**Note on Spans:** Simulated fades (multiple descending-volume SOUND events) are Span
+candidates — see §12 Span Event Architecture. Each individual SOUND event is still
+editable independently, but Phase 2 offers Span group edit when the pattern is detected
+as a group. Motifs and melodies (`motif.*`, `gracie.*`) are NOT Spans — they are discrete
+authored note sequences and remain as named cues. No conflict.
+
+**Preset captures (SOUND only):** `sound_id`, `category`, `volume`, `pitch`,
+`max_duration_ticks` (if set). Complete snapshot. No preset for STOP_SOUND.
+
+**Preset naming:** `sound.[category].[pitch_register].[slug]`
+- Examples: `sound.hostile.low.warden_presence`, `sound.ambient.natural.cave_under`,
+  `sound.master.high.arrival_bell`
 
 ### 📋 Lighting — not yet walked
 
@@ -396,7 +464,111 @@ trim state (pattern + material). Complete snapshot.
 
 ---
 
-## 12. Set Coordinate System
+## 12. Span Event Architecture
+
+### ✅ Span is a YAML primitive
+
+A Span is a first-class event type in the ScaenaShows YAML schema. It defines an
+interpolated or pulsed sequence of events as a single authored unit. The engine expands
+a Span to N individual events at show-load time (in EventParser via SpanExpander).
+The human and Phase 2 editor work with the Span; the scheduler works with expanded events.
+
+**Execution invariant preserved.** Spans are a parse-time concept only. ShowScheduler,
+ExecutorRegistry, and RunningShow never see Spans — they receive only expanded individual
+events. The production execution path is unchanged.
+
+### ✅ Two behavioral modes
+
+**Fade-type Span** (`start_value ≠ end_value`): interpolates a param from start to end
+across N steps. Examples: Sound simulated fade (volume), Lighting time transition (time).
+
+**Pulse-type Span** (`start_value == end_value`): repeats a fixed config N times at
+calibrated cycle timing. Example: Effects levitation patterns (HOVER, CLIMB, RELEASE).
+
+### ✅ Span field set
+
+| Field | Required | Description |
+|---|---|---|
+| `interpolated_param` | Yes | Which param varies (e.g., `volume`, `amplifier`, `time`) |
+| `start_value` | Yes | Value at step 0 |
+| `end_value` | Yes | Value at final step (== start_value for pulse-type) |
+| `steps` | Yes | Number of events to distribute |
+| `total_duration` | Yes | Total tick length of the Span |
+| `curve` | Yes | `linear` (default) \| `ease_in` \| `ease_out` |
+| `step_duration` | No | For event types with internal duration (EFFECT): how long each step event lasts |
+| `gap` | No | Ticks between step end and next step start (interval = step_duration + gap) |
+
+### ✅ Phase 2 Span types
+
+Three Span types ship in Phase 2:
+
+| Type | Department | Interpolated param | Primary use |
+|---|---|---|---|
+| `SOUND_SPAN` | Sound | `volume` | Simulated fade |
+| `EFFECT_SPAN` | Effects | `amplifier` | Levitation hover/climb/release cycles |
+| `TIME_OF_DAY_SPAN` | Lighting | `time` | Gradual time transition |
+
+Additional Span types (PARTICLE_SPAN, ENTITY_EFFECT_SPAN, etc.) are deferred until a
+concrete show need drives them.
+
+### ✅ Levitation calibrated patterns migrate to EFFECT_SPAN presets
+
+The three calibrated levitation patterns move from KB documentation to named EFFECT_SPAN
+presets in `effect-configs.yml`:
+
+| Preset ID | step_duration | gap | interval | Confirmed behavior |
+|---|---|---|---|---|
+| `effects.levitate.hover` | 20t | 8t | 28t | "gentle bubbling" — clean altitude hold |
+| `effects.levitate.climb` | 24t | 0t | 24t | "separation from earth" — gradual drift |
+| `effects.levitate.release` | 20t | 24t | 44t | "blood pressure release" — slow descent |
+
+### ✅ Span in TechCueSession (Phase 2)
+
+`TechCueSession.raw_yaml` stores Spans in unexpanded form. Expansion happens fresh each
+time `enterPreview()` is called. This is the load-bearing invariant: raw_yaml is always
+what was authored; RunningShow is always what was expanded from it. If these diverge,
+edits will be silently lost on the next preview cycle. TechManager must enforce this.
+
+ShowYamlEditor gains a **5th operation:** `editSpan(spanYamlNode, SpanParams)` — mutates
+Span fields in raw_yaml. Does not expand. Expansion happens at preview time.
+
+### ✅ Span display in Phase 2 panel
+
+Spans appear as collapsed groups in the cue detail panel:
+
+```
+  tick 360: ambient_fade                          [Span ▾]
+    SOUND_SPAN  volume: 0.8 → 0.1  4 steps  40t  [Edit ▸]
+```
+
+`[Edit ▸]` on any step within a Span opens Span edit mode (not single-event edit).
+Span edit mode shows step context: `Step 3 of 6 in span`. `[▶ Preview]` fires 1–2 cycles.
+
+### ✅ Melody/motif cues are NOT Spans
+
+Musical riffs, melodies, and Gracie gestures (`motif.*`, `gracie.*`) are discrete authored
+note sequences — each pitch is a specific authored value that cannot be computed by
+interpolation. They remain as named cues (sequences of SOUND events). The existing motif
+cue library is complete and aligned. Span does not replace or conflict with it.
+
+A `MELODY_SPAN` type (explicit note array primitive for authoring melodies in-game) is
+acknowledged as a future aspirational item — not Phase 2 scope.
+
+### Java layer sizing estimate
+
+| Layer | Work | Rough size |
+|---|---|---|
+| Spec (spec.md Span section) | Documentation | 1 session |
+| Model classes (SpanEvent + 3 subtypes) | Java | ~200 lines |
+| SpanExpander (expansion math + curves) | Java | ~250 lines |
+| EventParser routing | Java | ~50 lines |
+| ShowYamlEditor 5th operation | Java | ~150 lines |
+| TechCuePanel Span display + edit | Java/UI | ~300 lines |
+| **Total** | | **~4–6 weeks** |
+
+---
+
+## 13. Set Coordinate System
 
 ### ✅ Scene set origin mark
 
@@ -412,7 +584,7 @@ Properties:
 
 ---
 
-## 13. Universal Preset Library
+## 14. Universal Preset Library
 
 ### ✅ Established pattern
 
@@ -442,23 +614,27 @@ is clear.
 
 ---
 
-## 14. Open Items
+## 15. Open Items
 
 | # | Item | Blocking? |
 |---|------|-----------|
-| ⚑ 1 | Edit target: show YAML only vs. also loading cues/*.yml | Yes — before ShowYamlEditor Java |
+| ⚑ 1 | Edit target: show YAML only vs. also loading cues/*.yml — Span reinforces "cue file loaded" model: if a Span lives in a cue file, TechCueSession must have that file loaded to edit Span params | Yes — before ShowYamlEditor Java |
 | ⚑ 2 | Q4 (partial YAML / scaffold handling): what does Phase 2 do when a CUE reference can't resolve at preview time? What is the minimum viable YAML to enter Phase 2? | Yes — before TechCueSession Java |
-| ⚑ 3 | Panel design / mockup: full Phase 2 panel with all modes and states | Yes — before Java |
-| ⚑ 4 | Department walk incomplete: Sound, Lighting, Effects, Fireworks, Camera, Voice, Choreography edit modes not yet defined | Yes — before building spec is final |
+| ⚑ 3 | Panel design / mockup: full Phase 2 panel with all modes and states including Span display | Yes — before Java |
+| ⚑ 4 | Department walk incomplete: Lighting, Effects, Fireworks, Camera, Voice, Choreography edit modes not yet defined (Sound locked 2026-04-05) | Yes — before building spec is final |
 | ⚑ 5 | Preset library file structure: formal location and format for each department's preset file | Yes — before ShowYamlEditor Java |
-| 📋 6 | OPS item for universal preset library: file as separate ticket once department walk complete | No |
-| 📋 7 | Auto-name fallback logic: per-department inference rules when slug is absent | No — slug is required; fallback is a safety net only |
-| 📋 8 | Leather color palette: define the curated named color list for Wardrobe | No — design asset, not blocking |
-| 📋 9 | OPS-033 (display noise cleanup): still blocked on Phase 2 architecture decision — that decision is now made (extend TechSession). OPS-033 Part B can proceed. | No |
+| ⚑ 6 | Span schema spec section: field definitions, expansion rules, and validation for SOUND_SPAN, EFFECT_SPAN, TIME_OF_DAY_SPAN must be written into spec.md before any Span Java work | Yes — prerequisite for all Span Java |
+| ⚑ 7 | Span type list confirmation: three Phase 2 types proposed (SOUND_SPAN, EFFECT_SPAN, TIME_OF_DAY_SPAN) — confirm before parser/expander work begins | Yes — before Span Java |
+| ⚑ 8 | Cross-plugin text input UI pattern: text GUI (not anvil) established as preference during Sound walk — needs formal design decision for how text input modal works across all departments | Yes — before any department Java that requires string input |
+| 📋 9 | OPS item for universal preset library: file as separate ticket once department walk complete | No |
+| 📋 10 | Auto-name fallback logic: per-department inference rules when slug is absent | No — slug is required; fallback is a safety net only |
+| 📋 11 | Leather color palette: define the curated named color list for Wardrobe | No — design asset, not blocking |
+| 📋 12 | OPS-033 (display noise cleanup): still blocked on Phase 2 architecture decision — that decision is now made (extend TechSession). OPS-033 Part B can proceed. | No |
+| 📋 13 | MELODY_SPAN type: explicit note array primitive for authoring melodies in-game — acknowledged as future aspirational item, not Phase 2 scope | No |
 
 ---
 
-## 15. What Has Not Changed from the Existing Phase 2 Spec
+## 16. What Has Not Changed from the Existing Phase 2 Spec
 
 These items from `tech-rehearsal-phase2-spec.md` remain as-is:
 
@@ -473,5 +649,6 @@ These items from `tech-rehearsal-phase2-spec.md` remain as-is:
 
 ---
 
-*Session continues — department walk in progress. This document will be updated as
-remaining departments are walked.*
+*Session continues — department walk in progress. Sound locked 2026-04-05. Span
+architecture locked 2026-04-05. Remaining: Lighting, Effects, Fireworks, Camera,
+Voice, Choreography.*
