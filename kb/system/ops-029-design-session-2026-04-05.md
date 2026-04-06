@@ -15,22 +15,21 @@ and will be incorporated into the building spec once the department walk is comp
 
 ## Where We Left Off (pickup point for next session)
 
-**Last action (2026-04-05):** Choreography walk in progress. Panel taxonomy established and
-most single-event panels locked. Cross-department PHRASE confirmed as a significant architectural
-decision. CHOREO_PATTERN in scope. See §Choreography for full decisions.
+**Last action (2026-04-05):** Department walk complete. All 10 departments locked. Choreography
+locked with two calibration-deferred items (CHOREO_PATTERN field set, presets). PHRASE unified
+as single schema type (⚑29 closed): `type: PHRASE`, step builder uses dept → event type → panel,
+multiple events per step, change-dept action on any slot. ⚑4 closed.
 
-Prior actions same session: Camera walk fully locked (PLAYER_MOUNT/DISMOUNT, PLAYER_SPECTATE,
-screen effects, CAMERA_PHRASE). Voice walk locked. Fireworks locked. Effects locked. PATTERN rename
-confirmed (⚑16). Effects PHRASE vocabulary resolved (⚑18). MUSIC event type spec written into
-§12b (⚑17 design complete). Tempo Architecture locked (§12c).
+Prior actions same session: Camera walk fully locked. Voice walk locked. Fireworks locked.
+Effects locked. PATTERN rename confirmed (⚑16). Effects PHRASE vocabulary resolved (⚑18).
+MUSIC event type spec written into §12b (⚑17 design complete). Tempo Architecture locked (§12c).
 
-**To resume next session:** Continue Choreography walk. Three items remain:
-1. CHOREO_PATTERN field set — what does a formation/geometric computed pattern look like in YAML?
-2. CHOREO_PHRASE field set — now confirmed as cross-department; what does the step schema look like?
-3. Presets — any named formation or movement presets worth locking?
-Then settle the PHRASE unification question (⚑29) before closing Choreography.
+**To resume next session:** ⚑4 ⚑5 ⚑6 ⚑8 ⚑17 ⚑29 all closed (2026-04-06). Remaining blocking items:
+⚑1 Edit target (show YAML vs. cue file)
+⚑2 Partial YAML / scaffold handling
+⚑3 Panel mockup
 
-**Next department to walk:** Choreography (in progress).
+**Next department to walk:** None — walk complete.
 
 **Department walk status:**
 
@@ -45,7 +44,7 @@ Then settle the PHRASE unification question (⚑29) before closing Choreography.
 | Fireworks | ✅ Locked (2026-04-05) |
 | Camera | ✅ Locked (2026-04-05) |
 | Voice | ✅ Locked (2026-04-05) |
-| Choreography | 🔄 Walk in progress (2026-04-05) |
+| Choreography | ✅ Locked (2026-04-05) |
 
 **Key architectural decisions locked this session:**
 - Pattern is a YAML primitive (§12) — SOUND_PATTERN, EFFECT_PATTERN, TIME_OF_DAY_PATTERN in Phase 2
@@ -117,11 +116,13 @@ Then settle the PHRASE unification question (⚑29) before closing Choreography.
 - CAPTURE/RELEASE (CAPTURE_ENTITIES, RELEASE_ENTITIES): out of scope for Phase 2 panels.
 - CHOREO_PATTERN: in scope. Concept: computed formation/geometric positions — rules in,
   positions/moves out. Field set TBD (see §Choreography, open item).
-- PHRASE confirmed as cross-department (⚑29 opened): steps can include any event type from
-  any department. No department restriction on PHRASE step content. SOUND_PHRASE, CAMERA_PHRASE,
-  VOICE_PHRASE etc. remain valid as department-convention labels but are not technically
-  distinct types. Phase 2 step picker: select event type (any department) → sub-panel opens
-  for that event's fields. This is a significant architectural statement.
+- PHRASE unified (⚑29 closed 2026-04-05): single schema type `type: PHRASE`. Department-specific
+  names (VOICE_PHRASE, CAMERA_PHRASE, CHOREO_PHRASE, EFFECT_PHRASE, FIREWORK_PHRASE) are authoring
+  convention only — not distinct YAML types. Step builder model: dept picker → event type picker
+  → panel opens for that event's fields. Multiple events per step (vertical grouping): each event
+  slot has its own dept/event type picker. "Change dept" action available on any event slot to
+  re-select dept and event type (fields clear on change). Phase 2 panel entry points pre-select
+  the entry department for the first step but impose no restriction on subsequent steps.
 - Calibration: `formation.rotate.clockwise` added to choreography.kb.md calibration backlog.
 
 **Additional decisions locked (Camera/Voice walk, 2026-04-05):**
@@ -142,16 +143,16 @@ Then settle the PHRASE unification question (⚑29) before closing Choreography.
 ⚑ 1 Edit target (show YAML vs. cue file loaded)
 ⚑ 2 Partial YAML handling
 ⚑ 3 Panel mockup
-⚑ 4 Department walk — Choreography walk in progress. Three items remain: CHOREO_PATTERN field set, CHOREO_PHRASE field set, presets. Then ⚑29 (PHRASE unification).
-⚑ 5 Preset library file structure
-⚑ 6 Pattern schema section in spec.md
+✅ 4 Department walk complete (2026-04-05). All 10 departments locked. Choreography locked with two items deferred to calibration: CHOREO_PATTERN field set, presets.
+✅ 5 Preset library file structure — spec.md §22 (2026-04-06)
+✅ 6 Pattern schema written into spec.md (2026-04-06)
 ⚑ 7 ✅ Pattern type list confirmed (2026-04-05): SOUND_PATTERN, EFFECT_PATTERN, TIME_OF_DAY_PATTERN
 ⚑ 8 Cross-plugin text input UI pattern
 ⚑ 17 MUSIC event type spec — field set, pitch notation, instrument list
-⚑ 29 PHRASE unification: cross-department PHRASE confirmed (2026-04-05, Choreography walk).
-  Steps can include any event type. Does this supersede VOICE_PHRASE / CAMERA_PHRASE / CHOREO_PHRASE
-  as distinct named types, or do department-specific names remain as authoring convention?
-  Affects Phase 2 panel design — step picker must support full event type list.
+✅ 29 PHRASE unification locked (2026-04-05): `type: PHRASE` is the single schema type.
+  Department-specific names are authoring convention only. Step builder: dept picker (10 options) →
+  event type picker → panel. Multiple events per step via vertical grouping; each slot has its
+  own dept/type picker with change action. Entry points pre-select dept but impose no restriction.
 ✅ 18 Effects PHRASE vocabulary confirmed: Pulse / Cluster / Phrase (container). Pattern = type only.
 
 ---
@@ -1298,8 +1299,9 @@ y_mode: surface
 y_offset: 0
 ```
 
-These presets live in the FIREWORK_PATTERN preset file (location TBD — part of ⚑5,
-preset library file structure). They are distinct from `fireworks.yml` rocket presets.
+These presets live in `fireworks.yml` alongside rocket appearance presets (⚑5 closed — spec.md §22).
+They are distinct entries: rocket appearance presets and FIREWORK_PATTERN presets coexist in the
+same file, distinguished by their field sets.
 
 #### ✅ Auto-preview
 
@@ -1740,7 +1742,7 @@ a concrete show need surfaces it.
 
 ---
 
-### 🔄 Choreography — walk in progress (2026-04-05)
+### ✅ Choreography — locked (2026-04-05)
 
 **Orientation confirmed (2026-04-05 department scan):**
 - Dual-anchor model (scene_origin / player) confirmed — per-action field, not session-level default.
@@ -1775,23 +1777,40 @@ velocity at a single tick; AI-on entity resumes pathfinding immediately after.
 
 **CAPTURE/RELEASE:** Out of scope for Phase 2. Author-time YAML only.
 
-**CHOREO_PATTERN:** In scope. Concept: computed formation/geometric placement — rules in,
-positions/moves out. Consistent with SOUND_PATTERN, EFFECT_PATTERN model. Creative space:
-arrange N entities in a circle, arc, grid, or line around an anchor; compute orbital waypoints
-for a rotation sequence. Field set: **TBD — open item for next session.**
+**The honest core of Choreography:** Choreography is a mark management and pathfinding system.
+The creative work is: which entity, which mark, when, what state. Everything else serves that.
 
-**CHOREO_PHRASE:** In scope. Confirmed as cross-department (⚑29): steps can include any
-event type from any department. Field set: **TBD — open item for next session.**
+**Mark types — two kinds, both supported:**
+- Named marks: fixed world positions from Set's mark table. `mark:stage_left`, `mark:center`.
+- Relative marks: inline offset from anchor. "3 blocks that way." Syntax: `{x: 3, z: 0}`.
+  Already present in CROSS_TO. Phase 2 panel exposes an offset picker (x/z fields, y optional)
+  alongside the named mark picker. Which is used more in practice — deferred to calibration.
 
-**Calibration backlog:** `formation.rotate.clockwise` added. N entities at geometric marks,
-all AI CROSS to next mark clockwise simultaneously. Also: side-by-side movement test with
-two entities to adjacent marks. See choreography.kb.md.
+**CHOREO_PATTERN:** In scope. Concept: compute a set of mark positions from a geometric rule
+(circle, line, grid, arc) — rules in, positions out. Entities use those computed marks as
+destinations via AI CROSS or ENTRANCE. Consistent with SOUND_PATTERN, EFFECT_PATTERN model.
+Specific field set deferred to calibration — in-game formation experiments will determine
+which geometric configurations are worth computing vs. placing named marks manually.
 
-**Still open (next session):**
-- CHOREO_PATTERN field set
-- CHOREO_PHRASE field set (cross-department step schema)
-- Presets
-- PHRASE unification question (⚑29)
+**PHRASE container field set — locked (⚑29 closed):**
+```yaml
+type: PHRASE
+name: "phrase_id"           # required
+anchor: scene_origin        # optional — scene_origin | player
+ticks_per_quarter: 12       # optional — or tempo_bpm; inherits from show if absent
+steps:
+  - at: 0                   # tick offset or beat reference (beat 2, beat 2.5)
+    events:
+      - type: [EVENT_TYPE]  # any event type, any department
+        [fields...]
+```
+Step builder UI: dept picker (10 options) → event type picker → panel. Multiple event slots
+per step via vertical grouping. Change-dept action on any slot (fields clear on change).
+Phase 2 entry points pre-select dept for first step; no restriction on subsequent steps.
+
+**Calibration backlog:** `formation.rotate.clockwise` added to choreography.kb.md. N entities
+at geometric marks, all AI CROSS to next mark clockwise simultaneously. Also: side-by-side
+movement test with two entities to adjacent marks.
 
 ---
 
@@ -2895,11 +2914,11 @@ is clear.
 | ⚑ 1 | Edit target: show YAML only vs. also loading cues/*.yml — Pattern reinforces "cue file loaded" model: if a Pattern lives in a cue file, TechCueSession must have that file loaded to edit Pattern params | Yes — before ShowYamlEditor Java |
 | ⚑ 2 | Q4 (partial YAML / scaffold handling): what does Phase 2 do when a CUE reference can't resolve at preview time? What is the minimum viable YAML to enter Phase 2? | Yes — before TechCueSession Java |
 | ⚑ 3 | Panel design / mockup: full Phase 2 panel with all modes and states including Pattern display | Yes — before Java |
-| ⚑ 4 | Department walk: Choreography walk in progress (2026-04-05). All other departments locked. Three items remain for Choreography: CHOREO_PATTERN field set, CHOREO_PHRASE field set (cross-department), presets. Then ⚑29. | Yes — before building spec is final |
-| ⚑ 5 | Preset library file structure: formal location and format for each department's preset file | Yes — before ShowYamlEditor Java |
-| ⚑ 6 | Pattern schema spec section: field definitions, expansion rules, and validation for SOUND_PATTERN, EFFECT_PATTERN, TIME_OF_DAY_PATTERN must be written into spec.md before any Pattern Java work | Yes — prerequisite for all Pattern Java |
+| ✅ 4 | Department walk complete (2026-04-05). All 10 departments locked. Two Choreography items deferred to calibration: CHOREO_PATTERN field set, presets. These are calibration-dependent, not blocking spec. | Closed |
+| ✅ 5 | Preset library file structure written into spec.md §22 (2026-04-06). Universal format: `presets:` map in `src/main/resources/[dept].yml`. Startup loading. Six files ship in Phase 2: effects, camera, voice, sound, lighting (+ fireworks exists). Four deferred: wardrobe, set, casting, choreography. | Closed |
+| ✅ 6 | Pattern/PHRASE/MUSIC/Tempo schema written into spec.md (2026-04-06). §18 Pattern Event Architecture, §19 PHRASE Event Architecture, §20 MUSIC Event Type, §21 Tempo Architecture. Vocabulary Reference updated. | Closed |
 | ✅ 7 | Pattern type list confirmed (2026-04-05): SOUND_PATTERN, EFFECT_PATTERN, TIME_OF_DAY_PATTERN ship in Phase 2. MUSIC_PATTERN added as new type pending spec (⚑17). Fireworks types confirmed as FIREWORK_PATTERN subtypes (⚑19). | Closed |
-| ⚑ 8 | Cross-plugin text input UI pattern: text GUI (not anvil) established as preference during Sound walk — needs formal design decision for how text input modal works across all departments | Yes — before any department Java that requires string input |
+| ✅ 8 | Text formatting: & color codes confirmed as server standard (not MiniMessage). Full cheat sheet added to voice.kb.md §Text Formatting Reference (colors &0–&f, format &k/l/m/n/o/r, server extras &y/&u). spec.md §6.1 examples corrected. Text input modal: chat prompt for single-value fields; book editor for rich/multi-line text. | Closed |
 | 📋 9 | OPS item for universal preset library: file as separate ticket once department walk complete | No |
 | 📋 10 | Auto-name fallback logic: per-department inference rules when slug is absent | No — slug is required; fallback is a safety net only |
 | 📋 11 | Leather color palette: define the curated named color list for Wardrobe | No — design asset, not blocking |
@@ -2908,7 +2927,7 @@ is clear.
 | ✅ 14 | `world_preview` param: default confirmed as `LIVE` (2026-04-05). In-scene editing shows reality by default; toggle available contextually to suppress when needed. | Closed |
 | 📋 15 | OPS-034 (player-anchored LIGHTNING): Java capability gap filed 2026-04-05. Player anchor presets can be authored and saved in Phase 2; they require OPS-034 to fire correctly in production. Not blocking Phase 2 panel work. | No |
 | ✅ 16 | SPAN → PATTERN rename confirmed (2026-04-05). Find/replace complete throughout this doc. Building spec and Java model names to be updated when Java work begins. PATTERN and PHRASE are the two generative primitives. Fireworks spatial types are FIREWORK_PATTERN subtypes. | Closed |
-| ⚑ 17 | MUSIC event type spec: Design locked in session doc (§12b, 2026-04-05). Covers MUSIC, MUSIC_PATTERN, MUSIC_CYCLE (harpify toggle, named pattern library, 5 families), MUSIC_PHRASE (exception harmonies, fold). OPS-035 migration scoped. Remaining: formal entry into spec.md (same prerequisite as ⚑6 — Pattern schema section). | Yes — spec.md entry before any Music Java work |
+| ✅ 17 | MUSIC event type spec written into spec.md (2026-04-06, §20). MUSIC, MUSIC_PATTERN, MUSIC_CYCLE (harpify, named pattern library, 5 families), MUSIC_PHRASE (exception harmonies, fold, shorthand form). All four forms fully specced. OPS-035 migration can now be filed. | Closed |
 | 📋 23 | OPS-035: Migration of motif.* and gracie.* to MUSIC_PHRASE format. New naming convention: music.[instrument].[shape].[slug]. ~10–13 cues to re-author. Prerequisite: MUSIC spec in spec.md. Scope assessment in §12b. | No — after spec.md |
 | ✅ 18 | Effects PHRASE container vocabulary word (closed 2026-04-05): Effects vocab redefined to align with universal model. Pulse (single event) / Cluster (vertical grouping) / Phrase (EFFECT_PHRASE container). "Pattern" correctly refers to the EFFECT_PATTERN type only — no collision. | Closed |
 | 📋 19 | Fireworks schema migration: FIREWORK_CIRCLE, FIREWORK_LINE, etc. are confirmed as FIREWORK_PATTERN subtypes (2026-04-05). Type names in `fireworks.yml` and show YAMLs need updating. Assess migration scope before Fireworks walk. | No — not blocking walk, but must be done before Java |
@@ -2919,7 +2938,7 @@ is clear.
 | 📋 28 | Tempo hierarchy: show/scene/cue tempo inheritance model. Show YAML gets optional `tempo: ticks_per_quarter:` block; scenes can override; PHRASEs/PATTERNs inherit if no local tempo set. Requires show/scene YAML model extension, PhraseExpander resolution chain, spec.md update. | No — after §12c design |
 | 📋 21 | Voice walk: orientation captured (2026-04-05). VOICE_PHRASE (lines as steps with timing, location, color, intensity, duration) confirmed. Scene editing mode (Add/Insert/Reorder lines) scoped. | No |
 | 🔄 22 | Choreography walk in progress (2026-04-05). Panel taxonomy locked. CHOREO_PATTERN in scope (formation/geometric). PHRASE confirmed as cross-department (⚑29). Open: CHOREO_PATTERN field set, CHOREO_PHRASE field set, presets. | No |
-| ⚑ 29 | PHRASE unification: cross-department PHRASE confirmed during Choreography walk. Steps can include any event type from any department. Question: do department-specific names (VOICE_PHRASE, CAMERA_PHRASE, CHOREO_PHRASE) remain as authoring convention or are they unified into one PHRASE type? Affects Phase 2 step-picker panel design. | Yes — before Choreography locked |
+| ✅ 29 | PHRASE unification locked (2026-04-05). `type: PHRASE` is the single schema type. Dept-specific names are authoring convention only. Step builder: dept picker → event type picker → panel. Vertical grouping: multiple event slots per step, each with its own dept/type picker + change action. Entry points pre-select dept, no restriction on subsequent steps. | Closed |
 | 📋 24 | Fireworks player-anchor Java dependency: `anchor: player` on any FIREWORK/* event type requires the same Java capability as OPS-034 (resolve player position at invocation time). Not a new gap — OPS-034 dependency. Phase 2 panel writes valid YAML and shows a warning; live execution requires OPS-034 to ship. | No — not blocking Phase 2 panel |
 
 ---

@@ -346,19 +346,21 @@ All events carry `at` (start tick) and `type`. Duration events render as **color
 
 ### 6.1 Text and Display
 
+**Text formatting:** All text fields use `&` color codes. `&r` resets formatting. See `kb/departments/voice/voice.kb.md §Text Formatting Reference` for the full code table including server-specific `&y` (wavy) and `&u` (rainbow).
+
 **MESSAGE** — point-in-time
 ```yaml
 type: MESSAGE
 audience: broadcast | private | group_1 | group_2 | group_3 | group_4 | target
-message: "<gold>Text here.</gold>"
+message: "&6Text here."
 ```
 
 **TITLE** — bar (fade_in + stay + fade_out ticks)
 ```yaml
 type: TITLE
 audience: broadcast | private | group_1 | group_2 | target
-title: "<gold><bold>Title</bold></gold>"
-subtitle: "<gray>Subtitle here.</gray>"
+title: "&6&lTitle"
+subtitle: "&7Subtitle here."
 fade_in: 10
 stay: 40
 fade_out: 10
@@ -368,7 +370,7 @@ fade_out: 10
 ```yaml
 type: ACTION_BAR
 audience: broadcast | private | group_1 | group_2 | target
-message: "<gray>Action bar text.</gray>"
+message: "&7Action bar text."
 duration_ticks: 60
 # Plugin re-sends every 20 ticks to persist; action bar clears after ~40 ticks if not refreshed.
 ```
@@ -376,7 +378,7 @@ duration_ticks: 60
 **BOSSBAR** — bar
 ```yaml
 type: BOSSBAR
-title: "<gold>Bossbar text.</gold>"
+title: "&6Bossbar text."
 color: YELLOW       # PINK | BLUE | RED | GREEN | YELLOW | PURPLE | WHITE
 overlay: PROGRESS   # PROGRESS | NOTCHED_6 | NOTCHED_10 | NOTCHED_12 | NOTCHED_20
 audience: broadcast | private | group_1 | group_2 | target
@@ -1383,6 +1385,658 @@ At invocation, before tick 0, the plugin records each participating player's loc
 
 ---
 
+## 18. Pattern Event Architecture
+
+### Overview
+
+A Pattern is a first-class event type in the ScaenaShows YAML schema. It defines an interpolated or pulsed sequence of events as a single authored unit. The engine expands a Pattern to N individual events at show-load time via `PatternExpander`. The author and Phase 2 editor work with the Pattern; the scheduler works with expanded events.
+
+**Execution invariant:** Patterns are a parse-time concept only. `ShowScheduler`, `ExecutorRegistry`, and `RunningShow` never see Patterns — they receive only expanded individual events. The production execution path is unchanged.
+
+`TechCueSession.raw_yaml` stores Patterns in unexpanded form. Expansion happens fresh each time `enterPreview()` is called. Raw YAML is always what was authored; RunningShow is always what was expanded from it.
+
+---
+
+### Behavioral modes
+
+**Fade-type Pattern** — any param where `start ≠ end`: interpolates one or more params from start to end across N steps. Examples: volume fade, pitch glissando, time-of-day transition.
+
+**Pulse-type Pattern** — all params where `start == end`: repeats a fixed config N times at calibrated cycle timing. Example: levitation HOVER/CLIMB/RELEASE cycles.
+
+---
+
+### Pattern field set
+
+| Field | Required | Description |
+|---|---|---|
+| `type` | Yes | `SOUND_PATTERN` \| `EFFECT_PATTERN` \| `TIME_OF_DAY_PATTERN` |
+| `interpolations` | Yes | Map of `param: {start, end, curve}` — one entry per interpolated param |
+| `steps` | Yes | Number of events to distribute |
+| `total_duration` | Yes | Total tick length of the Pattern |
+| `curve` | No | Pattern-level default curve: `linear` (default) \| `ease_in` \| `ease_out` — overridden per-param |
+| `step_duration` | No | For event types with internal duration (EFFECT): how long each step event lasts in ticks |
+| `gap` | No | Ticks between step end and next step start. Interval = step_duration + gap. |
+
+Plus all event-type-specific fields for the base event (e.g., `sound_id:` for SOUND_PATTERN).
+
+**Step spacing:** `step_spacing = total_duration / (steps - 1)`. Must be an integer — non-integer spacing causes rounding drift. Phase 2 panel warns when non-integer spacing is detected and suggests corrected values.
+
+---
+
+### Per-param curve options
+
+| Curve | Behavior | Use for |
+|---|---|---|
+| `linear` | Equal arithmetic steps (default) | Volume, amplifier, time |
+| `ease_in` | Slow start, accelerating change | Swells, tension builds |
+| `ease_out` | Fast start, decelerating change | Release, fading out |
+
+Note: `equal_temperament` curve is MUSIC_PATTERN only — see §20.
+
+---
+
+### Phase 2 Pattern types
+
+| Type | Department | Interpolatable params | Primary use |
+|---|---|---|---|
+| `SOUND_PATTERN` | Sound | `pitch`, `volume` | Simulated fade, crescendo |
+| `EFFECT_PATTERN` | Effects | `amplifier` | Levitation cycles |
+| `TIME_OF_DAY_PATTERN` | Lighting | `time` | Gradual time-of-day transition |
+
+Additional Pattern types are deferred until a concrete show need drives them.
+
+---
+
+### EFFECT_PATTERN levitation presets
+
+The three calibrated levitation patterns are named presets in `effect-configs.yml`:
+
+| Preset ID | step_duration | gap | interval | Confirmed behavior |
+|---|---|---|---|---|
+| `effects.levitate.hover` | 20t | 8t | 28t | Gentle altitude hold |
+| `effects.levitate.climb` | 24t | 0t | 24t | Gradual upward drift |
+| `effects.levitate.release` | 20t | 24t | 44t | Slow descent |
+
+---
+
+### Examples
+
+**Simulated volume fade:**
+```yaml
+type: SOUND_PATTERN
+sound_id: minecraft:block.note_block.harp
+steps: 6
+total_duration: 120
+interpolations:
+  volume:
+    start: 0.9
+    end: 0.1
+    curve: linear
+```
+
+**Levitation hover cycle (pulse-type):**
+```yaml
+type: EFFECT_PATTERN
+effect_id: levitation
+steps: 4
+total_duration: 112    # 4 × 28t interval
+step_duration: 20
+gap: 8
+interpolations:
+  amplifier:
+    start: 0
+    end: 0             # pulse-type — start == end
+```
+
+---
+
+### PATTERN vs. PHRASE — when to use each
+
+| Content | Primitive | Reasoning |
+|---|---|---|
+| Volume fade | PATTERN | Single param interpolated |
+| Levitation cycle | PATTERN | Repeating pulse |
+| Time-of-day transition | PATTERN | Time param interpolated |
+| Harp glissando | MUSIC_PATTERN | Pitch computed via equal_temperament (see §20) |
+| Explicit melody or riff | PHRASE | Each note intentional — not computable |
+| Firework salvo | PHRASE | Each burst explicitly placed |
+| Levitation hover (calibrated) | EFFECT_PATTERN preset | Named preset |
+
+---
+
+## 19. PHRASE Event Architecture
+
+### Overview
+
+A PHRASE is a first-class event type in the ScaenaShows YAML schema — the explicit sequence counterpart to PATTERN. Where PATTERN computes its steps (interpolated from start/end), PHRASE contains explicitly authored steps: each event is intentional. The engine expands a PHRASE to individual events at show-load time via `PhraseExpander`. Scheduler and executors see only the expanded events.
+
+**Cross-department:** PHRASE steps can include any event type from any department. There is no department restriction on step content. `PHRASE` is the single unified schema type — names such as "voice phrase" or "camera phrase" are authoring-convention labels only, not distinct YAML types.
+
+`TechCueSession.raw_yaml` stores PHRASEs in unexpanded form. `PhraseExpander` runs at `enterPreview()`.
+
+---
+
+### PHRASE field set
+
+| Field | Required | Description |
+|---|---|---|
+| `type` | Yes | `PHRASE` |
+| `name` | Yes | Phrase identifier |
+| `anchor` | No | `scene_origin` (default) \| `player` — spatial anchor for spatially-anchored phrases |
+| `tempo_bpm` | No | Enables beat-based step addressing (`at_beat:`). Converted to ticks internally — may approximate for non-anchor BPM values. See §21. |
+| `ticks_per_quarter` | No | Alternative to `tempo_bpm`. Always exact — no rounding. Mutually exclusive; takes precedence if both present. |
+| `subdivision` | No | Smallest rhythmic unit in the beat grid: `4` = quarter, `8` = eighth (default), `16` = sixteenth. Subdivisions producing fractional ticks are unavailable in the Phase 2 panel. |
+| `steps` | Yes | Ordered list of step entries |
+
+**Step entry fields:**
+
+| Field | Required | Description |
+|---|---|---|
+| `at` | Yes (if no tempo) | Step offset in ticks from PHRASE start |
+| `at_beat` | Yes (if tempo set) | Step offset in beats (e.g., `1.5` = one eighth note after beat 1) |
+| `events` | Yes | Array of one or more event configs — multiple entries = vertical grouping (fire simultaneously) |
+
+---
+
+### Vertical grouping
+
+A step with multiple entries in `events:` fires all of them at the same tick. This is the mechanism for chords, volleys, and any multi-event simultaneous action. No special keyword required — the array length is the signal.
+
+```yaml
+# Single event
+- at_beat: 1.0
+  events:
+    - {type: SOUND, sound_id: minecraft:block.note_block.harp, pitch: 1.0, volume: 0.8}
+
+# Three events simultaneously (vertical grouping)
+- at_beat: 2.0
+  events:
+    - {type: SOUND, sound_id: minecraft:block.note_block.harp, pitch: 1.0, volume: 0.7}
+    - {type: SOUND, sound_id: minecraft:block.note_block.harp, pitch: 1.26, volume: 0.6}
+    - {type: SOUND, sound_id: minecraft:block.note_block.harp, pitch: 1.5, volume: 0.5}
+```
+
+---
+
+### Department vocabulary
+
+| Department | Single event | Vertical grouping | Container |
+|---|---|---|---|
+| Sound | Note | Chord | Phrase |
+| Fireworks | Burst | Volley | Salvo |
+| Effects | Pulse | Cluster | Phrase |
+| General | Event | Grouping | Phrase |
+
+Vocabulary is documentation and UI language only — the YAML structure is identical across departments.
+
+---
+
+### Examples
+
+**Cross-department PHRASE — voice line + sound hit + choreography simultaneous:**
+```yaml
+type: PHRASE
+name: "arrival_sequence"
+ticks_per_quarter: 12
+steps:
+  - at: 0
+    events:
+      - {type: TITLE, title: "<gold>Arise.</gold>", fade_in: 10, stay: 40, fade_out: 10}
+      - {type: SOUND, sound_id: minecraft:block.bell.use, volume: 1.0, pitch: 1.0}
+  - at: 20
+    events:
+      - {type: FACE, target: entity:spawned:Herald, look_at: player}
+      - {type: ENTITY_AI, target: entity:spawned:Herald, enabled: false}
+```
+
+**Fireworks salvo:**
+```yaml
+type: PHRASE
+name: "victory_salvo"
+tempo_bpm: 80
+steps:
+  - at_beat: 1.0
+    events:
+      - {type: FIREWORK, preset_id: fireworks.burst.gold.high}
+  - at_beat: 2.0
+    events:
+      - {type: FIREWORK, preset_id: fireworks.burst.gold.high}
+      - {type: FIREWORK, preset_id: fireworks.burst.silver.mid}
+      - {type: FIREWORK, preset_id: fireworks.burst.red.low}
+  - at_beat: 3.0
+    events:
+      - {type: FIREWORK, preset_id: fireworks.burst.white.finale}
+```
+
+---
+
+### Phase 2 PHRASE builder
+
+Phase 2 displays PHRASEs as expandable groups in the cue panel. Each step is editable.
+
+**Step builder UI:** When adding or editing a step event, a two-level picker opens:
+1. Department picker (10 options — the production team roster)
+2. Event type picker (event types available in that department)
+3. Event panel opens for that type's fields
+
+Multiple event slots per step (vertical grouping). Each slot has a **Change** action that re-opens the department/event type picker; fields clear on change. Phase 2 entry points (e.g., entering from the Voice department panel) pre-select that department for the first step but impose no restriction on subsequent steps.
+
+---
+
+## 20. MUSIC Event Type
+
+### Overview
+
+MUSIC is a first-class event type distinct from SOUND. Both live in the Sound department. The distinction is architectural:
+
+- **SOUND** — any Minecraft sound ID; `pitch:` is a continuous multiplier (0.5–2.0) applied to the sound's natural pitch. General sound effects, ambient beds, point hits.
+- **MUSIC** — one noteblock instrument per event or sequence; `pitch:` expressed in musical notation (note names: `A4`, `F#3`, `C5`) resolving to the chromatic scale. Produces actual musical intervals.
+
+**Parallel consideration principle:** Changes to MUSIC type warrant explicit consideration of SOUND for parallel applicability, and vice versa. Sister types.
+
+MUSIC has four forms: `MUSIC` (single event), `MUSIC_PATTERN` (interpolated sweep), `MUSIC_CYCLE` (arpeggiator), `MUSIC_PHRASE` (explicit authored sequence).
+
+---
+
+### Instrument shorthand
+
+The `instrument:` field takes the last segment of the Minecraft note block sound ID.
+
+| Shorthand | Resolves to | Register | Character |
+|---|---|---|---|
+| `harp` | `minecraft:block.note_block.harp` | Full range | Warm pluck — general purpose |
+| `bell` | `minecraft:block.note_block.bell` | Mid-high | Ceremony, clarity, arrival |
+| `flute` | `minecraft:block.note_block.flute` | Mid-high | Longing, pastoral, distance |
+| `chime` | `minecraft:block.note_block.chime` | High | Wonder, delicacy, uncanny |
+| `xylophone` | `minecraft:block.note_block.xylophone` | Mid-high | Joy, lightness, movement |
+| `bit` | `minecraft:block.note_block.bit` | Full range | Digital, synthetic, retro |
+| `pling` | `minecraft:block.note_block.pling` | Mid | Contemplative, jazz, interior |
+| `iron_xylophone` | `minecraft:block.note_block.iron_xylophone` | Mid | Precise, mechanical |
+| `guitar` | `minecraft:block.note_block.guitar` | Low-mid | Earthiness, folk, comfort |
+| `banjo` | `minecraft:block.note_block.banjo` | Mid | Folk warmth, community |
+| `bass` | `minecraft:block.note_block.bass` | Low | Foundation, grounding, weight |
+| `didgeridoo` | `minecraft:block.note_block.didgeridoo` | Low | Earth, ancient, primal |
+| `basedrum` | `minecraft:block.note_block.basedrum` | Percussion | Rhythmic downbeat |
+| `snare` | `minecraft:block.note_block.snare` | Percussion | Accent, punctuation |
+| `hat` | `minecraft:block.note_block.hat` | Percussion | Fine rhythmic texture |
+| `cow_bell` | `minecraft:block.note_block.cow_bell` | Percussion | Quirky emphasis |
+
+Percussion instruments (`basedrum`, `snare`, `hat`, `cow_bell`): `pitch:` is optional (defaults to `1.0`).
+
+---
+
+### Pitch notation
+
+The `pitch:` field accepts either:
+- **Note name** (authoring default): `A4`, `F#3`, `C5`, `Bb4`, `D#4` — resolves via the chromatic scale. Note names are preferred for authoring clarity.
+- **Float value** (compatibility / precision): `1.189` — used directly.
+
+Both forms are valid anywhere pitch appears in MUSIC types. The engine resolves names to floats at parse time.
+
+**Two-octave range:** F#3 (0.500) to F#5 (2.000). 25 discrete semitone positions.
+
+`pitch = 2^((semitone - 12) / 12)` where semitone 0 = F#3, 12 = F#4 (natural), 24 = F#5.
+
+---
+
+### Octave fold
+
+When a computed or authored pitch falls outside [0.5, 2.0], the engine folds it to the nearest in-range octave: multiply or divide by 2 until in range. Note name is preserved; register shifts. This is always-on — no field or flag. Applies to all four MUSIC forms.
+
+**Register displacement:** When fold changes the interval relationship between two notes (e.g., a fifth folds to a fourth), this is musically intentional when authoring near range boundaries. The Phase 2 panel shows the actual folded pitch alongside the authored value.
+
+---
+
+### MUSIC (single event)
+
+```yaml
+type: MUSIC
+instrument: harp
+pitch: A4                  # note name or float — resolves to 1.189
+volume: 0.8
+category: master           # same channel discipline as SOUND
+max_duration_ticks: 40     # optional — hard cut, same behavior as SOUND
+```
+
+All fields parallel SOUND except `instrument:` replaces `sound_id:`, and `pitch:` accepts note names.
+
+---
+
+### MUSIC_PATTERN (interpolated sweep)
+
+Generates an interpolated series of MUSIC events from start to end pitch. Uses the `equal_temperament` curve for pitch interpolation — this is the default and strongly recommended for pitch sweeps. Linear pitch spacing sounds musically uneven and should not be used.
+
+**`equal_temperament` math:** PatternExpander multiplies the previous value by `(end/start)^(1/(steps-1))` at each step. This produces semitone-spaced values — an even musical glide.
+
+```yaml
+type: MUSIC_PATTERN
+instrument: harp
+category: master
+steps: 13
+total_duration: 130
+interpolations:
+  pitch:
+    start: F#3             # note name — resolves to 0.500
+    end: F#5               # note name — resolves to 2.000
+    curve: equal_temperament
+  volume:
+    start: 0.3
+    end: 1.0
+    curve: ease_in
+```
+
+Field set: identical to SOUND_PATTERN (`interpolations:`, `steps:`, `total_duration:`, `curve:`, `step_duration:`, `gap:`) plus `instrument:` replacing `sound_id:`, and note names accepted in `interpolations.pitch.start` / `end`.
+
+Note: `equal_temperament` is MUSIC_PATTERN only. SOUND_PATTERN uses `linear`, `ease_in`, `ease_out` for volume and non-musical pitch manipulation.
+
+---
+
+### MUSIC_CYCLE (arpeggiator)
+
+Generates a repeating sequence of MUSIC events by cycling through a named or explicit interval pattern from a declared root.
+
+```yaml
+type: MUSIC_CYCLE
+instrument: harp
+category: master
+root: Ab3                  # transposable anchor — note name or float
+pattern: maj6_9            # named preset or explicit interval array
+harpify: true              # false = unique pitches only; true = full 7-string pedal tuning
+cycles: 3
+step_duration: 15          # ticks per note
+volume: 0.8                # scalar or envelope: {start, end, curve}
+```
+
+**`pattern:`** accepts a named preset string or an explicit semitone interval array: `[0, 4, 7, 9]`. Descending figures use negative intervals: `[0, -2, -4, -5]`.
+
+**`root:`** transposes the entire pattern. Change root, the pattern follows.
+
+**`harpify: false`** (default) — unique pitch classes only. Use for clean chord arpeggios, melodic figures, bass lines. Works on any instrument.
+
+**`harpify: true`** — full 7-string-per-octave pedal tuning. One diatonic letter (C D E F G A B) assigned to match the scale. Wherever two adjacent strings produce the same pitch (enharmonic pair), both steps fire in sequence — the doubled pitch sounds twice. Doublings create texture, shimmer, and rhythmic emphasis. Most idiomatic on harp.
+
+**Volume envelope:** `volume:` accepts either a scalar (`0.8`) or an envelope map with `start:`, `end:`, and `curve:`.
+
+Fold applies to every computed step.
+
+---
+
+#### Named Pattern Library
+
+All patterns are root-relative semitone interval arrays.
+
+**Family 1 — Scales and Modes** (7 unique pitches; harpify has no effect)
+
+| Pattern | Intervals | Character |
+|---|---|---|
+| `major` | [0,2,4,5,7,9,11] | Ionian |
+| `natural_minor` | [0,2,3,5,7,8,10] | Aeolian |
+| `harmonic_minor` | [0,2,3,5,7,8,11] | Raised 7th — tension + resolution |
+| `melodic_minor` | [0,2,3,5,7,9,11] | Ascending — jazz, lyrical |
+| `chromatic` | [0,1,2,3,4,5,6,7,8,9,10,11,12] | All semitones |
+| `dorian` | [0,2,3,5,7,9,10] | Minor with bright 6th |
+| `phrygian` | [0,1,3,5,7,8,10] | Dark, Spanish gravity |
+| `lydian` | [0,2,4,6,7,9,11] | Raised 4th — otherworldly |
+| `mixolydian` | [0,2,4,5,7,9,10] | Flat 7th — folk warmth |
+| `locrian` | [0,1,3,5,6,8,10] | Diminished root — unstable |
+
+**Family 2 — Whole-Tone** (6 unique pitches; 1 harp doubling)
+
+| Pattern | Intervals | Notes |
+|---|---|---|
+| `whole_tone` | [0,2,4,6,8,10] | Floating, directionless (harpify: false) |
+| `whole_tone_bc` | [0,2,4,6,8,10,12] | Doubling at top — cycle lands on repeated pitch (harpify: true) |
+| `whole_tone_bcb` | [0,0,2,4,6,8,10] | Doubling at bottom — cycle launches from repeated pitch (harpify: true) |
+
+**Family 3 — Pentatonic** (5 unique pitches; 2 harp doublings)
+
+| Pattern | harpify: false | harpify: true | Character |
+|---|---|---|---|
+| `pentatonic_major` | [0,2,4,7,9] | [0,2,4,4,7,9,12] | Open, folk warmth |
+| `pentatonic_minor` | [0,3,5,7,10] | [0,3,3,5,7,10,10] | Dark warmth |
+
+**Family 4 — Chord Arpeggios** (harpify: false is natural default)
+
+| Pattern | Intervals | Character |
+|---|---|---|
+| `major_triad` | [0,4,7] | Bright, resolved |
+| `minor_triad` | [0,3,7] | Shadow, interiority |
+| `sus2` | [0,2,7] | Open, floating |
+| `sus4` | [0,5,7] | Tension without resolution |
+| `dom_7th` | [0,4,7,10] | Wants resolution |
+| `major_7th` | [0,4,7,11] | Lush, complex rest |
+| `minor_7th` | [0,3,7,10] | Dark-warm, jazz |
+| `dim_triad` | [0,3,6] | Instability, dread |
+| `aug_triad` | [0,4,8] | Uneasy symmetry |
+| `six_nine` | [0,2,4,7,9] | Open, no 4th or 7th |
+| `maj6_9` | [0,4,7,9] | Lush, shimmering — defining harp voicing |
+| `min6_9` | [0,3,7,9] | Darker resonance, modal depth |
+
+**Family 5 — Motion Patterns**
+
+| Pattern | Intervals | Character |
+|---|---|---|
+| `I_V` | [0,7] | Tonic-dominant bass pump |
+| `major_arch` | [0,4,7,4,0] | Rise and return — major |
+| `minor_arch` | [0,3,7,3,0] | Rise and return — minor |
+| `do_ti_la_sol` | [0,-1,-3,-5] | Descending major — gravity, arrival |
+| `pendulum` | [0,7,12,7] | Tonic-fifth-octave-fifth — open motion |
+| `pedal` | [0,0,0,0] | Repeated root — insistence, pulse |
+
+---
+
+### MUSIC_PHRASE (explicit authored sequence)
+
+Single-instrument authored sequence. Instrument and category declared once at the top; steps need only `pitch:` and `volume:`.
+
+```yaml
+type: MUSIC_PHRASE
+instrument: harp
+category: master
+ticks_per_quarter: 12
+subdivision: 8
+steps:
+  - at_beat: 1.0
+    pitch: A4              # shorthand — single-note step
+    volume: 0.8
+  - at_beat: 1.5
+    pitch: B4
+    volume: 0.8
+  - at_beat: 2.0           # chord — events array for vertical grouping
+    events:
+      - {pitch: A4, volume: 0.7}
+      - {pitch: C5, volume: 0.6}
+      - {pitch: E5, volume: 0.5}
+  - at_beat: 3.0           # exception harmony — melody note + added interval
+    events:
+      - {pitch: C#5, volume: 0.8}
+      - {pitch: A4,  volume: 0.6}
+```
+
+**Shorthand form:** `pitch:` + `volume:` at step level = single-event step. Any step can use `events:` instead.
+
+**Exception harmonies:** `events:` array accepts any number of notes. The instrument declared at the top applies to all. This is how you add a doubled octave, sixth, or any interval to a specific step of an otherwise single-line melody.
+
+**Fold on exception harmonies:** Same fold rules apply. Phase 2 panel shows folded pitch alongside authored value.
+
+**Range note:** Doubling at the octave is only safe if the root note is in the lower register. Safe harmony intervals in the upper register: sixth (9 semitones), fifth (7), third (3–4).
+
+**Existing motif cues:** `motif.*` and `gracie.*` cues remain as valid, tested authored content. MUSIC_PHRASE is the authoring primitive for new musical content going forward. Migration tracked as OPS-035.
+
+---
+
+## 21. Tempo Architecture
+
+### Guiding principle: tick-first design
+
+Minecraft's simulation clock runs at exactly 20 ticks per second. All timing in ScaenaShows resolves to whole tick offsets. BPM is a derived, human-readable label — not the primary quantity.
+
+**Design for coherence over precision:** A tempo anchor that produces perfect integer subdivisions will feel better in play than a mathematically precise BPM that forces fractional tick rounding. Subdivision integrity is more important than BPM accuracy.
+
+---
+
+### Primary conversion
+
+```
+ticks_per_quarter = 1200 / BPM
+BPM ≈ 1200 / ticks_per_quarter
+```
+
+Ticks are integers. BPM is frequently irrational. Choose `ticks_per_quarter` first; accept the resulting BPM as the "musical equivalent."
+
+---
+
+### Preferred tempo anchors
+
+| ticks_per_quarter | Approx BPM | Character |
+|---|---|---|
+| 24 | 50 | Spacious, atmospheric |
+| 20 | 60 | Slow, ceremonial |
+| 16 | 75 | Lyrical, flowing |
+| 15 | 80 | Moderate, flexible |
+| **12** | **100** | **Highly versatile — recommended default** |
+| 10 | 120 | Energetic, standard |
+| 8 | 150 | Bright, rhythmic clarity |
+| 6 | 200 | Pulse-driven, grid-heavy |
+
+**Default recommendation:** 12 ticks/quarter. It is the only standard anchor where triplets produce exact integers, and it cleanly supports every common rhythmic structure.
+
+---
+
+### 12 ticks/quarter — full subdivision table
+
+| Note value | Ticks | Status |
+|---|---|---|
+| Whole | 48 | exact |
+| Half | 24 | exact |
+| Quarter | 12 | exact |
+| Eighth | 6 | exact |
+| Sixteenth | 3 | exact |
+| Dotted quarter | 18 | exact |
+| Dotted eighth | 9 | exact |
+| Triplet (quarter) | 8 | exact |
+| Triplet (eighth) | 4 | exact |
+
+---
+
+### `ticks_per_quarter` as a PHRASE / MUSIC_PHRASE field
+
+`ticks_per_quarter:` is an alternative to `tempo_bpm:` on any PHRASE or MUSIC_PHRASE. When specified, tick math is exact with no rounding. The two fields are mutually exclusive; `ticks_per_quarter` takes precedence if both are present (error logged). Phase 2 panel shows both representations and allows switching entry mode.
+
+```yaml
+# BPM form — familiar, may approximate at non-anchor values
+type: MUSIC_PHRASE
+instrument: harp
+tempo_bpm: 100         # internally converts to 12 ticks/quarter — exact here
+
+# Tick-first form — always exact
+type: MUSIC_PHRASE
+instrument: harp
+ticks_per_quarter: 12  # declared directly — no conversion, no rounding
+```
+
+---
+
+### PATTERN quantization rule
+
+When PatternExpander generates N events over `total_duration` ticks:
+
+```
+step_spacing = total_duration / (steps - 1)
+```
+
+Step spacing must be an integer. If fractional, PatternExpander rounds each step tick to the nearest whole tick — small drift accumulates at the phrase end. Phase 2 panel warns when fractional spacing is detected and suggests the nearest `steps` or `total_duration` value that produces integer spacing.
+
+---
+
+### Loop integrity
+
+For PHRASEs and PATTERNs intended to loop, total length in ticks should be divisible by a preferred loop unit:
+
+| Loop unit (ticks) | Equivalent at 12t/q | Notes |
+|---|---|---|
+| 12 | 1 quarter | minimum stable loop unit |
+| 24 | 1 half note | |
+| 48 | 1 bar (4/4) | standard loop unit |
+| 96 | 2 bars | |
+| 192 | 4 bars | preferred for repeating content |
+
+Phase 2 panel shows a loop-alignment indicator: green if divisible by 48 (1 bar at 12t/q), yellow if divisible by 12 (sub-bar clean), red if neither.
+
+---
+
+## 22. Preset Library
+
+### Overview
+
+The preset library is a collection of named, reusable configurations referenced by ID from events in cues and shows. Each department maintains its own preset file. The plugin loads all preset files at startup and indexes presets by ID — presets are immediately available to any show without per-session loading.
+
+`fireworks.yml` is the existing model. All department preset files follow the same structure.
+
+---
+
+### Universal file format
+
+```yaml
+# src/main/resources/[department].yml
+# [Department] presets — referenced by ID from any [DEPT_EVENT_TYPE] event.
+
+presets:
+
+  preset.subtype.slug:
+    display_name: "Human-readable label"
+    # preset-specific fields...
+
+  another.preset.slug:
+    display_name: "Another preset"
+    # ...
+```
+
+**Top-level `presets:` map.** Each key is a preset ID; each value is the preset's field set. The plugin indexes the full map at startup. Unknown preset IDs referenced from show/cue YAML fail at load time (same contract as unknown CUE IDs).
+
+---
+
+### Preset ID naming convention
+
+`[department].[subtype].[slug]`
+
+Examples: `effects.levitate.hover`, `camera.phrase.reveal_tilt`, `voice.phrase.sprite_intro`, `fireworks.circle.tight_ring`, `sound.fade.slow_out`.
+
+---
+
+### Department preset files
+
+All files live in `src/main/resources/`.
+
+| Department | File | Phase 2 | What it holds |
+|---|---|---|---|
+| Fireworks | `fireworks.yml` ✅ exists | Yes | Rocket appearance presets; FIREWORK_PATTERN presets |
+| Effects | `effects.yml` | Yes | EFFECT_PATTERN presets (levitate.hover, levitate.climb, levitate.release — see §18) |
+| Camera | `camera.yml` | Yes | CAMERA_PHRASE presets (reveal_tilt, battle_sweep, etc.) |
+| Voice | `voice.yml` | Yes | VOICE_PHRASE presets (sprite_intro, revelation, section_close) |
+| Sound | `sound.yml` | Yes | SOUND_PATTERN presets (named fades, crescendi) |
+| Lighting | `lighting.yml` | Yes | TIME_OF_DAY_PATTERN presets; named time-of-day snap values |
+| Wardrobe | `wardrobe.yml` | Later | Named equipment sets |
+| Set | `set.yml` | Later | Block configuration presets |
+| Casting | `casting.yml` | Later | Named entity cast configurations |
+| Choreography | `choreography.yml` | Later | Formation presets (post-calibration) |
+
+Phase 2 ships the six "Yes" files. The remaining four are created when those departments require Phase 2 preset support.
+
+---
+
+### MUSIC named patterns
+
+The MUSIC_CYCLE named pattern library (maj6_9, whole_tone_bc, chromatic, etc. — see §20) lives in Java as a built-in registry, not in a YAML file. These are algorithmic presets whose values are constants. MUSIC_PHRASE presets (authored sequences) are authored content and belong in `sound.yml` if and when named presets are needed.
+
+---
+
+### ShowYamlEditor integration
+
+`ShowYamlEditor` reads each Phase 2 preset file at startup and makes the indexed presets available to department panels as dropdown/picker options. Phase 2 panels that reference presets (e.g., EFFECT_PATTERN panel, CAMERA_PHRASE panel) pull their picker options from these loaded maps. Presets authored during a TechSession via `[Save as Preset]` are written back to the appropriate file and the index is refreshed.
+
+---
+
 ## 17. Vocabulary Reference
 
 | Term | Meaning |
@@ -1390,7 +2044,9 @@ At invocation, before tick 0, the plugin records each participating player's loc
 | **Cue** | The universal recursive container. Holds events and/or child Cue references. |
 | **Show** | A Cue with show-level metadata (mode, groups, marks, sets, bossbar). Runtime entry point. |
 | **Event** | A leaf action on a Cue's timeline. |
-| **Pattern** | A spatial generator event (circle, line, fan) that produces multiple firework positions at runtime. |
+| **Pattern** | A parse-time generative primitive. Defines an interpolated or pulsed sequence of events (start, end, steps, curve). Expanded to individual events at show-load time by PatternExpander. Types: SOUND_PATTERN, EFFECT_PATTERN, TIME_OF_DAY_PATTERN, MUSIC_PATTERN, FIREWORK_PATTERN. See §18, §20. |
+| **PHRASE** | A parse-time generative primitive. An explicitly authored sequence of steps, each at a tick or beat offset, each containing one or more events of any type from any department. Expanded at show-load time by PhraseExpander. See §19. |
+| **MUSIC** | A noteblock-instrument event type distinct from SOUND. Pitch expressed in musical notation (note names). Four forms: MUSIC, MUSIC_PATTERN, MUSIC_CYCLE, MUSIC_PHRASE. See §20. |
 | **Preset** | A named firework configuration (power + stars). Referenced by events and patterns. |
 | **Star** | One firework explosion layer within a preset. Multiple stars detonate simultaneously. |
 | **Chase** | Sequential firing of pattern positions at a defined tick interval. FL or LF direction. |

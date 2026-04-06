@@ -1,17 +1,18 @@
 ---
 department: Sprite Voice Director
 owner: ShowSprite
-kb_version: 2.2
-updated: 2026-03-27
+kb_version: 2.3
+updated: 2026-04-06
 notes: >
   v2.0: Full instrument inventory (MESSAGE, TITLE, ACTION_BAR, BOSSBAR), audience targeting,
   text layering, tone translation, department principles, capability status table.
   v2.1: owner corrected to ShowSprite. Broken stage-manager.kb.md path fixed.
   Folder migration to kb/departments/voice/voice.kb.md.
   v2.2: Reconciliation pass against production-team.md and showsprite.context.md.
-  [Sprite] prefix color corrected — tag is light_purple, text is white (was: full message in
-  white, contradicting showsprite.context.md §What ShowSprite Is). Production-team.md §8
-  MiniMessage reference updated in same pass.
+  [Sprite] prefix color corrected — tag is light_purple, text is white.
+  v2.3: All MiniMessage format tags replaced with & color codes (server standard).
+  Text Formatting Reference section added with full color/format cheat sheet including
+  server-specific &y (wavy) and &u (rainbow). spec.md §6.1 examples corrected in same pass.
 ---
 
 # Sprite Voice Director — Technical Knowledgebase
@@ -56,6 +57,48 @@ Voice decisions that change how Sprite is heard — its degree of presence, its 
 
 ---
 
+## Text Formatting Reference
+
+All text fields in Voice events use `&` color codes. `&r` resets all formatting to default. Codes can be combined: `&6&l` = bold gold.
+
+**Colors:**
+
+| Code | Color | Code | Color |
+|------|-------|------|-------|
+| `&0` | Black | `&8` | Dark gray |
+| `&1` | Dark blue | `&9` | Blue |
+| `&2` | Dark green | `&a` | Green |
+| `&3` | Dark aqua | `&b` | Aqua |
+| `&4` | Dark red | `&c` | Red |
+| `&5` | Dark purple | `&d` | Light purple |
+| `&6` | Gold | `&e` | Yellow |
+| `&7` | Gray | `&f` | White |
+
+**Formatting:**
+
+| Code | Effect |
+|------|--------|
+| `&k` | Obfuscated (scrambled) |
+| `&l` | **Bold** |
+| `&m` | ~~Strikethrough~~ |
+| `&n` | Underline |
+| `&o` | *Italic* |
+| `&r` | Reset all |
+
+**Server-specific extras:**
+
+| Code | Effect |
+|------|--------|
+| `&y` | Wavy text |
+| `&u` | Rainbow text |
+
+**ShowSprite convention:** `[Sprite]` tag in `&d` (light purple), line text in `&f` (white):
+```
+&d[Sprite]&f The ceiling opens.
+```
+
+---
+
 ## Capabilities & YAML Syntax
 
 ---
@@ -67,26 +110,12 @@ Sends a line of chat text to the target audience. Appears in the chat stream; pe
 ```yaml
 type: MESSAGE
 audience: broadcast | participants | private | group_1 | group_2 | group_3 | group_4 | target
-message: "<white>[Sprite] Something quiet this way comes.</white>"
+message: "&d[Sprite]&f Something quiet this way comes."
 ```
 
-**Formatting:** MiniMessage format is supported. Common tags:
-
-| Tag | Effect |
-|-----|--------|
-| `<white>` | White text (ShowSprite standard) |
-| `<gold>` | Gold text |
-| `<gray>` | Gray / subdued |
-| `<italic>` | Italic |
-| `<bold>` | Bold |
-| `<reset>` | Clear all formatting |
-| `<dark_gray>` | Dark gray — barely visible, ominous |
-| `<aqua>` | Cyan/aqua |
-| `<light_purple>` | Lavender |
-
-**ShowSprite convention:** The `[Sprite]` tag appears in `<light_purple>`; the line text follows in `<white>`. This is the canonical two-color format established in `showsprite.context.md §What ShowSprite Is`:
+**ShowSprite convention:** `[Sprite]` tag in `&d` (light purple), line text in `&f` (white). This is the canonical two-color format established in `showsprite.context.md §What ShowSprite Is`:
 ```yaml
-message: "<light_purple>[Sprite]</light_purple><white> The ceiling opens.</white>"
+message: "&d[Sprite]&f The ceiling opens."
 ```
 
 **Behavioral notes:**
@@ -104,8 +133,8 @@ Displays large text centered on the screen with an optional subtitle below. Thre
 ```yaml
 type: TITLE
 audience: broadcast | participants | private | group_1 | group_2 | target
-title: "<gold><bold>You are here.</bold></gold>"
-subtitle: "<gray>Or somewhere very close to it.</gray>"
+title: "&6&lYou are here."
+subtitle: "&7Or somewhere very close to it."
 fade_in: 20    # ticks to fade from transparent to full
 stay: 60       # ticks the text displays at full opacity
 fade_out: 20   # ticks to fade from full to transparent
@@ -127,7 +156,7 @@ Displays a single line of text above the hotbar. Auto-fades approximately 2 seco
 ```yaml
 type: ACTION_BAR
 audience: participants | private | group_1 | group_2 | target
-message: "<gray>Look up.</gray>"
+message: "&7Look up."
 duration_ticks: 60   # plugin re-sends the message every 20 ticks to keep it visible
 ```
 
@@ -147,7 +176,7 @@ Displays a persistent bar at the top of the screen for the event's duration. Has
 
 ```yaml
 type: BOSSBAR
-title: "<gold>Section title</gold>"
+title: "&6Section title"
 color: YELLOW       # PINK | BLUE | RED | GREEN | YELLOW | PURPLE | WHITE
 overlay: PROGRESS   # PROGRESS | NOTCHED_6 | NOTCHED_10 | NOTCHED_12 | NOTCHED_20
 audience: broadcast | participants | private | group_1 | group_2 | target
@@ -184,7 +213,7 @@ fade_out_ticks: 20  # plugin animates progress 1 → 0 over this many ticks
 # In show YAML:
 bossbar:
   enabled: true
-  title: "<gold><bold>Show Title</bold></gold>"
+  title: "&6&lShow Title"
   color: YELLOW
   overlay: PROGRESS
   audience: broadcast
