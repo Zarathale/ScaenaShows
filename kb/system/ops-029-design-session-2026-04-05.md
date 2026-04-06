@@ -19,21 +19,13 @@ has been extracted to standalone docs:
 
 ## Where We Left Off
 
-**Status (2026-04-06):** Department walk complete. All 10 departments locked. All schema
-primitives (PATTERN, PHRASE, MUSIC, HARP_SWEEP, Tempo Architecture) designed and documented.
-All blocking flags resolved except ⚑1, ⚑2, ⚑3.
+**Status (2026-04-06):** All blocking items resolved. Java can begin.
 
-**Blocking items — must resolve before Java begins:**
+⚑1 ✅ **Edit target** — Show YAML only. See §4.
+⚑2 ✅ **Partial YAML / scaffold handling** — Phase 2 enters fine with stubs. See §4b.
+⚑3 ✅ **Panel mockup** — Locked. See §4c.
 
-⚑ 1  **Edit target** — when a player edits a cue in Phase 2, does `TechCueSession` hold only
-      the show YAML, or does it also load the referenced cue file from `cues/*.yml`? See §4.
-
-⚑ 2  **Partial YAML / scaffold handling** — how does Phase 2 enter when the show YAML has
-      scaffold stubs or missing cue files?
-
-⚑ 3  **Panel mockup** — at least one annotated panel mockup needed before Java UI work begins.
-
-**Next action:** Work through ⚑1, ⚑2, ⚑3 in sequence. Java begins when all three are closed.
+**Next action:** Java begins on Phase 2. Start with `TechCueSession` and `ShowYamlEditor`.
 
 **Completed this session (summary):**
 All 10 departments walked and locked (2026-04-05). PATTERN / PHRASE primitives designed.
@@ -159,18 +151,82 @@ explicitly. Player controls when the world resets.
 These are documented as distinct operations. ShowYamlEditor knows which layer it is
 operating on for every mutation.
 
-### ⚑ Edit target clarification needed
+### ✅ Edit target — Show YAML only
 
-Ambiguity from session: when a player edits a cue in Phase 2, does `TechCueSession`
-hold only the show YAML, or does it also load the referenced cue file from `cues/*.yml`?
+`TechCueSession` holds only the show YAML. All edits write to the show's own timeline
+entries. `[Save as Preset]` is the explicit step that promotes a configuration to
+`cues/*.yml`. One file in memory. No silent cross-show mutations.
 
-Two models:
-- **Show YAML only**: edits are written to the show's own timeline entries. `[Save as Preset]`
-  is the step that writes to `cues/*.yml`. Simple — one file in memory.
-- **Cue file loaded**: `TechCueSession` also loads the cue's own YAML from `cues/*.yml`.
-  Edits go directly to that file. Affects all shows referencing that cue.
+---
 
-**Must be resolved before Java begins on ShowYamlEditor.**
+## 4b. Scaffold / Stub Handling
+
+### ✅ Phase 2 enters fine with stubs
+
+A CUE reference pointing to a stub cue (valid file, empty or minimal content) does not
+block Phase 2 entry. The stub loads; the panel displays it like any other cue.
+
+**Missing cue files** (no file at all in `cues/*.yml`) fail at show load time per the
+existing architectural decision — Phase 2 cannot be entered if the show won't load.
+This case is already handled and requires no additional Phase 2 logic.
+
+### ✅ Stub visual treatment
+
+Stub cues render with a dim gray `(empty)` label inline next to the cue ID in the panel.
+`[Edit ▸]` is still present — authoring content into a stub via Phase 2, then promoting
+with `[Save as Preset]`, is a valid and intentional workflow.
+
+---
+
+## 4c. Panel Mockup
+
+### ✅ Phase 2 cue panel — locked design
+
+Standard scene view:
+
+```
+─────────────────────────────────────────────
+  TECH REHEARSAL — Scene 2: The Approach
+  [◀ Prev Scene]                [Next Scene ▶]
+─────────────────────────────────────────────
+
+  6s | 120t  scouting_begins
+    casting.zombie.scout_enter              [Edit ▸]
+
+  10s | 200t  weather_shifts
+    lighting.overcast.dread_builds          [Edit ▸]
+    sound.wind.low_moan                     [Edit ▸]
+
+  17s | 340t  warrior_enters_scene
+    casting.zombie.warrior_enter            [Edit ▸]
+    wardrobe.diamond.battle_ready           [Edit ▸]
+
+  24s | 480t  victory_coda  (empty)
+    effects.levitate.high.stub              [Edit ▸]
+
+─────────────────────────────────────────────
+  ▶ Now: 10s | 200t   Next: 17s | 340t
+─────────────────────────────────────────────
+```
+
+End-of-scene pause point:
+
+```
+─────────────────────────────────────────────
+  End of Scene 2.
+  [Exit Preview]              [Next Scene ▶]
+─────────────────────────────────────────────
+```
+
+### ✅ Time/tick display format — universal convention
+
+Everywhere a position, marker, or tick is shown to the player, use: `Xs | Nt`
+
+- Drop the decimal when the seconds value is a clean integer: `6s | 120t`
+- Retain the decimal only when fractional seconds are meaningful: `6.25s | 125t`
+- Applies to: panel cue rows, position indicator, actionbar nudge feedback,
+  snap offers, "After [cue]" relative references, and any other player-facing
+  tick or time display throughout Phase 2.
 
 ---
 
