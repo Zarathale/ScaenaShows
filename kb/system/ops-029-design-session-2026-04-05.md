@@ -15,19 +15,23 @@ and will be incorporated into the building spec once the department walk is comp
 
 ## Where We Left Off (pickup point for next session)
 
-**Last action (2026-04-05):** Fireworks (Mira) locked. Dual-anchor model, panel design for all
-event types (FIREWORK single, FIREWORK_PATTERN CIRCLE/LINE/RANDOM, FIREWORK_PHRASE), FIREWORK_RANDOM
-enhancements (y_variation OPS-035, presets pool OPS-036), named FIREWORK_PATTERN presets for all
-three subtypes, auto-preview ON. FAN deferred. 5 of 10 departments now locked.
+**Last action (2026-04-05):** Camera walk in progress. PLAYER_MOUNT / PLAYER_DISMOUNT locked:
+spawn: fold (invisible optional, default false), duration shortcut auto-creates DISMOUNT cue,
+player lands where entity is at dismount time (no destination field), camera calls ineffective
+during mount (KB note only). PLAYER_SPECTATE / PLAYER_SPECTATE_END locked: entity lifecycle
+fold, duration shortcut, three END destinations, cinematic arrival pattern. Tempo Architecture
+locked (§12c).
 
-Prior actions same session: Effects (Felix) locked. PATTERN rename confirmed (⚑16). Department
-scan complete. Effects PHRASE vocabulary resolved (⚑18). MUSIC event type spec written into §12b
-(⚑17 design complete). MUSIC migration scoped (future OPS item, not yet filed).
+Prior actions same session: FACE panel, CAMERA_LOCK/MOVEMENT_LOCK, BOUNDARY_CHECK/VIEW_CHECK
+conditional primitives, show-relative spatial vocabulary. Fireworks (Mira) locked. Effects (Felix)
+locked. PATTERN rename confirmed (⚑16). Effects PHRASE vocabulary resolved (⚑18). MUSIC event
+type spec written into §12b (⚑17 design complete).
 
-**To resume next session:** Department walk at Camera. Read this file top-to-bottom, then read
-`kb/departments/camera/camera.kb.md` for instrument context.
+**To resume next session:** Continue Camera walk. Remaining: CAMERA (screen effects) single
+event panel; CAMERA_PATTERN field set (PT only — zoom gapped, no FOV API in Paper 1.21.x);
+CAMERA_PHRASE field set.
 
-**Next department to walk:** Camera.
+**Next department to walk:** Camera (continuing).
 
 **Department walk status:**
 
@@ -40,11 +44,9 @@ scan complete. Effects PHRASE vocabulary resolved (⚑18). MUSIC event type spec
 | Lighting | ✅ Locked (2026-04-05) |
 | Effects | ✅ Locked (2026-04-05) |
 | Fireworks | ✅ Locked (2026-04-05) |
-| Camera | 📋 Orientation captured — walk pending |
+| Camera | 📋 Single events locked: FACE, CAMERA_LOCK/MOVEMENT_LOCK, BOUNDARY_CHECK, VIEW_CHECK, PLAYER_SPECTATE/END, PLAYER_MOUNT/DISMOUNT. Remaining: CAMERA screen effects, CAMERA_PATTERN, CAMERA_PHRASE |
 | Voice | 📋 Orientation captured — walk pending |
 | Choreography | 📋 Orientation captured — walk pending |
-
-**Next department to walk:** Fireworks.
 
 **Key architectural decisions locked this session:**
 - Pattern is a YAML primitive (§12) — SOUND_PATTERN, EFFECT_PATTERN, TIME_OF_DAY_PATTERN in Phase 2
@@ -78,12 +80,30 @@ scan complete. Effects PHRASE vocabulary resolved (⚑18). MUSIC event type spec
   events array; cross-department (Sound: chord, Fireworks: volley/salvo); tempo_bpm + subdivision
   for beat-based addressing
 - MELODY_PATTERN concept superseded: glissando → SOUND_PATTERN; explicit melody → PHRASE (§12a, item 13 closed)
+- Show-relative spatial vocabulary locked (2026-04-05, cross-department — Camera and Choreography):
+  Show forward / Behind (depth axis); Stage Left / Stage Right (performer's perspective);
+  House Left / House Right (audience's perspective). All resolve from origin mark's stored yaw.
+  Origin mark must capture facing direction (yaw) in addition to position. (See §Camera.)
+- CAMERA_LOCK / MOVEMENT_LOCK: two independent cross-department show-state flags. Any department
+  can set/release either. Stop-safety resets both. Event types: CAMERA_LOCK and MOVEMENT_LOCK
+  (state: ON | OFF). (See §Camera, ⚑26.)
+- Tempo Architecture locked (§12c): tick-first design — `ticks_per_quarter` is the primary
+  quantity; BPM is derived. Preferred anchors: 12 (100bpm), 16 (75bpm), 8 (150bpm).
+  12t/quarter is the recommended default — supports all common subdivisions including triplets.
+  `ticks_per_quarter:` added as alternative to `tempo_bpm:` on PHRASE (exact, no rounding).
+  PATTERN quantization rule: step spacing must be integer ticks; Phase 2 panel warns if not.
+  Loop integrity: phrase lengths divisible by 48 (1 bar at 12t/q) preferred.
+  Tempo hierarchy (show/scene/cue) deferred to ⚑28.
+- Conditional primitive pattern introduced (2026-04-05): first conditionals in the engine.
+  General model: condition + tolerance + corrective branch + optional in-tolerance branch.
+  BOUNDARY_CHECK (position-based) and VIEW_CHECK (orientation-based) defined. VIEW_CHECK
+  corrective action is always a smooth pan — never a snap. This is a constraint. (See §Camera, ⚑27.)
 
 **Blocking open items before any Java starts (see §15 for full list):**
 ⚑ 1 Edit target (show YAML vs. cue file loaded)
 ⚑ 2 Partial YAML handling
 ⚑ 3 Panel mockup
-⚑ 4 Department walk (3 departments remain — Camera next)
+⚑ 4 Department walk (3 departments remain — Camera walk in progress)
 ⚑ 5 Preset library file structure
 ⚑ 6 Pattern schema section in spec.md
 ⚑ 7 ✅ Pattern type list confirmed (2026-04-05): SOUND_PATTERN, EFFECT_PATTERN, TIME_OF_DAY_PATTERN
@@ -1266,17 +1286,271 @@ is a player expectation, not a panel design issue. No special handling.
 
 ---
 
-### 📋 Camera — not yet walked
+### 📋 Camera — walk in progress (2026-04-05)
 
-**Orientation confirmed (2026-04-05 department scan):**
+**Show-Relative Spatial Vocabulary (cross-department — Camera and Choreography):**
 
-- CAMERA_PATTERN: PTZ (pan/tilt/zoom) start/end values — interpolated camera move.
-  Defines start and end positions; engine generates the arc. Natural Pattern fit.
-- CAMERA_PHRASE: explicitly authored sequence of camera positions (each position intentional).
-- Both Pattern and Phrase apply. Full field set (what constitutes a "camera position" —
-  pan, tilt, zoom values; anchor type; etc.) TBD during walk.
+All show-relative directions resolve at runtime from the origin mark's stored facing direction
+(yaw captured at snap time). This is a new requirement: the origin mark must store yaw in
+addition to position (x, y, z). Other marks remain pure positions.
 
-**Walk pending.**
+| Term | Definition |
+|------|------------|
+| Show forward | The direction the show designer faces when snapping the origin mark |
+| Behind | Opposite of show forward |
+| Stage Left | Performer's left when facing the audience (= House Right) |
+| Stage Right | Performer's right when facing the audience (= House Left) |
+| House Left | Audience's left when facing the stage (= Stage Right) |
+| House Right | Audience's right when facing the stage (= Stage Left) |
+
+Clock positions (12, 3, 6, 9 and intermediates) are valid shorthand: Show forward = 12,
+Behind = 6, Stage Right = 3, Stage Left = 9.
+
+**FACE — ✅ Locked**
+
+Two authorship patterns with distinct panel behavior (department implicit — not shown to user):
+
+- Camera-authored FACE: always targets player. Target not shown in panel.
+- Choreo-authored FACE: always targets a non-player entity. Target shown as read-only label.
+
+`look_at` picker offers three buckets: show-relative shortcuts, scene marks, spawned entities
+in current scene. Defaults differ by department:
+
+- Camera defaults: Right 90°, Left 90°, Show forward, Behind
+- Choreo defaults: Stage Left, Stage Right
+
+Both departments have access to the full mark picker and entity picker.
+
+No FACE presets — FACE calls are too show-specific. Camera's preset library lives with
+CAMERA_PATTERN and CAMERA_PHRASE.
+
+**CAMERA_LOCK / MOVEMENT_LOCK — ✅ Locked**
+
+Two independent cross-department show-state flags on RunningShow. Either can be set or
+released by any department. Stop-safety always resets both to unlocked at show or
+tech rehearsal end, regardless of current state.
+
+```yaml
+type: CAMERA_LOCK
+state: ON | OFF
+
+type: MOVEMENT_LOCK
+state: ON | OFF
+```
+
+Camera typically authors CAMERA_LOCK. Effects typically authors MOVEMENT_LOCK (e.g., during
+levitation). Authorship is intentionally open — any department can use either. Phase 2 panel
+for any event can include lock state as a visible indicator when relevant.
+
+**Conditional Primitive Pattern — ✅ Locked (first conditionals in the engine)**
+
+A conditional primitive evaluates show state at fire-time and branches on the result. This is
+the first conditional execution model in ScaenaShows — everything prior fires unconditionally.
+
+General pattern:
+- **Condition** — what to check (position radius, angular deviation; extensible to other state)
+- **Tolerance** — dead zone; no action fires while within tolerance
+- **Corrective branch** — fires when condition is out of tolerance
+- **Optional in-tolerance branch** — fires when condition is within tolerance; omit for "do nothing"
+
+Designed as bespoke for Camera but intentionally structured for extension to other departments.
+
+*BOUNDARY_CHECK — position-based conditional:*
+
+```yaml
+type: BOUNDARY_CHECK
+center: mark:stage_center    # or explicit xyz
+radius: 10                   # blocks
+out_of_range:
+  - type: PLAYER_TELEPORT
+    destination: mark:stage_center
+    audience: participants
+in_range:
+  # optional — omit if no in-range behavior needed
+```
+
+*VIEW_CHECK — orientation-based conditional:*
+
+```yaml
+type: VIEW_CHECK
+target: mark:center          # or entity:spawned:Name
+tolerance: 30                # degrees of angular deviation allowed before triggering
+out_of_view:
+  duration_ticks: 20
+  interpolation: EASE_OUT
+in_view:
+  # optional — omit if no in-view behavior needed
+```
+
+VIEW_CHECK corrective action is **always a smooth pan, never a snap.** This is a hard
+constraint, not a style preference — a snap correction is worse than no correction at all.
+Duration and interpolation are the tuning parameters; destination is always computed from
+`target` at fire time.
+
+Tolerance is expressed in degrees of angular deviation. Not as a percentage of FOV — FOV is
+player-configurable in Minecraft, so degree-based tolerance gives consistent behavior
+regardless of client settings.
+
+**PLAYER_SPECTATE / PLAYER_SPECTATE_END — ✅ Locked**
+
+PLAYER_SPECTATE is a self-contained cinematic primitive. Entity lifecycle is folded in via
+an optional `spawn:` block. Two mutually exclusive modes:
+
+- **`spawn:` mode** — entity is born at spectate time, invisible by default (always implied
+  for camera drones), optionally despawned when END fires.
+- **`entity:` mode** — references an entity already present in the scene.
+
+```yaml
+type: PLAYER_SPECTATE
+
+# Mode A: spawn new
+spawn:
+  name: CinematicCamera
+  type: ARMOR_STAND
+  offset: {x: 10, y: 5, z: 0}
+  despawn_on_end: true        # entity despawns when matching PLAYER_SPECTATE_END fires
+
+# Mode B: use existing
+entity: entity:spawned:GuideEntity
+
+audience: participants
+```
+
+After PLAYER_SPECTATE fires, `entity:spawned:CinematicCamera` is available for CROSS_TO
+calls in the same cue — the drone pattern is: PLAYER_SPECTATE (spawn + attach) →
+CROSS_TO (path) → PLAYER_SPECTATE_END (land + despawn).
+
+**Duration shortcut:** `duration_ticks` is a Phase 2 authoring convenience only — not
+stored in YAML. When filled in on the PLAYER_SPECTATE panel, Phase 2 auto-creates a
+matching PLAYER_SPECTATE_END cue at `(spectate_tick + duration_ticks)`. The generated
+END cue is a real cue in the show YAML, editable like any other. If left blank, the
+END cue is placed manually. PLAYER_SPECTATE always requires a corresponding
+PLAYER_SPECTATE_END — the duration field is the shortcut to create it, not a substitute.
+
+**Phase 2 panel:**
+
+```
+Camera entity:
+  ○ Use existing:  [entity:spawned:... ▾]
+  ● Spawn new:     Name: [CinematicCamera     ]
+                   Type: [ARMOR_STAND         ▾]
+                   Offset: x[10] y[5] z[0]
+                   Despawn on end: [✓]
+
+Audience: participants  [Change ▾]
+
+Auto-create END cue: [  60  ] ticks  (leave blank to place manually)
+
+[▶ Preview]  [Save]  [Save as Preset]  [Cancel]
+```
+
+Preview (spawn mode): spawns entity at offset, makes invisible, attaches spectate.
+No pre-spawning required. Preview (entity mode): requires entity already present —
+panel shows warning if not.
+
+**PLAYER_SPECTATE_END — destination field:**
+
+```yaml
+type: PLAYER_SPECTATE_END
+audience: participants
+destination: restore                      # default: return to pre-spectate position
+# destination: mark:near_stage_center     # teleport to a defined mark
+# destination: entity:spawned:CinematicCamera  # teleport to drone's current position
+```
+
+Three destination options:
+- `restore` — default. Player body returns to where it was when spectate began.
+- `mark:Name` — teleport to a defined mark. Author this for planned scene arrivals.
+- `entity:spawned:Name` — teleport to wherever the drone is at END time. The "cinematic
+  arrival" pattern: drone flies to destination, END fires, player materializes where drone
+  is, drone despawns. Java order of operations: record entity position → teleport player →
+  despawn entity (prevents race between teleport and despawn).
+
+**Phase 2 panel (END):**
+
+```
+Return player to:
+  ● Restore pre-spectate position
+  ○ Mark: [... ▾]
+  ○ Entity position: [entity:spawned:... ▾]
+
+Audience: participants  [Change ▾]
+[Save]  [Cancel]
+```
+
+No preview on END — it returns the player to their body, which happens naturally on save.
+No presets for PLAYER_SPECTATE or PLAYER_SPECTATE_END — entity names are show-specific.
+
+**PLAYER_MOUNT / PLAYER_DISMOUNT — ✅ Locked**
+
+Same spawn: fold as PLAYER_SPECTATE. Key differences: player retains game mode (no
+SPECTATOR switch), player orientation is player-controlled for the duration of the mount.
+Typical entity types: HORSE, BOAT, MINECART, STRIDER. Armor stands are inconsistent
+as mounts — prefer rideable entity types.
+
+```yaml
+type: PLAYER_MOUNT
+
+# Mode A: spawn new
+spawn:
+  name: GuideEntity
+  type: HORSE
+  offset: {x: 0, y: 0, z: 0}
+  invisible: false           # optional — default false (unlike camera drones, mounts
+                             # are usually visible)
+  despawn_on_dismount: true
+
+# Mode B: use existing
+entity: entity:spawned:GuideEntity
+
+audience: participants
+```
+
+**Duration shortcut:** Same model as PLAYER_SPECTATE — fill in ticks to auto-create
+a PLAYER_DISMOUNT cue at `(mount_tick + duration_ticks)`. Not stored in YAML. Leave
+blank to place the DISMOUNT cue manually.
+
+**PLAYER_DISMOUNT:** Player lands where the entity is at dismount time — default
+behavior, no destination field. Just `audience:`. No preview needed.
+
+```yaml
+type: PLAYER_DISMOUNT
+audience: participants
+```
+
+**Phase 2 panel (MOUNT):**
+
+```
+Mount entity:
+  ○ Use existing:  [entity:spawned:... ▾]
+  ● Spawn new:     Name: [GuideEntity       ]
+                   Type: [HORSE             ▾]
+                   Offset: x[0] y[0] z[0]
+                   Invisible: [ ]
+                   Despawn on dismount: [✓]
+
+Audience: participants  [Change ▾]
+
+Auto-create DISMOUNT cue: [  80  ] ticks  (leave blank to place manually)
+
+[▶ Preview]  [Save]  [Save as Preset]  [Cancel]
+```
+
+**Phase 2 panel (DISMOUNT):** Audience selector only. No preview, no destination.
+
+**KB note (camera.kb.md):** While mounted, Camera orientation calls (FACE, VIEW_CHECK,
+orientation-only PLAYER_TELEPORT) are ineffective — player looks around freely.
+Mark should not plan assertive camera calls during a mount sequence. If a specific
+initial facing is needed, author a FACE call in the ticks immediately before the mount,
+not during it.
+
+No presets for PLAYER_MOUNT or PLAYER_DISMOUNT — entity names are show-specific.
+
+**Remaining Camera walk items (TBD):**
+
+- CAMERA (sway / blackout / flash / float) edit panel
+- CAMERA_PATTERN field set — pan/tilt only (zoom gapped: no FOV API in Paper 1.21.x)
+- CAMERA_PHRASE field set
 
 ---
 
@@ -1537,8 +1811,9 @@ the same way SPANs are expanded. Scheduler and executors see only the expanded e
 
 | Field | Required | Description |
 |---|---|---|
-| `tempo_bpm` | No | Enables beat-based step addressing (`at_beat:`). If absent, steps use `at:` in raw ticks |
-| `subdivision` | No | Smallest rhythmic unit available in the beat grid: `4` = quarter notes, `8` = eighth notes (default), `16` = sixteenth notes |
+| `tempo_bpm` | No | Enables beat-based step addressing (`at_beat:`). Converted to `ticks_per_quarter` internally — may approximate for non-anchor BPM values. See §12c. |
+| `ticks_per_quarter` | No | Alternative to `tempo_bpm`. Always exact — no conversion rounding. Mutually exclusive with `tempo_bpm`; takes precedence if both present. |
+| `subdivision` | No | Smallest rhythmic unit available in the beat grid: `4` = quarter notes, `8` = eighth notes (default), `16` = sixteenth notes. Subdivisions that produce fractional ticks are unavailable in Phase 2 panel. |
 | `steps` | Yes | Ordered list of step entries |
 
 **Step entry fields:**
@@ -1551,18 +1826,23 @@ the same way SPANs are expanded. Scheduler and executors see only the expanded e
 
 ### ✅ Tempo, subdivision, and tick math
 
-When `tempo_bpm` is present, PhraseExpander converts `at_beat:` positions to ticks at
-load time: `tick = (at_beat - 1) × (60 / tempo_bpm × 20)`.
+See §12c for the full Tempo Architecture: preferred anchors, subdivision constraints,
+loop integrity rules, and PATTERN quantization.
 
-| BPM | Quarter note | Eighth note | Sixteenth note |
-|---|---|---|---|
-| 60 | 20t | 10t | 5t |
-| 90 | 13t | 7t | 3t |
-| 120 | 10t | 5t | 3t (floor) |
-| 180 | 7t | 3t | 2t (floor) |
+When `tempo_bpm` is present, PhraseExpander converts `at_beat:` positions to ticks:
+`tick = (at_beat - 1) × (1200 / tempo_bpm)`. Result is rounded to nearest whole tick.
+Use `ticks_per_quarter:` instead for exact conversion with no rounding.
+
+| ticks_per_quarter | BPM | Quarter | Eighth | Sixteenth | Triplet (eighth) |
+|---|---|---|---|---|---|
+| 20 | 60 | 20t | 10t | 5t | — |
+| 12 | 100 | 12t | 6t | 3t | 4t ✅ |
+| 10 | 120 | 10t | 5t | 2.5t ⚠️ | — |
+| 8 | 150 | 8t | 4t | 2t | — |
 
 Note: at fast tempos, sixteenth notes approach the 1t minimum. The Minecraft tick is the
-hard floor for all timing.
+hard floor. Subdivisions marked ⚠️ produce fractional ticks and are unavailable in the
+Phase 2 beat-grid editor.
 
 `subdivision` constrains the Phase 2 beat-grid editor — in-game step placement snaps to
 the available positions for that subdivision. At `subdivision: 8`, beat positions of `1.25`
@@ -2156,6 +2436,200 @@ File as OPS-035 before migration begins.
 
 ---
 
+## 12c. Tempo Architecture
+
+### ✅ Guiding principle: tick-first design
+
+Minecraft's simulation clock runs at exactly 20 ticks per second. All timing in
+ScaenaShows — events, patterns, phrases, loops — resolves to whole tick offsets.
+BPM is a derived, human-readable label, not the primary quantity.
+
+**Design for coherence over precision:** A tempo anchor that produces perfect integer
+subdivisions will feel better in play than a mathematically precise BPM that forces
+fractional tick rounding throughout. Subdivision integrity is more important than BPM
+accuracy.
+
+### ✅ Primary conversion relationship
+
+```
+ticks_per_quarter = 1200 / BPM
+BPM ≈ 1200 / ticks_per_quarter
+```
+
+Ticks are integers. BPM is frequently irrational. Tick-first design means choosing
+`ticks_per_quarter` first, then accepting the resulting BPM as the "musical equivalent."
+
+### ✅ Preferred tempo anchors
+
+These values produce the most usable rhythmic systems and are the default options
+offered in Phase 2 tempo pickers:
+
+| ticks_per_quarter | Approx BPM | Character |
+|---|---|---|
+| 24 | 50 | Spacious, atmospheric |
+| 20 | 60 | Slow, ceremonial |
+| 16 | 75 | Lyrical, flowing |
+| 15 | 80 | Moderate, flexible |
+| 12 | 100 | Highly versatile — recommended default |
+| 10 | 120 | Energetic, standard |
+| 8 | 150 | Bright, rhythmic clarity |
+| 6 | 200 | Pulse-driven, grid-heavy |
+
+**Strong recommendation:** Default to 12, 16, or 8 ticks per quarter when designing
+reusable systems. 12 is the most versatile — it cleanly supports all common subdivisions
+including triplets.
+
+### ✅ Subdivision constraint — integer ticks required
+
+All rhythmic subdivisions must resolve to integer ticks to remain stable and repeatable.
+Any subdivision that produces a fractional tick must be either rounded (introduces drift)
+or avoided (preferred).
+
+**12 ticks/quarter — the gold standard system:**
+
+| Note value | Ticks | Status |
+|---|---|---|
+| Whole | 48 | exact |
+| Half | 24 | exact |
+| Quarter | 12 | exact |
+| Eighth | 6 | exact |
+| Sixteenth | 3 | exact |
+| Dotted quarter | 18 | exact |
+| Dotted eighth | 9 | exact |
+| Triplet (quarter) | 8 | exact |
+| Triplet (eighth) | 4 | exact |
+
+12 ticks/quarter supports every common rhythmic structure cleanly, including triplets.
+It is the only standard anchor where triplets produce exact integers.
+
+**10 ticks/quarter — less stable:**
+
+| Note value | Ticks | Status |
+|---|---|---|
+| Eighth | 5 | exact |
+| Sixteenth | 2.5 | unusable |
+| Dotted eighth | 7.5 | unusable |
+| Triplets | non-integer | unusable |
+
+When a non-anchor BPM is specified via `tempo_bpm:`, the Phase 2 panel shows the
+computed `ticks_per_quarter` value and flags any subdivisions that would produce
+fractional ticks as unavailable in the beat grid.
+
+### ✅ `ticks_per_quarter` as a PHRASE field (alternative to `tempo_bpm`)
+
+PHRASE currently uses `tempo_bpm:` for beat-based addressing. `ticks_per_quarter:` is
+added as an alternative field. When specified, it bypasses BPM conversion entirely —
+tick math is exact, no rounding. The two fields are mutually exclusive; `ticks_per_quarter`
+takes precedence if both are present (error logged).
+
+```yaml
+# BPM form — familiar, may approximate
+type: MUSIC_PHRASE
+instrument: harp
+tempo_bpm: 100         # internally converts to 12 ticks/quarter — exact here
+subdivision: 8
+
+# Tick-first form — always exact
+type: MUSIC_PHRASE
+instrument: harp
+ticks_per_quarter: 12  # declared directly — no conversion, no rounding
+subdivision: 8
+```
+
+The Phase 2 panel always shows both representations: the entry field (BPM or
+ticks_per_quarter) and the computed equivalent. Switching entry mode is a panel toggle.
+
+### ✅ PATTERN quantization rule
+
+When PatternExpander generates N events over `total_duration` ticks, step spacing is:
+
+```
+step_spacing = total_duration / (steps - 1)
+```
+
+This must be an integer. If fractional, PatternExpander rounds each step tick to the
+nearest whole tick — small drift accumulates at the phrase end. The Phase 2 panel
+warns when this condition is detected:
+
+```
+Non-integer step spacing (12.5t) — steps will be rounded.
+Consider: steps: 13 (spacing: 12t)  or  total_duration: 125 (spacing: 12.5 → round)
+```
+
+The panel suggests the nearest `steps` value that produces integer spacing for the
+current `total_duration`, and vice versa. Designers should resolve the warning before
+saving to keep patterns tick-coherent.
+
+### ✅ MUSIC_CYCLE step_duration alignment
+
+`step_duration:` in MUSIC_CYCLE is already tick-native (whole integers only). For musical
+coherence, align `step_duration` to a subdivision of the current tempo anchor:
+
+| ticks_per_quarter | Natural step_duration values | Subdivision |
+|---|---|---|
+| 12 | 3, 6, 9, 12, 18, 24 | 16th, 8th, dotted 8th, quarter, dotted quarter, half |
+| 10 | 5, 10, 20 | 8th, quarter, half |
+| 8 | 4, 8, 16 | 8th, quarter, half |
+
+No validation enforcement on `step_duration` — it is a tick value. Guidance only.
+
+### ✅ Loop integrity
+
+For PHRASEs and PATTERNs intended to cycle or loop, total phrase length in ticks should
+be divisible by one of the preferred loop units:
+
+| Loop unit (ticks) | Equivalent at 12t/q | Notes |
+|---|---|---|
+| 12 | 1 quarter | minimum stable loop unit |
+| 24 | 1 half note | |
+| 48 | 1 bar (4/4) | standard loop unit |
+| 96 | 2 bars | |
+| 192 | 4 bars | preferred phrase length for repeating content |
+
+The Phase 2 panel computes total phrase length in ticks and shows a loop-alignment
+indicator: a green check if the length is divisible by 48 (1 bar at 12t/q), yellow if
+divisible by 12 (sub-bar clean), red if neither. Designer can adjust `total_duration`,
+`steps`, or step timing to achieve alignment.
+
+### ✅ Meter reference
+
+Common bar lengths in ticks at preferred anchors:
+
+| Meter | 12t/q | 10t/q | 8t/q |
+|---|---|---|---|
+| 2/4 | 24 | 20 | 16 |
+| 3/4 | 36 | 30 | 24 |
+| 4/4 | 48 | 40 | 32 |
+| 6/8 | 36 | 30 | 24 |
+| 5/4 | 60 | 50 | 40 |
+
+### 📋 Tempo hierarchy — show/scene/cue (design intention, spec TBD)
+
+A show's overall rhythmic character can be expressed as a top-level `tempo:` block.
+Scenes can override it. PHRASEs and PATTERNs that omit their own tempo field inherit
+from the nearest container.
+
+```yaml
+id: showcase.01
+tempo:
+  ticks_per_quarter: 12       # show default
+
+scenes:
+  - id: battle_approach
+    # inherits show tempo
+  - id: battle_climax
+    tempo:
+      ticks_per_quarter: 8    # scene override — faster
+```
+
+A PHRASE within `battle_climax` that omits `tempo_bpm` / `ticks_per_quarter` inherits
+`ticks_per_quarter: 8` from its scene. A PHRASE that declares its own value overrides locally.
+
+Implementation requires: show/scene YAML model extension, PhraseExpander tempo resolution
+chain, spec.md update. Filed as ⚑28.
+
+---
+
 ## 13. Set Coordinate System
 
 ### ✅ Scene set origin mark
@@ -2226,7 +2700,11 @@ is clear.
 | 📋 23 | OPS-035: Migration of motif.* and gracie.* to MUSIC_PHRASE format. New naming convention: music.[instrument].[shape].[slug]. ~10–13 cues to re-author. Prerequisite: MUSIC spec in spec.md. Scope assessment in §12b. | No — after spec.md |
 | ✅ 18 | Effects PHRASE container vocabulary word (closed 2026-04-05): Effects vocab redefined to align with universal model. Pulse (single event) / Cluster (vertical grouping) / Phrase (EFFECT_PHRASE container). "Pattern" correctly refers to the EFFECT_PATTERN type only — no collision. | Closed |
 | 📋 19 | Fireworks schema migration: FIREWORK_CIRCLE, FIREWORK_LINE, etc. are confirmed as FIREWORK_PATTERN subtypes (2026-04-05). Type names in `fireworks.yml` and show YAMLs need updating. Assess migration scope before Fireworks walk. | No — not blocking walk, but must be done before Java |
-| 📋 20 | Camera walk: orientation captured (2026-04-05). CAMERA_PATTERN (PTZ start/end interpolation) and CAMERA_PHRASE (authored position sequence) confirmed. Full field set TBD. | No |
+| 📋 20 | Camera walk in progress (2026-04-05). FACE panel, CAMERA_LOCK/MOVEMENT_LOCK, BOUNDARY_CHECK, VIEW_CHECK, and show-relative spatial vocabulary locked. Remaining: PLAYER_SPECTATE, PLAYER_MOUNT, CAMERA screen effects panels; CAMERA_PATTERN field set (PT only — zoom gapped); CAMERA_PHRASE field set. | No |
+| 📋 25 | Origin mark facing capture: origin mark must store yaw (facing direction) in addition to position (x, y, z). Required for show-relative spatial vocabulary to resolve at runtime. Spec update and Java model change needed. | No — before Choreography Java |
+| 📋 26 | CAMERA_LOCK / MOVEMENT_LOCK event type spec: two new event types, each with state: ON \| OFF. Cross-department. Stop-safety contract must explicitly reset both. Spec entry and Java implementation needed. | No |
+| 📋 27 | Conditional primitive spec: BOUNDARY_CHECK (position-based) and VIEW_CHECK (orientation-based). First conditional execution model in the engine. Both need spec entries, Java executors with branching logic, and Phase 2 panel designs. VIEW_CHECK constraint: corrective action is always smooth pan, never snap. | No — not blocking walk |
+| 📋 28 | Tempo hierarchy: show/scene/cue tempo inheritance model. Show YAML gets optional `tempo: ticks_per_quarter:` block; scenes can override; PHRASEs/PATTERNs inherit if no local tempo set. Requires show/scene YAML model extension, PhraseExpander resolution chain, spec.md update. | No — after §12c design |
 | 📋 21 | Voice walk: orientation captured (2026-04-05). VOICE_PHRASE (lines as steps with timing, location, color, intensity, duration) confirmed. Scene editing mode (Add/Insert/Reorder lines) scoped. | No |
 | 📋 22 | Choreography walk: orientation captured (2026-04-05). Dual-anchor model (scene_origin / player). CHOREO_PATTERN and CHOREO_PHRASE confirmed. | No |
 | 📋 24 | Fireworks player-anchor Java dependency: `anchor: player` on any FIREWORK/* event type requires the same Java capability as OPS-034 (resolve player position at invocation time). Not a new gap — OPS-034 dependency. Phase 2 panel writes valid YAML and shows a warning; live execution requires OPS-034 to ship. | No — not blocking Phase 2 panel |
