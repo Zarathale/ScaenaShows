@@ -1,7 +1,12 @@
 package com.scaena.shows.tech;
 
+import com.scaena.shows.model.Show;
+import com.scaena.shows.registry.CueRegistry;
 import com.scaena.shows.registry.ShowRegistry;
 import com.scaena.shows.registry.YamlLoader;
+import com.scaena.shows.runtime.RunningShow;
+import com.scaena.shows.runtime.ShowScheduler;
+import com.scaena.shows.runtime.executor.ExecutorRegistry;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -52,10 +57,15 @@ public final class TechManager {
     private final JavaPlugin      plugin;
     private final PromptBookLoader loader;
     private final Logger          log;
-    private ShowRegistry          showRegistry;   // optional — set after construction via setShowRegistry()
+    private ShowRegistry          showRegistry;   // set via setShowRegistry()
+    private CueRegistry           cueRegistry;   // set via setCueRegistry() — needed for preview
+    private ExecutorRegistry      executors;      // set via setExecutorRegistry() — needed for preview
 
-    /** Active sessions keyed by player UUID. */
-    private final Map<UUID, TechSession> sessions = new HashMap<>();
+    /** Phase 1 sessions keyed by player UUID. */
+    private final Map<UUID, TechSession>    sessions       = new HashMap<>();
+
+    /** Phase 2 cue sessions keyed by player UUID. One per player; requires active TechSession. */
+    private final Map<UUID, TechCueSession> cueSessionMap  = new HashMap<>();
 
     public TechManager(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -66,6 +76,16 @@ public final class TechManager {
     /** Wire in the ShowRegistry so the dashboard can report timeline cue counts. */
     public void setShowRegistry(ShowRegistry registry) {
         this.showRegistry = registry;
+    }
+
+    /** Wire in the CueRegistry — required before Phase 2 preview can be started. */
+    public void setCueRegistry(CueRegistry registry) {
+        this.cueRegistry = registry;
+    }
+
+    /** Wire in the ExecutorRegistry — required before Phase 2 preview can be started. */
+    public void setExecutorRegistry(ExecutorRegistry registry) {
+        this.executors = registry;
     }
 
     // -----------------------------------------------------------------------
@@ -208,6 +228,14 @@ public final class TechManager {
 
     /** Force-dismisses without a save prompt. Used for discard and disconnect. */
     public void forceDismiss(TechSession session, Player player) {
+        // Clean up Phase 2 cue session if active
+        TechCueSession cueSession = cueSessionMap.remove(player.getUniqueId());
+        if (cueSession != null) {
+            stopPreviewInternal(cueSession);
+            if (cueSession.buttonRefreshTask() != null) cueSession.buttonRefreshTask().cancel();
+            if (cueSession.editBossBar() != null) player.hideBossBar(cueSession.editBossBar());
+        }
+
         // Stop display tasks
         if (session.actionbarTask() != null) {
             session.actionbarTask().cancel();
@@ -644,6 +672,292 @@ public final class TechManager {
         PromptBook book = loader.load(plugin.getDataFolder(), showId);
         if (book == null) return List.of();
         return book.scenes().stream().map(PromptBook.SceneSpec::id).toList();
+    }
+
+    // -----------------------------------------------------------------------
+    // Phase 2 — TechCueSession lifecycle
+    // -----------------------------------------------------------------------
+
+    public TechCueSession getTechCueSession(Player player) {
+        return player == null ? null : cueSessionMap.get(player.getUniqueId());
+    }
+
+    /**
+     * Enter Phase 2 for the player's active TechSession.
+     *
+     * Loads the show's YAML into a ShowYamlEditor, creates a TechCueSession,
+     * and starts from the current Phase 1 scene. Phase 1 must be active.
+     *
+     * Called by: /scaena tech <showId> cues (Group 4 command surface)
+     */
+    public void enterPhase2(Player player) {
+        TechSession techSession = sessions.get(player.getUniqueId());
+        if (techSession == null) {
+            player.sendMessage(MM.deserialize(
+                "<red>Phase 2 requires an active tech session. Run "
+                + "<white>/scaena tech <showId></white> first.</red>"));
+            return;
+        }
+        if (cueSessionMap.containsKey(player.getUniqueId())) {
+            player.sendMessage(MM.deserialize(
+                "<yellow>Cue session already active.</yellow>"));
+            return;
+        }
+
+        String showId = techSession.showId();
+        PromptBook book = techSession.book();
+
+        ShowYamlEditor editor = ShowYamlEditor.load(showId, plugin.getDataFolder(), book, log);
+        if (editor == null) {
+            player.sendMessage(MM.deserialize(
+                "<red>No show YAML found for <white>" + showId + "</white>. "
+                + "Expected: shows/" + showId + ".yml or shows/" + showId + "/" + showId + ".yml</red>"));
+            return;
+        }
+
+        String sceneId = techSession.currentSceneId();
+        TechCueSession cueSession = new TechCueSession(player, book, editor, sceneId);
+        cueSessionMap.put(player.getUniqueId(), cueSession);
+
+        player.sendMessage(MM.deserialize(
+            "<gray>Phase 2 active — <white>" + showId + "</white></gray>"));
+        log.info("[Tech] " + player.getName() + " entered Phase 2 for " + showId);
+        // Group 4: CuePanelBuilder.sendScenePanel(player, cueSession, editor)
+    }
+
+    /**
+     * Exit Phase 2, stopping any active preview and cleaning up the TechCueSession.
+     * Phase 1 (TechSession) is NOT touched — the player remains in tech mode.
+     */
+    public void exitPhase2(Player player) {
+        TechCueSession cueSession = cueSessionMap.remove(player.getUniqueId());
+        if (cueSession == null) return;
+
+        // Stop preview if running
+        if (cueSession.isInPreview()) {
+            stopPreviewInternal(cueSession);
+        }
+
+        // Cancel department edit display tasks
+        if (cueSession.buttonRefreshTask() != null) {
+            cueSession.buttonRefreshTask().cancel();
+        }
+        if (cueSession.editBossBar() != null) {
+            player.hideBossBar(cueSession.editBossBar());
+        }
+
+        player.sendMessage(MM.deserialize("<gray>Cue session closed.</gray>"));
+        log.info("[Tech] " + player.getName() + " exited Phase 2");
+    }
+
+    // -----------------------------------------------------------------------
+    // Phase 2 — Preview mode
+    // -----------------------------------------------------------------------
+
+    /**
+     * Enter preview mode: build a RunningShow + ShowScheduler from the show registry,
+     * enable step mode, and position at the current scene's tick start.
+     *
+     * Note: preview uses the Show object already loaded from ShowRegistry.
+     * Layer 1 tick edits in rawYaml are only reflected after saveToShowYaml() + reload.
+     */
+    public void startPreview(Player player) {
+        TechCueSession cueSession = cueSessionMap.get(player.getUniqueId());
+        if (cueSession == null) return;
+        if (cueSession.isInPreview()) {
+            player.sendMessage(MM.deserialize("<yellow>Already in preview mode.</yellow>"));
+            return;
+        }
+        if (cueRegistry == null || executors == null || showRegistry == null) {
+            player.sendMessage(MM.deserialize(
+                "<red>Preview unavailable — registries not wired.</red>"));
+            return;
+        }
+
+        Show show = showRegistry.get(cueSession.showId());
+        if (show == null) {
+            player.sendMessage(MM.deserialize(
+                "<red>Show not loaded: <white>" + cueSession.showId() + "</white>. "
+                + "Ensure the show YAML is registered and /scaena reload was run.</red>"));
+            return;
+        }
+
+        RunningShow runningShow = new RunningShow(
+            show, List.of(player), player,
+            true,   // privateMode
+            false,  // scenesMode
+            "static"
+        );
+
+        ShowScheduler scheduler = new ShowScheduler(
+            plugin, cueRegistry, executors,
+            null,   // showManager — null is safe: auto-stop path never fires in step mode
+            runningShow
+        );
+
+        // Position at the current scene's tick start before enabling step mode
+        PromptBook.SceneSpec scene = cueSession.book().findScene(cueSession.currentSceneId());
+        if (scene != null && scene.tickStart() > 0) {
+            runningShow.setCurrentTick(scene.tickStart());
+        }
+
+        scheduler.enableStepMode();
+        scheduler.start();   // builds event map; tick loop runs but idles in step mode
+
+        cueSession.setPreview(runningShow, scheduler);
+
+        player.sendMessage(MM.deserialize(
+            "<gray>Preview ready — use <white>Go</white> / <white>Hold</white> "
+            + "/ <white>Prev</white> to navigate.</gray>"));
+        // Group 4: CuePanelBuilder.updatePreviewSidebar(player, cueSession)
+    }
+
+    /**
+     * Exit preview mode: stop the RunningShow, cancel the scheduler, return to edit mode.
+     */
+    public void exitPreview(Player player) {
+        TechCueSession cueSession = cueSessionMap.get(player.getUniqueId());
+        if (cueSession == null || !cueSession.isInPreview()) return;
+
+        stopPreviewInternal(cueSession);
+        player.sendMessage(MM.deserialize("<gray>Preview stopped.</gray>"));
+        // Group 4: CuePanelBuilder.sendScenePanel(player, cueSession, cueSession.editor())
+    }
+
+    // -----------------------------------------------------------------------
+    // Phase 2 — Step navigation (hotbar Go / Hold / Prev)
+    // -----------------------------------------------------------------------
+
+    /**
+     * Go — dispatch the next event tick in preview mode.
+     *
+     * Advances to the next CUE (or PAUSE) tick in the event map, fires all events
+     * at that tick, and records it in step history. Returns -1L at end of events
+     * (end-of-scene panel is handled by Group 4).
+     */
+    public void stepForward(Player player) {
+        TechCueSession cueSession = cueSessionMap.get(player.getUniqueId());
+        if (cueSession == null || !cueSession.isInPreview()) return;
+        if (cueSession.holdActive()) {
+            // Hold is active — release it before advancing
+            cueSession.setHoldActive(false);
+        }
+        if (cueSession.isEditing()) {
+            player.sendMessage(MM.deserialize(
+                "<yellow>Save or cancel the active edit session first.</yellow>"));
+            return;
+        }
+
+        long tick = cueSession.previewScheduler().dispatchNextEventTick();
+        if (tick == -1L) {
+            player.sendMessage(MM.deserialize(
+                "<gray>End of events. Use <white>[Next Scene]</white> to continue.</gray>"));
+            // Group 4: CuePanelBuilder.sendEndOfScenePanel(player, cueSession)
+            return;
+        }
+
+        cueSession.recordStep(tick);
+        player.sendActionBar(MM.deserialize(
+            "<gray>▶ " + ShowYamlEditor.formatTick((int) tick) + "</gray>"));
+        // Group 4: CuePanelBuilder.updatePreviewSidebar(player, cueSession)
+    }
+
+    /**
+     * Hold — interrupt dispatch mid-sequence (toggles hold flag).
+     * In step mode, hold simply blocks the next stepForward until released.
+     */
+    public void holdPreview(Player player) {
+        TechCueSession cueSession = cueSessionMap.get(player.getUniqueId());
+        if (cueSession == null || !cueSession.isInPreview()) return;
+
+        boolean nowHolding = !cueSession.holdActive();
+        cueSession.setHoldActive(nowHolding);
+        player.sendActionBar(MM.deserialize(
+            nowHolding ? "<yellow>⏸ Hold</yellow>" : "<gray>Hold released</gray>"));
+    }
+
+    /**
+     * Prev — navigate back one step.
+     *
+     * Moves the scheduler's tick cursor back to the previously dispatched tick
+     * so the next Go re-fires it. World state is not unwound — entities and effects
+     * from the previous dispatch remain until the show is stopped or events re-fire.
+     */
+    public void stepBack(Player player) {
+        TechCueSession cueSession = cueSessionMap.get(player.getUniqueId());
+        if (cueSession == null || !cueSession.isInPreview()) return;
+        if (cueSession.isEditing()) {
+            player.sendMessage(MM.deserialize(
+                "<yellow>Save or cancel the active edit session first.</yellow>"));
+            return;
+        }
+
+        if (!cueSession.hasSteps()) {
+            player.sendActionBar(MM.deserialize("<gray>Already at the start.</gray>"));
+            return;
+        }
+
+        long lastTick = cueSession.lastStepTick();
+        cueSession.popLastStep();
+        // Move cursor back — next Go will re-dispatch at lastTick
+        cueSession.previewScheduler().show().setCurrentTick(lastTick);
+
+        player.sendActionBar(MM.deserialize(
+            "<gray>◀ back to " + ShowYamlEditor.formatTick((int) lastTick) + "</gray>"));
+        // Group 4: CuePanelBuilder.updatePreviewSidebar(player, cueSession)
+    }
+
+    // -----------------------------------------------------------------------
+    // Phase 2 — Save operations
+    // -----------------------------------------------------------------------
+
+    /**
+     * Save the current rawYaml back to the show file on disk.
+     */
+    public void saveYaml(Player player) {
+        TechCueSession cueSession = cueSessionMap.get(player.getUniqueId());
+        if (cueSession == null) return;
+
+        boolean ok = cueSession.editor().saveToShowYaml();
+        if (ok) {
+            player.sendMessage(MM.deserialize(
+                "<green>Show YAML saved: <white>"
+                + cueSession.editor().sourceFile().getName() + "</white></green>"));
+        } else {
+            player.sendMessage(MM.deserialize(
+                "<red>Save failed — check server log.</red>"));
+        }
+    }
+
+    /**
+     * Save a cue's inline Layer 2 events as a named preset in cues/.
+     *
+     * @param cueId    the cue being promoted
+     * @param presetId the new preset ID (e.g. "casting.zombie.warrior_enter_v2")
+     */
+    public void saveAsPreset(Player player, String cueId, String presetId) {
+        TechCueSession cueSession = cueSessionMap.get(player.getUniqueId());
+        if (cueSession == null) return;
+
+        boolean ok = cueSession.editor().saveAsPreset(cueId, presetId);
+        if (ok) {
+            player.sendMessage(MM.deserialize(
+                "<green>Saved preset: <white>" + presetId + "</white></green>"));
+        } else {
+            player.sendMessage(MM.deserialize(
+                "<red>Preset save failed — check server log.</red>"));
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // Phase 2 — private helpers
+    // -----------------------------------------------------------------------
+
+    private void stopPreviewInternal(TechCueSession cueSession) {
+        if (!cueSession.isInPreview()) return;
+        cueSession.previewShow().stop();
+        cueSession.previewScheduler().cancel();
+        cueSession.clearPreview();
     }
 
     // -----------------------------------------------------------------------

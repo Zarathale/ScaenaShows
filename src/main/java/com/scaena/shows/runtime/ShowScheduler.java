@@ -198,6 +198,9 @@ public final class ShowScheduler {
         }
     }
 
+    /** The RunningShow this scheduler is driving — used by Phase 2 step navigation. */
+    public RunningShow show() { return show; }
+
     /** Cancel the scheduler task without triggering full stop (called by ShowManager). */
     public void cancel() {
         if (task != null && !task.isCancelled()) {

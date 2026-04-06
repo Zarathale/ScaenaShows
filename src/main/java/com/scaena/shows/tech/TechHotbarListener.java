@@ -58,6 +58,33 @@ public final class TechHotbarListener implements Listener {
         int slot  = player.getInventory().getHeldItemSlot();
         boolean shift = player.isSneaking();
 
+        // Phase 2: when a TechCueSession is active, slots PREV/HOLD/NEXT
+        // are routed to step navigation in preview mode.
+        TechCueSession cueSession = manager.getTechCueSession(player);
+        if (cueSession != null) {
+            switch (slot) {
+                case TechManager.SLOT_PREV -> {
+                    if (cueSession.isInPreview()) manager.stepBack(player);
+                    // else: cue-level prev nav — Group 4
+                }
+                case TechManager.SLOT_HOLD -> {
+                    if (cueSession.isInPreview()) manager.holdPreview(player);
+                }
+                case TechManager.SLOT_NEXT -> {
+                    if (cueSession.isInPreview()) manager.stepForward(player);
+                    // else: cue-level next nav — Group 4
+                }
+                case TechManager.SLOT_CAPTURE -> manager.confirmCapture(player);
+                case TechManager.SLOT_PARAMS  -> {
+                    if (shift) manager.decrementParam(player);
+                    else if (session.paramScrollMode()) manager.incrementParam(player);
+                    else manager.paramAction(player);
+                }
+                default -> { /* Not a tech slot */ }
+            }
+            return;
+        }
+
         switch (slot) {
             case TechManager.SLOT_PREV    -> manager.prevScene(player);
             case TechManager.SLOT_HOLD    -> { /* Phase 2 — hold/GO no-op */ }
