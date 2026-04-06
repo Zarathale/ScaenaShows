@@ -9,7 +9,7 @@
 **ScaenaShows** is a live directing tool for Minecraft Paper servers — a stage director's tool built on top of a reusable cue library. Players stage shows; they don't author YAML.
 **Owner:** Alan (alytle@thearcoregon.org)
 **Repo:** ScaenaShows
-**Branch:** `feature/ai-show-generation` ← active development branch
+**Branch:** `main` ← active development branch
 **YAML schema:** `kb/system/cue-show-yaml-schema.md` — authoritative source of truth for all Cue/Show/event-type syntax.
 
 This is a hobby project and a live experiment in working with Claude. The process is part of the point. Keep the vibe casual, collaborative, and creative. Lean into the theatre metaphor — it holds up.
@@ -26,15 +26,18 @@ All 12 department KBs are now in folder structure (`kb/departments/[dept-slug]/[
 - Gates 1 (Casting) ✅ and 2 (Wardrobe) ✅ closed. Kit locked, arc staged, script v2 complete.
 - Gate 3 (Set Scouting) open. Zarathale scouts Sites B–F using `direction/showcase.01.scouting-field-guide.md`. Site A scouted 2026-03-30.
 - Gate 4 (Intake) pending Gate 3. Two TBDs remain: victory coda fireworks (Mira) + victory levitation amplifier (Effects, pending ceiling clearance).
-- Engine at 2.31.0 (uncommitted) — OPS-027 (Phase 1) shipped. OPS-029 Phase 2 scaffolding complete (Groups 2–4), awaiting first commit + Group 5. Prompt Book is the authoritative committed-state artifact.
+- Engine at 2.31.0 (committed) — OPS-027 (Phase 1) shipped. OPS-029 Groups 0–4 all committed. **Version bump to 2.32.0 pending** (Group 4 shipped without bump — fix in Code before next build). Prompt Book is the authoritative committed-state artifact.
 
 **Not show-specific:**
 - R7 debrief ✅ complete (2026-03-28). R8 not yet scheduled.
-- **OPS-029 Phase 2 — Groups 2–4 written, uncommitted (2026-04-06).**
-  Groups 0 + 1 shipped in v2.29.0. Groups 2–4 complete in working tree at v2.31.0 —
-  build compiles; commit pending. Read `kb/system/ops-029-impl-plan.md` for full build
-  sequence. Read `kb/system/ops-029-design-session-2026-04-05.md` for architecture decisions.
-  **Next: verify build (./gradlew shadowJar), commit Groups 2–4, then begin Group 5 (Casting dept edit).**
+- **OPS-029 Phase 2 — Groups 0–4 committed (2026-04-06).**
+  Groups 0–1 at v2.29.0. Group 2 at v2.30.0. Group 3 at v2.31.0 (via PR merge). Group 4
+  (CuePanelBuilder) committed in "update" (11a3ad6) — **version not bumped yet; needs 2.32.0**.
+  Read `kb/system/ops-029-impl-plan.md` for full build sequence.
+  Read `kb/system/ops-029-design-session-2026-04-05.md` for architecture decisions.
+  **Next: bump version → 2.32.0, verify build (./gradlew shadowJar), then begin Group 5 (Casting dept first).**
+  Note: `SetBuildSession.java`, `BlockBuildListener.java`, `SetBuildWriter.java` exist in
+  `tech/` from an earlier commit — early Group 5 Set scaffolding. Review before starting Group 5.
   Detailed content in standalone docs:
   - `kb/system/phase2-department-panels.md` — all 10 department panel specs
   - `kb/system/pattern-phrase-spec.md` — PATTERN, PHRASE, Tempo Architecture
@@ -190,6 +193,8 @@ Do not reopen these without Alan.
 ## Known Issues / Tech Debt
 
 - `build/` and `.gradle/` directories are tracked in git — clean up with `git rm --cached -r build/ .gradle/` when convenient (`.gitignore` already excludes them)
+- `.claude/worktrees/` directories (`pedantic-hertz`, `interesting-kirch`) are tracked in git — clean up with `git rm --cached -r .claude/` when convenient (`.gitignore` already excludes `.claude/`)
+- Many Java files show as "modified" in git status due to CRLF/LF line-ending differences — add `.gitattributes` with `*.java text=auto eol=lf` to normalize
 - Player-facing plugin strings are placeholder text — replace with Scaena voice strings before any public-facing launch
 - `intro.young_persons_guide` is an effective capability demo but not yet an artistic experience — rewrite is SCENA-006
 - Legacy run sheets in `docs/` belong in their show folders — migration debt, low priority
@@ -208,7 +213,7 @@ Do not reopen these without Alan.
 
 ## Versioning Policy
 
-**Current version:** `2.31.0`
+**Current version:** `2.31.0` → **bump to `2.32.0` pending** (Group 4 shipped without bump)
 **Version file:** `build.gradle.kts` — the `version = "x.y.z"` line
 
 Before telling Alan to build, either bump the version or explicitly state why no bump is needed.
@@ -228,6 +233,29 @@ How to bump:
 3. Update "Current version" above
 
 If no bump is needed (rebuilding identical content), say so explicitly.
+
+---
+
+## Git Workflow
+
+Three agents touch this repo. Keep them in their lanes.
+
+**Cowork (Claude desktop)** — edits docs, YAML, KB files, and CLAUDE.md directly in the mounted folder. Does not use git. Alan stages and commits from GitHub Desktop after reviewing.
+
+**Claude Code** — writes and compiles Java. Always works on a **feature branch** (e.g. `claude/ops-029-group5-casting`). When done: commits to that branch, pushes. Stops there. Alan reviews the diff and merges via GitHub Desktop or GitHub web. **Code never commits directly to `main`.**
+
+**GitHub Desktop** — Alan's merge/push surface. The source of truth for what's actually on `main`.
+
+**Git hygiene rules for Code sessions:**
+- Always `git checkout -b claude/[description]` before any Java work
+- Commit with a meaningful message: `OPS-029 Group N: [what] (vX.Y.Z)`
+- Bump the version in `build.gradle.kts` *before* the commit
+- Push the branch; do not merge
+- Never `git push origin main` directly
+
+**Cleaning up tracked artifacts:**
+- `.claude/worktrees/` gets created by Code for isolated tasks. `.claude/` is in `.gitignore` but old worktrees may still be tracked. Fix: `git rm --cached -r .claude/` then commit.
+- Line-ending noise (CRLF/LF): add `.gitattributes` with `*.java text=auto eol=lf` if Java files keep showing as modified with no real changes.
 
 ---
 

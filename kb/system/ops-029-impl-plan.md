@@ -224,14 +224,14 @@ Depends on: Group 0 (scene/tick mapping resolved), Group 1 (PAUSE), Group 2 (ste
 
 **Version bump: MINOR**
 
-### Group 4 — CuePanelBuilder + command surface
+### Group 4 — CuePanelBuilder + command surface ✅ committed (11a3ad6, 2026-04-06) — version bump PENDING
 Depends on: Group 3.
-- [ ] `CuePanelBuilder.java` — Edit mode panel (§4c mockup), end-of-scene panel
-- [ ] `CuePanelBuilder` — preview mode sidebar timeline cursor
-- [ ] `ShowCommand` — add `/scaena tech2` entry command (or `/scaena tech <showId> cues`)
-- [ ] Command subcommands: `go`, `hold`, `prev`, `scene next`, `scene prev`, `edit <cueId>`, `panel`
+- [x] `CuePanelBuilder.java` — Edit mode panel (§4c mockup), end-of-scene panel
+- [x] `CuePanelBuilder` — preview mode sidebar timeline cursor
+- [x] `ShowCommand` — add `/scaena tech2` entry command (or `/scaena tech <showId> cues`)
+- [x] Command subcommands: `go`, `hold`, `prev`, `scene next`, `scene prev`, `edit <cueId>`, `panel`
 
-**Version bump: MINOR**
+**Version bump: MINOR — NOT YET APPLIED. Bump build.gradle.kts 2.31.0 → 2.32.0 before next build.**
 
 ### Group 5 — Department edit sessions (iterative)
 Depends on: Group 4. Implement one department at a time; each ships independently.
@@ -326,14 +326,14 @@ Total to fully ship Phase 2: ~2,500 lines across ~12 commits.
 
 ## Version Progression (rough)
 
-Current: `2.28.0`
+Current: `2.31.0` in build.gradle.kts — **bump to 2.32.0 required** (Group 4 committed without bump)
 
-| Group | Expected version |
-|---|---|
-| Group 1 (PAUSE) | 2.29.0 |
-| Group 2 (step mode) | 2.30.0 |
-| Group 3 (TechCueSession core) | 2.31.0 |
-| Group 4 (panel + commands) | 2.32.0 |
-| Group 5 — first dept (Casting) | 2.33.0 |
-| … each subsequent dept | +0.1.0 |
-| OPS-043 + OPS-040 | slots into any Group 1–2 window |
+| Group | Expected version | Actual |
+|---|---|---|
+| Group 1 (PAUSE) | 2.29.0 | ✅ 2.29.0 |
+| Group 2 (step mode) | 2.30.0 | ✅ 2.30.0 |
+| Group 3 (TechCueSession core) | 2.31.0 | ✅ 2.31.0 |
+| Group 4 (panel + commands) | 2.32.0 | ⚠️ committed, bump pending |
+| Group 5 — first dept (Casting) | 2.33.0 | not started |
+| … each subsequent dept | +0.1.0 | |
+| OPS-043 + OPS-040 | slots into any Group 1–2 window | |

@@ -2,16 +2,16 @@
 show_id: showcase.01
 document: Status
 stage: Brief
-last_updated: 2026-04-02
+last_updated: 2026-04-06
 ---
 
 # showcase.01 "Preparing for Battle" — Current Status
 
 ## Stage
-**Brief / R0 Preview** — Gates 1 and 2 closed. Scouting in progress. Sneak preview YAML authored (R0). Tech Rehearsal Mode available (OPS-027, v2.21.0).
+**Brief / R0 Preview** — Gates 1 and 2 closed. Scouting in progress. Sneak preview YAML authored (R0). Tech Rehearsal Mode Phase 1 available (v2.21.0). Phase 2 (OPS-029) Groups 0–4 committed; version bump to 2.32.0 pending.
 
 ## Last Session
-2026-04-02 (session 9). Phase 2 spec refinement — no show changes. See below.
+2026-04-06 — repo realignment. OPS-029 Groups 2–4 committed (Groups 2 at v2.30.0, Group 3 at v2.31.0 via PR, Group 4 via "update" commit). Version not bumped for Group 4; needs 2.32.0 in Code. No show-specific changes this session.
 
 **Session 9 work (2026-04-02):**
 
@@ -48,12 +48,10 @@ last_updated: 2026-04-02
 - **Version bumped to 2.21.0.** MINOR bump — new subsystem (Tech Rehearsal Mode).
 
 **What's next:**
-1. **Build and test in-game.** Invoke from home_base: `/show play showcase.01.preview [PlayerName]`.
-   Confirm REDSTONE polarity (OPEN ITEM [2]) before first run.
-2. **Gate 3 scouting** — Zarathale scouts Sites B–F per `showcase.01.scouting-field-guide.md`.
-   Site A already scouted 2026-03-30.
-3. **Tech mode available.** After scouting delivers coordinates for Sites B–F, enter tech mode
-   (`/scaena tech showcase.01 [scene_id]`) to verify materialization and capture marks.
+1. **In Code — version bump + cleanup.** Bump build.gradle.kts 2.31.0 → 2.32.0. Run `./gradlew shadowJar` to confirm clean build. Commit on a branch. Clean up `.claude/worktrees/` with `git rm --cached -r .claude/` and add `.gitattributes` to fix line-ending noise.
+2. **In Code — begin Group 5 (Casting).** Review existing `SetBuildSession.java` / `BlockBuildListener.java` / `SetBuildWriter.java` before starting. Casting is first (simplest: panel only, live param swap, no world capture).
+3. **Gate 3 scouting** — Zarathale scouts Sites B–F per `showcase.01.scouting-field-guide.md`. Site A already scouted 2026-03-30.
+4. **After scouting — tech mode.** Enter `/scaena tech showcase.01 [scene_id]` to verify materialization and capture marks once coordinates are in the prompt-book.
 
 ## YAML Readiness
 
@@ -240,4 +238,6 @@ vs. silence).
 - **OPS-026** ✅ shipped (v2.19.0). SPAWN_ENTITY attribute support + BOSS_HEALTH_BAR.
   A-Final YAML authoring unblocked pending scouting and intake.
 - **OPS-027** ✅ shipped (v2.21.0). Tech Rehearsal Mode Phase 1. Use `/scaena tech showcase.01
-  [scene_id]` to enter. Phase 2 (YAML cue navigation) deferred.
+  [scene_id]` to enter.
+- **OPS-029 Groups 0–4** ✅ committed (2026-04-06). Phase 2 core infrastructure in place. Group 4
+  (CuePanelBuilder) needs version bump to 2.32.0. Group 5 (dept edit sessions) is next.
