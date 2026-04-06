@@ -670,6 +670,15 @@ Smooth continuous circular movement is not a first-class event. Compose orbits f
 
 ---
 
+### `formation.rotate.clockwise` — 📋 Proposed
+**Intent:** N entities positioned at marks arranged in a geometric formation (square, circle). All fire AI CROSS to the next mark clockwise simultaneously. Does imprecise individual pathfinding read as organic collective movement or as chaos? What's the right follow-up at arrival — hold, brief wander, or continuous next rotation?
+**Setup requirements:** Open flat terrain, named marks arranged around a clear geometric path, entities pre-placed at marks (via ENTRANCE), all AI CROSS events firing at the same tick.
+**Variables to test:** Entity count (start at 4); mark spacing (tight vs. generous); speed (slow = procession, fast = scatter); follow-up behavior (ENTITY_AI off on a timer vs. continuous rotation vs. free wander).
+**Also test:** Two entities moving side by side to adjacent marks simultaneously — do they jostle naturally or fight for space? At what mark separation does collision stop being a problem?
+**Confirmed when:** Simultaneous clockwise rotation reads as intentional movement, not chaos. Know the conditions (terrain, spacing, speed) under which it holds together.
+
+---
+
 ## Capability Status Summary
 
 | Instrument | Status | Notes |

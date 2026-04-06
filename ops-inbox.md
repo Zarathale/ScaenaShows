@@ -787,6 +787,148 @@ infrastructure and it's worth coordinating the implementation.
 
 ---
 
+### OPS-043 [java-gap] BOSSBAR progress control — start_progress, end_progress, static mode
+
+**Area:** Voice department, TextEventExecutor
+**Filed:** 2026-04-05
+**Priority:** Medium — authoring flexibility; structural bossbar use case blocked
+
+**Problem:**
+The current BOSSBAR executor hardcodes progress to start at `0f` and animate 0→1→0 over
+`duration_ticks`. Three capabilities are missing:
+
+1. **`start_progress`** — start the bar at an arbitrary fill value (e.g., 0.4 = 40% full).
+   Currently hardcoded to `0f` in `BossBar.bossBar(title, 0f, color, overlay)`.
+
+2. **`end_progress`** — end the bar at an arbitrary fill value instead of always emptying to 0.
+   Currently the bar always fades out to empty and hides.
+
+3. **Static / frozen mode** — hold a fixed progress value indefinitely without any fill
+   animation. Primary use case: a persistent structural label at the top of the screen (full
+   bar, no timer feel). Currently impossible — the animation always runs.
+
+**Desired YAML:**
+```yaml
+type: BOSSBAR
+title: "<gold>Preparing for Battle</gold>"
+color: YELLOW
+overlay: PROGRESS
+audience: participants
+duration_ticks: 400
+start_progress: 1.0   # appear fully filled (no fill-in animation needed)
+end_progress: 1.0     # stay fully filled (no empty-out animation)
+fade_in_ticks: 0
+fade_out_ticks: 20
+```
+
+**Java changes needed:**
+- Add `startProgress` and `endProgress` fields to `BossbarEvent` (defaults: 0.0 and 1.0 —
+  preserves current behavior)
+- Update `handleBossbar()` animation logic to interpolate from `startProgress` to `endProgress`
+  during fade-in, hold at `endProgress`, then interpolate `endProgress` → 0 during fade-out
+- Static mode: `start_progress == end_progress` with `fade_in_ticks: 0` and `fade_out_ticks: 0`
+  — bar appears at fixed progress, holds for `duration_ticks`, disappears
+
+---
+
+### OPS-041 [java-gap] DARKEN_SKY event — sky darkening for Lighting department
+
+**Area:** Lighting department, world-state instruments
+**Filed:** 2026-04-05
+**Priority:** Low — atmosphere/calibration item
+
+**Problem:**
+Paper's BossBar API exposes a `darkenScreen` flag that darkens the sky overhead (End-dimension
+effect). This was surfaced during BOSSBAR review but belongs to Lighting, not Voice — it is a
+world-state effect, not a text delivery tool.
+
+**Desired capability:**
+A standalone event type (or field on an existing Lighting event) that toggles sky darkening on
+and off for participants. Distinct from BOSSBAR — the sky darkening effect should be available
+without requiring an active bossbar.
+
+**Design questions before implementation:**
+- Standalone event type (`DARKEN_SKY`, `state: ON | OFF`)? Or a flag on `TIME_OF_DAY`?
+- How does it interact with stop-safety? Must be reset on show stop.
+- Is the Paper API for this on `BossBar` only, or accessible independently?
+
+---
+
+### OPS-042 [java-gap] CREATE_FOG event — atmospheric fog for Effects department
+
+**Area:** Effects department, player perception instruments
+**Filed:** 2026-04-05
+**Priority:** Low — atmosphere/calibration item
+
+**Problem:**
+Paper's BossBar API exposes a `createFog` flag that applies thick atmospheric fog around the
+player. This was surfaced during BOSSBAR review but belongs to Effects — it is a player
+perception effect, not a text delivery tool.
+
+**Desired capability:**
+A standalone event type (or flag on CAMERA or EFFECT) that toggles fog on and off for
+participants without requiring an active bossbar.
+
+**Design questions before implementation:**
+- Is `createFog` only accessible via BossBar API, or independently in Paper?
+- If BossBar-only: can a zero-progress invisible bossbar be used as a fog carrier without
+  showing any bar UI?
+- Stop-safety: must clear fog on show stop.
+
+---
+
+### OPS-040 [java-gap] ROTATE: add pitch field — smooth tilt to match smooth pan
+
+**Area:** Camera department, StageEventExecutor
+**Filed:** 2026-04-05
+**Priority:** Medium — fills the last first-class camera movement gap
+
+**Problem:**
+`ROTATE` (OPS-005, shipped 2.26.0) handles smooth yaw (pan) cleanly. Pitch (tilt) has no equivalent — the only smooth tilt path is the spectate drone workaround. Camera department needs first-class smooth pitch to match the smooth pan capability already in the engine.
+
+**Desired capability:**
+Extend `ROTATE` to support optional pitch fields alongside the existing yaw fields:
+
+```yaml
+type: ROTATE
+target: player
+delta: -90.0          # pan left 90° (existing)
+delta_pitch: -30.0    # tilt up 30° (new)
+duration_ticks: 40
+```
+
+Both axes interpolate simultaneously over `duration_ticks`. Either axis is optional — yaw-only and pitch-only are both valid. Absolute `pitch:` field alongside the existing absolute `yaw:` field.
+
+**Pitch range:** -90.0 (straight up) to +90.0 (straight down). No wrap-around issue — pitch clamps at extremes.
+
+**Java changes:**
+- `RotateEvent` — add `pitch` (absolute) and `deltaPitch` fields; `isPitchDelta()` helper; mutual exclusivity same as yaw
+- `handleRotate()` — interpolate both axes in the same BukkitRunnable loop when pitch is present
+- No new event type, no new stop-safety work — pitch cleanup follows the same task cancellation already in place
+
+**Note:** `CAMERA_PATTERN` (pan/tilt sweep via discrete PLAYER_TELEPORT steps) was evaluated and rejected — ROTATE + pitch extension covers the same ground with genuinely smooth interpolation.
+
+---
+
+### OPS-039 [explore] Snow blindness / frozen-feet screen effect — identify Minecraft mechanism
+
+**Area:** Camera department, CAMERA event type
+**Filed:** 2026-04-05
+**Priority:** Low — calibration and toolkit expansion
+
+**Problem:**
+The CAMERA event exposes `nausea`, `darkness`, `blindness`, `levitation`, and `slow_falling` as screen-affecting effects. A bright white-out / snow blindness effect (the kind that occurs when a player is submerged in snow or certain blinding conditions) has been requested as a Camera tool but the underlying Minecraft mechanism is unknown. It is not a standard potion effect.
+
+**Goal:**
+Identify what produces the snow/frozen-feet blindness screen effect in Minecraft (Paper 1.21.x). Is it a potion effect, a block proximity effect, a client-side renderer state, or something else? Determine whether it can be triggered programmatically via the Paper API and what parameters (if any) it exposes.
+
+**If viable:** Add to the CAMERA event as a new `effect:` value with appropriate field set and update camera.kb.md.
+**If not viable via Paper API:** File as a platform limit (same treatment as zoom/FOV).
+
+**No Java work until the mechanism is confirmed.**
+
+---
+
 #### Part A Audit Findings — 2026-04-04
 
 **Red scoreboard numbers (13→1)**

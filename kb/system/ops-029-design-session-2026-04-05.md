@@ -15,23 +15,22 @@ and will be incorporated into the building spec once the department walk is comp
 
 ## Where We Left Off (pickup point for next session)
 
-**Last action (2026-04-05):** Camera walk in progress. PLAYER_MOUNT / PLAYER_DISMOUNT locked:
-spawn: fold (invisible optional, default false), duration shortcut auto-creates DISMOUNT cue,
-player lands where entity is at dismount time (no destination field), camera calls ineffective
-during mount (KB note only). PLAYER_SPECTATE / PLAYER_SPECTATE_END locked: entity lifecycle
-fold, duration shortcut, three END destinations, cinematic arrival pattern. Tempo Architecture
-locked (§12c).
+**Last action (2026-04-05):** Choreography walk in progress. Panel taxonomy established and
+most single-event panels locked. Cross-department PHRASE confirmed as a significant architectural
+decision. CHOREO_PATTERN in scope. See §Choreography for full decisions.
 
-Prior actions same session: FACE panel, CAMERA_LOCK/MOVEMENT_LOCK, BOUNDARY_CHECK/VIEW_CHECK
-conditional primitives, show-relative spatial vocabulary. Fireworks (Mira) locked. Effects (Felix)
-locked. PATTERN rename confirmed (⚑16). Effects PHRASE vocabulary resolved (⚑18). MUSIC event
-type spec written into §12b (⚑17 design complete).
+Prior actions same session: Camera walk fully locked (PLAYER_MOUNT/DISMOUNT, PLAYER_SPECTATE,
+screen effects, CAMERA_PHRASE). Voice walk locked. Fireworks locked. Effects locked. PATTERN rename
+confirmed (⚑16). Effects PHRASE vocabulary resolved (⚑18). MUSIC event type spec written into
+§12b (⚑17 design complete). Tempo Architecture locked (§12c).
 
-**To resume next session:** Continue Camera walk. Remaining: CAMERA (screen effects) single
-event panel; CAMERA_PATTERN field set (PT only — zoom gapped, no FOV API in Paper 1.21.x);
-CAMERA_PHRASE field set.
+**To resume next session:** Continue Choreography walk. Three items remain:
+1. CHOREO_PATTERN field set — what does a formation/geometric computed pattern look like in YAML?
+2. CHOREO_PHRASE field set — now confirmed as cross-department; what does the step schema look like?
+3. Presets — any named formation or movement presets worth locking?
+Then settle the PHRASE unification question (⚑29) before closing Choreography.
 
-**Next department to walk:** Camera (continuing).
+**Next department to walk:** Choreography (in progress).
 
 **Department walk status:**
 
@@ -44,9 +43,9 @@ CAMERA_PHRASE field set.
 | Lighting | ✅ Locked (2026-04-05) |
 | Effects | ✅ Locked (2026-04-05) |
 | Fireworks | ✅ Locked (2026-04-05) |
-| Camera | 📋 Single events locked: FACE, CAMERA_LOCK/MOVEMENT_LOCK, BOUNDARY_CHECK, VIEW_CHECK, PLAYER_SPECTATE/END, PLAYER_MOUNT/DISMOUNT. Remaining: CAMERA screen effects, CAMERA_PATTERN, CAMERA_PHRASE |
-| Voice | 📋 Orientation captured — walk pending |
-| Choreography | 📋 Orientation captured — walk pending |
+| Camera | ✅ Locked (2026-04-05) |
+| Voice | ✅ Locked (2026-04-05) |
+| Choreography | 🔄 Walk in progress (2026-04-05) |
 
 **Key architectural decisions locked this session:**
 - Pattern is a YAML primitive (§12) — SOUND_PATTERN, EFFECT_PATTERN, TIME_OF_DAY_PATTERN in Phase 2
@@ -99,16 +98,60 @@ CAMERA_PHRASE field set.
   BOUNDARY_CHECK (position-based) and VIEW_CHECK (orientation-based) defined. VIEW_CHECK
   corrective action is always a smooth pan — never a snap. This is a constraint. (See §Camera, ⚑27.)
 
+**Choreography walk decisions (2026-04-05, in progress — see §Choreography for full notes):**
+- Panel taxonomy locked: ENTRANCE (Appear/Arrive modes), CHARACTER EXIT (Exit/Vanish modes),
+  CHARACTER CROSS (Instant/AI modes), CHARACTER LOOK (compound: face → freeze → resume),
+  PERFORMER STATE (AI toggle + hold note), CHARACTER VELOCITY (standalone panel).
+- AI toggle IS the freeze. HOLD = momentary velocity zero only, not sustained stillness.
+  No separate freeze toggle needed.
+- Mob crosses honest assessment: INSTANT CROSS = teleport (reliable/precise); AI CROSS =
+  pathfinder walk (uncontrolled path, timing, arrival — no callback when entity reaches target).
+  No smooth interpolated mob movement exists. Imprecision can be used creatively.
+- AI CROSS speed: named presets — Creep (0.05–0.1) / Slow (0.2–0.3) / Normal (1.0) /
+  Fast (1.5–2.0) / Sprint (2.5+). ENTITY_SPEED set before cross fires; persists until changed.
+  To change speed mid-scene without a cross, author another CROSS to same mark at new speed.
+- Anchor: per-action field on every choreography event. scene_origin or player. Not a
+  session-level default — each event declares its own anchor.
+- CHARACTER VELOCITY: standalone panel. Target + vector (x/y/z) + named presets
+  (gentle bounce / dramatic launch / float arc).
+- CAPTURE/RELEASE (CAPTURE_ENTITIES, RELEASE_ENTITIES): out of scope for Phase 2 panels.
+- CHOREO_PATTERN: in scope. Concept: computed formation/geometric positions — rules in,
+  positions/moves out. Field set TBD (see §Choreography, open item).
+- PHRASE confirmed as cross-department (⚑29 opened): steps can include any event type from
+  any department. No department restriction on PHRASE step content. SOUND_PHRASE, CAMERA_PHRASE,
+  VOICE_PHRASE etc. remain valid as department-convention labels but are not technically
+  distinct types. Phase 2 step picker: select event type (any department) → sub-panel opens
+  for that event's fields. This is a significant architectural statement.
+- Calibration: `formation.rotate.clockwise` added to choreography.kb.md calibration backlog.
+
+**Additional decisions locked (Camera/Voice walk, 2026-04-05):**
+- CAMERA screen effects: nausea / darkness / blindness / levitation / slow_falling. darkness uses
+  matched-pair contract (darkness + darkness_return). OPS-039 filed (snow blindness explore).
+- CAMERA_PATTERN dead: ROTATE (OPS-005) covers smooth pan. Pitch extension → OPS-040.
+- CAMERA_PHRASE: Phase 2 confirmed. Script-editor model. Presets: reveal_tilt, battle_sweep, etc.
+- ROTATE KB corrected: marked ✅ Verified (was stale ⚠️ Gapped).
+- VOICE single events locked: MESSAGE, TITLE, ACTION_BAR, BOSSBAR panels confirmed.
+- VOICE_PHRASE: Phase 2. `after:` timing coexists with `at:`. Script-editor panel shape.
+- VOICE_PATTERN: deferred — no Phase 2 use case.
+- BOSSBAR Java accounting: always 0→1→0; no start_progress/end_progress/freeze. OPS-043 filed.
+- darken_sky → OPS-041 (Lighting). create_fog → OPS-042 (Effects).
+- TITLE_CLEAR: KB corrected from gap → ✅ Verified (OPS-016, shipped).
+- BOSS_HEALTH_BAR: added to voice.kb.md capability summary.
+
 **Blocking open items before any Java starts (see §15 for full list):**
 ⚑ 1 Edit target (show YAML vs. cue file loaded)
 ⚑ 2 Partial YAML handling
 ⚑ 3 Panel mockup
-⚑ 4 Department walk (3 departments remain — Camera walk in progress)
+⚑ 4 Department walk — Choreography walk in progress. Three items remain: CHOREO_PATTERN field set, CHOREO_PHRASE field set, presets. Then ⚑29 (PHRASE unification).
 ⚑ 5 Preset library file structure
 ⚑ 6 Pattern schema section in spec.md
 ⚑ 7 ✅ Pattern type list confirmed (2026-04-05): SOUND_PATTERN, EFFECT_PATTERN, TIME_OF_DAY_PATTERN
 ⚑ 8 Cross-plugin text input UI pattern
 ⚑ 17 MUSIC event type spec — field set, pitch notation, instrument list
+⚑ 29 PHRASE unification: cross-department PHRASE confirmed (2026-04-05, Choreography walk).
+  Steps can include any event type. Does this supersede VOICE_PHRASE / CAMERA_PHRASE / CHOREO_PHRASE
+  as distinct named types, or do department-specific names remain as authoring convention?
+  Affects Phase 2 panel design — step picker must support full event type list.
 ✅ 18 Effects PHRASE vocabulary confirmed: Pulse / Cluster / Phrase (container). Pattern = type only.
 
 ---
@@ -1546,40 +1589,209 @@ not during it.
 
 No presets for PLAYER_MOUNT or PLAYER_DISMOUNT — entity names are show-specific.
 
-**Remaining Camera walk items (TBD):**
+**Camera walk — ✅ Complete (2026-04-05)**
 
-- CAMERA (sway / blackout / flash / float) edit panel
-- CAMERA_PATTERN field set — pan/tilt only (zoom gapped: no FOV API in Paper 1.21.x)
-- CAMERA_PHRASE field set
+**CAMERA_PHRASE — ✅ Locked**
+
+Phase 2 confirmed. PHRASE primitive applied to Camera's event set. Department ownership: Phase 2 panel offers Camera events in the step editor; Camera presets populate the preset picker.
+
+```yaml
+type: CAMERA_PHRASE
+audience: participants
+tempo_bpm: 120
+subdivision: quarter    # quarter | eighth | sixteenth
+
+steps:
+  - at_beat: 1.0
+    events:
+      - type: FACE
+        target: player
+        look_at: mark:stage_center
+
+  - at_beat: 2.0
+    events:
+      - type: ROTATE
+        target: player
+        delta_pitch: -40.0    # tilt up (OPS-040 — pending)
+        duration_ticks: 20
+
+  - at_beat: 3.0
+    events:
+      - type: CAMERA
+        effect: nausea
+        intensity: 1
+        duration_ticks: 30
+
+  - at_beat: 4.0
+    events:
+      - type: CAMERA
+        effect: darkness
+        audience: participants
+      - type: FACE
+        target: player
+        look_at: mark:act_two_center
+
+  - at_beat: 6.0
+    events:
+      - type: CAMERA
+        effect: darkness_return
+        audience: participants
+```
+
+Event durations run independently — phrase continues stepping while effects play out. `darkness` / `darkness_return` pairing is author responsibility; panel prompts for the return step when `darkness` is added.
+
+Named presets: `camera.phrase.reveal_tilt`, `camera.phrase.entrance_redirect`, `camera.phrase.transition_blackout`, `camera.phrase.battle_sweep`, `camera.phrase.unease`.
+
+**Resolved during walk:**
+- CAMERA screen effects ✅ Locked: nausea / darkness / blindness / levitation / slow_falling. darkness uses matched-pair contract (darkness + darkness_return). OPS-039 filed for snow blindness exploration.
+- CAMERA_PATTERN ✅ Dead: ROTATE (OPS-005, 2.26.0) covers smooth pan. Pitch extension filed as OPS-040. No CAMERA_PATTERN type needed.
+- camera.kb.md ✅ Updated: ROTATE marked verified; OPS-040 gap noted; CAMERA effects row corrected.
 
 ---
 
-### 📋 Voice — not yet walked
+### ✅ Voice — Locked (2026-04-05)
 
-**Orientation confirmed (2026-04-05 department scan):**
+**Single event panels — ✅ Locked**
 
-- VOICE_PHRASE: the primary primitive for dropping text lines into a scene. Each step
-  of the phrase is one text line element with: timing, location, color, intensity, duration.
-- Scene editing mode required: ability to Add a New Line, Insert a line, Reorder lines.
-  This is a meaningful UX surface — own walk required.
-- VOICE_PATTERN: could handle repeating/pulsing text elements (flashing text, etc.).
-- Both Pattern and Phrase apply.
+All four instruments confirmed. Panels: text field (text GUI, not anvil), audience picker,
+format-specific fields, preview, save-as-preset for all four.
 
-**Walk pending.**
+- MESSAGE: text + audience. Presets: `[Sprite]` prefix format variants.
+- TITLE: title + subtitle (optional) + fade_in / stay / fade_out timing. Presets: timing configs.
+- ACTION_BAR: text + duration_ticks (plugin re-sends every 20t to persist). Presets: yes.
+- BOSSBAR: title + color + overlay + duration_ticks + fade_in_ticks + fade_out_ticks + audience.
+  Presets: color/overlay/timing combinations.
+
+**BOSSBAR — what the Java actually does (from source):**
+- Always starts at 0 (hardcoded), fills to 1.0 during fade_in_ticks, holds, empties during
+  fade_out_ticks, then hides.
+- `duration_ticks` = total life of the bar. Hold phase = duration - fade_in - fade_out.
+- No start_progress, end_progress, or freeze capability. OPS-043 filed.
+- darken_sky → OPS-041 (Lighting). create_fog → OPS-042 (Effects). Not in BOSSBAR panel.
+- BOSS_HEALTH_BAR: separate event type (OPS-026, shipped); entity-linked live HP bar.
+  Noted in voice.kb.md capability summary.
+
+**VOICE_PHRASE — ✅ Locked**
+
+Primary Phase 2 authoring surface for Voice. Script editor model, not beat sequencer.
+
+```yaml
+type: VOICE_PHRASE
+audience: participants      # phrase-level default; per-step can override
+
+steps:
+  - at: 0
+    events:
+      - type: BOSSBAR
+        title: "<gold>Preparing for Battle</gold>"
+        color: YELLOW
+        overlay: PROGRESS
+        duration_ticks: 400
+
+  - after: 40               # relative: N ticks after previous step
+    events:
+      - type: MESSAGE
+        message: "<light_purple>[Sprite]</light_purple><white> The ceiling opens.</white>"
+
+  - after: 80
+    events:
+      - type: MESSAGE
+        message: "<light_purple>[Sprite]</light_purple><white> Something has been waiting.</white>"
+
+  - after: 60
+    events:
+      - type: TITLE
+        title: "<gold><bold>You are here.</bold></gold>"
+        fade_in: 20
+        stay: 60
+        fade_out: 20
+```
+
+Timing: `at:` (absolute tick) and `after:` (relative to previous step) coexist — author
+picks per step. `after:` is the natural authoring mode for dialogue that needs to breathe.
+
+Phase 2 panel — script editor:
+```
+VOICE PHRASE  [ + Add Line ]
+
+  1.  [at: 0     ]  BOSSBAR    "Preparing for Battle"         [Edit] [↑] [↓] [✕]
+  2.  [after: 40 ]  MESSAGE    "[Sprite] The ceiling opens."  [Edit] [↑] [↓] [✕]
+  3.  [after: 80 ]  MESSAGE    "[Sprite] Something has been…" [Edit] [↑] [↓] [✕]
+  4.  [after: 60 ]  TITLE      "You are here."                [Edit] [↑] [↓] [✕]
+
+  [ Insert Line Above ▾ ]
+
+[▶ Preview Phrase]  [Save]  [Save as Preset]  [Cancel]
+```
+
+Clicking Edit opens the individual event panel inline. ↑/↓ reorders. Named presets:
+`voice.phrase.sprite_intro`, `voice.phrase.revelation`, `voice.phrase.section_close`.
+
+**VOICE_PATTERN — ✅ Deferred**
+
+No clear Phase 2 use case. No meaningful param to interpolate for text. Deferred until
+a concrete show need surfaces it.
+
+**KB updates completed:**
+- voice.kb.md: TITLE_CLEAR corrected from gap → ✅ Verified (OPS-016, shipped)
+- voice.kb.md: BOSSBAR progress gap row added (OPS-043)
+- voice.kb.md: BOSS_HEALTH_BAR row added to capability summary
+- voice.kb.md: Stage Manager cross-department note updated (no more workaround reference)
 
 ---
 
-### 📋 Choreography — not yet walked
+### 🔄 Choreography — walk in progress (2026-04-05)
 
 **Orientation confirmed (2026-04-05 department scan):**
-
-- Works like Fireworks and Lightning: choreography events are anchored either to the
-  scene center point or the player's current position (dual-anchor model, same as LIGHTNING).
+- Dual-anchor model (scene_origin / player) confirmed — per-action field, not session-level default.
 - CHOREO_PATTERN and CHOREO_PHRASE both apply.
-- Pattern: computed movement sweep (rules/endpoints in, movement events out).
-- Phrase: explicitly authored sequence of positions/movements.
 
-**Walk pending.**
+**Honest assessment of mob movement (established during walk):**
+- INSTANT CROSS = teleport. Reliable, precise, works on puppets (AI off).
+- AI CROSS = pathfinder walk. Entity navigates toward mark using Bukkit pathfinder. Uncontrolled
+  path, uncontrolled timing, no arrival guarantee. No callback when entity reaches destination —
+  show has no awareness of arrival. Entity resumes default AI behavior on arrival.
+- No smooth interpolated mob movement exists. Imprecision can be used creatively (see calibration).
+- Player CROSS_TO = tick-exact smooth interpolation. Fully controlled and reliable.
+
+**Panel taxonomy locked:**
+
+| Panel name | Mode / notes |
+|---|---|
+| ENTRANCE | Appear (SPAWN_ENTITY at mark) / Arrive (ENTER from wing → pathfinds to destination) |
+| CHARACTER EXIT | Exit (path to wing, despawn on arrival) / Vanish (immediate despawn, optional particle burst) |
+| CHARACTER CROSS | Instant (teleport) / AI (pathfinder, includes speed field). Anchor field on both. |
+| CHARACTER LOOK | Compound panel: FACE (snap yaw, pitch gapped for entities) → ENTITY_AI off → resume after N ticks. Target: mark / character / player / compass / yaw value. |
+| PERFORMER STATE | AI toggle (Puppet / Performer). HOLD note in panel: "For sustained stillness, use Puppet. Hold is for momentary pauses only." |
+| CHARACTER VELOCITY | Standalone. Target + vector (x/y/z) + named presets: gentle bounce / dramatic launch / float arc. Anchor field. |
+
+**AI = freeze. No separate freeze toggle needed.** AI off = puppet = still. HOLD only zeroes
+velocity at a single tick; AI-on entity resumes pathfinding immediately after.
+
+**AI CROSS speed named presets:**
+- Creep (0.05–0.1), Slow (0.2–0.3), Normal (1.0), Fast (1.5–2.0), Sprint (2.5+)
+- Speed set before cross fires. Persists until changed. To change speed alone, write another
+  CROSS to same destination at new speed (instant mode, just updates the speed attribute).
+
+**CAPTURE/RELEASE:** Out of scope for Phase 2. Author-time YAML only.
+
+**CHOREO_PATTERN:** In scope. Concept: computed formation/geometric placement — rules in,
+positions/moves out. Consistent with SOUND_PATTERN, EFFECT_PATTERN model. Creative space:
+arrange N entities in a circle, arc, grid, or line around an anchor; compute orbital waypoints
+for a rotation sequence. Field set: **TBD — open item for next session.**
+
+**CHOREO_PHRASE:** In scope. Confirmed as cross-department (⚑29): steps can include any
+event type from any department. Field set: **TBD — open item for next session.**
+
+**Calibration backlog:** `formation.rotate.clockwise` added. N entities at geometric marks,
+all AI CROSS to next mark clockwise simultaneously. Also: side-by-side movement test with
+two entities to adjacent marks. See choreography.kb.md.
+
+**Still open (next session):**
+- CHOREO_PATTERN field set
+- CHOREO_PHRASE field set (cross-department step schema)
+- Presets
+- PHRASE unification question (⚑29)
 
 ---
 
@@ -2683,7 +2895,7 @@ is clear.
 | ⚑ 1 | Edit target: show YAML only vs. also loading cues/*.yml — Pattern reinforces "cue file loaded" model: if a Pattern lives in a cue file, TechCueSession must have that file loaded to edit Pattern params | Yes — before ShowYamlEditor Java |
 | ⚑ 2 | Q4 (partial YAML / scaffold handling): what does Phase 2 do when a CUE reference can't resolve at preview time? What is the minimum viable YAML to enter Phase 2? | Yes — before TechCueSession Java |
 | ⚑ 3 | Panel design / mockup: full Phase 2 panel with all modes and states including Pattern display | Yes — before Java |
-| ⚑ 4 | Department walk incomplete: Fireworks, Camera, Voice, Choreography edit modes not yet defined. Orientation context captured for all four (2026-04-05). Effects locked 2026-04-05. Fireworks is next. | Yes — before building spec is final |
+| ⚑ 4 | Department walk: Choreography walk in progress (2026-04-05). All other departments locked. Three items remain for Choreography: CHOREO_PATTERN field set, CHOREO_PHRASE field set (cross-department), presets. Then ⚑29. | Yes — before building spec is final |
 | ⚑ 5 | Preset library file structure: formal location and format for each department's preset file | Yes — before ShowYamlEditor Java |
 | ⚑ 6 | Pattern schema spec section: field definitions, expansion rules, and validation for SOUND_PATTERN, EFFECT_PATTERN, TIME_OF_DAY_PATTERN must be written into spec.md before any Pattern Java work | Yes — prerequisite for all Pattern Java |
 | ✅ 7 | Pattern type list confirmed (2026-04-05): SOUND_PATTERN, EFFECT_PATTERN, TIME_OF_DAY_PATTERN ship in Phase 2. MUSIC_PATTERN added as new type pending spec (⚑17). Fireworks types confirmed as FIREWORK_PATTERN subtypes (⚑19). | Closed |
@@ -2706,7 +2918,8 @@ is clear.
 | 📋 27 | Conditional primitive spec: BOUNDARY_CHECK (position-based) and VIEW_CHECK (orientation-based). First conditional execution model in the engine. Both need spec entries, Java executors with branching logic, and Phase 2 panel designs. VIEW_CHECK constraint: corrective action is always smooth pan, never snap. | No — not blocking walk |
 | 📋 28 | Tempo hierarchy: show/scene/cue tempo inheritance model. Show YAML gets optional `tempo: ticks_per_quarter:` block; scenes can override; PHRASEs/PATTERNs inherit if no local tempo set. Requires show/scene YAML model extension, PhraseExpander resolution chain, spec.md update. | No — after §12c design |
 | 📋 21 | Voice walk: orientation captured (2026-04-05). VOICE_PHRASE (lines as steps with timing, location, color, intensity, duration) confirmed. Scene editing mode (Add/Insert/Reorder lines) scoped. | No |
-| 📋 22 | Choreography walk: orientation captured (2026-04-05). Dual-anchor model (scene_origin / player). CHOREO_PATTERN and CHOREO_PHRASE confirmed. | No |
+| 🔄 22 | Choreography walk in progress (2026-04-05). Panel taxonomy locked. CHOREO_PATTERN in scope (formation/geometric). PHRASE confirmed as cross-department (⚑29). Open: CHOREO_PATTERN field set, CHOREO_PHRASE field set, presets. | No |
+| ⚑ 29 | PHRASE unification: cross-department PHRASE confirmed during Choreography walk. Steps can include any event type from any department. Question: do department-specific names (VOICE_PHRASE, CAMERA_PHRASE, CHOREO_PHRASE) remain as authoring convention or are they unified into one PHRASE type? Affects Phase 2 step-picker panel design. | Yes — before Choreography locked |
 | 📋 24 | Fireworks player-anchor Java dependency: `anchor: player` on any FIREWORK/* event type requires the same Java capability as OPS-034 (resolve player position at invocation time). Not a new gap — OPS-034 dependency. Phase 2 panel writes valid YAML and shows a warning; live execution requires OPS-034 to ship. | No — not blocking Phase 2 panel |
 
 ---

@@ -115,7 +115,7 @@ fade_out: 20   # ticks to fade from full to transparent
 - TITLE is the cinematic mode — the screen is the stage. Reserve it for moments that deserve the full screen. Overuse deflates its impact.
 - `subtitle:` is optional. A title with no subtitle feels more declarative and sparse.
 - Timing is craft: `fade_in: 0, stay: 10, fade_out: 60` reads as a flash of recognition. `fade_in: 40, stay: 80, fade_out: 40` is a slow revelation that the player sees coming.
-- To erase a TITLE before its `stay` timer expires, fire a new TITLE with empty strings: `title: " " subtitle: " "` — this resets the fade clock. See Gap: No TITLE_CLEAR below.
+- To erase a TITLE before its `stay` timer expires, use `TITLE_CLEAR` — a dedicated event that cleanly dismisses the title with a controlled fade-out (OPS-016, shipped). `fade_out` field controls the wipe speed.
 - Only two lines available: `title:` and `subtitle:`. Do not try to add a third line — there is no mechanism for it.
 
 ---
@@ -242,17 +242,19 @@ Chat stream:
 
 ---
 
-### Gap: No TITLE_CLEAR event
+### TITLE_CLEAR — ✅ Resolved (OPS-016, shipped)
 
-**Status:** Open. Filed in `ops-inbox.md`.
+`TITLE_CLEAR` is a first-class event type. It cleanly dismisses an active TITLE with a
+controlled fade-out — no workaround needed.
 
-There is no way to cleanly dismiss a TITLE before its `stay` timer expires. Firing a new TITLE with empty strings resets the fade clock but does not fade smoothly — it pops.
+```yaml
+type: TITLE_CLEAR
+audience: participants
+fade_out: 10    # ticks to fade the title out
+```
 
-**Impact:** Title timing must be designed upfront so early dismissal is never needed. Constrains authoring when a scene demands a title cut short by action.
-
-**Workaround:** Fire a new TITLE with `title: " "` (a space, not empty string) and `fade_in: 0, stay: 0, fade_out: 10`. This creates a fast fade-out. Not perfectly clean but better than an empty-string pop.
-
-**Design rule until resolved:** Write TITLE timing so the natural `stay` + `fade_out` expiry matches the intended scene beat. Don't design shows that require early title dismissal.
+`fade_in` and `stay` are both set to zero internally; `fade_out` controls the wipe speed.
+Fire it at whatever tick you want the title to begin disappearing.
 
 ---
 
@@ -318,9 +320,7 @@ Very spare. One line, then a long silence. White text. Often: no words at all �
 
 *With Wardrobe:* Floating objects, invisible presences, and major costume transformations are natural Sprite reaction moments. Voice decides whether to name them, let them be silent, or react obliquely. The naming can anchor the moment or deflate it — coordinate with Wardrobe on which it should be.
 
-*With Stage Manager:* BOSSBAR events register with the show's active bossbar list and are cleaned up on `/show stop` via stop-safety. No extra cleanup needed. TITLE cannot be stopped mid-show without the TITLE_CLEAR workaround — keep this in mind when the Stage Manager asks about stop-safety for any scene with an active TITLE.
-
-**Handling capability gaps:** The TITLE_CLEAR gap is the primary constraint. Design TITLE timing so early dismissal is never required — the `stay` + `fade_out` should match the scene beat naturally. If a scene absolutely requires early title dismissal, use the workaround (`title: " "`, `fade_in: 0, stay: 0, fade_out: 10`) and document it in the run sheet.
+*With Stage Manager:* BOSSBAR events register with the show's active bossbar list and are cleaned up on `/show stop` via stop-safety. No extra cleanup needed. TITLE_CLEAR (OPS-016) handles early title dismissal cleanly — no workaround required.
 
 **Escalation discipline:** Voice resolves text mode, timing, and narration choices independently. Voice escalates when: (1) the tone phrase in the brief is unclear enough that Sprite's degree of presence is genuinely ambiguous — ask the Director before writing any lines; (2) a text moment conflicts with another department's key beat and neither can easily move — bring to Stage Manager; (3) a line of narration implies a story decision that wasn't in the brief — surface it to the Director before authoring it in.
 
@@ -373,6 +373,8 @@ Sprite needs to internalize four timing modes and understand that the correct mo
 | Audience targeting (broadcast / participants / private / group_1–4) | ✅ Verified | `AudienceResolver.resolve()` handles all targeting modes |
 | Entity-targeted MESSAGE | ✅ Verified | Available; text routed to entity's name target; rare use case |
 | BOSSBAR stop-safety cleanup | ✅ Verified | `show.addActiveBossBar()` registers bar for cleanup on `/show stop` |
-| TITLE_CLEAR — dismissing a TITLE early cleanly | ⚠️ Gapped | No native event; workaround: `title: " "` with `fade_in: 0, stay: 0, fade_out: 10` — filed in `ops-inbox.md` |
+| BOSSBAR start_progress / end_progress / static mode | ⚠️ Gapped | Always animates 0→1→0; no fixed start/end point. OPS-043 filed. |
+| BOSS_HEALTH_BAR — entity-linked bossbar | ✅ Verified | OPS-026 shipped. Progress reflects live entity HP. Fields: target, title, color, overlay, audience, death_line, victory_cue. Owned by Voice; authored for combat/boss encounters. |
+| TITLE_CLEAR — dismissing a TITLE early cleanly | ✅ Verified | OPS-016, shipped. `fade_out` field controls wipe speed. Clean dismiss, no workaround needed. |
 | Per-player distinct ACTION_BAR in a single event | 📋 Aspirational | One text per event; use separate events with `audience: group_N` to target subsets |
 | Scrolling / paginated text | 📋 Aspirational | No multi-page text event; not implemented or filed |

@@ -134,7 +134,7 @@ Turning left or right in place.
 | **Instant snap** | ✅ Available | `FACE` — yaw only, no pitch |
 | **Instant snap with pitch** | ✅ Available | `PLAYER_TELEPORT` with `offset: {x:0,y:0,z:0}` + yaw + pitch |
 | **Smooth pan** | ✅ Available (via drone) | `PLAYER_SPECTATE` on an entity moving horizontally via `CROSS_TO` |
-| **First-class smooth pan** | ⚠️ Gapped | No `ROTATE` event. Workaround is the drone pattern. Filed: ops-inbox.md |
+| **First-class smooth pan** | ✅ Available | `ROTATE` event — shipped 2.26.0 (OPS-005). Supports `yaw:` (absolute) and `delta:` (relative); `duration_ticks` for smooth interpolation. |
 
 ### Tilt (vertical rotation — pitch)
 Looking up or down.
@@ -143,11 +143,12 @@ Looking up or down.
 |-----------|---------|-----|
 | **Instant tilt** | ✅ Available | `PLAYER_TELEPORT` with `pitch:` field |
 | **Smooth tilt** | ✅ Available (via drone) | `PLAYER_SPECTATE` on an entity moving vertically via `CROSS_TO` |
-| **FACE for tilt** | ❌ Not available | `FACE` is yaw only — filed in ops-inbox.md |
+| **First-class smooth tilt** | ⚠️ Gapped | `ROTATE` pitch extension filed as OPS-040 — adds `pitch:` / `delta_pitch:` to ROTATE. Not yet shipped. |
+| **FACE for tilt** | ❌ Not available | `FACE` is yaw only — platform behavior, not filed. |
 
 > **Mark's primary tool for "look up at something":** `PLAYER_TELEPORT` with
 > `offset: {x:0,y:0,z:0}` + explicit `pitch:` value. This is the fastest path.
-> The drone pattern can smooth it if the show needs a gentle upward tilt.
+> Once OPS-040 ships, `ROTATE` with `delta_pitch:` will be the smooth equivalent.
 
 ### Zoom
 Changing field of view, pulling in or pushing out.
@@ -806,7 +807,8 @@ Camera already has four named patterns in the KB body (snap, face-then-land, pre
 | PLAYER_SPECTATE_END | ✅ Verified | Confirmed; restores game mode from spectate restore map |
 | PLAYER_MOUNT | ✅ Verified | Uses addPassenger(); confirmed. Rideable entity types required. |
 | PLAYER_DISMOUNT | ✅ Verified | Confirmed |
-| CAMERA: blackout / sway / flash / float | ✅ Verified | Confirmed via potion effects |
-| ROTATE event (smooth yaw) | ⚠️ Gapped | Not implemented. Workaround: spectate drone. Filed: ops-inbox.md |
+| CAMERA: nausea / darkness / blindness / levitation / slow_falling | ✅ Verified | Confirmed via potion effects. darkness uses matched-pair contract (darkness + darkness_return). |
+| ROTATE event (smooth yaw) | ✅ Verified | Shipped 2.26.0 (OPS-005). yaw: / delta: fields; duration_ticks for smooth interpolation. |
+| ROTATE pitch (smooth tilt) | ⚠️ Gapped | OPS-040 filed — extends ROTATE with pitch: / delta_pitch:. Not yet shipped. |
 | Zoom (FOV control) | ❌ Platform limit | No Paper API. Not fileable — platform constraint. |
 | Real-time auto-follow / look-at-entity | ❌ Platform limit | No live entity tracking. Scripted drone is the best approximation. |
