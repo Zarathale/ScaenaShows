@@ -85,7 +85,7 @@ Provide at least one **recommended** candidate per site. Include an **alternate*
 if you found more than one strong option.
 
 Every confirmed location enters the permanent stage registry at
-`kb/departments/set/stage-registry.md` before the show enters tech.
+`kb/departments/set/set.stage-registry.md` before the show enters tech.
 
 ---
 
@@ -261,7 +261,7 @@ here is the beat. Camera holds; Sound steps back; Effects does nothing.
 2. Tell Alan you're done — he pulls coordinates and merges into show-params
 3. Fill descriptive fields in `showcase.01.scouting-report.md` and commit
 4. Michael C. translates to Environment Notes in `departments/showcase.01.set.md`
-5. Stage registry entries go in `kb/departments/set/stage-registry.md`
+5. Stage registry entries go in `kb/departments/set/set.stage-registry.md`
 6. Direction closes Gate 3 and schedules intake conversation
 
 **Six locations total:** home base (A) + five expedition sites (B through F).

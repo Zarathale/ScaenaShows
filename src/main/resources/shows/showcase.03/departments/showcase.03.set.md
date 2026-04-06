@@ -75,7 +75,7 @@ the approximate ceiling height (or "open sky" if unlimited).
 
 ## Scouting Task (Task 8 in Stage Registry)
 
-The scouting task list at `kb/departments/set/stage-registry.md` Task 8 defines the full
+The scouting task list at `kb/departments/set/set.stage-registry.md` Task 8 defines the full
 scouting and design requirements. Key documentation items:
 
 **Approach corridor:**

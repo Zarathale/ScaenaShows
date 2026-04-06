@@ -107,4 +107,4 @@ The following sections are intentionally thin. They will be written from direct 
 - **Cross-show cue reuse decisions** — when a cue from one show should be extracted to the library vs. left show-specific
 - **Interruption recovery** — what Kendra does when a show is interrupted mid-rehearsal
 - **Show deprecation** — how a show gets sunset or archived
-- **Show import process** — migrating a flat-YAML show to the folder structure (see `skills/show-import-process/SKILL.md`)
+- **Show import process** — migrating a flat-YAML show to the folder structure (see `skills/show-import-process/show-import-process.skill.md`)

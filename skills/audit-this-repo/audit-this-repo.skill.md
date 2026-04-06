@@ -35,13 +35,13 @@ This lets you focus on what's changed rather than re-auditing everything at equa
 Read these before assessing anything:
 1. `CLAUDE.md` — current phase, session state, open questions, versioning policy
 2. `ROADMAP.md` — phase status (especially whether it reflects current phase structure)
-3. `kb/departments/show-director/showcase-roadmap.md` — pass status for all three showcases
+3. `kb/departments/show-director/show-director.showcase-roadmap.md` — pass status for all three showcases
 
 Then do a file tree scan:
 - `find src/main/resources/cues -name "*.yml" | sort` — full cue inventory
 - `find src/main/resources/shows -type f | sort` — full show inventory
 - `find kb/departments -type f | sort` — KB folder structure + migration status
-- `find skills -name "SKILL.md" | sort` — skill inventory
+- `find skills -name "*.skill.md" | sort` — skill inventory
 
 Assessment must be based on what's actually in the files, not on assumptions from prior sessions.
 
@@ -96,7 +96,7 @@ ScaenaShows shows live in `src/main/resources/shows/`. Audit both what exists an
 | Flat YAML | Does a loadable `.yml` exist for plugin compatibility? |
 | Folder | Does a `[show_id]/` folder exist with brief, run-sheet, direction/, departments/? |
 | Development stage | What does `brief.md`'s `development_stage:` frontmatter say? |
-| Pass status | For showcase.01/02/03 — check `showcase-roadmap.md` for completed passes (✅ vs [ ]) |
+| Pass status | For showcase.01/02/03 — check `show-director.showcase-roadmap.md` for completed passes (✅ vs [ ]) |
 | Department briefs | Are `departments/*.md` files populated with real decisions, or still scaffold stubs? |
 
 **Flag specifically:**
@@ -155,7 +155,7 @@ Cues live in `src/main/resources/cues/`. The production target is 30+ tagged pro
 
 ### Layer 4 — KB Calibration Readiness
 
-Department KBs live in `kb/departments/`. The skill `skills/kb-builder/SKILL.md` defines the calibration-ready checklist — use it as the scoring rubric.
+Department KBs live in `kb/departments/`. The skill `skills/kb-builder/kb-builder.skill.md` defines the calibration-ready checklist — use it as the scoring rubric.
 
 **Calibration-ready checklist (per dept):**
 
@@ -180,7 +180,7 @@ The skill requires every dept to have a folder at `kb/departments/[dept-slug]/[d
 | Department | Calibration Ready | Migration | Primary Gap |
 |---|---|---|---|
 | Show Director | ✅ | ✅ folder | — |
-| Stage Management | ⚠️ Partial | ❌ flat | No show-creation-process.md yet |
+| Stage Management | ⚠️ Partial | ❌ flat | No stage-management.show-creation-process.md yet |
 | Casting | ✅ | ❌ flat | folder migration pending |
 ...
 
@@ -188,7 +188,7 @@ The skill requires every dept to have a folder at `kb/departments/[dept-slug]/[d
 **Phase 10 gate:** [what's still blocking the team from starting Showcase passes]
 ```
 
-For a full depth read on specific KBs flagged as thin, defer to `skills/kb-builder/SKILL.md §Mode 2` in a follow-up session.
+For a full depth read on specific KBs flagged as thin, defer to `skills/kb-builder/kb-builder.skill.md §Mode 2` in a follow-up session.
 
 ---
 
@@ -219,7 +219,7 @@ Flag each mismatch.
 - Multiple docs describing the same process (e.g., show creation workflow across stage-manager.kb.md, CLAUDE.md §How to Work, and any planning docs)
 
 **Long-term storage quality:**
-- For the primary context files (`CLAUDE.md`, `ROADMAP.md`, `kb/production-team.md`, `kb/system/spec.md`) — is each skimmable, well-organized, and sized appropriately?
+- For the primary context files (`CLAUDE.md`, `ROADMAP.md`, `kb/production-team.md`, `kb/system/cue-show-yaml-schema.md`) — is each skimmable, well-organized, and sized appropriately?
 - Is `CLAUDE.md`'s session state current, or is it still describing a past session's "where we stopped"?
 - Is `kb/roadmap-planning-2026-03-26.md` still needed, or has its content been moved to ROADMAP.md?
 
@@ -311,7 +311,7 @@ When condensing a verbose file:
 - Remove a "Confirmed" or "Closed" decision entry from any KB
 - Rename a show folder or cue file
 - Change the `CLAUDE.md` architectural decisions table
-- Modify another skill's `SKILL.md`
+- Modify another skill's `.skill.md` file
 - Rewrite `ROADMAP.md` (propose the content, confirm before writing)
 
 ---
@@ -340,6 +340,6 @@ If no changes were needed: "Audit complete. [N] issues found, no changes needed 
 ## What This Skill Is Not For
 
 - Filling in missing KB content or authoring show YAML (that's show work — use production-team.md and the relevant dept KBs)
-- Running department KB uplifts in depth (that's `skills/kb-builder/SKILL.md §Mode 1`)
+- Running department KB uplifts in depth (that's `skills/kb-builder/kb-builder.skill.md §Mode 1`)
 - Making judgment calls about whether KB content is creatively correct — only whether it's organized and referenced correctly
 - Rewriting ROADMAP.md autonomously — always propose content and wait for approval

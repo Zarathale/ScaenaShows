@@ -97,7 +97,7 @@ despawn_on_end: true
 
 > ⚠️ **ENTER gap:** Equipment fields are not applied in ENTER (unlike SPAWN_ENTITY). If a
 > performer needs to enter with equipment, use SPAWN_ENTITY at the wing mark + CROSS_TO
-> instead. This is not documented in spec.md — confirmed by reading EntityEventExecutor.java
+> instead. This is not documented in cue-show-yaml-schema.md — confirmed by reading EntityEventExecutor.java
 > vs. StageEventExecutor.handleEnter(). Filed in ops-inbox.md (2026-03-25).
 
 **Choosing between SPAWN_ENTITY and ENTER:**
@@ -590,7 +590,7 @@ FACE is instant. No first-class event for gradual horizontal rotation without po
 
 **Status:** Open. Filed in ops-inbox.md (2026-03-25, Choreography KB build).
 
-StageEventExecutor.handleEnter() does not apply equipment fields, unlike EntityEventExecutor.handleSpawn(). The ENTER event in spec.md implies equipment should work, but it doesn't.
+StageEventExecutor.handleEnter() does not apply equipment fields, unlike EntityEventExecutor.handleSpawn(). The ENTER event in cue-show-yaml-schema.md implies equipment should work, but it doesn't.
 
 **Workaround:** Use SPAWN_ENTITY (at the wing mark offset) + CROSS_TO (to the destination) when the entering performer needs equipment.
 

@@ -11,7 +11,7 @@ notes: >
 
 # ScaenaShows — Approved External Research Sources
 
-When building or auditing department knowledgebases, internal repo sources (spec.md,
+When building or auditing department knowledgebases, internal repo sources (cue-show-yaml-schema.md,
 production-team.md, cue-library-survey.md, existing KBs, cue YAMLs) take priority.
 Use sources from this list only when internal sources are insufficient.
 

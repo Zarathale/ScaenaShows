@@ -21,7 +21,7 @@ cues/*.yml      → named Cue assets (reusable building blocks)
 shows/*.yml     → show definitions (top-level runtime entry points)
 ```
 
-For the full design specification, see `kb/system/spec.md`.
+For the full design specification, see `kb/system/cue-show-yaml-schema.md`.
 
 ---
 

@@ -891,7 +891,7 @@ content, these cues should be migrated to the new format and naming convention.
 Gracie's gestures move under `music.harp.*`. Gracie remains as a character concept in KB
 and production team docs; cue IDs no longer named after her.
 
-**Prerequisite:** MUSIC type formally entered into spec.md (⚑6 prerequisite).
+**Prerequisite:** MUSIC type formally entered into cue-show-yaml-schema.md (⚑6 prerequisite).
 **Scope:** ~10–13 cues + any show YAML references that need ID updates.
 
 ---
@@ -1128,7 +1128,7 @@ Implementation was already complete in the codebase; ticket not previously close
 - Removed `FireworkLaunch launch` field and `FireworkLaunch.from()` call from `FireworkPreset.java`
 - Stripped all `launch:` blocks from `fireworks.yml` (12 presets cleaned)
 - Updated `fireworks.kb.md`: preset structure example, limitations note, capability table row
-- Updated `kb/system/spec.md`: removed `launch:` from both preset schema examples
+- Updated `kb/system/cue-show-yaml-schema.md`: removed `launch:` from both preset schema examples
 
 ---
 
@@ -1213,7 +1213,7 @@ Multiple state keys can be patched in a single event. Implementation uses a bloc
 ### OPS-028 [resolved] Scene Numbering Convention — Stage Management defines and owns ✓
 **Delivered:** 2026-04-01 | **Filed:** 2026-04-01 | **Area:** Stage Management
 
-Convention doc authored at `kb/departments/stage-management/scene-numbering-convention.md`.
+Convention doc authored at `kb/departments/stage-management/stage-management.scene-numbering-convention.md`.
 Summary in `stage-management.kb.md §Scene Numbers`. Covers: zero-padded two-digit scheme,
 subscene insertion rules, decimal-aware sort, renumbering protocol, visibility (players
 never see `scene_number`), and assignment authority (Kendra only).

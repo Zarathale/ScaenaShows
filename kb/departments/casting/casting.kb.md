@@ -447,7 +447,7 @@ behavior — authentic, but unpredictable.
 **Status:** Resolved. Removed from `ops-inbox.md`.
 **How it works:** The executor applies profession and variant via Paper's Registry API (NamespacedKey lookup). Values must be **lowercase**: `profession: armorer`, `variant: plains`. Invalid values log a warning and the field is skipped.
 **Villager profession override (known game mechanic):** A freshly spawned Villager with AI active will seek nearby job site blocks within one game tick, overriding the profession set at spawn. To lock the profession, fire `ENTITY_AI enabled: false` at T=1 immediately after spawn. This is the required pattern for any show-managed Villager that must hold a specific profession.
-**Wardrobe coordination:** `mob-variants.md` in the Wardrobe KB has full value tables for each entity type. The value format (lowercase vs. ALLCAPS) varies by type — consult that reference before authoring.
+**Wardrobe coordination:** `wardrobe.mob-variants.md` in the Wardrobe KB has full value tables for each entity type. The value format (lowercase vs. ALLCAPS) varies by type — consult that reference before authoring.
 
 ---
 

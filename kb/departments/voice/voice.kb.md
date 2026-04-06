@@ -12,7 +12,7 @@ notes: >
   [Sprite] prefix color corrected — tag is light_purple, text is white.
   v2.3: All MiniMessage format tags replaced with & color codes (server standard).
   Text Formatting Reference section added with full color/format cheat sheet including
-  server-specific &y (wavy) and &u (rainbow). spec.md §6.1 examples corrected in same pass.
+  server-specific &y (wavy) and &u (rainbow). cue-show-yaml-schema.md §6.1 examples corrected in same pass.
 ---
 
 # Sprite Voice Director — Technical Knowledgebase

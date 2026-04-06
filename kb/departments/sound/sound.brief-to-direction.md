@@ -94,4 +94,4 @@ This covers the core of what Brian needs from Direction and what Direction needs
 
 - Examples of how Sound's questions surface into per-show department intake records (that writing will happen show by show as Showcase Series briefs are authored)
 - Calibration patterns confirmed and named (see `sound.kb.md §Calibration Backlog`) — the `bed.dark`, `bed.wonder`, and button patterns are still proposed, not confirmed. The brief-to-direction should eventually point to confirmed patterns, not just proposed ones.
-- Music Director section (motif library, note block composition) — referenced in `sound/music-director.md`, not yet integrated here.
+- Music Director section (motif library, note block composition) — referenced in `sound/sound.music-director.md`, not yet integrated here.

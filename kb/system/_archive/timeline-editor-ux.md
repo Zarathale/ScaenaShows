@@ -1,7 +1,13 @@
-# ScaenaShows — Timeline Editor UX Design
+---
+document: ScaenaShows — Timeline Editor UX Design (Director Mode)
+date: 2026-04-02
+status: ARCHIVED (2026-04-06) — Director Mode concept evaluated and rejected in OPS-029
+        design session (2026-04-05). Phase 2 extends TechSession instead. Historical only.
+---
+
+# ScaenaShows — Timeline Editor UX Design (Director Mode)
 **Date:** 2026-04-02
-**Status:** Design document — pending review
-**Scope:** In-game timeline editor (Phase 2 product surface)
+**Scope:** In-game timeline editor (Phase 2 product surface) — REJECTED DIRECTION
 
 ---
 

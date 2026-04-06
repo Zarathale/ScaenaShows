@@ -12,7 +12,7 @@ updated: 2026-03-26
 Set provides one location. The entire 10–12 minute show takes place here. The player never
 leaves. The location must sustain that duration through its own inherent interest.
 
-The scouting task (Task 7 in `kb/departments/set/stage-registry.md`) defines what the Night
+The scouting task (Task 7 in `kb/departments/set/set.stage-registry.md`) defines what the Night
 Location must have: open sky, visual layers across foreground/midground/background, weather
 event visibility, nocturnal creature plausibility, and the quality of feeling right at dusk,
 midnight, and dawn.

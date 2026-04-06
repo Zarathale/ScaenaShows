@@ -48,7 +48,7 @@ Extended references for Sound department specialists live in `kb/departments/sou
 
 | File | Contents |
 |------|----------|
-| `sound/music-director.md` | Music Director role — note block instrument palette, pitch/chord/melody authoring, redstone arrangement workflow, starter motif library, ensemble deployment |
+| `sound/sound.music-director.md` | Music Director role — note block instrument palette, pitch/chord/melody authoring, redstone arrangement workflow, starter motif library, ensemble deployment |
 
 ---
 
@@ -608,7 +608,7 @@ Signal back to the Director with a specific question: "What is the sound *doing*
 
 📋 Proposed = named, not yet tested in a dedicated round. ✅ Confirmed = tested, parameters known.
 
-Motif patterns live in `kb/departments/sound/music-director.md` — see that file for motif library and proposed additions.
+Motif patterns live in `kb/departments/sound/sound.music-director.md` — see that file for motif library and proposed additions.
 
 ---
 

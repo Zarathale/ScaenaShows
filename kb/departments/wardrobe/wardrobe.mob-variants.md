@@ -20,7 +20,7 @@ Complete inventory of variant options for entities that support appearance custo
 - `variant:` and `profession:` fields will apply correctly at spawn time
 - Wardrobe's visual palette expands enormously
 - Each mob type will have 5–100+ distinct appearance options
-- Emotional tone mapping becomes part of show authoring (see `emotional-register.md`)
+- Emotional tone mapping becomes part of show authoring (see `wardrobe.emotional-register.md`)
 
 ---
 

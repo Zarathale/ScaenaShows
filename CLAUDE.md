@@ -10,7 +10,7 @@
 **Owner:** Alan (alytle@thearcoregon.org)
 **Repo:** ScaenaShows
 **Branch:** `feature/ai-show-generation` ← active development branch
-**YAML schema:** `kb/system/spec.md` — authoritative source of truth for all Cue/Show/event-type syntax.
+**YAML schema:** `kb/system/cue-show-yaml-schema.md` — authoritative source of truth for all Cue/Show/event-type syntax.
 
 This is a hobby project and a live experiment in working with Claude. The process is part of the point. Keep the vibe casual, collaborative, and creative. Lean into the theatre metaphor — it holds up.
 
@@ -30,11 +30,14 @@ All 12 department KBs are now in folder structure (`kb/departments/[dept-slug]/[
 
 **Not show-specific:**
 - R7 debrief ✅ complete (2026-03-28). R8 not yet scheduled.
-- **OPS-029 Phase 2 design session active (2026-04-05).** Department walk in progress
-  (7 of 10 locked; Camera walk in progress). PATTERN/PHRASE primitives locked. Read
-  `kb/system/ops-029-design-session-2026-04-05.md` before any Phase 2 work — the
-  "Where We Left Off" block at the top is the pickup point. Next: continue Camera walk
-  (CAMERA screen effects, CAMERA_PATTERN, CAMERA_PHRASE), then Voice and Choreography.
+- **OPS-029 Phase 2 design session active (2026-04-05).** All architecture and department
+  panel design locked. 3 blocking items remain before Java (⚑1 edit target, ⚑2 partial
+  YAML, ⚑3 panel mockup). Read `kb/system/ops-029-design-session-2026-04-05.md` before
+  any Phase 2 work — "Where We Left Off" at the top is the pickup point. Detailed content
+  has been extracted to standalone docs:
+  - `kb/system/phase2-department-panels.md` — all 10 department panel specs
+  - `kb/system/pattern-phrase-spec.md` — PATTERN, PHRASE, Tempo Architecture
+  - `kb/system/music-event-types.md` — MUSIC types, HARP_SWEEP, pattern library
 
 *Last audit: 2026-03-31 — `kb/audits/2026-03-31_post-ops026-audit.md`*
 
@@ -102,7 +105,7 @@ Two kinds of working rounds, which alternate naturally:
 ScaenaShows/
 ├── kb/                            ← Plugin-wide knowledge base
 │   ├── system/
-│   │   └── spec.md                ← Authoritative YAML schema (Cue/Show/event-type syntax)
+│   │   └── cue-show-yaml-schema.md                ← Authoritative YAML schema (Cue/Show/event-type syntax)
 │   ├── departments/               ← One folder per department
 │   │   ├── [dept-slug]/
 │   │   │   ├── [dept-slug].kb.md  ← Main KB: instruments, tone translation, calibration backlog, patterns
@@ -110,10 +113,10 @@ ScaenaShows/
 │   │   └── approved-sources.md
 │   └── production-team.md         ← Full team roster and role definitions
 ├── skills/                        ← Claude working skills (plain markdown)
-│   ├── audit-this-repo/SKILL.md
-│   ├── kb-builder/SKILL.md
-│   ├── production-review/SKILL.md
-│   └── show-import-process/SKILL.md
+│   ├── audit-this-repo/audit-this-repo.skill.md
+│   ├── kb-builder/kb-builder.skill.md
+│   ├── production-review/production-review.skill.md
+│   └── show-import-process/show-import-process.skill.md
 ├── docs/                          ← Legacy run sheets (migration debt — move to show folders)
 ├── src/
 │   └── main/
@@ -189,6 +192,16 @@ Do not reopen these without Alan.
 - Player-facing plugin strings are placeholder text — replace with Scaena voice strings before any public-facing launch
 - `intro.young_persons_guide` is an effective capability demo but not yet an artistic experience — rewrite is SCENA-006
 - Legacy run sheets in `docs/` belong in their show folders — migration debt, low priority
+
+---
+
+## File Naming Conventions
+
+**Audit files:** Use `YYYY-MM-DDTHHMM_description.md` (datetime, not date-only). Example: `2026-04-06T1430_post-session-audit.md`. Existing audit files predate this convention and are not being retroactively renamed.
+
+**Dept sub-docs:** Prefix with `[dept-slug].` to match the KB and brief files. Example: `set.stage-registry.md`, `sound.music-director.md`. Files named `[dept-slug].kb.md` and `[dept-slug].brief-to-direction.md` already follow this pattern — all supplementary docs should too.
+
+**Project skill files:** Named `[skill-name].skill.md` inside their folder. Example: `skills/kb-builder/kb-builder.skill.md`.
 
 ---
 

@@ -1,7 +1,8 @@
 ---
 document: Tech Rehearsal Mode — Architecture
 area: Plugin-wide
-status: INACTIVE — superseded by ops-027-building-spec.md (Phase 1) and tech-rehearsal-phase2-spec.md (Phase 2). Retained for historical context only.
+status: ARCHIVED (2026-04-06) — superseded by ops-027-building-spec.md (Phase 1) and
+         ops-029-design-session-2026-04-05.md (Phase 2). Historical context only.
 ---
 
 # Tech Rehearsal Mode — Architecture

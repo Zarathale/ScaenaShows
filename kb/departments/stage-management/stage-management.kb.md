@@ -7,7 +7,7 @@ notes: >
   Full KB for the Stage Management & Production department. Covers both layers:
   Stage Manager proper (prompt book, cleanup, beat collision, ops-inbox, run sheets)
   and Production Manager (show creation workflow, dept briefing coordination, YAML authorship).
-  Show creation process document: kb/departments/stage-management/show-creation-process.md
+  Show creation process document: kb/departments/stage-management/stage-management.show-creation-process.md
 ---
 
 # Stage Management & Production — Technical Knowledgebase
@@ -48,7 +48,7 @@ The Production Manager layer is everything that happens before YAML is written �
 
 ### Show Creation Sequence
 
-The full process is documented in `kb/departments/stage-management/show-creation-process.md`. The spine:
+The full process is documented in `kb/departments/stage-management/stage-management.show-creation-process.md`. The spine:
 
 ```
 1. Concept accepted by Show Director
@@ -151,7 +151,7 @@ visible to players; the `label` field is the human-readable scene name.
 with optional subscene suffixes (`"02.1"`, `"02.2"`) for insertions between existing
 scenes. `"00"` is the reserved prologue slot. Sort is decimal-aware (not raw string sort).
 
-**Full specification:** `kb/departments/stage-management/scene-numbering-convention.md`
+**Full specification:** `kb/departments/stage-management/stage-management.scene-numbering-convention.md`
 (OPS-028 deliverable). That doc is authoritative — the summary above is the at-a-glance version.
 
 ---
@@ -314,7 +314,7 @@ Isolated events with long sustained REST after. One moment per section. The time
 Stage Management is the production team's facility manager. In a physical theatre, the Stage Manager knows every piece of equipment in the building, what works, what doesn't, and what's on the repair list. In ScaenaShows, that means:
 
 **What Stage Management tracks:**
-- Every event type currently implemented and working (the full YAML surface — see `kb/system/spec.md §6` for the authoritative list)
+- Every event type currently implemented and working (the full YAML surface — see `kb/system/cue-show-yaml-schema.md §6` for the authoritative list)
 - Every known gap: features the team wants to author but cannot yet express in YAML
 - Every gap's current status: open, in development, or resolved
 - The development priority of each gap (informed by show authoring needs)
@@ -597,7 +597,7 @@ Always bump before building. Never build the same version number twice. Version 
 | REST event (deliberate pause) | ✅ Verified | Confirmed working in all show revisions |
 | GROUP_ASSIGN (participant grouping) | ✅ Verified | Tick-0 requirement; underflow = silent skip (by design) |
 | COMMAND escape hatch | ✅ Verified | Working; outside stop-safety contract |
-| Show creation workflow coordination | ✅ Active | Process defined; `show-creation-process.md` for full detail |
+| Show creation workflow coordination | ✅ Active | Process defined; `stage-management.show-creation-process.md` for full detail |
 | Department briefing coordination | ✅ Active | Blocking/non-blocking table defined per pass type |
 | YAML authorship sequencing | ✅ Active | Kendra gates on dept decisions before authoring begins |
 | BLOCK_PLACE / BLOCK_REMOVE | ⚠️ Gapped | Requires COMMAND; outside cleanup contract — **High safety risk** |

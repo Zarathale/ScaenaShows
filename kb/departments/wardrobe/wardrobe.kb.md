@@ -12,7 +12,7 @@ notes: >
 
 **Quick reference:** What the ScaenaShows Java plugin can do for equipment, appearance, variants, and the invisible-body technique.
 
-**Emotional palette:** See `kb/departments/wardrobe/emotional-register.md` — what Wardrobe contributes to each emotional arc in a show.
+**Emotional palette:** See `kb/departments/wardrobe/wardrobe.emotional-register.md` — what Wardrobe contributes to each emotional arc in a show.
 
 **Creative direction:** `kb/production-team.md §2. Wardrobe & Properties Director`
 
@@ -48,10 +48,10 @@ For complete catalogues and in-depth guides, see the `kb/departments/wardrobe/` 
 
 | File | Purpose |
 |------|---------|
-| `emotional-register.md` | How Wardrobe contributes to arrival, joy, wonder, dread, intimacy, and transition moments |
-| `mob-variants.md` | Complete inventory of villager professions, cat colors, horse variants, sheep wool colors, parrots, and other mob appearance options (current status + future capability after Java gap is fixed) |
-| `equipment-slots.md` | Detailed guide to each equipment slot: helmet, chestplate, leggings, boots, main hand, off hand — what each communicates and creative uses |
-| `invisible-body.md` | Technical and creative guide to the invisible-body technique (ENTITY_INVISIBLE): floating weapons, disembodied armor, ghostly presences |
+| `wardrobe.emotional-register.md` | How Wardrobe contributes to arrival, joy, wonder, dread, intimacy, and transition moments |
+| `wardrobe.mob-variants.md` | Complete inventory of villager professions, cat colors, horse variants, sheep wool colors, parrots, and other mob appearance options (current status + future capability after Java gap is fixed) |
+| `wardrobe.equipment-slots.md` | Detailed guide to each equipment slot: helmet, chestplate, leggings, boots, main hand, off hand — what each communicates and creative uses |
+| `wardrobe.invisible-body.md` | Technical and creative guide to the invisible-body technique (ENTITY_INVISIBLE): floating weapons, disembodied armor, ghostly presences |
 
 ---
 

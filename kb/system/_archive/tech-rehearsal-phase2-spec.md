@@ -1,7 +1,9 @@
 ---
 document: Tech Rehearsal Mode — Phase 2 Spec
 area: Plugin-wide
-status: Design spec — v2, 2026-04-02
+status: ARCHIVED (2026-04-06) — superseded by ops-029-design-session-2026-04-05.md and
+         phase2-department-panels.md, pattern-phrase-spec.md, music-event-types.md.
+         Was the pre-session Phase 2 draft; OPS-029 is the authoritative Phase 2 record.
 ---
 
 # Tech Rehearsal Mode — Phase 2: Cue-to-Cue

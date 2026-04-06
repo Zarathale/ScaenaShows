@@ -86,7 +86,7 @@ This helps departments calibrate their investment.]*
 ## Calibration Priorities
 
 > What does this show give each department to practice? Name one pattern from the calibration
-> backlog per department. See `kb/departments/show-director/direction-briefing.md` for the full
+> backlog per department. See `kb/departments/show-director/show-director.dept-capabilities-briefing.md` for the full
 > backlog per department.
 
 | Department | Calibration Goal This Show |
@@ -107,7 +107,7 @@ This helps departments calibrate their investment.]*
 ## Voice Timing Directions
 
 > For every major physical beat, specify the timing relationship. ShowSprite does not default
-> to a mode — this is a Director call. See `kb/departments/show-director/direction-briefing.md
+> to a mode — this is a Director call. See `kb/departments/show-director/show-director.dept-capabilities-briefing.md
 > §Voice — calibration priorities` for mode definitions.
 
 | Beat | Timing Mode | Notes |

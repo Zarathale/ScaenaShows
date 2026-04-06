@@ -100,7 +100,7 @@ Bring every dept KB to a common threshold of "meaningful working capacity." Prio
 - Wardrobe (thin on creative/contextual examples)
 
 **Track B — Show Creation Workflow:**
-Formally define the end-to-end show creation process. Who does what, in what order, documented as a Kendra-owned process doc. Needs to be iterated in practice — can't just be written in theory. Target home: new section in `kb/departments/stage-manager.kb.md` or a standalone `kb/show-creation-process.md`.
+Formally define the end-to-end show creation process. Who does what, in what order, documented as a Kendra-owned process doc. Needs to be iterated in practice — can't just be written in theory. Target home: new section in `kb/departments/stage-manager.kb.md` or a standalone `kb/stage-management.show-creation-process.md`.
 
 **Exit criteria:** Every dept KB meets the working capacity definition. Show creation workflow is documented and has been exercised at least once.
 
@@ -136,7 +136,7 @@ This phase begins only after Phase 10 establishes calibrated dept confidence.
 
 **Open Question A:** Is the Phase 10 calibration series a single evolving show (revised round-to-round) or a fresh show each round?
 
-**Open Question B:** Does the show creation workflow definition live inside `stage-manager.kb.md` (as Kendra's process) or as a standalone doc (e.g., `kb/show-creation-process.md`)? Alan's instinct needed.
+**Open Question B:** Does the show creation workflow definition live inside `stage-manager.kb.md` (as Kendra's process) or as a standalone doc (e.g., `kb/stage-management.show-creation-process.md`)? Alan's instinct needed.
 
 ---
 

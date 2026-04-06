@@ -1,7 +1,7 @@
 # ScaenaShows v2 — Show: SHOW_ID
 # ─────────────────────────────────────────────────────────────────────
 # Rename this file to [show_id].yml and fill in the fields below.
-# See docs/spec.md §3.2 for the full Show field reference.
+# See kb/system/cue-show-yaml-schema.md §3.2 for the full Show field reference.
 # See brief.md for the creative brief that drives all authoring decisions.
 # ─────────────────────────────────────────────────────────────────────
 
@@ -48,7 +48,7 @@ bossbar:
 timeline:
 
   # ─────────────────────────────────────────────────────────────────
-  # Add cue events here. See docs/spec.md §6 for event type reference.
+  # Add cue events here. See kb/system/cue-show-yaml-schema.md §6 for event type reference.
   # Format:
   #   - at: TICK
   #     type: EVENT_TYPE

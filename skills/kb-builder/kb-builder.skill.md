@@ -60,7 +60,7 @@ Read these before writing or updating any KB:
    Read the production-team.md section first to know what already exists before adding
    anything to the KB. Do not duplicate content that lives in production-team.md.
 
-2. **`kb/system/spec.md §4`** — The YAML event types and fields the plugin accepts.
+2. **`kb/system/cue-show-yaml-schema.md §4`** — The YAML event types and fields the plugin accepts.
    This is the input surface, not the full capability picture, but it tells you what
    events exist.
 
@@ -126,7 +126,7 @@ pre-production process coordination, department briefing logistics, and YAML aut
 The KB reflects this expanded scope.
 
 **KB home:** `kb/departments/stage-management/stage-management.kb.md`
-**Show creation process:** `kb/departments/stage-management/show-creation-process.md`
+**Show creation process:** `kb/departments/stage-management/stage-management.show-creation-process.md`
 
 When building or updating the Stage Management KB, document both layers:
 - Stage Manager proper: prompt book, cue naming, beat collision, revision continuity,
@@ -149,7 +149,7 @@ dept-by-dept during each uplift session — not in a bulk pass.
 ```
 kb/departments/
 ├── show-director/
-├── stage-management/          ← includes show-creation-process.md
+├── stage-management/          ← includes stage-management.show-creation-process.md
 ├── casting/
 ├── wardrobe/                  ← wardrobe.kb.md + 4 reference files
 ├── choreography/
@@ -157,7 +157,7 @@ kb/departments/
 ├── effects/
 ├── camera/
 ├── lighting/
-├── sound/                     ← sound.kb.md + music-director.md
+├── sound/                     ← sound.kb.md + sound.music-director.md
 ├── fireworks/
 └── voice/                     ← voice.kb.md + showsprite.context.md
 ```
@@ -303,7 +303,7 @@ Status codes:
 Marking a capability ✅ Verified requires at least one of:
 1. You've read the relevant Java executor class and confirmed the field is applied
 2. The capability is used in an existing show YAML Alan has confirmed works in-game
-3. Explicitly documented as working in `kb/system/spec.md`
+3. Explicitly documented as working in `kb/system/cue-show-yaml-schema.md`
 
 If your only source is an external reference not traced to Java code, the capability is
 at best ⚠️ Gapped. External sources tell you what the Minecraft API *offers* — not whether
@@ -364,7 +364,7 @@ Read in this order:
 1. `kb/production-team.md` — establishes the authoritative dept list and what each
    department claims to own
 2. Each `kb/departments/[dept]/[dept].kb.md` (or flat `.kb.md` for depts not yet migrated)
-3. Root KB files: `kb/system/spec.md` (skim for any forward references to dept KBs),
+3. Root KB files: `kb/system/cue-show-yaml-schema.md` (skim for any forward references to dept KBs),
    `kb/departments/approved-sources.md`
 
 ### Per-department assessment
@@ -477,7 +477,7 @@ deferred UI artifacts.
 Correct paths:
 - `kb/production-team.md`
 - `kb/departments/[dept]/[dept].kb.md`
-- `kb/system/spec.md`
+- `kb/system/cue-show-yaml-schema.md`
 - `kb/departments/voice/showsprite.context.md`
 
 When editing any KB file, scan for `docs/` references and correct them before committing.

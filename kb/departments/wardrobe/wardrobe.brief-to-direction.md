@@ -12,8 +12,8 @@ status: first-pass
 > Margaret's standing requirements, intake questions, and requests for the Show Director.
 > The authoritative technical reference for equipment slots, the invisible-body technique,
 > mob variants, and armor stands lives in `kb/departments/wardrobe/wardrobe.kb.md`.
-> Detailed catalogue references: `wardrobe/equipment-slots.md`, `wardrobe/invisible-body.md`,
-> `wardrobe/mob-variants.md`, `wardrobe/emotional-register.md`.
+> Detailed catalogue references: `wardrobe.equipment-slots.md`, `wardrobe.invisible-body.md`,
+> `wardrobe.mob-variants.md`, `wardrobe.emotional-register.md`.
 
 ---
 
@@ -63,7 +63,7 @@ Margaret's instruments, in brief:
 
 **Armor Stands** — static entity type that accepts all six equipment slots and displays them without movement or AI. Use as a costume-on-a-wire: a memorial, a silent sentinel, a prop placed deliberately in the performance space.
 
-For full slot-by-slot creative reference, see `wardrobe/equipment-slots.md`. For the invisible-body technique in depth, see `wardrobe/invisible-body.md`. For the emotional palette — what Wardrobe brings to arrival, wonder, dread, intimacy — see `wardrobe/emotional-register.md`.
+For full slot-by-slot creative reference, see `wardrobe.equipment-slots.md`. For the invisible-body technique in depth, see `wardrobe.invisible-body.md`. For the emotional palette — what Wardrobe brings to arrival, wonder, dread, intimacy — see `wardrobe.emotional-register.md`.
 
 ---
 

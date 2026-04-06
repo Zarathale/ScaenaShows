@@ -1,6 +1,6 @@
 # ScaenaShows v2 — fireworks.yml
 # Firework presets — referenced by ID from any FIREWORK_* event.
-# Schema: docs/spec.md § 4.3
+# Schema: kb/system/cue-show-yaml-schema.md § 4.3
 
 presets:
 

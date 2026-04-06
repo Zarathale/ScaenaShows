@@ -242,7 +242,7 @@ Natural behavior as a creative tool: an Allay that genuinely follows and collect
 
 **Authority:** All `equipment:` fields on SPAWN_ENTITY and ENTITY_EQUIP events. `variant:` and `profession:` fields on SPAWN_ENTITY. Armor Stand design and placement. Custom name visibility.
 
-**Knowledgebase:** `kb/departments/wardrobe/wardrobe.kb.md` (v4.0) — Role summary, Margaret's voice and bias, instrument inventory, tone translation (10 entries including shadow, arrival, nocturnal, intimacy), department principles, cross-department coordination, and capability status table. Detailed technical catalogues in `kb/departments/wardrobe/` subfolder: `equipment-slots.md`, `invisible-body.md`, `mob-variants.md`, `emotional-register.md`.
+**Knowledgebase:** `kb/departments/wardrobe/wardrobe.kb.md` (v4.0) — Role summary, Margaret's voice and bias, instrument inventory, tone translation (10 entries including shadow, arrival, nocturnal, intimacy), department principles, cross-department coordination, and capability status table. Detailed technical catalogues in `kb/departments/wardrobe/` subfolder: `wardrobe.equipment-slots.md`, `wardrobe.invisible-body.md`, `wardrobe.mob-variants.md`, `wardrobe.emotional-register.md`.
 
 ---
 
@@ -395,7 +395,7 @@ Player smooth movement (smoothMovePlayer) is tick-exact. Mob pathfinding timing 
 
 **Named head:** Michael C. See `kb/departments/set/set.kb.md §Michael C.` for working style and escalation posture. Zarathale executes all in-game scouting and building; Michael C. owns the design voice and documentation.
 
-**Knowledgebase:** `kb/departments/set/set.kb.md` (v2.1) — Michael C. introduction, P1 Scouting Process, Environment Notes format, full instrument reference with Java verification (PLAYER_TELEPORT, REDSTONE, COMMAND, marks, sets), Tone Translation, Department Principles, Capability Status Summary. Active gaps: BLOCK_PLACE/BLOCK_REMOVE (filed), REDSTONE stop-safety (filed). Stage Registry: `kb/departments/set/stage-registry.md`.
+**Knowledgebase:** `kb/departments/set/set.kb.md` (v2.1) — Michael C. introduction, P1 Scouting Process, Environment Notes format, full instrument reference with Java verification (PLAYER_TELEPORT, REDSTONE, COMMAND, marks, sets), Tone Translation, Department Principles, Capability Status Summary. Active gaps: BLOCK_PLACE/BLOCK_REMOVE (filed), REDSTONE stop-safety (filed). Stage Registry: `kb/departments/set/set.stage-registry.md`.
 
 ---
 
@@ -623,9 +623,9 @@ As with all other creative dimensions, the Lighting Designer should establish th
 
 **Named head:** Brian. See `kb/departments/sound/sound.kb.md §Brian` for working style and escalation posture.
 
-**Knowledgebase:** `kb/departments/sound/sound.kb.md` (v2.2) — Brian introduction, Java capabilities, YAML syntax, behavioral notes, sound ID reference, known limitations of the Minecraft sound system, and the full roster of named instrumentalists with their gesture vocabularies. Extended reference: `kb/departments/sound/music-director.md`.
+**Knowledgebase:** `kb/departments/sound/sound.kb.md` (v2.2) — Brian introduction, Java capabilities, YAML syntax, behavioral notes, sound ID reference, known limitations of the Minecraft sound system, and the full roster of named instrumentalists with their gesture vocabularies. Extended reference: `kb/departments/sound/sound.music-director.md`.
 
-**The Music Director** is a specialist within the Sound department who advises on and authors the musical layer specifically — note block arrangements, motifs, riffs, and ensemble deployment. The Sound Designer owns the audio arc; the Music Director is called when a scene needs something with pitch, rhythm, and musical identity. The Music Director calls the ensemble. See `kb/departments/sound/music-director.md` for the note block instrument palette, pitch/harmony reference, world-built redstone arrangement workflow, and starter motif library (`motif.*` namespace, 5 cues).
+**The Music Director** is a specialist within the Sound department who advises on and authors the musical layer specifically — note block arrangements, motifs, riffs, and ensemble deployment. The Sound Designer owns the audio arc; the Music Director is called when a scene needs something with pitch, rhythm, and musical identity. The Music Director calls the ensemble. See `kb/departments/sound/sound.music-director.md` for the note block instrument palette, pitch/harmony reference, world-built redstone arrangement workflow, and starter motif library (`motif.*` namespace, 5 cues).
 
 **The ensemble:** The Sound department is staffed by named theatrical musicians who stand by throughout every production. They respond live to the show's needs — punctuating moments, supporting transitions, providing live musical texture beneath scripted SOUND events. Their gestures are available as named cues and can be summoned by the Show Director, Sound Designer, or Music Director at any point in the show.
 
@@ -814,7 +814,7 @@ When designing a show's text arc, mark the silences: "No text from T=240 to T=38
 
 **Kendra does not bring problems — she brings resolved problems, or problems with proposed resolutions attached.** Escalation to the Show Director happens only when a resolution requires a creative decision she isn't authorized to make, or requires a department to change what a beat *is*.
 
-**Knowledgebase:** `kb/departments/stage-management/stage-management.kb.md` (v3.0) — Prompt book ownership, cue naming conventions, beat collision protocol, revision continuity, run sheet format, what stop-safety covers, what it does not, pre-show tech check, rehearsal safety checklist, ops-inbox workflow, Production Manager role, show creation workflow, department briefing coordination, YAML authorship sequencing, and Tone Translation (structural/pacing). Show creation process: `kb/departments/stage-management/show-creation-process.md`.
+**Knowledgebase:** `kb/departments/stage-management/stage-management.kb.md` (v3.0) — Prompt book ownership, cue naming conventions, beat collision protocol, revision continuity, run sheet format, what stop-safety covers, what it does not, pre-show tech check, rehearsal safety checklist, ops-inbox workflow, Production Manager role, show creation workflow, department briefing coordination, YAML authorship sequencing, and Tone Translation (structural/pacing). Show creation process: `kb/departments/stage-management/stage-management.show-creation-process.md`.
 
 ---
 

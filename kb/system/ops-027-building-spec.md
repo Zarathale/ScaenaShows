@@ -1,8 +1,8 @@
 ---
 document: OPS-027 Building Spec — Tech Rehearsal Mode Phase 1
-status: ready-for-implementation
+status: SHIPPED — Phase 1 complete (v2.21.0). Reference document; no active work items.
 authored: 2026-04-01
-supersedes: tech-rehearsal-architecture.md (v3)
+supersedes: kb/system/_archive/tech-rehearsal-architecture.md (v3)
 ---
 
 # OPS-027 Building Spec — Tech Rehearsal Mode (Phase 1)

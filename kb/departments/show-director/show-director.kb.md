@@ -265,7 +265,7 @@ pattern appears, the Director facilitates a joint session, not sequential indivi
 **The formal Showcase Roadmap:**
 
 The sequencing for all three Showcase Series shows is documented in:
-`kb/departments/show-director/showcase-roadmap.md`
+`kb/departments/show-director/show-director.showcase-roadmap.md`
 
 That document defines each show's pass sequence, the input/output at each pass, and a
 department-indexed view showing when each department engages across the full series. Each
@@ -333,7 +333,7 @@ authoring begins.
 **On the plugin scanner:** The plugin currently reads flat `shows/*.yml` files. Until the
 scanner is updated, keep the YAML accessible as a flat file alongside the folder. The folder
 serves as production team documentation now; it becomes the canonical plugin path after the
-scanner ships. See `skills/show-import-process/SKILL.md` for migration guidance.
+scanner ships. See `skills/show-import-process/show-import-process.skill.md` for migration guidance.
 
 ---
 

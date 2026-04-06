@@ -20,7 +20,7 @@ notes: >
 >
 > Creative direction for this role lives in `kb/production-team.md §4. Set Director`.
 >
-> Stage Registry (all confirmed stages): `kb/departments/set/stage-registry.md`
+> Stage Registry (all confirmed stages): `kb/departments/set/set.stage-registry.md`
 
 ---
 
@@ -84,7 +84,7 @@ translates findings to stage registry entries and Environment Notes.
 ### What gets filed
 
 **Stage Registry entry** — one entry per confirmed location in
-`kb/departments/set/stage-registry.md`. This is the permanent record; once registered, a
+`kb/departments/set/set.stage-registry.md`. This is the permanent record; once registered, a
 stage is available to all future productions.
 
 **Environment Notes** — one entry per scene/set in the show's Set department brief

@@ -159,7 +159,7 @@ Candidate status: [recommended / alternate / rejected with reason]
 ```
 
 Every location confirmed by Set enters the permanent stage registry in
-`kb/departments/set/stage-registry.md` before the show enters tech.
+`kb/departments/set/set.stage-registry.md` before the show enters tech.
 
 ---
 

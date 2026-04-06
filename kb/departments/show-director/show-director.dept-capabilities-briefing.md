@@ -98,7 +98,7 @@ A show that opens in warmth and moves toward darkness gives Steve `houselights.d
 - `button.reveal` — sharper or more upward than `button.arrival`. Distinguishable in register.
 - `button.close` — the show's final sound before silence. Settling. Not mid-show energy.
 
-**Motif library:** `motif.still.chord` ✅ (A minor, verified). Proposed: `motif.joy`, `motif.tension`, `motif.close`. See `kb/departments/sound/music-director.md`.
+**Motif library:** `motif.still.chord` ✅ (A minor, verified). Proposed: `motif.joy`, `motif.tension`, `motif.close`. See `kb/departments/sound/sound.music-director.md`.
 
 **Show design implications:**
 A show with a sustained dark register gives Brian `bed.dark`. A show with wonder/elevation gives him `bed.wonder`. Any show with performer entrances or set reveals gives him `button.arrival` and `button.reveal`. A show that ends cleanly gives him `button.close`. Sound calibrates best when sections have clear, distinct emotional registers — that's what makes the beds legible.
