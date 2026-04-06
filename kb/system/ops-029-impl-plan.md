@@ -200,21 +200,27 @@ Dependencies flow top to bottom. Each group can ship as a discrete commit.
 - [x] `UtilityEventExecutor` — `case PAUSE -> {}` no-op
 - [x] `ExecutorRegistry` — `PAUSE` registered to `utility`
 
-### Group 2 — ShowScheduler step mode
+### Group 2 — ShowScheduler step mode ✅ 2.30.0
 Depends on: nothing new (adds to existing class).
-- [ ] `ShowScheduler` — add `steppingMode` flag, `dispatchNextEventTick()`, `dispatchEventsUpTo(long)`
-- [ ] Step mode gates the BukkitRunnable tick loop; demand-driven dispatch when `steppingMode = true`
+- [x] `ShowScheduler` — add `steppingMode` flag, `dispatchNextEventTick()`, `dispatchEventsUpTo(long)`
+- [x] Step mode gates the BukkitRunnable tick loop; demand-driven dispatch when `steppingMode = true`
+- [x] `RunningShow` — add `setCurrentTick(long)` to support direct tick positioning
 
 **Version bump: MINOR**
 
-### Group 3 — TechCueSession + ShowYamlEditor
+### Group 3 — TechCueSession + ShowYamlEditor ✅ 2.31.0
 Depends on: Group 0 (scene/tick mapping resolved), Group 1 (PAUSE), Group 2 (step mode).
-- [ ] `TechCueSession.java` — session state model
-- [ ] `ShowYamlEditor.java` — mutation model (Layer 1 + Layer 2)
-- [ ] `TechManager` — `enterPhase2()`, `exitPhase2()`, `getTechCueSession()`, `startPreview()`, `exitPreview()`
-- [ ] `TechManager` — `stepForward()`, `stepBack()` — hotbar routing in preview mode
-- [ ] `TechManager` — `saveYaml()`, `saveAsPreset()`
-- [ ] `TechHotbarListener` — route slots 5–7 to Phase 2 handlers when `TechCueSession` is active
+- [x] `TechCueSession.java` — session state model (edit + preview mode, step history, dept edit)
+- [x] `DeptEditSession.java` — interface (save/cancel contract for Group 5 dept sessions)
+- [x] `ShowYamlEditor.java` — mutation model (Layer 1 tick shift; Layer 2 inline events; save/preset)
+- [x] `TechManager` — `enterPhase2()`, `exitPhase2()`, `getTechCueSession()`, `startPreview()`, `exitPreview()`
+- [x] `TechManager` — `stepForward()`, `holdPreview()`, `stepBack()` — hotbar routing in preview mode
+- [x] `TechManager` — `saveYaml()`, `saveAsPreset()` — persistence operations
+- [x] `TechManager` — Phase 2 cleanup wired into `forceDismiss()` and `onPlayerQuit()`
+- [x] `TechManager` — `setCueRegistry()`, `setExecutorRegistry()` setters for preview construction
+- [x] `ShowScheduler` — `show()` accessor for Phase 2 step navigation
+- [x] `TechHotbarListener` — route slots 5–7 to Phase 2 handlers when `TechCueSession` is active
+- [x] `ScaenaShowsPlugin` — wire `cueRegistry` + `executors` into `TechManager`
 
 **Version bump: MINOR**
 
