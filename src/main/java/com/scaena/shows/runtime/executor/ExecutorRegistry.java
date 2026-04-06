@@ -120,6 +120,9 @@ public final class ExecutorRegistry {
         executors.put(EventType.REST,    utility);
         executors.put(EventType.COMMAND, utility);
         executors.put(EventType.CUE,     utility);
+
+        // §6.12 Tech Rehearsal
+        executors.put(EventType.PAUSE,   utility);   // OPS-029: no-op executor
     }
 
     /**

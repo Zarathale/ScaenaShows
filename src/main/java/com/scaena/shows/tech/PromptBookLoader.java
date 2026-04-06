@@ -129,6 +129,7 @@ public final class PromptBookLoader {
         String sceneNumber = str(m, "scene_number", "99");
         String label       = str(m, "label", id);
         String arrivalMark = str(m, "arrival_mark", null);
+        int    tickStart   = intVal(m, "tick_start");   // 0 = unset / not yet authored
         String statusStr   = str(m, "status", "pending");
         String biome       = str(m, "biome", null);
         String world       = str(m, "world", null);
@@ -145,7 +146,7 @@ public final class PromptBookLoader {
         PromptBook.DeptFireworks fireworks = parseFireworks(depts);
         PromptBook.DeptScript   script   = parseScript(depts);
 
-        return new PromptBook.SceneSpec(id, sceneNumber, label, arrivalMark, status,
+        return new PromptBook.SceneSpec(id, sceneNumber, label, arrivalMark, tickStart, status,
             biome, world, casting, wardrobe, set, lighting, fireworks, script);
     }
 

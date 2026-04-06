@@ -42,7 +42,10 @@ public enum EventType {
     PLAYER_FLIGHT,
 
     // §6.11 Utility
-    REST, COMMAND, CUE;
+    REST, COMMAND, CUE,
+
+    // §6.12 Tech Rehearsal
+    PAUSE;   // OPS-029: narrative pause point for Phase 2 step-mode navigation. No-op executor.
 
     /** Parse from YAML string; throws IllegalArgumentException for unknown types. */
     public static EventType fromString(String raw) {

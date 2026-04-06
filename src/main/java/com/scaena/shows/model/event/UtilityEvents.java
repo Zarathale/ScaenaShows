@@ -51,4 +51,27 @@ public final class UtilityEvents {
 
         @Override public EventType type() { return EventType.CUE; }
     }
+
+    // ------------------------------------------------------------------
+    // PAUSE — OPS-029: narrative pause point for Phase 2 step-mode navigation.
+    //
+    // Safe to author in any show YAML. No-op executor — the scheduler recognises
+    // PAUSE as a stop point in step mode; in production tick mode it fires and
+    // does nothing.
+    //
+    // YAML:
+    //   - at: 120
+    //     type: PAUSE
+    //     label: "After the declaration"   # optional — shown in panel
+    // ------------------------------------------------------------------
+    public static final class PauseEvent extends ShowEvent {
+        public final String label;   // optional; null if not set
+
+        public PauseEvent(Map<String, Object> m) {
+            super(intVal(m, "at", 0));
+            this.label = str(m, "label", null);
+        }
+
+        @Override public EventType type() { return EventType.PAUSE; }
+    }
 }

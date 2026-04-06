@@ -27,6 +27,7 @@ public final class UtilityEventExecutor implements EventExecutor {
             case REST    -> {} // no-op at execution time; timeline pacing is in ShowScheduler
             case COMMAND -> handleCommand((CommandEvent) event, show);
             case CUE     -> {} // CUE refs are inlined by ShowScheduler before dispatch
+            case PAUSE   -> {} // OPS-029: no-op in production; Phase 2 step scheduler handles stop logic
             default -> {}
         }
     }

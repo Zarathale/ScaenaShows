@@ -96,6 +96,7 @@ public record PromptBook(
         String      sceneNumber,    // decimal string — sort key
         String      label,
         String      arrivalMark,
+        int         tickStart,      // tick at which this scene opens in the show timeline (Phase 2)
         StageStatus status,
         String      biome,
         String      world,

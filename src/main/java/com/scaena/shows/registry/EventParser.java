@@ -106,6 +106,8 @@ public final class EventParser {
                 case REST    -> new UtilityEvents.RestEvent(m);
                 case COMMAND -> new UtilityEvents.CommandEvent(m);
                 case CUE     -> new UtilityEvents.CueRefEvent(m);
+                // §6.12 Tech Rehearsal
+                case PAUSE   -> new UtilityEvents.PauseEvent(m);   // OPS-029
             };
             events.add(event);
         }
