@@ -26,15 +26,16 @@ All 12 department KBs are now in folder structure (`kb/departments/[dept-slug]/[
 - Gates 1 (Casting) ✅ and 2 (Wardrobe) ✅ closed. Kit locked, arc staged, script v2 complete.
 - Gate 3 (Set Scouting) open. Zarathale scouts Sites B–F using `direction/showcase.01.scouting-field-guide.md`. Site A scouted 2026-03-30.
 - Gate 4 (Intake) pending Gate 3. Two TBDs remain: victory coda fireworks (Mira) + victory levitation amplifier (Effects, pending ceiling clearance).
-- Engine at 2.29.0 — OPS-027 (Phase 1) shipped. OPS-029 Phase 2 Java underway. Prompt Book is the authoritative committed-state artifact.
+- Engine at 2.31.0 (uncommitted) — OPS-027 (Phase 1) shipped. OPS-029 Phase 2 scaffolding complete (Groups 2–4), awaiting first commit + Group 5. Prompt Book is the authoritative committed-state artifact.
 
 **Not show-specific:**
 - R7 debrief ✅ complete (2026-03-28). R8 not yet scheduled.
-- **OPS-029 Phase 2 — Java underway (2026-04-06).** All blocking items resolved (⚑1 ✅ ⚑2 ✅ ⚑3 ✅).
-  Groups 0 + 1 shipped in v2.29.0: `tick_start` in `PromptBook.SceneSpec` + `PAUSE` event type.
-  **Next: Group 2 — `ShowScheduler` step mode.** Read `kb/system/ops-029-impl-plan.md` for
-  full build sequence. Read `kb/system/ops-029-design-session-2026-04-05.md` for architecture
-  decisions. Detailed content in standalone docs:
+- **OPS-029 Phase 2 — Groups 2–4 written, uncommitted (2026-04-06).**
+  Groups 0 + 1 shipped in v2.29.0. Groups 2–4 complete in working tree at v2.31.0 —
+  build compiles; commit pending. Read `kb/system/ops-029-impl-plan.md` for full build
+  sequence. Read `kb/system/ops-029-design-session-2026-04-05.md` for architecture decisions.
+  **Next: verify build (./gradlew shadowJar), commit Groups 2–4, then begin Group 5 (Casting dept edit).**
+  Detailed content in standalone docs:
   - `kb/system/phase2-department-panels.md` — all 10 department panel specs
   - `kb/system/pattern-phrase-spec.md` — PATTERN, PHRASE, Tempo Architecture
   - `kb/system/music-event-types.md` — MUSIC types, HARP_SWEEP, pattern library

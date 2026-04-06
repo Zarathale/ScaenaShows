@@ -1,6 +1,7 @@
 package com.scaena.shows.tech;
 
-import com.scaena.shows.registry.YamlLoader;
+import com.scaena.shows.model.Cue;
+import com.scaena.shows.registry.CueRegistry;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -10,400 +11,294 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
- * In-memory mutation model for a show's YAML file.
+ * In-memory show YAML editor for Phase 2.
  *
- * Two-layer scope (per OPS-029 design session §4):
+ * Holds the raw YAML map loaded from the show file on Phase 2 entry and
+ * provides typed mutations at two layers:
  *
- *   Layer 1 — show timeline CUE reference mutations:
- *     Tick shift: adjust the `at` value of a CUE ref in the show's top-level timeline.
+ *   Layer 1 — show timeline entries (tick shifts on CUE references)
+ *   Layer 2 — event-level content within cues (param patches, tick shifts,
+ *              event insert/remove); writes are made into rawYaml itself,
+ *              treating the show YAML as the authoritative in-session store.
  *
- *   Layer 2 — event-level mutations within a cue:
- *     Written inline to rawYaml as an `events:` key on the CUE ref timeline entry.
- *     On first Layer 2 edit, the cue file's events are loaded and copied inline.
- *     [Save as Preset] promotes inline events to cues/[presetId].yml.
+ * Layer 2 edits are NOT written to cues/*.yml until saveAsPreset() is called
+ * explicitly by the player.
  *
- * One file in memory. All mutations target the show's own timeline. No silent
- * cross-show mutations.
- *
- * Note: SnakeYAML does not preserve YAML comments. Saving via saveToShowYaml()
- * will drop comments from the original file. This is acceptable for a rehearsal tool.
+ * Thread model: all calls are on the main server thread.
  */
 public final class ShowYamlEditor {
 
+    private static final int TICKS_PER_SECOND = 20;
+
     private final Map<String, Object> rawYaml;
     private final File                sourceFile;
-    private final File                dataFolder;
     private final PromptBook          book;
+    private final CueRegistry         cueRegistry;
     private final Logger              log;
 
-    private ShowYamlEditor(Map<String, Object> rawYaml, File sourceFile,
-                           File dataFolder, PromptBook book, Logger log) {
+    public ShowYamlEditor(
+        Map<String, Object> rawYaml,
+        File                sourceFile,
+        PromptBook          book,
+        CueRegistry         cueRegistry,
+        Logger              log
+    ) {
         this.rawYaml    = rawYaml;
         this.sourceFile = sourceFile;
-        this.dataFolder = dataFolder;
         this.book       = book;
+        this.cueRegistry = cueRegistry;
         this.log        = log;
     }
 
-    // -----------------------------------------------------------------------
-    // Factory
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------------
+    // Layer 1 — show timeline mutations
+    // ------------------------------------------------------------------
 
     /**
-     * Load the show's YAML file into a ShowYamlEditor.
+     * Shift the `at` tick of a CUE reference in the show's top-level timeline.
      *
-     * Search order: shows/[showId].yml, then shows/[showId]/[showId].yml.
-     * Returns null if neither file exists or the file cannot be read.
+     * @param timelineIndex index into the flat timeline list (0-based)
+     * @param deltaTicks    positive = later; negative = earlier (clamped to 0)
      */
-    public static ShowYamlEditor load(String showId, File dataFolder,
-                                      PromptBook book, Logger log) {
-        File flat   = new File(dataFolder, "shows/" + showId + ".yml");
-        File nested = new File(dataFolder, "shows/" + showId + "/" + showId + ".yml");
-
-        File source = flat.exists() ? flat : (nested.exists() ? nested : null);
-        if (source == null) {
-            log.warning("[Tech] ShowYamlEditor: no show YAML found for " + showId);
-            return null;
-        }
-
-        try {
-            Map<String, Object> raw = new LinkedHashMap<>(YamlLoader.load(source));
-            ensureMutableTimeline(raw);
-            return new ShowYamlEditor(raw, source, dataFolder, book, log);
-        } catch (IOException e) {
-            log.warning("[Tech] ShowYamlEditor: failed to load " + source + ": " + e.getMessage());
-            return null;
-        }
-    }
-
-    // -----------------------------------------------------------------------
-    // Query helpers
-    // -----------------------------------------------------------------------
-
-    /**
-     * Return all CUE ref timeline entries for the given scene, sorted by tick.
-     * Scene boundaries come from PromptBook.SceneSpec.tickStart.
-     */
-    public List<Map<String, Object>> getSceneCueRefs(String sceneId) {
-        PromptBook.SceneSpec scene = book.findScene(sceneId);
-        if (scene == null) return List.of();
-
-        long sceneStart = scene.tickStart();
-        long sceneEnd   = nextSceneTickStart(sceneId);
-
-        List<Map<String, Object>> result = new ArrayList<>();
-        for (Map<String, Object> entry : getTimeline()) {
-            if (!"CUE".equals(entry.get("type"))) continue;
-            long at = toLong(entry.get("at"));
-            if (at >= sceneStart && at < sceneEnd) {
-                result.add(entry);
-            }
-        }
-        // Already in timeline order; sort by at for safety
-        result.sort(Comparator.comparingLong(e -> toLong(e.get("at"))));
-        return result;
-    }
-
-    /**
-     * True if the cue file on disk has no events (empty or missing timeline).
-     * Checks the original cue file — not any inline Layer 2 overrides.
-     */
-    public boolean isCueStub(String cueId) {
-        File cueFile = new File(dataFolder, "cues/" + cueId + ".yml");
-        if (!cueFile.exists()) return true;
-        try {
-            Map<String, Object> cueRaw = YamlLoader.load(cueFile);
-            Object timeline = cueRaw.get("timeline");
-            return !(timeline instanceof List<?> list) || list.isEmpty();
-        } catch (IOException e) {
-            return true;
-        }
-    }
-
-    /**
-     * Format a tick as "Xs | Nt".
-     * Drops the decimal when seconds is a clean integer (6s not 6.0s).
-     */
-    public static String formatTick(int tick) {
-        double seconds = tick / 20.0;
-        String secStr;
-        if (seconds == Math.floor(seconds)) {
-            secStr = String.valueOf((int) seconds);
-        } else {
-            secStr = String.format("%.2f", seconds)
-                .replaceAll("0+$", "")
-                .replaceAll("\\.$", "");
-        }
-        return secStr + "s | " + tick + "t";
-    }
-
-    // -----------------------------------------------------------------------
-    // Layer 1 — show timeline CUE reference mutations
-    // -----------------------------------------------------------------------
-
-    /**
-     * Shift the `at` tick of the timeline entry at the given index.
-     *
-     * @param timelineIndex 0-based index into the show's top-level timeline
-     * @param deltaTicks    positive = later, negative = earlier; clamped to 0
-     */
+    @SuppressWarnings("unchecked")
     public void shiftCueRefTick(int timelineIndex, int deltaTicks) {
         List<Map<String, Object>> timeline = getTimeline();
         if (timelineIndex < 0 || timelineIndex >= timeline.size()) return;
+
         Map<String, Object> entry = timeline.get(timelineIndex);
-        long current = toLong(entry.get("at"));
-        entry.put("at", (int) Math.max(0, current + deltaTicks));
+        int current = intVal(entry, "at", 0);
+        int updated = Math.max(0, current + deltaTicks);
+        entry.put("at", updated);
     }
 
-    // -----------------------------------------------------------------------
-    // Layer 2 — event-level mutations within a cue (written inline to rawYaml)
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------------
+    // Layer 2 — event-level mutations within cues
+    // ------------------------------------------------------------------
 
-    /**
-     * Patch a single param on an event within a cue.
-     * Loads the cue's events inline from disk on the first Layer 2 edit.
-     *
-     * @param cueId      the cue ID as it appears in the timeline's cue_id field
-     * @param eventIndex 0-based index into the cue's event list
-     * @param paramKey   the YAML field name to update
-     * @param newValue   the new value (String, Integer, Double, Boolean, etc.)
-     */
-    public void patchEventParam(String cueId, int eventIndex,
-                                String paramKey, Object newValue) {
-        List<Map<String, Object>> events = getOrLoadInlineEvents(cueId);
-        if (eventIndex < 0 || eventIndex >= events.size()) return;
-        events.get(eventIndex).put(paramKey, newValue);
+    // NOTE: Layer 2 edits are applied to an inline events block stored inside
+    // rawYaml under a "_cue_overrides" key (keyed by cue ID). On saveToShowYaml()
+    // these overrides are written out as inline YAML alongside the CUE refs.
+    // On saveAsPreset(), the override is promoted to a cues/*.yml file.
+    //
+    // Full implementation is Phase 2 Group 5 territory. Stubs are provided here
+    // so the class compiles and Group 3/4 can wire against these signatures.
+
+    /** Patch a single param key on the given event within the named cue. */
+    public void patchEventParam(String cueId, int eventIndex, String paramKey, Object newValue) {
+        Map<String, Object> events = ensureCueOverride(cueId);
+        List<Map<String, Object>> list = getOrInitEventList(events);
+        if (eventIndex >= 0 && eventIndex < list.size()) {
+            list.get(eventIndex).put(paramKey, newValue);
+        }
     }
 
-    /**
-     * Shift the `at` tick of an event within a cue's inline event list.
-     */
+    /** Shift the `at` tick of an event within the named cue. */
     public void shiftEventTick(String cueId, int eventIndex, int deltaTicks) {
-        List<Map<String, Object>> events = getOrLoadInlineEvents(cueId);
-        if (eventIndex < 0 || eventIndex >= events.size()) return;
-        Map<String, Object> event = events.get(eventIndex);
-        long current = toLong(event.get("at"));
-        event.put("at", (int) Math.max(0, current + deltaTicks));
+        Map<String, Object> events = ensureCueOverride(cueId);
+        List<Map<String, Object>> list = getOrInitEventList(events);
+        if (eventIndex >= 0 && eventIndex < list.size()) {
+            Map<String, Object> event = list.get(eventIndex);
+            int current = intVal(event, "at", 0);
+            event.put("at", Math.max(0, current + deltaTicks));
+        }
     }
 
-    /**
-     * Insert a new event into a cue's inline event list, maintaining tick order.
-     *
-     * @param cueId     the cue to insert into
-     * @param atTick    the tick at which the new event fires
-     * @param eventYaml the full event map (type + fields); `at` will be overwritten
-     */
+    /** Insert a new event into the named cue at the given tick. */
     public void insertEvent(String cueId, int atTick, Map<String, Object> eventYaml) {
-        List<Map<String, Object>> events = getOrLoadInlineEvents(cueId);
-        Map<String, Object> entry = new LinkedHashMap<>(eventYaml);
-        entry.put("at", atTick);
-
-        // Insert in tick-sorted order
-        int insertAt = events.size();
-        for (int i = 0; i < events.size(); i++) {
-            if (toLong(events.get(i).get("at")) > atTick) {
+        Map<String, Object> events = ensureCueOverride(cueId);
+        List<Map<String, Object>> list = getOrInitEventList(events);
+        Map<String, Object> copy = new LinkedHashMap<>(eventYaml);
+        copy.put("at", atTick);
+        // Insert in tick order
+        int insertAt = list.size();
+        for (int i = 0; i < list.size(); i++) {
+            if (intVal(list.get(i), "at", 0) > atTick) {
                 insertAt = i;
                 break;
             }
         }
-        events.add(insertAt, entry);
+        list.add(insertAt, copy);
     }
 
-    /**
-     * Remove an event from a cue's inline event list.
-     *
-     * @param cueId      the cue to remove from
-     * @param eventIndex 0-based index into the cue's event list
-     */
+    /** Remove the event at the given index from the named cue. */
     public void removeEvent(String cueId, int eventIndex) {
-        List<Map<String, Object>> events = getOrLoadInlineEvents(cueId);
-        if (eventIndex >= 0 && eventIndex < events.size()) {
-            events.remove(eventIndex);
+        Map<String, Object> events = ensureCueOverride(cueId);
+        List<Map<String, Object>> list = getOrInitEventList(events);
+        if (eventIndex >= 0 && eventIndex < list.size()) {
+            list.remove(eventIndex);
         }
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------------
     // Persistence
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------------
 
     /**
-     * Write rawYaml back to the source show file.
+     * Write rawYaml back to the show file on disk.
      *
      * @return true on success, false if an IOException occurred
      */
     public boolean saveToShowYaml() {
-        try (Writer writer = new OutputStreamWriter(
-                new FileOutputStream(sourceFile), StandardCharsets.UTF_8)) {
-            buildDumper().dump(rawYaml, writer);
-            log.info("[Tech] ShowYamlEditor: saved " + sourceFile.getName());
-            return true;
-        } catch (IOException e) {
-            log.warning("[Tech] ShowYamlEditor: save failed: " + e.getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Promote a cue's inline Layer 2 events to a standalone preset file.
-     *
-     * The resulting file lives at cues/[presetId].yml with:
-     *   id: [presetId], name: "", timeline: [inline events]
-     *
-     * Requires that the cue has been Layer 2-edited (inline events loaded).
-     * If no inline events exist, the call is a no-op and returns false.
-     *
-     * @return true on success
-     */
-    @SuppressWarnings("unchecked")
-    public boolean saveAsPreset(String cueId, String presetId) {
-        Map<String, Object> timelineEntry = findTimelineEntry(cueId);
-        if (timelineEntry == null) {
-            log.warning("[Tech] saveAsPreset: no timeline entry for cue " + cueId);
-            return false;
-        }
-
-        Object eventsObj = timelineEntry.get("events");
-        if (!(eventsObj instanceof List<?> list) || list.isEmpty()) {
-            log.warning("[Tech] saveAsPreset: no inline events for cue " + cueId
-                + " — load and edit first");
-            return false;
-        }
-
-        List<Map<String, Object>> inlineEvents = (List<Map<String, Object>>) list;
-
-        Map<String, Object> presetMap = new LinkedHashMap<>();
-        presetMap.put("id", presetId);
-        presetMap.put("name", "");
-        presetMap.put("timeline", inlineEvents);
-
-        File presetFile = new File(dataFolder, "cues/" + presetId + ".yml");
-        presetFile.getParentFile().mkdirs();
-
-        try (Writer writer = new OutputStreamWriter(
-                new FileOutputStream(presetFile), StandardCharsets.UTF_8)) {
-            buildDumper().dump(presetMap, writer);
-            log.info("[Tech] ShowYamlEditor: saved preset " + presetId);
-            return true;
-        } catch (IOException e) {
-            log.warning("[Tech] ShowYamlEditor: preset save failed: " + e.getMessage());
-            return false;
-        }
-    }
-
-    // -----------------------------------------------------------------------
-    // Package-private accessors (for TechManager)
-    // -----------------------------------------------------------------------
-
-    /** The raw parsed show YAML — used for RunningShow construction in preview mode. */
-    Map<String, Object> rawYaml() { return rawYaml; }
-
-    /** The file this editor loaded from and will write back to. */
-    File sourceFile() { return sourceFile; }
-
-    // -----------------------------------------------------------------------
-    // Private helpers
-    // -----------------------------------------------------------------------
-
-    @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> getTimeline() {
-        Object t = rawYaml.get("timeline");
-        if (t instanceof List<?> list) return (List<Map<String, Object>>) list;
-        return List.of();
-    }
-
-    /** Find the first CUE ref timeline entry with the given cue_id. */
-    private Map<String, Object> findTimelineEntry(String cueId) {
-        for (Map<String, Object> entry : getTimeline()) {
-            if ("CUE".equals(entry.get("type")) && cueId.equals(entry.get("cue_id"))) {
-                return entry;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Return the inline `events:` list for the given cue ref.
-     *
-     * On first access: loads the cue file's timeline and copies it into the
-     * timeline entry as `events:`. Subsequent accesses return the same list.
-     */
-    @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> getOrLoadInlineEvents(String cueId) {
-        Map<String, Object> entry = findTimelineEntry(cueId);
-        if (entry == null) {
-            log.warning("[Tech] ShowYamlEditor: no timeline entry for cue " + cueId);
-            return new ArrayList<>();
-        }
-
-        Object existing = entry.get("events");
-        if (existing instanceof List<?> list) return (List<Map<String, Object>>) list;
-
-        // Load from the cue file and copy inline
-        File cueFile = new File(dataFolder, "cues/" + cueId + ".yml");
-        List<Map<String, Object>> loaded = new ArrayList<>();
-        if (cueFile.exists()) {
-            try {
-                Map<String, Object> cueRaw = YamlLoader.load(cueFile);
-                Object timeline = cueRaw.get("timeline");
-                if (timeline instanceof List<?> tl) {
-                    for (Object e : tl) {
-                        if (e instanceof Map<?, ?> m) {
-                            loaded.add(new LinkedHashMap<>((Map<String, Object>) m));
-                        }
-                    }
-                }
-            } catch (IOException e) {
-                log.warning("[Tech] ShowYamlEditor: failed to load cue file "
-                    + cueId + ": " + e.getMessage());
-            }
-        }
-
-        entry.put("events", loaded);
-        return loaded;
-    }
-
-    /**
-     * The tickStart of the scene following sceneId, or show duration_ticks for the last scene.
-     * Returns Long.MAX_VALUE if duration_ticks is not set.
-     */
-    private long nextSceneTickStart(String sceneId) {
-        List<PromptBook.SceneSpec> scenes = book.scenes();
-        for (int i = 0; i < scenes.size() - 1; i++) {
-            if (sceneId.equals(scenes.get(i).id())) {
-                return scenes.get(i + 1).tickStart();
-            }
-        }
-        // Last scene — use show's duration_ticks
-        Object dur = rawYaml.get("duration_ticks");
-        return (dur instanceof Number n) ? n.longValue() : Long.MAX_VALUE;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static void ensureMutableTimeline(Map<String, Object> raw) {
-        Object t = raw.get("timeline");
-        if (t instanceof List<?> list) {
-            List<Map<String, Object>> mutable = new ArrayList<>();
-            for (Object entry : list) {
-                if (entry instanceof Map<?, ?> m) {
-                    mutable.add(new LinkedHashMap<>((Map<String, Object>) m));
-                }
-            }
-            raw.put("timeline", mutable);
-        } else {
-            raw.put("timeline", new ArrayList<>());
-        }
-    }
-
-    private static long toLong(Object o) {
-        if (o instanceof Number n) return n.longValue();
-        return 0L;
-    }
-
-    private static Yaml buildDumper() {
         DumperOptions opts = new DumperOptions();
         opts.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         opts.setIndent(2);
         opts.setPrettyFlow(true);
-        return new Yaml(opts);
+        Yaml yaml = new Yaml(opts);
+
+        try (Writer writer = new OutputStreamWriter(
+                new FileOutputStream(sourceFile), StandardCharsets.UTF_8)) {
+            yaml.dump(rawYaml, writer);
+            return true;
+        } catch (IOException e) {
+            log.warning("[ShowYamlEditor] Failed to save " + sourceFile.getName()
+                + ": " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Promote the in-session cue content for the given cue ID to the preset
+     * library by writing it to cues/[presetId].yml.
+     *
+     * The preset file is written under the plugin's cues/ directory.
+     *
+     * @param cueId    the cue whose override (or original content) to promote
+     * @param presetId the target preset ID (e.g. "casting.zombie.warrior_enter")
+     * @return true on success
+     */
+    public boolean saveAsPreset(String cueId, String presetId) {
+        // TODO (Group 5): Resolve the cue's current content (override or original),
+        // construct a full cue YAML block, and write to cues/[presetId].yml.
+        log.info("[ShowYamlEditor] saveAsPreset not yet implemented: cueId=" + cueId
+            + ", presetId=" + presetId);
+        return false;
+    }
+
+    // ------------------------------------------------------------------
+    // Query helpers
+    // ------------------------------------------------------------------
+
+    /**
+     * Return the timeline CUE reference entries that belong to the given scene.
+     *
+     * Entries are filtered by tick range: [scene.tickStart, nextScene.tickStart).
+     * The last scene runs to the show's duration_ticks.
+     *
+     * Returns an empty list if the scene ID is unknown or the timeline is empty.
+     */
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> getSceneCueRefs(String sceneId) {
+        if (sceneId == null || book == null) return List.of();
+
+        PromptBook.SceneSpec scene = book.findScene(sceneId);
+        if (scene == null) return List.of();
+
+        int tickStart = scene.tickStart();
+        int tickEnd   = tickEndForScene(sceneId);
+
+        List<Map<String, Object>> timeline = getTimeline();
+        List<Map<String, Object>> result   = new ArrayList<>();
+
+        for (Map<String, Object> entry : timeline) {
+            int at = intVal(entry, "at", 0);
+            if (at >= tickStart && at < tickEnd) {
+                result.add(entry);
+            }
+        }
+        return Collections.unmodifiableList(result);
+    }
+
+    /**
+     * Returns true if the named cue has no events (either in its original cue
+     * file or in any in-session override). Stub cues render with "(empty)" in
+     * the panel but still accept [Edit ▸].
+     */
+    @SuppressWarnings("unchecked")
+    public boolean isCueStub(String cueId) {
+        // Check in-session override first
+        Map<String, Object> overrides = getCueOverrides();
+        if (overrides.containsKey(cueId)) {
+            List<?> events = (List<?>) ((Map<?, ?>) overrides.get(cueId)).get("events");
+            if (events != null) return events.isEmpty();
+        }
+        // Fall back to the registered cue
+        Cue cue = cueRegistry.get(cueId);
+        return cue == null || cue.timeline.isEmpty();
+    }
+
+    /**
+     * Format an absolute tick as the universal display string: "Xs | Nt".
+     *
+     * Drops the decimal when seconds is a clean integer: "6s | 120t"
+     * Retains the decimal only when fractional: "6.25s | 125t"
+     */
+    public String formatTick(int tick) {
+        double seconds = (double) tick / TICKS_PER_SECOND;
+        String secStr = (seconds == Math.floor(seconds))
+            ? String.valueOf((long) seconds)
+            : String.valueOf(seconds);
+        return secStr + "s | " + tick + "t";
+    }
+
+    /** Total number of entries in the flat timeline list. */
+    public int getTimelineSize() {
+        return getTimeline().size();
+    }
+
+    // ------------------------------------------------------------------
+    // Internal helpers
+    // ------------------------------------------------------------------
+
+    @SuppressWarnings("unchecked")
+    private List<Map<String, Object>> getTimeline() {
+        Object raw = rawYaml.get("timeline");
+        if (raw instanceof List<?> list) {
+            return (List<Map<String, Object>>) list;
+        }
+        List<Map<String, Object>> empty = new ArrayList<>();
+        rawYaml.put("timeline", empty);
+        return empty;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getCueOverrides() {
+        return (Map<String, Object>) rawYaml.computeIfAbsent(
+            "_cue_overrides", k -> new LinkedHashMap<String, Object>());
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> ensureCueOverride(String cueId) {
+        Map<String, Object> overrides = getCueOverrides();
+        return (Map<String, Object>) overrides.computeIfAbsent(
+            cueId, k -> new LinkedHashMap<String, Object>());
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Map<String, Object>> getOrInitEventList(Map<String, Object> cueOverride) {
+        return (List<Map<String, Object>>) cueOverride.computeIfAbsent(
+            "events", k -> new ArrayList<Map<String, Object>>());
+    }
+
+    /** The upper tick boundary (exclusive) for a scene. */
+    private int tickEndForScene(String sceneId) {
+        if (book == null || book.scenes() == null) return Integer.MAX_VALUE;
+        List<PromptBook.SceneSpec> scenes = book.scenes();
+        for (int i = 0; i < scenes.size(); i++) {
+            if (sceneId.equals(scenes.get(i).id())) {
+                if (i + 1 < scenes.size()) {
+                    return scenes.get(i + 1).tickStart();
+                } else {
+                    // Last scene: runs to show duration
+                    Object dur = rawYaml.get("duration_ticks");
+                    return (dur instanceof Number n) ? n.intValue() : Integer.MAX_VALUE;
+                }
+            }
+        }
+        return Integer.MAX_VALUE;
+    }
+
+    private static int intVal(Map<String, Object> m, String key, int def) {
+        Object v = m.get(key);
+        return (v instanceof Number n) ? n.intValue() : def;
     }
 }

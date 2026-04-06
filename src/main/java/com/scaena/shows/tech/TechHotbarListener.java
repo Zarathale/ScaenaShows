@@ -12,6 +12,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+// Phase 2
+import com.scaena.shows.tech.TechCueSession;
+
 /**
  * Handles all in-session input events for Tech Rehearsal Mode.
  *
@@ -58,36 +61,36 @@ public final class TechHotbarListener implements Listener {
         int slot  = player.getInventory().getHeldItemSlot();
         boolean shift = player.isSneaking();
 
-        // Phase 2: when a TechCueSession is active, slots PREV/HOLD/NEXT
-        // are routed to step navigation in preview mode.
+        // Phase 2: if a TechCueSession is active, re-route PREV/HOLD/NEXT
         TechCueSession cueSession = manager.getTechCueSession(player);
         if (cueSession != null) {
+            // All Phase 2 navigation is suspended during a department edit session
+            if (cueSession.isEditing()) return;
+
             switch (slot) {
-                case TechManager.SLOT_PREV -> {
-                    if (cueSession.isInPreview()) manager.stepBack(player);
-                    // else: cue-level prev nav — Group 4
-                }
-                case TechManager.SLOT_HOLD -> {
-                    if (cueSession.isInPreview()) manager.holdPreview(player);
-                }
-                case TechManager.SLOT_NEXT -> {
-                    if (cueSession.isInPreview()) manager.stepForward(player);
-                    // else: cue-level next nav — Group 4
-                }
+                case TechManager.SLOT_PREV -> manager.stepBack(player);
+                case TechManager.SLOT_HOLD -> manager.holdPreview(player);
+                case TechManager.SLOT_NEXT -> manager.stepForward(player);
                 case TechManager.SLOT_CAPTURE -> manager.confirmCapture(player);
                 case TechManager.SLOT_PARAMS  -> {
-                    if (shift) manager.decrementParam(player);
-                    else if (session.paramScrollMode()) manager.incrementParam(player);
-                    else manager.paramAction(player);
+                    if (shift) {
+                        manager.decrementParam(player);
+                    } else {
+                        if (session.paramScrollMode()) {
+                            manager.incrementParam(player);
+                        } else {
+                            manager.paramAction(player);
+                        }
+                    }
                 }
-                default -> { /* Not a tech slot */ }
+                default -> {}
             }
-            return;
+            return; // Phase 2 handled — don't fall through to Phase 1
         }
 
         switch (slot) {
             case TechManager.SLOT_PREV    -> manager.prevScene(player);
-            case TechManager.SLOT_HOLD    -> { /* Phase 2 — hold/GO no-op */ }
+            case TechManager.SLOT_HOLD    -> { /* no-op in Phase 1 */ }
             case TechManager.SLOT_NEXT    -> manager.nextScene(player);
             case TechManager.SLOT_CAPTURE -> manager.confirmCapture(player);
             case TechManager.SLOT_PARAMS  -> {

@@ -76,6 +76,7 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
             case "snap"   -> handleSnap(player, args);
             case "choose" -> handleChoose(player, args);
             case "tech"   -> handleTech(player, args);
+            case "tech2"  -> handleTech2(player, args);   // OPS-029 Phase 2
             // OPS-031: /scaena <showId> — bare show ID shorthand opens the Show Status Dashboard
             default       -> handleShowDashboard(player, args[0]);
         }
@@ -316,6 +317,88 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
                 String showId  = args[1];
                 String sceneId = args.length >= 3 ? args[2] : null;
                 techManager.enterTech(player, showId, sceneId);
+            }
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // /scaena tech2 ...  — Phase 2 Timeline Editor  (OPS-029)
+    // -----------------------------------------------------------------------
+
+    /**
+     * Routes all /scaena tech2 ... commands.
+     *
+     *   /scaena tech2 <showId>        — enter Phase 2 (requires active Phase 1 session)
+     *   /scaena tech2 exit            — exit Phase 2
+     *   /scaena tech2 panel           — re-send cue panel
+     *   /scaena tech2 save            — save YAML to disk
+     *   /scaena tech2 go              — step forward (Go)
+     *   /scaena tech2 hold            — hold
+     *   /scaena tech2 prev            — step back (Back)
+     *   /scaena tech2 preview         — start preview mode
+     *   /scaena tech2 previewexit     — exit preview mode
+     *   /scaena tech2 scene next      — navigate to next scene
+     *   /scaena tech2 scene prev      — navigate to previous scene
+     *   /scaena tech2 edit <cueId>    — enter department edit for a cue
+     *   /scaena tech2 editsave        — commit current dept edit ([Save] button)
+     *   /scaena tech2 editpreset      — save-as-preset ([Save as Preset] button)
+     *   /scaena tech2 editcancel      — discard dept edit ([Cancel] button)
+     */
+    private void handleTech2(Player player, String[] args) {
+        if (args.length < 2) {
+            // Status summary or brief help
+            if (techManager.hasCueSession(player)) {
+                var cs = techManager.getTechCueSession(player);
+                player.sendMessage(MM.deserialize(
+                    "<aqua>Phase 2 active:</aqua> <white>" + cs.getShowId() + "</white>"
+                    + (cs.getCurrentSceneId() != null ? " @ " + cs.getCurrentSceneId() : "")
+                    + (cs.isDirty() ? "  <yellow>✎ unsaved</yellow>" : "")));
+                techManager.sendCuePanel(player);
+            } else {
+                player.sendMessage(MM.deserialize(
+                    "<aqua>Phase 2 Timeline Editor</aqua>"
+                    + " <gray>— /scaena tech2 <showId></gray>"));
+            }
+            return;
+        }
+
+        String sub = args[1].toLowerCase();
+        switch (sub) {
+            case "exit"        -> techManager.exitPhase2(player);
+            case "panel"       -> techManager.sendCuePanel(player);
+            case "save"        -> techManager.saveYaml(player);
+            case "go"          -> techManager.stepForward(player);
+            case "hold"        -> techManager.holdPreview(player);
+            case "prev"        -> techManager.stepBack(player);
+            case "preview"     -> techManager.startPreview(player);
+            case "previewexit" -> techManager.exitPreview(player);
+            case "editsave"    -> techManager.commitDeptEdit(player, false);
+            case "editpreset"  -> techManager.commitDeptEdit(player, true);
+            case "editcancel"  -> techManager.cancelDeptEdit(player);
+            case "scene"       -> {
+                if (args.length < 3) {
+                    player.sendMessage(MM.deserialize(
+                        "<red>Usage: /scaena tech2 scene <next|prev></red>"));
+                    return;
+                }
+                switch (args[2].toLowerCase()) {
+                    case "next" -> techManager.nextCueScene(player);
+                    case "prev" -> techManager.prevCueScene(player);
+                    default -> player.sendMessage(MM.deserialize(
+                        "<red>Usage: /scaena tech2 scene <next|prev></red>"));
+                }
+            }
+            case "edit"        -> {
+                if (args.length < 3) {
+                    player.sendMessage(MM.deserialize(
+                        "<red>Usage: /scaena tech2 edit <cueId></red>"));
+                    return;
+                }
+                techManager.enterDeptEdit(player, args[2]);
+            }
+            default -> {
+                // Treat as /scaena tech2 <showId>
+                techManager.enterPhase2(player, args[1]);
             }
         }
     }

@@ -6,165 +6,209 @@ import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.File;
+import java.util.*;
 
 /**
- * Stateful core of a Phase 2 Tech Cue Session.
+ * Stateful core of a single player's active Phase 2 (Timeline Editor) session.
  *
- * Created by TechManager.enterPhase2(); removed on exitPhase2() or Phase 1 dismiss.
- * Phase 2 requires an active TechSession (Phase 1) — the two live side-by-side.
+ * Phase 2 requires an owning Phase 1 TechSession. Created by TechManager.enterPhase2();
+ * destroyed by TechManager.exitPhase2() or when the owning TechSession is dismissed.
  *
- * Two modes:
- *   Edit mode    — rawYaml open in ShowYamlEditor; cue panel displayed; nothing executing.
- *   Preview mode — RunningShow + ShowScheduler in step mode; player navigates with Go/Hold/Prev.
+ * Two modes of operation:
+ *   Edit mode    — in-memory YAML open; cue panel visible; nothing executing.
+ *   Preview mode — RunningShow + ShowScheduler in step mode; player navigates
+ *                  with hotbar Go/Hold/Back items.
  */
 public final class TechCueSession {
 
     // ---- Identity ----
+    private final String          showId;
     private final Player          player;
-    private final PromptBook      book;       // re-used from owning TechSession
-    private final ShowYamlEditor  editor;
+    private final PromptBook      book;   // shared reference from owning TechSession
 
-    // ---- Navigation (edit mode) ----
-    private String  currentSceneId;
-    private int     currentCueIndex  = 0;    // index within current scene's cue ref list
+    // ---- In-memory YAML ----
+    /** Raw show YAML loaded from disk on Phase 2 entry; mutated in place by ShowYamlEditor. */
+    private Map<String, Object>   rawYaml;
+    /** File path for [Save] write-back. */
+    private File                  sourceFile;
+
+    // ---- Edit mode navigation ----
+    private String                currentSceneId;
+    /** Index of the focused cue within the current scene's CUE ref list. -1 = none focused. */
+    private int                   currentCueIndex = -1;
 
     // ---- Preview mode ----
-    private RunningShow   previewShow      = null;   // non-null while in preview mode
-    private ShowScheduler previewScheduler = null;   // paired with previewShow
-    private boolean       holdActive       = false;
+    private RunningShow           previewShow;       // non-null while in preview mode
+    private ShowScheduler         previewScheduler;  // non-null while in preview mode
+    private boolean               holdActive;
 
     /**
-     * Ordered list of ticks dispatched in the current preview session.
-     * Used by stepBack to navigate to the previous cue without re-dispatching.
+     * Stack of ticks dispatched so far in the current preview pass.
+     * Supports the Back (previous cue) operation: pop the top and re-seek.
      */
-    private final List<Long> stepHistory = new ArrayList<>();
+    private final Deque<Long>     visitedTicks = new ArrayDeque<>();
 
     // ---- Department edit ----
-    private DeptEditSession   activeEditSession = null;
-    private final Set<String> dirtyCueIds       = new LinkedHashSet<>();
+    private DeptEditSession       activeEditSession;   // null when not editing
+    private final Set<String>     dirtyCueIds = new LinkedHashSet<>();
 
     // ---- Session toggles ----
-    private boolean          autoPreview  = true;
-    private WorldPreviewMode worldPreview = WorldPreviewMode.LIVE;
+    /** If true, param changes immediately refire the relevant event (Sound, Effects, etc.) */
+    private boolean               autoPreview  = true;
+    private WorldPreviewMode      worldPreview = WorldPreviewMode.LIVE;
 
     // ---- Display ----
-    private BossBar    editBossBar       = null;  // shown during dept edit sessions
-    private BukkitTask buttonRefreshTask = null;  // periodic re-send of [Save]/[Cancel]
+    /** Boss bar shown for the duration of any department edit session. */
+    private BossBar               editBossBar;
+    /** Periodic task re-sending [Save] / [Cancel] so they don't scroll off chat. */
+    private BukkitTask            buttonRefreshTask;
 
-    /** Controls how instruments with server-wide effects behave during edit. */
-    public enum WorldPreviewMode { LIVE, VALUES_ONLY }
+    // ---- Dirty flag ----
+    private boolean               dirty = false;   // true if rawYaml has unsaved mutations
 
     // -----------------------------------------------------------------------
     // Constructor
     // -----------------------------------------------------------------------
 
-    public TechCueSession(Player player, PromptBook book, ShowYamlEditor editor,
-                          String initialSceneId) {
-        this.player         = player;
-        this.book           = book;
-        this.editor         = editor;
-        this.currentSceneId = initialSceneId;
+    public TechCueSession(String showId, Player player, PromptBook book) {
+        this.showId = showId;
+        this.player = player;
+        this.book   = book;
     }
 
     // -----------------------------------------------------------------------
-    // Accessors — identity
+    // WorldPreviewMode
     // -----------------------------------------------------------------------
 
-    public String          showId()  { return book.showId(); }
-    public Player          player()  { return player; }
-    public PromptBook      book()    { return book; }
-    public ShowYamlEditor  editor()  { return editor; }
-
-    // -----------------------------------------------------------------------
-    // Accessors — navigation
-    // -----------------------------------------------------------------------
-
-    public String currentSceneId()              { return currentSceneId; }
-    public int    currentCueIndex()             { return currentCueIndex; }
-
-    /** Change scene and reset cue index to 0. */
-    public void setCurrentSceneId(String id) {
-        this.currentSceneId = id;
-        this.currentCueIndex = 0;
+    public enum WorldPreviewMode {
+        /** Every param change immediately applies to the world. */
+        LIVE,
+        /** Edits update rawYaml only; use [▶ Apply to world] to spot-check. */
+        VALUES_ONLY
     }
 
-    public void setCurrentCueIndex(int idx)     { this.currentCueIndex = idx; }
-
     // -----------------------------------------------------------------------
-    // Accessors — preview mode
+    // Identity
     // -----------------------------------------------------------------------
 
-    public boolean        isInPreview()         { return previewShow != null; }
-    public RunningShow    previewShow()          { return previewShow; }
-    public ShowScheduler  previewScheduler()     { return previewScheduler; }
-    public boolean        holdActive()           { return holdActive; }
-    public void           setHoldActive(boolean h) { this.holdActive = h; }
+    public String    getShowId()     { return showId; }
+    public Player    getPlayer()     { return player; }
+    public PromptBook getBook()      { return book; }
 
-    /** Register the RunningShow and ShowScheduler for preview mode. Clears step history. */
-    public void setPreview(RunningShow show, ShowScheduler scheduler) {
-        this.previewShow      = show;
-        this.previewScheduler = scheduler;
-        this.stepHistory.clear();
-        this.holdActive = false;
+    // -----------------------------------------------------------------------
+    // Raw YAML
+    // -----------------------------------------------------------------------
+
+    public Map<String, Object> getRawYaml()                        { return rawYaml; }
+    public void                setRawYaml(Map<String, Object> m)   { this.rawYaml = m; }
+    public File                getSourceFile()                     { return sourceFile; }
+    public void                setSourceFile(File f)               { this.sourceFile = f; }
+
+    // -----------------------------------------------------------------------
+    // Edit mode navigation
+    // -----------------------------------------------------------------------
+
+    public String getCurrentSceneId()                  { return currentSceneId; }
+    public void   setCurrentSceneId(String id)         { this.currentSceneId = id; }
+
+    public int  getCurrentCueIndex()                   { return currentCueIndex; }
+    public void setCurrentCueIndex(int idx)            { this.currentCueIndex = idx; }
+
+    // -----------------------------------------------------------------------
+    // Preview mode
+    // -----------------------------------------------------------------------
+
+    public boolean isPreviewActive()                              { return previewShow != null; }
+
+    public RunningShow    getPreviewShow()                        { return previewShow; }
+    public void           setPreviewShow(RunningShow rs)          { this.previewShow = rs; }
+
+    public ShowScheduler  getPreviewScheduler()                   { return previewScheduler; }
+    public void           setPreviewScheduler(ShowScheduler s)    { this.previewScheduler = s; }
+
+    public boolean isHoldActive()                                 { return holdActive; }
+    public void    setHoldActive(boolean h)                       { this.holdActive = h; }
+
+    /** Record that we just dispatched up to (or at) the given tick. */
+    public void pushVisitedTick(long tick)                        { visitedTicks.push(tick); }
+
+    /**
+     * Return and remove the most recently dispatched tick, or -1 if none.
+     * Used by stepBack() to find where to re-seek.
+     */
+    public long popVisitedTick() {
+        return visitedTicks.isEmpty() ? -1L : visitedTicks.pop();
     }
 
-    /** Clear preview state (call after stopping RunningShow + cancelling scheduler). */
-    public void clearPreview() {
-        this.previewShow      = null;
-        this.previewScheduler = null;
-        this.holdActive       = false;
-        this.stepHistory.clear();
+    /** Peek at the previous tick without removing it (the one BEFORE the current position). */
+    public long peekPreviousTick() {
+        if (visitedTicks.size() < 2) return -1L;
+        Iterator<Long> it = visitedTicks.iterator();
+        it.next(); // current (top of deque)
+        return it.next(); // previous
     }
 
-    // ---- Step history (for Prev navigation) ----
+    public void clearVisitedTicks()                               { visitedTicks.clear(); }
 
-    /** Record a tick that was dispatched in the current preview. */
-    public void recordStep(long tick) { stepHistory.add(tick); }
+    // -----------------------------------------------------------------------
+    // Department edit
+    // -----------------------------------------------------------------------
 
-    /** The tick of the last dispatched step, or -1L if nothing has been dispatched. */
-    public long lastStepTick() {
-        return stepHistory.isEmpty() ? -1L : stepHistory.get(stepHistory.size() - 1);
+    public DeptEditSession getActiveEditSession()                          { return activeEditSession; }
+    public void            setActiveEditSession(DeptEditSession s)         { this.activeEditSession = s; }
+    public boolean         isEditing()                                     { return activeEditSession != null; }
+
+    public Set<String>     getDirtyCueIds()                                { return dirtyCueIds; }
+    public void            markCueDirty(String cueId)                      { dirtyCueIds.add(cueId); }
+
+    // -----------------------------------------------------------------------
+    // Session toggles
+    // -----------------------------------------------------------------------
+
+    public boolean         isAutoPreview()                                 { return autoPreview; }
+    public void            setAutoPreview(boolean v)                       { this.autoPreview = v; }
+
+    public WorldPreviewMode getWorldPreview()                              { return worldPreview; }
+    public void             setWorldPreview(WorldPreviewMode m)            { this.worldPreview = m; }
+
+    // -----------------------------------------------------------------------
+    // Display
+    // -----------------------------------------------------------------------
+
+    public BossBar    getEditBossBar()                                     { return editBossBar; }
+    public void       setEditBossBar(BossBar bar)                         { this.editBossBar = bar; }
+
+    public BukkitTask getButtonRefreshTask()                               { return buttonRefreshTask; }
+    public void       setButtonRefreshTask(BukkitTask t)                  { this.buttonRefreshTask = t; }
+
+    // -----------------------------------------------------------------------
+    // Dirty flag
+    // -----------------------------------------------------------------------
+
+    public boolean isDirty()                                              { return dirty; }
+    public void    markDirty()                                            { this.dirty = true; }
+    public void    clearDirty()                                           { this.dirty = false; }
+
+    // -----------------------------------------------------------------------
+    // Stop-safety cleanup
+    // -----------------------------------------------------------------------
+
+    /**
+     * Release all display resources associated with this session.
+     * Called by TechManager.exitPhase2() before discarding this object.
+     * Does NOT stop a live previewShow — caller must call exitPreview() first.
+     */
+    public void cleanup() {
+        if (buttonRefreshTask != null && !buttonRefreshTask.isCancelled()) {
+            buttonRefreshTask.cancel();
+            buttonRefreshTask = null;
+        }
+        if (editBossBar != null) {
+            player.hideBossBar(editBossBar);
+            editBossBar = null;
+        }
+        dirtyCueIds.clear();
+        visitedTicks.clear();
     }
-
-    /** Remove the last recorded step (called on stepBack). */
-    public void popLastStep() {
-        if (!stepHistory.isEmpty()) stepHistory.remove(stepHistory.size() - 1);
-    }
-
-    /** True if at least one step has been dispatched in the current preview. */
-    public boolean hasSteps() { return !stepHistory.isEmpty(); }
-
-    // -----------------------------------------------------------------------
-    // Accessors — department edit
-    // -----------------------------------------------------------------------
-
-    public DeptEditSession activeEditSession()           { return activeEditSession; }
-    public void  setActiveEditSession(DeptEditSession s) { this.activeEditSession = s; }
-    public void  clearActiveEditSession()                { this.activeEditSession = null; }
-    public boolean isEditing()                           { return activeEditSession != null; }
-
-    public Set<String> dirtyCueIds()                     { return dirtyCueIds; }
-    public void        markCueDirty(String cueId)        { dirtyCueIds.add(cueId); }
-
-    // -----------------------------------------------------------------------
-    // Accessors — toggles
-    // -----------------------------------------------------------------------
-
-    public boolean          autoPreview()                     { return autoPreview; }
-    public void             setAutoPreview(boolean on)        { this.autoPreview = on; }
-    public WorldPreviewMode worldPreview()                    { return worldPreview; }
-    public void             setWorldPreview(WorldPreviewMode m){ this.worldPreview = m; }
-
-    // -----------------------------------------------------------------------
-    // Accessors — display
-    // -----------------------------------------------------------------------
-
-    public BossBar    editBossBar()                         { return editBossBar; }
-    public void       setEditBossBar(BossBar bar)           { this.editBossBar = bar; }
-    public BukkitTask buttonRefreshTask()                   { return buttonRefreshTask; }
-    public void       setButtonRefreshTask(BukkitTask t)    { this.buttonRefreshTask = t; }
 }

@@ -288,7 +288,11 @@ public final class RunningShow {
         currentTick++;
     }
 
-    /** Directly position the tick counter — used by step mode during TechCueSession preview. */
+    /**
+     * Set the tick counter directly.
+     * Used by ShowScheduler step mode to jump to the next event tick
+     * without busy-looping through every intermediate tick.
+     */
     public void setCurrentTick(long tick) {
         this.currentTick = tick;
     }

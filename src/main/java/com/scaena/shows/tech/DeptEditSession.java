@@ -1,28 +1,40 @@
 package com.scaena.shows.tech;
 
 /**
- * Interface for per-department edit sessions in Phase 2.
+ * Interface for per-department Phase 2 edit sessions.
  *
- * Each department implements its own session (Casting, Wardrobe, Sound, ...).
- * The interface provides the save/cancel contract shared by all departments.
+ * Each department that supports in-panel editing implements this interface.
+ * The TechCueSession holds at most one active DeptEditSession at a time.
+ * Entry: player clicks [Edit ▸] in the Phase 2 cue panel.
+ * Exit: player clicks [Save], [Save as Preset], or [Cancel].
  *
- * Group 5 implements concrete sessions, one per department, in priority order
- * (simplest → most complex). This interface is the only coupling between
- * TechCueSession and the department-specific edit logic.
+ * The universal edit shell (boss bar, periodic save/cancel button re-send,
+ * hotbar suspension) is managed by CuePanelBuilder / TechManager, not here.
  */
 public interface DeptEditSession {
-    /** The cue ID being edited (e.g. "casting.zombie.warrior_enter"). */
+
+    /** The fully-qualified cue ID being edited (e.g. "casting.zombie.warrior_enter"). */
     String cueId();
 
-    /** The department this session belongs to (e.g. "casting"). */
+    /** The department slug owning this session (e.g. "casting", "sound"). */
     String department();
 
-    /** Player clicked [Save] — apply changes, close edit session. */
+    /**
+     * Commit changes to the show YAML via the session's ShowYamlEditor.
+     * Called when the player clicks [Save].
+     */
     void onSave();
 
-    /** Player clicked [Save as Preset] — apply changes and promote to cues/*.yml. */
+    /**
+     * Commit changes and promote the cue content to the preset library
+     * (cues/*.yml) with an auto-generated ID.
+     * Called when the player clicks [Save as Preset].
+     */
     void onSaveAsPreset();
 
-    /** Player clicked [Cancel] — discard all edits, restore entry state. */
+    /**
+     * Discard all in-session edits and restore the entry state.
+     * Called when the player clicks [Cancel].
+     */
     void onCancel();
 }

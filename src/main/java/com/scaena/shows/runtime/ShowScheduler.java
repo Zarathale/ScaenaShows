@@ -39,15 +39,15 @@ public final class ShowScheduler {
     /** Flattened event map: absolute tick → events, built at show start. */
     private final NavigableMap<Long, List<ShowEvent>> eventMap = new TreeMap<>();
 
-    private BukkitTask task;
-    private final RunningShow show;
-
     /**
-     * When true, the BukkitRunnable tick loop skips all event dispatch and tick advancement.
-     * Events are dispatched on demand via dispatchNextEventTick() / dispatchEventsUpTo().
-     * Used by TechCueSession preview mode.
+     * When true, the BukkitRunnable tick loop does nothing — all dispatch is
+     * demand-driven via dispatchNextEventTick() / dispatchEventsUpTo().
+     * Set by TechCueSession when entering Phase 2 preview mode.
      */
     private boolean steppingMode = false;
+
+    private BukkitTask task;
+    private final RunningShow show;
 
     public ShowScheduler(
         JavaPlugin plugin,
@@ -77,7 +77,7 @@ public final class ShowScheduler {
                     return;
                 }
 
-                // Step mode: demand-driven — caller advances explicitly via dispatchNextEventTick()
+                // Step mode: all dispatch is demand-driven; tick loop is a no-op
                 if (steppingMode) return;
 
                 // Hard-suspended for PLAYER_CHOICE — hold until resolved
@@ -139,72 +139,84 @@ public final class ShowScheduler {
             + " (new duration: " + show.getDurationOverride() + ")");
     }
 
-    // ------------------------------------------------------------------
-    // Step mode — used by TechCueSession preview
-    // ------------------------------------------------------------------
-
-    /** Enter step mode. The tick loop will run but skip all dispatch until exitStepMode() is called. */
-    public void enableStepMode() {
-        steppingMode = true;
-    }
-
-    /** Exit step mode and return to production tick-clock dispatch. */
-    public void disableStepMode() {
-        steppingMode = false;
-    }
-
-    /**
-     * Dispatch the next event tick in step mode.
-     *
-     * Finds the event tick at or after the current position, dispatches all events
-     * at that tick, and advances the show's tick counter past that tick.
-     *
-     * @return the tick that was dispatched, or -1L if there are no more events
-     */
-    public long dispatchNextEventTick() {
-        long current = show.getCurrentTick();
-        Map.Entry<Long, List<ShowEvent>> next = eventMap.ceilingEntry(current);
-        if (next == null) return -1L;
-
-        long targetTick = next.getKey();
-        for (ShowEvent e : next.getValue()) {
-            if (e.type() == EventType.CUE) continue;
-            executors.dispatch(e, show);
-        }
-        tickBossBar(targetTick);
-        show.setCurrentTick(targetTick + 1);
-        return targetTick;
-    }
-
-    /**
-     * Dispatch all events from the current position up to and including targetTick, in order.
-     *
-     * Used by preview mode to replay a range (e.g. on Prev — rewind and re-dispatch
-     * from scene start to the prior cue tick).
-     */
-    public void dispatchEventsUpTo(long targetTick) {
-        long current = show.getCurrentTick();
-        NavigableMap<Long, List<ShowEvent>> range =
-            eventMap.subMap(current, true, targetTick, true);
-        for (Map.Entry<Long, List<ShowEvent>> entry : range.entrySet()) {
-            for (ShowEvent e : entry.getValue()) {
-                if (e.type() == EventType.CUE) continue;
-                executors.dispatch(e, show);
-            }
-            tickBossBar(entry.getKey());
-        }
-        if (targetTick >= current) {
-            show.setCurrentTick(targetTick + 1);
-        }
-    }
-
-    /** The RunningShow this scheduler is driving — used by Phase 2 step navigation. */
-    public RunningShow show() { return show; }
-
     /** Cancel the scheduler task without triggering full stop (called by ShowManager). */
     public void cancel() {
         if (task != null && !task.isCancelled()) {
             task.cancel();
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Step mode (Phase 2 preview)
+    // ------------------------------------------------------------------
+
+    /**
+     * Enable or disable step mode.
+     *
+     * When true, the BukkitRunnable tick loop is a no-op and all event
+     * dispatch is driven by dispatchNextEventTick() / dispatchEventsUpTo().
+     * When false (default), the scheduler returns to normal production
+     * tick-clock behaviour.
+     */
+    public void setSteppingMode(boolean stepping) {
+        this.steppingMode = stepping;
+    }
+
+    public boolean isSteppingMode() {
+        return steppingMode;
+    }
+
+    /**
+     * Dispatch all events at the next event tick after the show's current tick.
+     * Advances the tick cursor to that tick and holds there.
+     *
+     * This is the "Go" operation in Phase 2 preview mode.
+     *
+     * PAUSE events are dispatched as a no-op (per their executor) — the step
+     * naturally holds at that tick, so authored PAUSE markers behave as expected
+     * without any special-case logic here.
+     *
+     * @return the tick at which events were dispatched,
+     *         or -1 if no further events exist in the map
+     */
+    public long dispatchNextEventTick() {
+        long currentTick = show.getCurrentTick();
+        Long nextTick = eventMap.higherKey(currentTick);
+        if (nextTick == null) return -1;
+
+        show.setCurrentTick(nextTick);
+        dispatchAt(nextTick);
+        tickBossBar(nextTick);
+        return nextTick;
+    }
+
+    /**
+     * Dispatch all events from currentTick (exclusive) through targetTick (inclusive),
+     * then advance the tick cursor to targetTick.
+     *
+     * Used for seeking to a specific timeline position — e.g. jumping to a cue's
+     * tick to set up the world state for that moment without navigating step-by-step.
+     *
+     * @param targetTick the tick to seek to (must be >= show.getCurrentTick())
+     */
+    public void dispatchEventsUpTo(long targetTick) {
+        long current = show.getCurrentTick();
+        NavigableMap<Long, List<ShowEvent>> range =
+            eventMap.subMap(current, false, targetTick, true);
+        for (long tick : range.keySet()) {
+            dispatchAt(tick);
+        }
+        show.setCurrentTick(targetTick);
+        tickBossBar(targetTick);
+    }
+
+    /** Dispatch all events at the given absolute tick (internal helper). */
+    private void dispatchAt(long tick) {
+        List<ShowEvent> events = eventMap.get(tick);
+        if (events == null) return;
+        for (ShowEvent e : events) {
+            if (e.type() == EventType.CUE) continue; // already expanded at build time
+            executors.dispatch(e, show);
         }
     }
 
