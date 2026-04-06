@@ -831,6 +831,71 @@ fade_out_ticks: 20
 
 ---
 
+### OPS-045 [future-capability] HARP_SWEEP event type — harp articulation primitive
+
+**Area:** Sound department, Music instruments
+**Filed:** 2026-04-06
+**Priority:** Medium — high creative value; enables idiomatic harp gesture authoring
+
+**Problem:**
+MUSIC_CYCLE covers arpeggio patterns well, but does not model the physical gesture of
+a harpist sweeping across tuned strings. Broadway sweeps, bisbigliando, legato glissandi,
+and thunder pulls require variable per-note timing, dynamic weight shaping, and overlap
+control — none of which MUSIC_CYCLE supports.
+
+**Goal:**
+Implement `HARP_SWEEP` as a distinct MUSIC event type with:
+- Tuning fields: `root`, `pattern`, `harpify` (same as MUSIC_CYCLE)
+- Range fields: `range_low`, `range_high`
+- `technique:` — named preset or inline block: direction, speed profile, weight, overlap_ticks
+- `cycles:`, `volume:` (scalar or envelope)
+- `HarpSweepExpander` — generates N MUSIC events with variable inter-event timing from speed profile; per-note volume envelopes from weight; overlap via max_duration_ticks
+- Named technique library (9 presets): broadway_sweep, broadway_pull, broadway_finale, bisbigliando, glissando_legato, glissando_staccato, soft_whisper, thunder_pull, shimmer_flutter
+- Phase 2 panel with tuning/range/technique/dynamics sections; named preset browser
+- Named HARP_SWEEP presets: `harp.sweep.[technique_family].[slug]`
+
+**Spec:** §12d of ops-029-design-session-2026-04-05.md
+
+**Rough size:**
+- HarpSweepEvent model: ~100 lines
+- HarpSweepExpander (speed profiles, weight, overlap): ~300 lines
+- Named technique registry: ~80 lines
+- Phase 2 panel: ~300 lines
+- Total: ~780 lines / ~4–6 weeks alongside other MUSIC work
+
+**Prerequisite:** MUSIC event type and PitchResolver shipped (same prerequisite as MUSIC types generally).
+
+---
+
+### OPS-044 [future-capability] MUSIC cue migration — motif.* and gracie.* to PHRASE
+
+**Area:** Cue library, Sound department
+**Filed:** 2026-04-06
+**Priority:** Low — cleanup; existing cues work; no playback impact
+
+**Problem:**
+The existing `motif.*` and `gracie.*` named cues are hand-authored sequences of SOUND events.
+Now that `PHRASE` with `instrument:` shorthand is the canonical authoring primitive for musical
+content, these cues should be migrated to the new format and naming convention.
+
+**New naming convention:** `music.[instrument].[shape].[slug]`
+
+| Old ID | New ID | Notes |
+|---|---|---|
+| `motif.arrival.bell` | `music.bell.rise.arrival` | 3-note rising step |
+| `motif.unease.descend` | `music.bass.descent.unease` | 3-note chromatic descent |
+| `motif.wonder.chime` | `music.chime.ascend.wonder` | 4-note ascending run |
+| `motif.still.chord` | `music.pling.chord.still` | A minor chord, sustained |
+| `motif.warmth.banjo` | `music.banjo.arch.warmth` | 5-note pentatonic arch |
+
+Gracie's gestures move under `music.harp.*`. Gracie remains as a character concept in KB
+and production team docs; cue IDs no longer named after her.
+
+**Prerequisite:** MUSIC type formally entered into spec.md (⚑6 prerequisite).
+**Scope:** ~10–13 cues + any show YAML references that need ID updates.
+
+---
+
 ### OPS-041 [java-gap] DARKEN_SKY event — sky darkening for Lighting department
 
 **Area:** Lighting department, world-state instruments

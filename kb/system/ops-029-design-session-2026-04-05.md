@@ -803,7 +803,7 @@ editorial responsibility is documented.
 - `hide_particles` — toggle. Default: true (always hidden in show context)
 - `audience` — selector: `participants / group_1 / group_2`
 
-**`[▶ Hear it]`** — applies the effect to the designer for duration_ticks. Auto-preview
+**`[▶ Preview]`** — applies the effect to the designer for duration_ticks. Auto-preview
 re-applies on each param change when ON.
 
 **Preset:** ✅ Yes — named effect configurations. Audience not captured (set at call time).
@@ -1006,10 +1006,10 @@ Cluster support (multiple events at one step) via `events:` array.
 
 **Field set:**
 ```yaml
-type: EFFECT_PHRASE
+type: PHRASE
 audience: participants
 tempo_bpm: 120           # optional — enables at_beat: addressing
-subdivision: 8           # optional
+subdivision: eighth      # optional
 steps:
   - at: 0               # tick offset (or at_beat: if tempo set)
     type: EFFECT
@@ -1598,7 +1598,7 @@ No presets for PLAYER_MOUNT or PLAYER_DISMOUNT — entity names are show-specifi
 Phase 2 confirmed. PHRASE primitive applied to Camera's event set. Department ownership: Phase 2 panel offers Camera events in the step editor; Camera presets populate the preset picker.
 
 ```yaml
-type: CAMERA_PHRASE
+type: PHRASE
 audience: participants
 tempo_bpm: 120
 subdivision: quarter    # quarter | eighth | sixteenth
@@ -1678,7 +1678,7 @@ format-specific fields, preview, save-as-preset for all four.
 Primary Phase 2 authoring surface for Voice. Script editor model, not beat sequencer.
 
 ```yaml
-type: VOICE_PHRASE
+type: PHRASE
 audience: participants      # phrase-level default; per-step can override
 
 steps:
@@ -1854,17 +1854,17 @@ specifies its own `start`, `end`, and optional `curve`.
 | `steps` | Yes | Number of events to distribute |
 | `total_duration` | Yes | Total tick length of the Pattern |
 | `curve` | No | Pattern-level default curve: `linear` (default) \| `ease_in` \| `ease_out` \| `equal_temperament` — overridden per-param |
-| `step_duration` | No | For event types with internal duration (EFFECT): how long each step event lasts |
-| `gap` | No | Ticks between step end and next step start (interval = step_duration + gap) |
+| `duration_ticks` | No | For event types with internal duration (EFFECT): how long each step event lasts |
+| `cycle_ticks` | No | Ticks from one pulse start to the next. Implicit gap = `cycle_ticks - duration_ticks`. If `cycle_ticks < duration_ticks`, pulses overlap (engine warns at author time). |
 
 **Per-param curve options:**
 
-| Curve | Behavior | Use for |
-|---|---|---|
-| `linear` | Equal arithmetic steps (default) | Volume, amplifier, time |
-| `ease_in` | Slow start, accelerating change | Swells, tension builds |
-| `ease_out` | Fast start, decelerating change | Release, fading |
-| `equal_temperament` | Multiplicative steps — equal musical intervals | Pitch only — sounds like a smooth glide |
+| Curve | Behavior | Use for | Available on |
+|---|---|---|---|
+| `linear` | Equal arithmetic steps (default) | Volume, amplifier, time | All Pattern types |
+| `ease_in` | Slow start, accelerating change | Swells, tension builds | All Pattern types |
+| `ease_out` | Fast start, decelerating change | Release, fading | All Pattern types |
+| `equal_temperament` | Multiplicative steps — equal musical intervals | Pitch only — sounds like a smooth glide | **MUSIC_PATTERN only** |
 
 **`equal_temperament` math:** PatternExpander multiplies the previous value by
 `(end/start)^(1/(steps-1))` at each step rather than adding a linear increment.
@@ -1887,40 +1887,40 @@ semitone 0 = F#3, 12 = F#4 (natural), 24 = F#5.
 **Glissando example — whole-tone harp sweep (ascending):**
 
 ```yaml
-type: SOUND_PATTERN
-sound_id: minecraft:block.note_block.harp
-steps: 13                  # 13 whole-tone steps across 2 octaves
-total_duration: 130        # 10 ticks per note (~120 BPM eighth note feel)
+type: MUSIC_PATTERN          # equal_temperament is MUSIC_PATTERN only
+instrument: harp
+steps: 13                    # 13 whole-tone steps across 2 octaves
+total_duration: 130          # 10 ticks per note (~120 BPM eighth note feel)
 interpolations:
   pitch:
-    start: 0.5             # F#3 — lowest note block pitch
-    end: 2.0               # F#5 — highest note block pitch
+    start: F#3               # note name — resolves to 0.5
+    end: F#5                 # note name — resolves to 2.0
     curve: equal_temperament
   volume:
     start: 0.9
-    end: 0.9               # constant — omit for same effect
+    end: 0.9                 # constant — omit for same effect
     curve: linear
 ```
 
 **Crescendo glissando — pitch rises while volume builds:**
 
 ```yaml
-type: SOUND_PATTERN
-sound_id: minecraft:block.note_block.harp
+type: MUSIC_PATTERN
+instrument: harp
 steps: 13
 total_duration: 130
 interpolations:
   pitch:
-    start: 0.5
-    end: 2.0
+    start: F#3
+    end: F#5
     curve: equal_temperament
   volume:
     start: 0.3
     end: 1.0
-    curve: ease_in         # volume accelerates into the peak
+    curve: ease_in           # volume accelerates into the peak
 ```
 
-**Simulated volume fade (original SOUND_PATTERN use case — unchanged):**
+**Simulated volume fade (SOUND_PATTERN — volume interpolation, no pitch):**
 
 ```yaml
 type: SOUND_PATTERN
@@ -1940,7 +1940,7 @@ Three Pattern types ship in Phase 2:
 
 | Type | Department | Interpolatable params | Primary use |
 |---|---|---|---|
-| `SOUND_PATTERN` | Sound | `pitch` (equal_temperament), `volume` (linear/ease) | Glissando, simulated fade, crescendo |
+| `SOUND_PATTERN` | Sound | `volume` (linear/ease), `pitch` (linear/ease — arbitrary effect only) | Simulated fade, volume swell, pitch shift effect |
 | `EFFECT_PATTERN` | Effects | `amplifier` | Levitation hover/climb/release cycles |
 | `TIME_OF_DAY_PATTERN` | Lighting | `time` | Gradual time transition |
 
@@ -1952,11 +1952,11 @@ concrete show need drives them.
 The three calibrated levitation patterns move from KB documentation to named EFFECT_PATTERN
 presets in `effect-configs.yml`:
 
-| Preset ID | step_duration | gap | interval | Confirmed behavior |
-|---|---|---|---|---|
-| `effects.levitate.hover` | 20t | 8t | 28t | "gentle bubbling" — clean altitude hold |
-| `effects.levitate.climb` | 24t | 0t | 24t | "separation from earth" — gradual drift |
-| `effects.levitate.release` | 20t | 24t | 44t | "blood pressure release" — slow descent |
+| Preset ID | duration_ticks | cycle_ticks | Sensation |
+|---|---|---|---|
+| `effects.levitation.hover` | 20t | 28t | "gentle bubbling" — clean altitude hold |
+| `effects.levitation.climb` | 24t | 24t | "separation from earth" — gradual drift |
+| `effects.levitation.release` | 20t | 44t | "blood pressure release" — slow descent |
 
 ### ✅ Pattern in TechCueSession (Phase 2)
 
@@ -2044,7 +2044,10 @@ the same way SPANs are expanded. Scheduler and executors see only the expanded e
 |---|---|---|
 | `tempo_bpm` | No | Enables beat-based step addressing (`at_beat:`). Converted to `ticks_per_quarter` internally — may approximate for non-anchor BPM values. See §12c. |
 | `ticks_per_quarter` | No | Alternative to `tempo_bpm`. Always exact — no conversion rounding. Mutually exclusive with `tempo_bpm`; takes precedence if both present. |
-| `subdivision` | No | Smallest rhythmic unit available in the beat grid: `4` = quarter notes, `8` = eighth notes (default), `16` = sixteenth notes. Subdivisions that produce fractional ticks are unavailable in Phase 2 panel. |
+| `subdivision` | No | Smallest rhythmic unit available in the beat grid: `quarter` \| `eighth` (default) \| `sixteenth`. Names a rhythmic value — not a tick count. The actual tick count per subdivision is determined by `ticks_per_quarter`. Subdivisions that produce fractional ticks are unavailable in the Phase 2 panel. |
+| `instrument` | No | Phrase-level default instrument for MUSIC step shorthand. When set, steps may use `pitch:` + `volume:` directly rather than a full `events:` array. The shorthand resolves as `{type: MUSIC, instrument: [value], pitch: ..., volume: ...}`. Any step can override with a full `events:` array mixing any dept. |
+| `category` | No | Phrase-level default audio category; inherited by all shorthand MUSIC steps. |
+| `anchor` | No | Spatial anchor for event types that support it (e.g. Fireworks, Choreography). Phrase-level; per-step override not available on anchor — set at invocation time. |
 | `steps` | Yes | Ordered list of step entries |
 
 **Step entry fields:**
@@ -2076,7 +2079,7 @@ hard floor. Subdivisions marked ⚠️ produce fractional ticks and are unavaila
 Phase 2 beat-grid editor.
 
 `subdivision` constrains the Phase 2 beat-grid editor — in-game step placement snaps to
-the available positions for that subdivision. At `subdivision: 8`, beat positions of `1.25`
+the available positions for that subdivision. At `subdivision: eighth`, beat positions of `1.25`
 (sixteenth) are unavailable until subdivision is changed.
 
 **Rests** are implicit — the absence of a step at a beat position is silence.
@@ -2120,7 +2123,7 @@ across departments.
 ```yaml
 type: PHRASE
 tempo_bpm: 120
-subdivision: 8
+subdivision: eighth
 steps:
   - at_beat: 1.0
     events:
@@ -2146,15 +2149,15 @@ tempo_bpm: 80
 steps:
   - at_beat: 1.0         # single burst
     events:
-      - {type: FIREWORK, preset_id: fireworks.burst.gold.high}
+      - {type: FIREWORK, preset: fireworks.burst.gold.high}
   - at_beat: 2.0         # volley — simultaneous bursts
     events:
-      - {type: FIREWORK, preset_id: fireworks.burst.gold.high}
-      - {type: FIREWORK, preset_id: fireworks.burst.silver.mid}
-      - {type: FIREWORK, preset_id: fireworks.burst.red.low}
+      - {type: FIREWORK, preset: fireworks.burst.gold.high}
+      - {type: FIREWORK, preset: fireworks.burst.silver.mid}
+      - {type: FIREWORK, preset: fireworks.burst.red.low}
   - at_beat: 3.0
     events:
-      - {type: FIREWORK, preset_id: fireworks.burst.white.finale}
+      - {type: FIREWORK, preset: fireworks.burst.white.finale}
 ```
 
 ### ✅ PATTERN vs. PHRASE decision guide for melodic content
@@ -2435,7 +2438,9 @@ the doubling and therefore where in each cycle the repetition falls.
 | `minor_7th` | [0,3,7,10] | doublings vary | Dark-warm, jazz |
 | `dim_triad` | [0,3,6] | doublings vary | Instability, dread |
 | `aug_triad` | [0,4,8] | doublings vary | Uneasy symmetry |
-| `six_nine` | [0,2,4,7,9] | doublings vary | Root+M2+M3+P5+M6 — open, no 4th or 7th |
+| `maj6_9` | [0,4,7,9] | root, M3, P5 each doubled | Major 6th chord — lush, shimmering, unresolved. The defining harp voicing; most idiomatic from Ab root |
+| `min6_9` | [0,3,7,9] | root, m3, P5 each doubled | Minor 6th chord — darker resonance, modal depth, interior and unresolved |
+| `six_nine` | [0,2,4,7,9] | doublings vary | Root+M2+M3+P5+M6 — five-voice open voicing; no 4th or 7th |
 
 ---
 
@@ -2542,14 +2547,14 @@ Single-instrument authored sequence. Simplifies step authoring — instrument an
 declared once at the top; steps need only pitch and volume.
 
 ```yaml
-type: MUSIC_PHRASE
-instrument: harp
-category: master
+type: PHRASE
+instrument: harp           # phrase-level default — steps using pitch/volume shorthand inherit this
+category: master           # phrase-level default for all MUSIC steps
 tempo_bpm: 120
-subdivision: 8
+subdivision: eighth
 steps:
   - at_beat: 1.0
-    pitch: A4              # shorthand — single note step
+    pitch: A4              # shorthand — single note step; inherits instrument + category from above
     volume: 0.8
   - at_beat: 1.5
     pitch: B4
@@ -2566,7 +2571,8 @@ steps:
 ```
 
 **Shorthand form:** `pitch:` + `volume:` at the step level = syntactic sugar for a
-single-event step. Any step can use the full `events:` array instead.
+single-event MUSIC step. Requires `instrument:` declared at the phrase level. Any step can
+use the full `events:` array instead, mixing any dept event types at that step.
 
 **Exception harmonies:** `events:` array accepts any number of notes. The instrument
 declared at the top applies to all. This is how you add a doubled octave, sixth, or any
@@ -2585,8 +2591,8 @@ nearest in-range octave. Panel shows the folded pitch.
 beat positions; `at:` in raw ticks if no tempo_bpm.
 
 **Existing motif cues:** `motif.*` and `gracie.*` cues remain as-is — valid, tested, not
-migrated automatically. MUSIC_PHRASE is the authoring primitive for new musical content
-going forward. See OPS-035.
+migrated automatically. PHRASE with instrument shorthand is the authoring primitive for new
+musical content going forward. See OPS-044.
 
 ---
 
@@ -2623,7 +2629,7 @@ MUSIC edit modes follow the universal edit shell (§9). Instrument-specific affo
 
 ---
 
-### 📋 OPS-035: Migration of motif.* and gracie.*
+### 📋 OPS-044: Migration of motif.* and gracie.*
 
 **Scope:** Re-author existing named cues in the `motif.*` and `gracie.*` namespaces as
 MUSIC_PHRASE cues following the new naming convention. Update any show YAMLs that reference
@@ -2644,7 +2650,7 @@ KB and production team docs; cue IDs no longer named after her.
 
 **Prerequisite:** MUSIC type spec formally entered into `spec.md` (same prerequisite as ⚑6).
 **Scope assessment:** 5 motif cues + Gracie's gesture library (~5–8 cues) + show YAML updates.
-File as OPS-035 before migration begins.
+OPS-044 filed (2026-04-06).
 
 ---
 
@@ -2664,6 +2670,155 @@ File as OPS-035 before migration begins.
 | PatternExpander extensions for MUSIC_PATTERN | Java | ~50 lines |
 | Phase 2 panel: all MUSIC edit modes | Java/UI | ~350 lines |
 | **Total** | | **~4–6 weeks** |
+
+---
+
+## 12d. HARP_SWEEP — Harp Articulation Primitive
+
+### ✅ Overview
+
+`HARP_SWEEP` is a distinct MUSIC event type for harpists — it models the physical gesture of
+fingers sweeping across a tuned set of strings, not just an arpeggio cycling through intervals.
+Where `MUSIC_CYCLE` defines *what harmonic pattern* cycles, `HARP_SWEEP` defines *how a harpist
+moves through the strings*: direction, speed profile, touch weight, note overlap.
+
+The two types are complementary, not redundant:
+
+| | MUSIC_CYCLE | HARP_SWEEP |
+|---|---|---|
+| Concept | Arpeggio pattern cycling | Physical string sweep gesture |
+| Primary param | Pattern interval array | Technique (motion + dynamics) |
+| Speed | Fixed `step_duration` | Variable — shaped by speed profile |
+| Use for | Chord arpeggios, rhythmic figures | Glissandi, broadway sweeps, bisbigliando |
+
+### ✅ Field set
+
+```yaml
+type: HARP_SWEEP
+root: Ab3                    # transposable anchor — note name or float
+pattern: maj6_9              # any named pattern or explicit interval array — defines the tuning
+harpify: true                # resolve to full 7-string pedal tuning (recommended: true for sweeps)
+range_low: Ab3               # optional — lowest string to include; defaults to full pattern range
+range_high: F#5              # optional — highest string to include
+technique: broadway_finale   # named preset (see library below) OR inline block
+cycles: 1                    # how many complete passes through the range
+volume: 0.9                  # scalar or envelope {start, end, curve} — overall level
+category: master
+audience: participants
+```
+
+**Inline technique block** (when no named preset fits):
+
+```yaml
+technique:
+  direction: up_down         # ascending | descending | up_down | down_up | bisbigliando
+  speed: accelerando         # steady | accelerando | ritardando | swell
+  weight: heavy              # light | medium | heavy
+  overlap_ticks: 0           # ticks a note rings before release; 0 = clean gliss; 3+ = blur
+```
+
+**Field notes:**
+- `direction: up_down` — ascending sweep, then descending sweep, as one continuous gesture
+- `direction: bisbigliando` — rapid back-and-forth, very short range, notes heavily overlapping; `overlap_ticks` should be 3–6t
+- `speed: swell` — slow start, accelerates to midpoint, decelerates back (the classical big harp arc)
+- `weight` — governs the dynamic shape *within a single pass*, independent of `volume`: heavy = notes swell and ring; light = notes are brief and even; medium = standard gliss character
+- `overlap_ticks` — how long each note continues to ring before the next string fires its note. Distinct from `step_duration` in MUSIC_CYCLE; the engine computes per-note durations from technique + speed profile
+- `range_low` / `range_high` can be set to explore only a portion of the tuning — a low-register rumble or a high-register shimmer without full-range traversal
+
+### ✅ Named Technique Library
+
+| Technique | Direction | Speed | Weight | Overlap | Character |
+|---|---|---|---|---|---|
+| `broadway_sweep` | ascending | accelerando | heavy | 0t | The big ascending pull — energy builds as fingers move up |
+| `broadway_pull` | descending | ritardando | heavy | 0t | Pulling back down — gravity and resolution after the peak |
+| `broadway_finale` | up_down | swell | heavy | 0t | The complete arc — ascends with acceleration, sweeps back with breadth |
+| `bisbigliando` | up_down | steady | light | 4t | Rapid back-and-forth shimmer; notes blur and overlap; trembling texture |
+| `glissando_legato` | ascending | steady | medium | 2t | Clean ascending gliss; notes just touch before releasing |
+| `glissando_staccato` | ascending | steady | light | 0t | Clean ascending gliss; notes are crisp and separate |
+| `soft_whisper` | ascending | ritardando | light | 0t | Slow, delicate ascent; very light touch; nearly inaudible at top |
+| `thunder_pull` | descending | ritardando | heavy | 0t | Heavy descending gliss slowing to a deep resolution |
+| `shimmer_flutter` | up_down | steady | light | 3t | Fast, soft oscillation over a narrow range; atmospheric shimmer |
+
+### ✅ Named presets (full sweeps)
+
+Named HARP_SWEEP presets capture a complete configuration: tuning + range + technique + dynamics.
+Naming convention: `harp.sweep.[technique_family].[slug]`
+
+Examples:
+
+```yaml
+# harp.sweep.broadway.victory_pull
+id: harp.sweep.broadway.victory_pull
+root: Ab3
+pattern: maj6_9
+harpify: true
+technique: broadway_finale
+cycles: 1
+volume: {start: 0.5, end: 1.0, curve: ease_in}
+
+# harp.sweep.bisbigliando.shimmer_above
+id: harp.sweep.bisbigliando.shimmer_above
+root: F#4
+pattern: whole_tone_bc
+harpify: true
+range_low: F#4
+range_high: F#5
+technique: bisbigliando
+cycles: 3
+volume: 0.6
+
+# harp.sweep.whisper.opening_mist
+id: harp.sweep.whisper.opening_mist
+root: C4
+pattern: pentatonic_major
+harpify: true
+range_low: C4
+range_high: A5
+technique: soft_whisper
+cycles: 1
+volume: 0.4
+```
+
+### ✅ Phase 2 panel
+
+```
+HARP SWEEP
+
+  Tuning
+    Pattern: [ maj6_9         ▾ ]   Root: [ Ab3 ]   Harpify: [✓]
+
+  Range
+    Low: [ Ab3 ]   High: [ F#5 ]   [ Full range ]
+
+  Technique
+    [ broadway_finale         ▾ ]   (or [ Custom... ])
+    → Direction: up_down   Speed: swell   Weight: heavy   Overlap: 0t
+    (shown as read-only descriptors when a named technique is selected;
+     editable fields when Custom is selected)
+
+  Dynamics
+    Volume: [ 0.9 ]   Cycles: [ 1 ]
+
+  [▶ Preview]  [Save]  [Save as Preset]  [Cancel]
+```
+
+When `[▶ Preview]` fires, the engine runs the full sweep once at the designer's current
+position. Cycles constrain the preview to 1 regardless of authored value — the sound of one
+pass is sufficient for dialing in tuning and technique.
+
+Auto-preview: OFF by default — a full sweep is a significant perceptible event. Explicit
+`[▶ Preview]` only.
+
+### ✅ Java implementation note (OPS-045)
+
+`HarpSweepExpander` generates N MUSIC events with variable inter-event tick spacing computed
+from the technique's speed profile and the total tick count derived from the range + cycles.
+The expander applies the weight profile to per-note volume envelopes and the overlap model to
+per-note max_duration_ticks. `PatternExpander` / `PhraseExpander` are not used — this is a
+distinct expander with its own math.
+
+OPS-045 filed (2026-04-06): `HARP_SWEEP` event type, `HarpSweepExpander`, named technique
+registry, Phase 2 panel.
 
 ---
 
@@ -2755,16 +2910,16 @@ takes precedence if both are present (error logged).
 
 ```yaml
 # BPM form — familiar, may approximate
-type: MUSIC_PHRASE
-instrument: harp
+type: PHRASE
+instrument: harp       # phrase-level default for shorthand steps
 tempo_bpm: 100         # internally converts to 12 ticks/quarter — exact here
-subdivision: 8
+subdivision: eighth
 
 # Tick-first form — always exact
-type: MUSIC_PHRASE
+type: PHRASE
 instrument: harp
 ticks_per_quarter: 12  # declared directly — no conversion, no rounding
-subdivision: 8
+subdivision: eighth
 ```
 
 The Phase 2 panel always shows both representations: the entry field (BPM or
@@ -2783,183 +2938,4 @@ nearest whole tick — small drift accumulates at the phrase end. The Phase 2 pa
 warns when this condition is detected:
 
 ```
-Non-integer step spacing (12.5t) — steps will be rounded.
-Consider: steps: 13 (spacing: 12t)  or  total_duration: 125 (spacing: 12.5 → round)
-```
-
-The panel suggests the nearest `steps` value that produces integer spacing for the
-current `total_duration`, and vice versa. Designers should resolve the warning before
-saving to keep patterns tick-coherent.
-
-### ✅ MUSIC_CYCLE step_duration alignment
-
-`step_duration:` in MUSIC_CYCLE is already tick-native (whole integers only). For musical
-coherence, align `step_duration` to a subdivision of the current tempo anchor:
-
-| ticks_per_quarter | Natural step_duration values | Subdivision |
-|---|---|---|
-| 12 | 3, 6, 9, 12, 18, 24 | 16th, 8th, dotted 8th, quarter, dotted quarter, half |
-| 10 | 5, 10, 20 | 8th, quarter, half |
-| 8 | 4, 8, 16 | 8th, quarter, half |
-
-No validation enforcement on `step_duration` — it is a tick value. Guidance only.
-
-### ✅ Loop integrity
-
-For PHRASEs and PATTERNs intended to cycle or loop, total phrase length in ticks should
-be divisible by one of the preferred loop units:
-
-| Loop unit (ticks) | Equivalent at 12t/q | Notes |
-|---|---|---|
-| 12 | 1 quarter | minimum stable loop unit |
-| 24 | 1 half note | |
-| 48 | 1 bar (4/4) | standard loop unit |
-| 96 | 2 bars | |
-| 192 | 4 bars | preferred phrase length for repeating content |
-
-The Phase 2 panel computes total phrase length in ticks and shows a loop-alignment
-indicator: a green check if the length is divisible by 48 (1 bar at 12t/q), yellow if
-divisible by 12 (sub-bar clean), red if neither. Designer can adjust `total_duration`,
-`steps`, or step timing to achieve alignment.
-
-### ✅ Meter reference
-
-Common bar lengths in ticks at preferred anchors:
-
-| Meter | 12t/q | 10t/q | 8t/q |
-|---|---|---|---|
-| 2/4 | 24 | 20 | 16 |
-| 3/4 | 36 | 30 | 24 |
-| 4/4 | 48 | 40 | 32 |
-| 6/8 | 36 | 30 | 24 |
-| 5/4 | 60 | 50 | 40 |
-
-### 📋 Tempo hierarchy — show/scene/cue (design intention, spec TBD)
-
-A show's overall rhythmic character can be expressed as a top-level `tempo:` block.
-Scenes can override it. PHRASEs and PATTERNs that omit their own tempo field inherit
-from the nearest container.
-
-```yaml
-id: showcase.01
-tempo:
-  ticks_per_quarter: 12       # show default
-
-scenes:
-  - id: battle_approach
-    # inherits show tempo
-  - id: battle_climax
-    tempo:
-      ticks_per_quarter: 8    # scene override — faster
-```
-
-A PHRASE within `battle_climax` that omits `tempo_bpm` / `ticks_per_quarter` inherits
-`ticks_per_quarter: 8` from its scene. A PHRASE that declares its own value overrides locally.
-
-Implementation requires: show/scene YAML model extension, PhraseExpander tempo resolution
-chain, spec.md update. Filed as ⚑28.
-
----
-
-## 13. Set Coordinate System
-
-### ✅ Scene set origin mark
-
-Block coordinates in set presets are stored relative to a dedicated **scene set origin
-mark** — a named mark established once per scene, separate from the arrival mark.
-
-Properties:
-- Does not move when the arrival mark is repositioned
-- Established during initial set design; stable thereafter
-- Defines `(0, 0, 0)` for all block coordinates in that scene's set presets
-- Portability: any set preset can be reused at any world location by placing the
-  origin mark at the desired position
-
----
-
-## 14. Universal Preset Library
-
-### ✅ Established pattern
-
-Fireworks.yml is the existing model. Each department has its own preset file or folder.
-Presets are named library assets referenced by ID from events in cues.
-
-### ✅ Department preset files (proposed, not yet formally specified)
-
-| Department | Preset file |
-|---|---|
-| Fireworks | `fireworks.yml` (exists) |
-| Set | `block-configs.yml` or `sets/[id].yml` |
-| Sound | `sound-configs.yml` |
-| Effects | `effect-configs.yml` |
-| Wardrobe | `wardrobe-configs.yml` |
-| Lighting | `lighting-configs.yml` |
-| Camera | `camera-configs.yml` |
-| Casting | `casting-configs.yml` |
-| Voice | `voice-configs.yml` |
-
-### 📋 OPS item not yet filed
-
-The universal preset library is bigger than Phase 2 alone. Phase 2 is the first
-implementation (Set being the first department with in-game capture). A separate
-OPS item should be filed once the department walk is complete and the full scope
-is clear.
-
----
-
-## 15. Open Items
-
-| # | Item | Blocking? |
-|---|------|-----------|
-| ⚑ 1 | Edit target: show YAML only vs. also loading cues/*.yml — Pattern reinforces "cue file loaded" model: if a Pattern lives in a cue file, TechCueSession must have that file loaded to edit Pattern params | Yes — before ShowYamlEditor Java |
-| ⚑ 2 | Q4 (partial YAML / scaffold handling): what does Phase 2 do when a CUE reference can't resolve at preview time? What is the minimum viable YAML to enter Phase 2? | Yes — before TechCueSession Java |
-| ⚑ 3 | Panel design / mockup: full Phase 2 panel with all modes and states including Pattern display | Yes — before Java |
-| ✅ 4 | Department walk complete (2026-04-05). All 10 departments locked. Two Choreography items deferred to calibration: CHOREO_PATTERN field set, presets. These are calibration-dependent, not blocking spec. | Closed |
-| ✅ 5 | Preset library file structure written into spec.md §22 (2026-04-06). Universal format: `presets:` map in `src/main/resources/[dept].yml`. Startup loading. Six files ship in Phase 2: effects, camera, voice, sound, lighting (+ fireworks exists). Four deferred: wardrobe, set, casting, choreography. | Closed |
-| ✅ 6 | Pattern/PHRASE/MUSIC/Tempo schema written into spec.md (2026-04-06). §18 Pattern Event Architecture, §19 PHRASE Event Architecture, §20 MUSIC Event Type, §21 Tempo Architecture. Vocabulary Reference updated. | Closed |
-| ✅ 7 | Pattern type list confirmed (2026-04-05): SOUND_PATTERN, EFFECT_PATTERN, TIME_OF_DAY_PATTERN ship in Phase 2. MUSIC_PATTERN added as new type pending spec (⚑17). Fireworks types confirmed as FIREWORK_PATTERN subtypes (⚑19). | Closed |
-| ✅ 8 | Text formatting: & color codes confirmed as server standard (not MiniMessage). Full cheat sheet added to voice.kb.md §Text Formatting Reference (colors &0–&f, format &k/l/m/n/o/r, server extras &y/&u). spec.md §6.1 examples corrected. Text input modal: chat prompt for single-value fields; book editor for rich/multi-line text. | Closed |
-| 📋 9 | OPS item for universal preset library: file as separate ticket once department walk complete | No |
-| 📋 10 | Auto-name fallback logic: per-department inference rules when slug is absent | No — slug is required; fallback is a safety net only |
-| 📋 11 | Leather color palette: define the curated named color list for Wardrobe | No — design asset, not blocking |
-| 📋 12 | OPS-033 (display noise cleanup): still blocked on Phase 2 architecture decision — that decision is now made (extend TechSession). OPS-033 Part B can proceed. | No |
-| ✅ 13 | MELODY_PATTERN concept superseded (2026-04-05): melodic content is now covered by two primitives. SOUND_PATTERN with `equal_temperament` curve handles interpolated pitch sequences (glissandi, whole-tone sweeps). PHRASE (§12a) handles explicitly authored note sequences. No standalone MELODY_PATTERN type needed. | Closed |
-| ✅ 14 | `world_preview` param: default confirmed as `LIVE` (2026-04-05). In-scene editing shows reality by default; toggle available contextually to suppress when needed. | Closed |
-| 📋 15 | OPS-034 (player-anchored LIGHTNING): Java capability gap filed 2026-04-05. Player anchor presets can be authored and saved in Phase 2; they require OPS-034 to fire correctly in production. Not blocking Phase 2 panel work. | No |
-| ✅ 16 | SPAN → PATTERN rename confirmed (2026-04-05). Find/replace complete throughout this doc. Building spec and Java model names to be updated when Java work begins. PATTERN and PHRASE are the two generative primitives. Fireworks spatial types are FIREWORK_PATTERN subtypes. | Closed |
-| ✅ 17 | MUSIC event type spec written into spec.md (2026-04-06, §20). MUSIC, MUSIC_PATTERN, MUSIC_CYCLE (harpify, named pattern library, 5 families), MUSIC_PHRASE (exception harmonies, fold, shorthand form). All four forms fully specced. OPS-035 migration can now be filed. | Closed |
-| 📋 23 | OPS-035: Migration of motif.* and gracie.* to MUSIC_PHRASE format. New naming convention: music.[instrument].[shape].[slug]. ~10–13 cues to re-author. Prerequisite: MUSIC spec in spec.md. Scope assessment in §12b. | No — after spec.md |
-| ✅ 18 | Effects PHRASE container vocabulary word (closed 2026-04-05): Effects vocab redefined to align with universal model. Pulse (single event) / Cluster (vertical grouping) / Phrase (EFFECT_PHRASE container). "Pattern" correctly refers to the EFFECT_PATTERN type only — no collision. | Closed |
-| 📋 19 | Fireworks schema migration: FIREWORK_CIRCLE, FIREWORK_LINE, etc. are confirmed as FIREWORK_PATTERN subtypes (2026-04-05). Type names in `fireworks.yml` and show YAMLs need updating. Assess migration scope before Fireworks walk. | No — not blocking walk, but must be done before Java |
-| 📋 20 | Camera walk in progress (2026-04-05). FACE panel, CAMERA_LOCK/MOVEMENT_LOCK, BOUNDARY_CHECK, VIEW_CHECK, and show-relative spatial vocabulary locked. Remaining: PLAYER_SPECTATE, PLAYER_MOUNT, CAMERA screen effects panels; CAMERA_PATTERN field set (PT only — zoom gapped); CAMERA_PHRASE field set. | No |
-| 📋 25 | Origin mark facing capture: origin mark must store yaw (facing direction) in addition to position (x, y, z). Required for show-relative spatial vocabulary to resolve at runtime. Spec update and Java model change needed. | No — before Choreography Java |
-| 📋 26 | CAMERA_LOCK / MOVEMENT_LOCK event type spec: two new event types, each with state: ON \| OFF. Cross-department. Stop-safety contract must explicitly reset both. Spec entry and Java implementation needed. | No |
-| 📋 27 | Conditional primitive spec: BOUNDARY_CHECK (position-based) and VIEW_CHECK (orientation-based). First conditional execution model in the engine. Both need spec entries, Java executors with branching logic, and Phase 2 panel designs. VIEW_CHECK constraint: corrective action is always smooth pan, never snap. | No — not blocking walk |
-| 📋 28 | Tempo hierarchy: show/scene/cue tempo inheritance model. Show YAML gets optional `tempo: ticks_per_quarter:` block; scenes can override; PHRASEs/PATTERNs inherit if no local tempo set. Requires show/scene YAML model extension, PhraseExpander resolution chain, spec.md update. | No — after §12c design |
-| 📋 21 | Voice walk: orientation captured (2026-04-05). VOICE_PHRASE (lines as steps with timing, location, color, intensity, duration) confirmed. Scene editing mode (Add/Insert/Reorder lines) scoped. | No |
-| 🔄 22 | Choreography walk in progress (2026-04-05). Panel taxonomy locked. CHOREO_PATTERN in scope (formation/geometric). PHRASE confirmed as cross-department (⚑29). Open: CHOREO_PATTERN field set, CHOREO_PHRASE field set, presets. | No |
-| ✅ 29 | PHRASE unification locked (2026-04-05). `type: PHRASE` is the single schema type. Dept-specific names are authoring convention only. Step builder: dept picker → event type picker → panel. Vertical grouping: multiple event slots per step, each with its own dept/type picker + change action. Entry points pre-select dept, no restriction on subsequent steps. | Closed |
-| 📋 24 | Fireworks player-anchor Java dependency: `anchor: player` on any FIREWORK/* event type requires the same Java capability as OPS-034 (resolve player position at invocation time). Not a new gap — OPS-034 dependency. Phase 2 panel writes valid YAML and shows a warning; live execution requires OPS-034 to ship. | No — not blocking Phase 2 panel |
-
----
-
-## 16. What Has Not Changed from the Existing Phase 2 Spec
-
-These items from `tech-rehearsal-phase2-spec.md` remain as-is:
-
-- PAUSE event type: no-op executor, safe in production YAML (§6, Q1 resolved)
-- PREV rewind: accept the stutter, replay from tick 0 (Q3 resolved)
-- In-game cue creation: out of scope for Phase 2 (Q2 resolved)
-- ShowScheduler additions: `steppingMode`, `dispatchNextEventTick()`, `dispatchEventsUpTo()`
-- TechCueSession structure (§4)
-- TechManager Phase 2 lifecycle methods (§4)
-- The theatrical model and two-mode design (§2, §3)
-- Phase 1 + Phase 2 coexistence model (§10)
-
----
-
-*Session paused 2026-04-05 — account transition. Sound locked. Lighting locked. Pattern
-architecture updated (multi-param, equal_temperament, glissando). PHRASE primitive added.
-OPS-034 filed. PATTERN rename confirmed (⚑16 closed). MUSIC confirmed as new event type
-(⚑17 opened). Department orientation scan complete for all remaining departments. Effects
-(Felix) locked 2026-04-05. Remaining: Fireworks, Camera, Voice, Choreography.*
+Non-integer step spacing (12.5t) — steps will be rounde
