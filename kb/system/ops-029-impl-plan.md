@@ -200,10 +200,11 @@ Dependencies flow top to bottom. Each group can ship as a discrete commit.
 - [x] `UtilityEventExecutor` — `case PAUSE -> {}` no-op
 - [x] `ExecutorRegistry` — `PAUSE` registered to `utility`
 
-### Group 2 — ShowScheduler step mode
+### Group 2 — ShowScheduler step mode ✅ 2.30.0
 Depends on: nothing new (adds to existing class).
-- [ ] `ShowScheduler` — add `steppingMode` flag, `dispatchNextEventTick()`, `dispatchEventsUpTo(long)`
-- [ ] Step mode gates the BukkitRunnable tick loop; demand-driven dispatch when `steppingMode = true`
+- [x] `ShowScheduler` — add `steppingMode` flag, `dispatchNextEventTick()`, `dispatchEventsUpTo(long)`
+- [x] Step mode gates the BukkitRunnable tick loop; demand-driven dispatch when `steppingMode = true`
+- [x] `RunningShow` — add `setCurrentTick(long)` to support direct tick positioning
 
 **Version bump: MINOR**
 

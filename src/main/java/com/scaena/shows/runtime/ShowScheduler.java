@@ -42,6 +42,13 @@ public final class ShowScheduler {
     private BukkitTask task;
     private final RunningShow show;
 
+    /**
+     * When true, the BukkitRunnable tick loop skips all event dispatch and tick advancement.
+     * Events are dispatched on demand via dispatchNextEventTick() / dispatchEventsUpTo().
+     * Used by TechCueSession preview mode.
+     */
+    private boolean steppingMode = false;
+
     public ShowScheduler(
         JavaPlugin plugin,
         CueRegistry cueRegistry,
@@ -69,6 +76,9 @@ public final class ShowScheduler {
                     cancel();
                     return;
                 }
+
+                // Step mode: demand-driven — caller advances explicitly via dispatchNextEventTick()
+                if (steppingMode) return;
 
                 // Hard-suspended for PLAYER_CHOICE — hold until resolved
                 if (show.isSuspended()) return;
@@ -127,6 +137,65 @@ public final class ShowScheduler {
         log.fine("[ScaenaShows] Branch '" + branchCue.id
             + "' injected at tick " + currentTick
             + " (new duration: " + show.getDurationOverride() + ")");
+    }
+
+    // ------------------------------------------------------------------
+    // Step mode — used by TechCueSession preview
+    // ------------------------------------------------------------------
+
+    /** Enter step mode. The tick loop will run but skip all dispatch until exitStepMode() is called. */
+    public void enableStepMode() {
+        steppingMode = true;
+    }
+
+    /** Exit step mode and return to production tick-clock dispatch. */
+    public void disableStepMode() {
+        steppingMode = false;
+    }
+
+    /**
+     * Dispatch the next event tick in step mode.
+     *
+     * Finds the event tick at or after the current position, dispatches all events
+     * at that tick, and advances the show's tick counter past that tick.
+     *
+     * @return the tick that was dispatched, or -1L if there are no more events
+     */
+    public long dispatchNextEventTick() {
+        long current = show.getCurrentTick();
+        Map.Entry<Long, List<ShowEvent>> next = eventMap.ceilingEntry(current);
+        if (next == null) return -1L;
+
+        long targetTick = next.getKey();
+        for (ShowEvent e : next.getValue()) {
+            if (e.type() == EventType.CUE) continue;
+            executors.dispatch(e, show);
+        }
+        tickBossBar(targetTick);
+        show.setCurrentTick(targetTick + 1);
+        return targetTick;
+    }
+
+    /**
+     * Dispatch all events from the current position up to and including targetTick, in order.
+     *
+     * Used by preview mode to replay a range (e.g. on Prev — rewind and re-dispatch
+     * from scene start to the prior cue tick).
+     */
+    public void dispatchEventsUpTo(long targetTick) {
+        long current = show.getCurrentTick();
+        NavigableMap<Long, List<ShowEvent>> range =
+            eventMap.subMap(current, true, targetTick, true);
+        for (Map.Entry<Long, List<ShowEvent>> entry : range.entrySet()) {
+            for (ShowEvent e : entry.getValue()) {
+                if (e.type() == EventType.CUE) continue;
+                executors.dispatch(e, show);
+            }
+            tickBossBar(entry.getKey());
+        }
+        if (targetTick >= current) {
+            show.setCurrentTick(targetTick + 1);
+        }
     }
 
     /** Cancel the scheduler task without triggering full stop (called by ShowManager). */

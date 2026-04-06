@@ -288,6 +288,11 @@ public final class RunningShow {
         currentTick++;
     }
 
+    /** Directly position the tick counter — used by step mode during TechCueSession preview. */
+    public void setCurrentTick(long tick) {
+        this.currentTick = tick;
+    }
+
     /** Signal that the show has ended or been stopped. */
     public void stop() {
         running = false;
