@@ -45,6 +45,7 @@ public final class FireworkEvents {
     // FIREWORK (single launch)
     // ------------------------------------------------------------------
     public static final class FireworkEvent extends ShowEvent {
+        public final String anchor;       // scene_origin | player
         public final String preset;
         public final double offsetX, offsetY, offsetZ;
         public final String yMode;        // relative | surface
@@ -52,6 +53,7 @@ public final class FireworkEvents {
 
         public FireworkEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
+            this.anchor        = str(m, "anchor", "scene_origin");
             this.preset  = str(m, "preset", "");
             Map<String, Object> off = mapVal(m, "offset");
             this.offsetX = dblVal(off, "x", 0);
@@ -68,6 +70,7 @@ public final class FireworkEvents {
     // FIREWORK_CIRCLE
     // ------------------------------------------------------------------
     public static final class FireworkCircleEvent extends ShowEvent {
+        public final String anchor;       // scene_origin | player
         public final String preset;
         public final XZOffset originOffset;
         public final double radius;
@@ -82,6 +85,7 @@ public final class FireworkEvents {
 
         public FireworkCircleEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
+            this.anchor          = str(m, "anchor", "scene_origin");
             this.preset          = str(m, "preset", "");
             this.originOffset    = XZOffset.from(m.get("origin_offset"), "x", "z");
             this.radius          = dblVal(m, "radius", 10);
@@ -102,6 +106,7 @@ public final class FireworkEvents {
     // FIREWORK_LINE
     // ------------------------------------------------------------------
     public static final class FireworkLineEvent extends ShowEvent {
+        public final String anchor;       // scene_origin | player
         public final String preset;
         public final XZOffset startOffset;
         public final double length;
@@ -122,6 +127,7 @@ public final class FireworkEvents {
 
         public FireworkLineEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
+            this.anchor        = str(m, "anchor", "scene_origin");
             this.preset        = str(m, "preset", "");
             this.startOffset   = XZOffset.from(m.get("start_offset"), "x", "z");
             this.length        = dblVal(m, "length", 10);
@@ -143,6 +149,7 @@ public final class FireworkEvents {
     // FIREWORK_FAN
     // ------------------------------------------------------------------
     public static final class FireworkFanEvent extends ShowEvent {
+        public final String anchor;       // scene_origin | player
         public final XZOffset originOffset;
         public final List<FanArm> arms;
         public final String yMode;
@@ -158,6 +165,7 @@ public final class FireworkEvents {
         @SuppressWarnings("unchecked")
         public FireworkFanEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
+            this.anchor          = str(m, "anchor", "scene_origin");
             this.originOffset    = XZOffset.from(m.get("origin_offset"), "x", "z");
             this.yMode           = str(m, "y_mode", "surface");
             this.yOffset         = dblVal(m, "y_offset", 2);
@@ -188,24 +196,34 @@ public final class FireworkEvents {
     // All fireworks launch simultaneously (no chase).
     // ------------------------------------------------------------------
     public static final class FireworkRandomEvent extends ShowEvent {
+        public final String anchor;       // scene_origin | player
         public final String preset;
         public final XZOffset originOffset;
         public final double radius;
         public final int count;
         public final String yMode;
         public final double yOffset;
+        public final String powerVariation;   // UNIFORM | RAMP_UP | RAMP_DOWN | ALTERNATE | RANDOM
+        public final String colorVariation;   // UNIFORM | RAINBOW | GRADIENT | ALTERNATE
+        public final String gradientFrom;
+        public final String gradientTo;
         public final Long seed; // null = different every run
 
         public FireworkRandomEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
-            this.preset       = str(m, "preset", "");
-            this.originOffset = XZOffset.from(m.get("origin_offset"), "x", "z");
-            this.radius       = dblVal(m, "radius", 10);
-            this.count        = intVal(m, "count", 6);
-            this.yMode        = str(m, "y_mode", "surface");
-            this.yOffset      = dblVal(m, "y_offset", 2);
-            Object seedRaw    = m.get("seed");
-            this.seed         = (seedRaw instanceof Number n) ? n.longValue() : null;
+            this.anchor          = str(m, "anchor", "scene_origin");
+            this.preset          = str(m, "preset", "");
+            this.originOffset    = XZOffset.from(m.get("origin_offset"), "x", "z");
+            this.radius          = dblVal(m, "radius", 10);
+            this.count           = intVal(m, "count", 6);
+            this.yMode           = str(m, "y_mode", "surface");
+            this.yOffset         = dblVal(m, "y_offset", 2);
+            this.powerVariation  = str(m, "power_variation", "UNIFORM").toUpperCase();
+            this.colorVariation  = str(m, "color_variation", "UNIFORM").toUpperCase();
+            this.gradientFrom    = str(m, "gradient_from", "#FF0000");
+            this.gradientTo      = str(m, "gradient_to", "#0000FF");
+            Object seedRaw       = m.get("seed");
+            this.seed            = (seedRaw instanceof Number n) ? n.longValue() : null;
         }
 
         @Override public EventType type() { return EventType.FIREWORK_RANDOM; }

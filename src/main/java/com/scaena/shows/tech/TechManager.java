@@ -2169,8 +2169,12 @@ public final class TechManager {
             return new EffectsEditSession(
                 cueId, cueSession.getPlayer(), cueSession, editor, cueRegistry, log);
         }
-        // TODO (Group 5): add Fireworks, Lighting,
-        //   Camera, Choreography, Set as each department is implemented.
+        if (cueId.startsWith("fireworks.")) {
+            return new FireworksEditSession(
+                cueId, cueSession.getPlayer(), cueSession, editor, cueRegistry, log);
+        }
+        // TODO (Group 5): add Lighting, Camera, Choreography, Set
+        //   as each department is implemented.
         return null;
     }
 
