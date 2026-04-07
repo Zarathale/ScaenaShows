@@ -1,40 +1,48 @@
 ---
 document: OPS-029 Phase 2 Implementation Plan
 date: 2026-04-06
-status: Working plan — ready to build
+status: Active — Groups 0–4 committed, Group 5 next
 scope: TechCueSession, ShowYamlEditor, and related work sequenced from ops-inbox
 ---
 
 # OPS-029 Phase 2 — Implementation Plan
 
 All architecture decisions are locked. This document is the build roadmap:
-new classes, build sequence, one open design question, and OPS items sequenced
-in from the inbox.
+new classes, build sequence, and OPS items sequenced in from the inbox.
 
 ---
 
-## Open Design Question — Scene / Timeline Mapping
+## Current State — Read This First
 
-**Must resolve before writing `TechCueSession` or `CuePanelBuilder`.**
+**Groups 0–4 are all committed on `main` at v2.32.0. Git is clean. Ready to build.**
 
-The Phase 2 panel filters the show timeline to the current scene. But `PromptBook.SceneSpec`
-has no tick range. The show YAML has a flat `timeline:` — no scene boundaries.
+~~Step 1 — Version bump~~ ✅ Done. `build.gradle.kts` is at `2.32.0`, build confirmed clean.
+~~Step 2 — Git cleanup~~ ✅ Done. `.claude/` worktrees untracked, `.gitattributes` added.
 
-**Proposed resolution:** Add `tick_start` to `SceneSpec` in the prompt book. Each scene
-declares the tick at which it begins. Phase 2 buckets timeline CUE refs between
-`scene[n].tick_start` and `scene[n+1].tick_start` (last scene runs to `duration_ticks`).
+### Git workflow rule for all Code sessions
 
-Changes required:
-- `PromptBook.SceneSpec` — add `int tickStart` field
-- `PromptBookLoader` — read `tick_start:` from YAML
-- Prompt book YAML files — add `tick_start:` to each scene entry
+**Always branch before any Java work. Never commit directly to `main`.**
 
-This is a small, isolated addition. It's the cleaner alternative to embedding scene
-markers in the show YAML.
+```bash
+git checkout -b claude/ops-029-group5-casting
+```
 
-**Confirm this before Java begins.** If rejected, the alternative is CUE refs carry
-their scene ID as an authoring field (slug-based, fragile) or Phase 2 doesn't filter
-by scene (shows the full timeline flat). Neither alternative is preferred.
+Commit message format: `OPS-029 Group 5 [Dept]: [what] (vX.Y.Z)`
+Push the branch. Stop there. Alan reviews and merges via GitHub Desktop.
+
+### Begin Group 5
+
+Start with **Casting** (simplest: panel only, live param swap, no world capture).
+See § Build Sequence → Group 5 below.
+
+---
+
+## Design Question — Scene / Timeline Mapping ✅ RESOLVED
+
+`tick_start` in `PromptBook.SceneSpec` confirmed. Changes shipped in Group 0 (v2.29.0):
+- `PromptBook.SceneSpec` — `tickStart` field added
+- `PromptBookLoader` — reads `tick_start:` from YAML
+- Prompt book YAML files — add `tick_start:` per show as scenes are ticked (hand-authored)
 
 ---
 
@@ -224,31 +232,78 @@ Depends on: Group 0 (scene/tick mapping resolved), Group 1 (PAUSE), Group 2 (ste
 
 **Version bump: MINOR**
 
-### Group 4 — CuePanelBuilder + command surface ✅ committed (11a3ad6, 2026-04-06) — version bump PENDING
+### Group 4 — CuePanelBuilder + command surface ✅ 2.32.0
 Depends on: Group 3.
 - [x] `CuePanelBuilder.java` — Edit mode panel (§4c mockup), end-of-scene panel
 - [x] `CuePanelBuilder` — preview mode sidebar timeline cursor
 - [x] `ShowCommand` — add `/scaena tech2` entry command (or `/scaena tech <showId> cues`)
 - [x] Command subcommands: `go`, `hold`, `prev`, `scene next`, `scene prev`, `edit <cueId>`, `panel`
 
-**Version bump: MINOR — NOT YET APPLIED. Bump build.gradle.kts 2.31.0 → 2.32.0 before next build.**
+**Version bump: MINOR ✅**
 
 ### Group 5 — Department edit sessions (iterative)
-Depends on: Group 4. Implement one department at a time; each ships independently.
+Depends on: Groups 1–4 (all committed). Implement one department at a time; each ships independently.
+
+Each department implements `DeptEditSession` and ships as its own MINOR bump on a feature branch.
+Branch naming: `claude/ops-029-group5-[dept]`
 
 **Priority order (simplest → most complex):**
-1. [ ] Casting — panel only; live swap on param change; no world capture
-2. [ ] Wardrobe — slot selector panel; leather color sub-panel
-3. [ ] Sound — param panel; auto-preview (refire SOUND event on change)
-4. [ ] Voice — script line text input; BOSSBAR/ACTION_BAR/TITLE sub-panel
-5. [ ] Effects — potion effect selector; auto-preview
-6. [ ] Fireworks — firework builder panel; auto-preview (refire burst)
-7. [ ] Lighting — TIME_OF_DAY / WEATHER; world_preview param toggle
-8. [ ] Camera — ROTATE/TELEPORT/CAMERA selectors
-9. [ ] Choreography — DANCE selector panel
-10. [ ] Set — block diff capture (most complex; in-world; full stop-motion model)
 
-Each department ships as its own MINOR bump.
+1. [ ] **Casting** — panel only; live param swap on param change; no world capture
+   - Read `kb/system/phase2-department-panels.md §Casting` for panel spec
+   - Read `kb/departments/casting/casting.kb.md` for dept context
+   - New class: `CastingEditSession implements DeptEditSession`
+   - No auto-preview needed — Casting changes take effect on next Phase 1 materialization
+   - Version: 2.33.0
+
+2. [ ] **Wardrobe** — slot selector panel; leather color sub-panel
+   - Read `kb/system/phase2-department-panels.md §Wardrobe`
+   - New class: `WardrobeEditSession implements DeptEditSession`
+   - Version: 2.34.0
+
+3. [ ] **Sound** — param panel; auto-preview (refire SOUND event on change)
+   - Read `kb/system/phase2-department-panels.md §Sound`
+   - New class: `SoundEditSession implements DeptEditSession`
+   - Version: 2.35.0
+
+4. [ ] **Voice** — script line text input; BOSSBAR/ACTION_BAR/TITLE sub-panel
+   - Read `kb/system/phase2-department-panels.md §Voice`
+   - New class: `VoiceEditSession implements DeptEditSession`
+   - Version: 2.36.0
+
+5. [ ] **Effects** — potion effect selector; auto-preview
+   - Read `kb/system/phase2-department-panels.md §Effects`
+   - New class: `EffectsEditSession implements DeptEditSession`
+   - Version: 2.37.0
+
+6. [ ] **Fireworks** — firework builder panel; auto-preview (refire burst)
+   - Read `kb/system/phase2-department-panels.md §Fireworks`
+   - New class: `FireworksEditSession implements DeptEditSession`
+   - Version: 2.38.0
+
+7. [ ] **Lighting** — TIME_OF_DAY / WEATHER; world_preview param toggle
+   - Read `kb/system/phase2-department-panels.md §Lighting`
+   - New class: `LightingEditSession implements DeptEditSession`
+   - Version: 2.39.0
+
+8. [ ] **Camera** — ROTATE/TELEPORT/CAMERA selectors
+   - Read `kb/system/phase2-department-panels.md §Camera`
+   - New class: `CameraEditSession implements DeptEditSession`
+   - Version: 2.40.0
+
+9. [ ] **Choreography** — DANCE selector panel
+   - Read `kb/system/phase2-department-panels.md §Choreography`
+   - New class: `ChoreographyEditSession implements DeptEditSession`
+   - Version: 2.41.0
+
+10. [ ] **Set** — Phase 2 panel wrapper only; block diff capture is already done
+    - Read `kb/system/phase2-department-panels.md §Set`
+    - `SetBuildSession.java`, `BlockBuildListener.java`, `SetBuildWriter.java` are **fully
+      implemented and live in Phase 1** (`TechSession`/`TechManager`). The in-world block
+      tracking, bounding box logic, and YAML write are all working. Do not rewrite them.
+    - New class: `SetEditSession implements DeptEditSession` — wires the existing Phase 1
+      capture into the Phase 2 panel interface. The hard work is already done.
+    - Version: 2.42.0
 
 ---
 
@@ -326,14 +381,22 @@ Total to fully ship Phase 2: ~2,500 lines across ~12 commits.
 
 ## Version Progression (rough)
 
-Current: `2.31.0` in build.gradle.kts — **bump to 2.32.0 required** (Group 4 committed without bump)
+Current: `2.32.0` ✅
 
-| Group | Expected version | Actual |
+| Group | Version | Status |
 |---|---|---|
-| Group 1 (PAUSE) | 2.29.0 | ✅ 2.29.0 |
-| Group 2 (step mode) | 2.30.0 | ✅ 2.30.0 |
-| Group 3 (TechCueSession core) | 2.31.0 | ✅ 2.31.0 |
-| Group 4 (panel + commands) | 2.32.0 | ⚠️ committed, bump pending |
-| Group 5 — first dept (Casting) | 2.33.0 | not started |
-| … each subsequent dept | +0.1.0 | |
-| OPS-043 + OPS-040 | slots into any Group 1–2 window | |
+| Group 1 (PAUSE) | 2.29.0 | ✅ |
+| Group 2 (step mode) | 2.30.0 | ✅ |
+| Group 3 (TechCueSession core) | 2.31.0 | ✅ |
+| Group 4 (panel + commands) | 2.32.0 | ✅ |
+| Group 5 — Casting | 2.33.0 | next |
+| Group 5 — Wardrobe | 2.34.0 | |
+| Group 5 — Sound | 2.35.0 | |
+| Group 5 — Voice | 2.36.0 | |
+| Group 5 — Effects | 2.37.0 | |
+| Group 5 — Fireworks | 2.38.0 | |
+| Group 5 — Lighting | 2.39.0 | |
+| Group 5 — Camera | 2.40.0 | |
+| Group 5 — Choreography | 2.41.0 | |
+| Group 5 — Set | 2.42.0 | |
+| OPS-043 + OPS-040 | slots into any Group 5 window | |

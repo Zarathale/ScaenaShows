@@ -26,18 +26,18 @@ All 12 department KBs are now in folder structure (`kb/departments/[dept-slug]/[
 - Gates 1 (Casting) ✅ and 2 (Wardrobe) ✅ closed. Kit locked, arc staged, script v2 complete.
 - Gate 3 (Set Scouting) open. Zarathale scouts Sites B–F using `direction/showcase.01.scouting-field-guide.md`. Site A scouted 2026-03-30.
 - Gate 4 (Intake) pending Gate 3. Two TBDs remain: victory coda fireworks (Mira) + victory levitation amplifier (Effects, pending ceiling clearance).
-- Engine at 2.31.0 (committed) — OPS-027 (Phase 1) shipped. OPS-029 Groups 0–4 all committed. **Version bump to 2.32.0 pending** (Group 4 shipped without bump — fix in Code before next build). Prompt Book is the authoritative committed-state artifact.
+- Engine at 2.32.0 — OPS-027 (Phase 1) shipped. OPS-029 Groups 0–4 all committed. Prompt Book is the authoritative committed-state artifact.
 
 **Not show-specific:**
 - R7 debrief ✅ complete (2026-03-28). R8 not yet scheduled.
-- **OPS-029 Phase 2 — Groups 0–4 committed (2026-04-06).**
-  Groups 0–1 at v2.29.0. Group 2 at v2.30.0. Group 3 at v2.31.0 (via PR merge). Group 4
-  (CuePanelBuilder) committed in "update" (11a3ad6) — **version not bumped yet; needs 2.32.0**.
-  Read `kb/system/ops-029-impl-plan.md` for full build sequence.
+- **OPS-029 Phase 2 — Groups 0–4 committed at v2.32.0. Git clean. Group 5 next.**
+  Groups 0–1 at v2.29.0. Group 2 at v2.30.0. Group 3 at v2.31.0. Group 4 at v2.32.0.
+  Read `kb/system/ops-029-impl-plan.md` for full build sequence — it has everything Code needs.
   Read `kb/system/ops-029-design-session-2026-04-05.md` for architecture decisions.
-  **Next: bump version → 2.32.0, verify build (./gradlew shadowJar), then begin Group 5 (Casting dept first).**
-  Note: `SetBuildSession.java`, `BlockBuildListener.java`, `SetBuildWriter.java` exist in
-  `tech/` from an earlier commit — early Group 5 Set scaffolding. Review before starting Group 5.
+  **Next: begin Group 5 in Code (Casting dept first, feature branch).**
+  Note: `SetBuildSession.java`, `BlockBuildListener.java`, `SetBuildWriter.java` are fully
+  shipped Phase 1 features — block diff capture is live and wired into `TechSession`/`TechManager`.
+  Group 5 Set wraps this in a `DeptEditSession` for Phase 2; the hard capture work is already done.
   Detailed content in standalone docs:
   - `kb/system/phase2-department-panels.md` — all 10 department panel specs
   - `kb/system/pattern-phrase-spec.md` — PATTERN, PHRASE, Tempo Architecture
@@ -213,7 +213,7 @@ Do not reopen these without Alan.
 
 ## Versioning Policy
 
-**Current version:** `2.31.0` → **bump to `2.32.0` pending** (Group 4 shipped without bump)
+**Current version:** `2.32.0`
 **Version file:** `build.gradle.kts` — the `version = "x.y.z"` line
 
 Before telling Alan to build, either bump the version or explicitly state why no bump is needed.
