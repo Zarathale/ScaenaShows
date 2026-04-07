@@ -2035,6 +2035,8 @@ public final class TechManager {
         // Send the department panel (or fallback message for unimplemented departments)
         if (editSession instanceof CastingEditSession castingSession) {
             CastingPanelBuilder.sendPanel(player, castingSession);
+        } else if (editSession instanceof WardrobeEditSession wardrobeSession) {
+            WardrobePanelBuilder.sendPanel(player, wardrobeSession);
         } else {
             player.sendMessage(MM.deserialize(
                 "<aqua>Editing: <white>" + cueId + "</white></aqua>"
@@ -2147,7 +2149,11 @@ public final class TechManager {
             return new CastingEditSession(
                 cueId, cueSession.getPlayer(), cueSession, editor, cueRegistry, log);
         }
-        // TODO (Group 5): add Wardrobe, Sound, Voice, Effects, Fireworks, Lighting,
+        if (cueId.startsWith("wardrobe.")) {
+            return new WardrobeEditSession(
+                cueId, cueSession.getPlayer(), cueSession, editor, cueRegistry, log);
+        }
+        // TODO (Group 5): add Sound, Voice, Effects, Fireworks, Lighting,
         //   Camera, Choreography, Set as each department is implemented.
         return null;
     }
