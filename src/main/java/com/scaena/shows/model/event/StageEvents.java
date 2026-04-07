@@ -33,12 +33,15 @@ public final class StageEvents {
 
     // ------------------------------------------------------------------
     // ROTATE — smoothly rotate target's yaw to a destination angle (OPS-005)
+    // OPS-040 adds optional pitch interpolation via delta_pitch or pitch.
     // ------------------------------------------------------------------
     public static final class RotateEvent extends ShowEvent {
         public final String target;
         public final float yaw;           // absolute target yaw; NaN if using delta
         public final float delta;         // relative yaw change; NaN if using yaw
         public final int durationTicks;   // 0 or omitted = instant (same as FACE)
+        public final double deltaPitch;   // relative pitch change in degrees; NaN if using pitch
+        public final double pitch;        // absolute target pitch; NaN if using deltaPitch or absent
 
         public RotateEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
@@ -58,10 +61,30 @@ public final class StageEvents {
                 this.delta = 0f;
                 this.yaw   = Float.NaN;
             }
+            // pitch wins over delta_pitch if both are present — OPS-040
+            boolean hasPitch      = m.containsKey("pitch");
+            boolean hasDeltaPitch = m.containsKey("delta_pitch");
+            if (hasPitch) {
+                this.pitch      = dblVal(m, "pitch", 0.0);
+                this.deltaPitch = Double.NaN;
+            } else if (hasDeltaPitch) {
+                this.deltaPitch = dblVal(m, "delta_pitch", 0.0);
+                this.pitch      = Double.NaN;
+            } else {
+                // Neither supplied — no pitch change
+                this.deltaPitch = 0.0;
+                this.pitch      = Double.NaN;
+            }
         }
 
-        /** True if this event uses relative delta; false = absolute yaw. */
+        /** True if this event uses relative yaw delta; false = absolute yaw. */
         public boolean isDelta() { return !Float.isNaN(delta); }
+
+        /** True if pitch interpolation is configured. */
+        public boolean hasPitchChange() { return !Double.isNaN(pitch) || !Double.isNaN(deltaPitch); }
+
+        /** True if using relative delta_pitch; false = absolute pitch. */
+        public boolean isPitchDelta() { return !Double.isNaN(deltaPitch); }
 
         @Override public EventType type() { return EventType.ROTATE; }
     }

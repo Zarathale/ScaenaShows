@@ -190,10 +190,20 @@ public final class FireworkEventExecutor implements EventExecutor {
     // ------------------------------------------------------------------
     // FIREWORK_RANDOM — scatter N fireworks at random XZ positions within radius.
     // All fireworks launch simultaneously. Optional seed for reproducible patterns.
+    // OPS-035: y_variation adds per-rocket random Y offset drawn from seeded RNG.
+    // OPS-036: presets pool — each rocket draws a preset from the list at random.
     // ------------------------------------------------------------------
     private void handleRandom(FireworkRandomEvent e, RunningShow show) {
-        FireworkPreset preset = fireworkRegistry.get(e.preset);
-        if (preset == null) { log.warning("[ScaenaShows] Unknown preset: " + e.preset); return; }
+        // OPS-036: presets pool wins over single preset if non-empty
+        boolean usePool = !e.presets.isEmpty();
+        FireworkPreset singlePreset = null;
+        if (!usePool) {
+            singlePreset = fireworkRegistry.get(e.preset);
+            if (singlePreset == null) {
+                log.warning("[ScaenaShows] Unknown preset: " + e.preset);
+                return;
+            }
+        }
 
         Location anchor = show.getAnchorLocation();
         if (anchor == null) return;
@@ -202,16 +212,36 @@ public final class FireworkEventExecutor implements EventExecutor {
         Random rand = (e.seed != null) ? new Random(e.seed) : rng;
 
         for (int i = 0; i < e.count; i++) {
-            // Uniform scatter within a circle: use polar coordinates with sqrt for uniform density
-            double angle  = rand.nextDouble() * 2 * Math.PI;
-            double dist   = Math.sqrt(rand.nextDouble()) * e.radius;
-            double dx     = dist * Math.sin(angle); // sin for X (east)
-            double dz     = dist * Math.cos(angle); // cos for Z (north)
-            double ox     = e.originOffset.x() + dx;
-            double oz     = e.originOffset.z() + dz;
+            // OPS-036: draw preset from pool per rocket
+            FireworkPreset preset;
+            if (usePool) {
+                String presetId = e.presets.get(rand.nextInt(e.presets.size()));
+                preset = fireworkRegistry.get(presetId);
+                if (preset == null) {
+                    log.warning("[ScaenaShows] FIREWORK_RANDOM: unknown preset in pool: " + presetId);
+                    continue;
+                }
+            } else {
+                preset = singlePreset;
+            }
 
-            Location loc = PositionResolver.fireworkLocation(anchor, ox, oz, e.yMode, e.yOffset);
-            spawnFirework(loc, preset, preset.power(), null);
+            // Uniform scatter within a circle: use polar coordinates with sqrt for uniform density
+            double angle = rand.nextDouble() * 2 * Math.PI;
+            double dist  = Math.sqrt(rand.nextDouble()) * e.radius;
+            double dx    = dist * Math.sin(angle); // sin for X (east)
+            double dz    = dist * Math.cos(angle); // cos for Z (north)
+            double ox    = e.originOffset.x() + dx;
+            double oz    = e.originOffset.z() + dz;
+
+            // OPS-035: y_variation randomizes per-rocket Y height
+            double effectiveYOffset = e.yOffset + (e.yVariation > 0.0 ? rand.nextDouble() * e.yVariation : 0.0);
+
+            Location loc = PositionResolver.fireworkLocation(anchor, ox, oz, e.yMode, effectiveYOffset);
+
+            Color colorOverride = resolveColorVariation(e.colorVariation, i, e.count,
+                preset, e.gradientFrom, e.gradientTo);
+            int power = resolvePower(e.powerVariation, i, e.count, preset.power());
+            spawnFirework(loc, preset, power, colorOverride);
         }
     }
 

@@ -95,6 +95,9 @@ public final class TextEvents {
         public final int durationTicks;
         public final int fadeInTicks;
         public final int fadeOutTicks;
+        public final float startProgress;  // initial fill value (0.0–1.0); default 0.0
+        public final float endProgress;    // final fill value (0.0–1.0); default 0.0
+        public final boolean staticMode;   // hold at startProgress indefinitely; no animation
 
         public BossbarEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
@@ -105,6 +108,9 @@ public final class TextEvents {
             this.durationTicks = intVal(m, "duration_ticks", 200);
             this.fadeInTicks   = intVal(m, "fade_in_ticks", 10);
             this.fadeOutTicks  = intVal(m, "fade_out_ticks", 20);
+            this.startProgress = fltVal(m, "start_progress", 0f);
+            this.endProgress   = fltVal(m, "end_progress", 0f);
+            this.staticMode    = boolVal(m, "static", false);
         }
 
         @Override public EventType type() { return EventType.BOSSBAR; }

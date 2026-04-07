@@ -82,42 +82,61 @@ public final class StageEventExecutor implements EventExecutor {
 
     // ------------------------------------------------------------------
     // ROTATE — smoothly rotate target's yaw to a destination angle (OPS-005)
+    //          optionally with simultaneous pitch interpolation (OPS-040)
     //
     // Supports absolute yaw: or relative delta: (sign = direction; spec §OPS-005).
     // duration_ticks: 0 or omitted = instant snap (same effect as FACE compass:...).
     // Wrap-around: for absolute yaw, normalise the interpolation delta to [−180, +180]
     // so the route is always the shorter arc.
     // With delta: the sign is respected as-written — authors control the direction.
+    // Pitch clamped to [−90, +90] per Minecraft limits.
     // ------------------------------------------------------------------
     private void handleRotate(RotateEvent e, RunningShow show) {
         for (Entity entity : resolveEntities(e.target, show)) {
-            float currentYaw = entity.getLocation().getYaw();
+            Location entityLoc = entity.getLocation();
+            float currentYaw   = entityLoc.getYaw();
+            float currentPitch = entityLoc.getPitch();
             float targetYaw;
 
             if (e.isDelta()) {
-                // Relative: apply signed delta directly
                 targetYaw = currentYaw + e.delta;
             } else {
-                // Absolute: take the shorter arc to reach the target yaw
                 targetYaw = e.yaw;
+            }
+
+            // Resolve target pitch (OPS-040)
+            float targetPitch;
+            if (e.hasPitchChange()) {
+                if (e.isPitchDelta()) {
+                    targetPitch = currentPitch + (float) e.deltaPitch;
+                } else {
+                    targetPitch = (float) e.pitch;
+                }
+                targetPitch = Math.max(-90f, Math.min(90f, targetPitch));
+            } else {
+                targetPitch = currentPitch;
             }
 
             if (e.durationTicks <= 0) {
                 // Instant snap
                 Location loc = entity.getLocation();
                 loc.setYaw(targetYaw);
+                if (e.hasPitchChange()) loc.setPitch(targetPitch);
                 entity.teleport(loc);
             } else {
-                // Smooth pan: compute per-tick yaw step, linear interpolation
+                // Smooth pan: linear interpolation over durationTicks
                 float rawDelta = targetYaw - currentYaw;
                 if (!e.isDelta()) {
                     // Normalise to [−180, +180] for the shorter arc
                     rawDelta = ((rawDelta + 180f) % 360f + 360f) % 360f - 180f;
                 }
-                final float totalDelta = rawDelta;
+                final float totalYawDelta   = rawDelta;
+                final float totalPitchDelta = targetPitch - currentPitch;
+                final boolean interpolatePitch = e.hasPitchChange();
                 final int steps = e.durationTicks;
-                final float startYaw = currentYaw;
-                final Entity target = entity;
+                final float startYaw   = currentYaw;
+                final float startPitch = currentPitch;
+                final Entity target    = entity;
 
                 BukkitTask task = new BukkitRunnable() {
                     int step = 0;
@@ -128,9 +147,13 @@ public final class StageEventExecutor implements EventExecutor {
                             return;
                         }
                         float fraction = (float) step / steps;
-                        float newYaw = startYaw + totalDelta * fraction;
+                        float newYaw = startYaw + totalYawDelta * fraction;
                         Location loc = target.getLocation();
                         loc.setYaw(newYaw);
+                        if (interpolatePitch) {
+                            float newPitch = startPitch + totalPitchDelta * fraction;
+                            loc.setPitch(Math.max(-90f, Math.min(90f, newPitch)));
+                        }
                         target.teleport(loc);
                     }
                 }.runTaskTimer(plugin, 1L, 1L);

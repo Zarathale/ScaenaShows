@@ -100,9 +100,11 @@ public final class VisualEvents {
 
     // ------------------------------------------------------------------
     // LIGHTNING (cosmetic only — strikeLightningEffect, no damage)
+    // OPS-034: anchor field — "scene_origin" (default) or "player" (live position at fire time)
     // ------------------------------------------------------------------
     public static final class LightningEvent extends ShowEvent {
         public final double offsetX, offsetY, offsetZ;
+        public final String anchor;   // scene_origin | player
 
         public LightningEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
@@ -110,6 +112,7 @@ public final class VisualEvents {
             this.offsetX = dblVal(off, "x", 0);
             this.offsetY = dblVal(off, "y", 0);
             this.offsetZ = dblVal(off, "z", 0);
+            this.anchor  = str(m, "anchor", "scene_origin");
         }
 
         @Override public EventType type() { return EventType.LIGHTNING; }
