@@ -120,6 +120,17 @@ public final class ShowYamlEditor {
         list.add(insertAt, copy);
     }
 
+    /**
+     * Replace the entire event list for the given cue in the in-session override.
+     * Used by department edit sessions that build their own event map (e.g. CastingEditSession).
+     * Calling this with an empty list clears all events for the cue.
+     */
+    @SuppressWarnings("unchecked")
+    public void setCueEvents(String cueId, List<Map<String, Object>> events) {
+        Map<String, Object> override = ensureCueOverride(cueId);
+        override.put("events", new ArrayList<>(events));
+    }
+
     /** Remove the event at the given index from the named cue. */
     public void removeEvent(String cueId, int eventIndex) {
         Map<String, Object> events = ensureCueOverride(cueId);

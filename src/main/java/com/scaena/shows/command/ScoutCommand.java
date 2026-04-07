@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -395,6 +396,20 @@ public final class ScoutCommand implements CommandExecutor, TabCompleter {
                     return;
                 }
                 techManager.enterDeptEdit(player, args[2]);
+            }
+            case "editparam"   -> {
+                // /scaena tech2 editparam <key> [value...]
+                // value may contain spaces — join args[3..] if present
+                if (args.length < 3) {
+                    player.sendMessage(MM.deserialize(
+                        "<red>Usage: /scaena tech2 editparam <key> <value></red>"));
+                    return;
+                }
+                String key   = args[2];
+                String value = args.length >= 4
+                    ? String.join(" ", Arrays.copyOfRange(args, 3, args.length))
+                    : "";
+                techManager.dispatchEditParam(player, key, value);
             }
             default -> {
                 // Treat as /scaena tech2 <showId>
