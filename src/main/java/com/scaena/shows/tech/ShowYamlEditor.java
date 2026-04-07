@@ -271,6 +271,41 @@ public final class ShowYamlEditor {
         return empty;
     }
 
+    /**
+     * Returns the first event map from the cue's in-session override, or an empty
+     * map if no override or no events exist.
+     * Used by EffectsEditSession to seed EFFECT_PATTERN fields from a prior save.
+     */
+    @SuppressWarnings("unchecked")
+    Map<String, Object> getCueOverrideFirstEvent(String cueId) {
+        Map<String, Object> overrides = getCueOverrides();
+        Object override = overrides.get(cueId);
+        if (!(override instanceof Map<?, ?> overMap)) return Map.of();
+        Object eventsObj = overMap.get("events");
+        if (!(eventsObj instanceof List<?> events) || events.isEmpty()) return Map.of();
+        Object first = events.get(0);
+        if (!(first instanceof Map<?, ?> firstMap)) return Map.of();
+        return (Map<String, Object>) firstMap;
+    }
+
+    /**
+     * Returns the {@code type} string from the first event in the cue's in-session
+     * override, or {@code null} if no override or no events exist.
+     * Used by EffectsEditSession to detect EFFECT_PATTERN mode (not parseable by
+     * EventParser since it is not yet in EventType).
+     */
+    @SuppressWarnings("unchecked")
+    String getCueOverrideFirstEventType(String cueId) {
+        Map<String, Object> overrides = getCueOverrides();
+        Object override = overrides.get(cueId);
+        if (!(override instanceof Map<?, ?> overMap)) return null;
+        Object eventsObj = overMap.get("events");
+        if (!(eventsObj instanceof List<?> events) || events.isEmpty()) return null;
+        Object first = events.get(0);
+        if (!(first instanceof Map<?, ?> firstMap)) return null;
+        return (String) firstMap.get("type");
+    }
+
     @SuppressWarnings("unchecked")
     private Map<String, Object> getCueOverrides() {
         return (Map<String, Object>) rawYaml.computeIfAbsent(
