@@ -1,7 +1,7 @@
 ---
 document: OPS-029 Phase 2 Implementation Plan
-date: 2026-04-06
-status: Active — Groups 0–4 committed, Group 5 (Casting, Wardrobe, Sound, Voice, Effects, Fireworks) committed
+date: 2026-04-07
+status: Active — Groups 0–4 committed, Group 5 through Choreography committed. Next: Set (v2.43.0).
 scope: TechCueSession, ShowYamlEditor, and related work sequenced from ops-inbox
 ---
 
@@ -14,9 +14,9 @@ new classes, build sequence, and OPS items sequenced in from the inbox.
 
 ## Current State — Read This First
 
-**Groups 0–4 + Group 5 Casting, Wardrobe, Sound, Voice, Effects, and Fireworks are all committed at v2.39.0. Ready to build Lighting.**
+**Groups 0–4 + Group 5 Casting, Wardrobe, Sound, Voice, Effects, Fireworks, Lighting, Camera, and Choreography are all committed and merged to main. Choreography at v2.42.0 (PR #13). Ready to build Set.**
 
-~~Step 1 — Version bump~~ ✅ Done. `build.gradle.kts` is at `2.38.0`, build confirmed clean.
+~~Step 1 — Version bump~~ ✅ Done. `build.gradle.kts` is at `2.40.0`, build confirmed clean.
 ~~Step 2 — Git cleanup~~ ✅ Done. `.claude/` worktrees untracked, `.gitattributes` added.
 
 Group 5 progress:
@@ -37,10 +37,10 @@ git checkout -b claude/ops-029-group5-fireworks
 Commit message format: `OPS-029 Group 5 [Dept]: [what] (vX.Y.Z)`
 Push the branch. Stop there. Alan reviews and merges via GitHub Desktop.
 
-### Begin Group 5 Fireworks
+### Begin Group 5 Choreography
 
-Next department is **Fireworks** — firework builder panel; auto-preview (refire burst).
-Target version: **2.39.0**
+Next department is **Choreography** — character movement, AI/pathfinding, PHRASE container.
+Target version: **2.42.0**
 See § Build Sequence → Group 5 below.
 
 ---
@@ -280,21 +280,15 @@ Branch naming: `claude/ops-029-group5-[dept]`
    - FIREWORK + FIREWORK_CIRCLE + FIREWORK_LINE + FIREWORK_RANDOM active; FIREWORK_FAN + FIREWORK_PHRASE unsupported (graceful fallback)
    - OPS-034 dependency warning shown inline when player anchor selected; FireworkRegistry not wired (preview uses generic white-star)
 
-7. [ ] **Lighting** — TIME_OF_DAY / WEATHER / LIGHTNING / TIME_OF_DAY_PATTERN; world_preview param toggle
-   - Read `kb/system/phase2-department-panels.md §Lighting`
-   - New class: `LightingEditSession implements DeptEditSession`
-   - New class: `LightingPanelBuilder`
-   - Version: 2.40.0
+7. [x] **Lighting** — TIME_OF_DAY / WEATHER / LIGHTNING / TIME_OF_DAY_PATTERN; world_preview param toggle ✅ v2.40.0
+   - `LightingEditSession.java`, `LightingPanelBuilder.java` committed on `main`
 
-8. [ ] **Camera** — ROTATE/TELEPORT/CAMERA selectors
-   - Read `kb/system/phase2-department-panels.md §Camera`
-   - New class: `CameraEditSession implements DeptEditSession`
-   - Version: 2.41.0
+8. [x] **Camera** — FACE/CAMERA/CAMERA_LOCK/MOVEMENT_LOCK/BOUNDARY_CHECK/VIEW_CHECK/PLAYER_SPECTATE/PLAYER_MOUNT ✅ v2.41.0
+   - `CameraEditSession.java`, `CameraPanelBuilder.java` committed on `main` (PR #12)
+   - New event types shipped: CAMERA_LOCK, MOVEMENT_LOCK, BOUNDARY_CHECK, VIEW_CHECK
 
-9. [ ] **Choreography** — DANCE selector panel
-   - Read `kb/system/phase2-department-panels.md §Choreography`
-   - New class: `ChoreographyEditSession implements DeptEditSession`
-   - Version: 2.42.0
+9. [x] **Choreography** — character movement panels (ENTRANCE, CHARACTER EXIT/CROSS/LOOK/VELOCITY, PERFORMER STATE, CHOREO_PHRASE) ✅ v2.42.0
+   - `ChoreographyEditSession.java`, `ChoreographyPanelBuilder.java` committed on `main` (PR #13)
 
 10. [ ] **Set** — Phase 2 panel wrapper only; block diff capture is already done
     - Read `kb/system/phase2-department-panels.md §Set`
@@ -381,7 +375,7 @@ Total to fully ship Phase 2: ~2,500 lines across ~12 commits.
 
 ## Version Progression (rough)
 
-Current: `2.39.0` ✅
+Current: `2.42.0` on main
 
 | Group | Version | Status |
 |---|---|---|
@@ -395,7 +389,7 @@ Current: `2.39.0` ✅
 | Group 5 — Voice | 2.37.0 | ✅ |
 | Group 5 — Effects | 2.38.0 | ✅ |
 | Group 5 — Fireworks | 2.39.0 | ✅ |
-| Group 5 — Lighting | 2.40.0 | ⬜ next |
-| Group 5 — Camera | 2.41.0 | ⬜ |
-| Group 5 — Choreography | 2.42.0 | ⬜ |
-| Group 5 — Set | 2.43.0 | ⬜ |
+| Group 5 — Lighting | 2.40.0 | ✅ |
+| Group 5 — Camera | 2.41.0 | ✅ |
+| Group 5 — Choreography | 2.42.0 | ✅ |
+| Group 5 — Set | 2.43.0 | ⬜ next |

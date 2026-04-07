@@ -111,7 +111,7 @@ All values come from `kb/system/ops-029-impl-plan.md` (Current State + Version P
 
 ---
 
-## Lighting session (filled in — current next)
+## Lighting session (shipped ✅ v2.40.0)
 
 ```
 You are continuing OPS-029 Phase 2 on the ScaenaShows plugin.
@@ -162,6 +162,169 @@ Then implement:
 - Wire into TechManager: add `lighting.` prefix dispatch routing
 - Bump build.gradle.kts: 2.39.0 → 2.40.0
 - Commit: "OPS-029 Group 5 Lighting: LightingEditSession + LightingPanelBuilder (v2.40.0)"
+- Push the branch. Stop there — Alan reviews and merges.
+
+Do NOT run gradle or gradlew. Write the code, bump the version, commit, push. Stop.
+```
+
+---
+
+## Camera session (shipped ✅ v2.41.0 — branch `claude/ops-029-group5-camera`, pending merge)
+
+```
+You are continuing OPS-029 Phase 2 on the ScaenaShows plugin.
+
+Current state:
+- main is at v2.40.0 — clean, no open branches
+- Group 5 so far: Casting (v2.33.0/v2.35.0), Wardrobe (v2.34.0), Sound (v2.36.0),
+  Voice (v2.37.0), Effects (v2.38.0), Fireworks (v2.39.0), Lighting (v2.40.0)
+- Next: Camera dept edit session, target v2.41.0
+- Feature branch: claude/ops-029-group5-camera
+
+**READ STRATEGY — issue all file reads in one parallel batch before writing any code:**
+
+Full reads (short files):
+- CLAUDE.md
+- kb/system/ops-029-impl-plan.md
+
+Targeted section reads (large files — use offset/limit):
+- kb/departments/camera/camera.kb.md  lines 178–442  (Instrument Inventory — all 6 instruments)
+- kb/system/ops-029-design-session-2026-04-05.md  lines 333–416  (§9 Universal Shell)
+- kb/system/phase2-department-panels.md  lines 857–1176  (Camera section — read all 320 lines; this dept is complex)
+- kb/system/cue-show-yaml-schema.md  lines 443–462  (CAMERA potion-effect event type)
+- kb/system/cue-show-yaml-schema.md  lines 755–761  (FACE event type)
+- kb/system/cue-show-yaml-schema.md  lines 827–856  (PLAYER_SPECTATE / PLAYER_SPECTATE_END / PLAYER_MOUNT / PLAYER_DISMOUNT)
+- src/main/java/com/scaena/shows/tech/LightingEditSession.java  lines 1–80  (most recent dept — pattern reference)
+
+Then implement:
+- git checkout -b claude/ops-029-group5-camera
+
+**Part A — New event types (engine-level; add before the edit session):**
+  Camera introduces 4 event types not yet in the engine. Add each to EventType enum,
+  create a data class, wire EventParser, and register an executor:
+  - CAMERA_LOCK — show-state flag (state: ON | OFF); sets RunningShow.cameraLocked
+  - MOVEMENT_LOCK — show-state flag (state: ON | OFF); sets RunningShow.movementLocked
+  - BOUNDARY_CHECK — conditional primitive: center (mark ref or xyz), radius (blocks),
+    out_of_range branch (list of events), optional in_range branch. Evaluates at fire-time.
+  - VIEW_CHECK — conditional primitive: target (mark ref or entity ref), tolerance (degrees),
+    out_of_view branch (smooth pan, never snap), optional in_view branch.
+  Stop-safety: both CAMERA_LOCK and MOVEMENT_LOCK reset to unlocked at show end.
+  Full spec in phase2-department-panels.md lines 857–1176.
+
+**Part B — CameraEditSession implements DeptEditSession:**
+  Instruments (each routes from `camera.` prefix):
+  - FACE (camera-authored): look_at picker — show-relative shortcuts, scene marks,
+    spawned entities. Defaults: Right 90°, Left 90°, Show forward, Behind. No preset.
+  - CAMERA: effect selector (sway/blackout/flash/float), intensity scroll 0–3,
+    duration_ticks scroll ±10/notch Shift ±50. Auto-preview refires on change. No preset.
+  - CAMERA_LOCK / MOVEMENT_LOCK: state toggle ON/OFF. No preview, no preset.
+  - BOUNDARY_CHECK: center picker (mark or xyz), radius scroll ±1/notch Shift ±5.
+    out_of_range branch uses inline event editor (list); optional in_range branch.
+    [▶ Preview] evaluates condition against player's current position. No preset.
+  - VIEW_CHECK: target picker (mark or entity:spawned:), tolerance scroll ±5°/notch.
+    out_of_view branch: duration_ticks + interpolation selector (EASE_OUT default).
+    in_view branch optional. [▶ Preview] evaluates against player's current facing. No preset.
+  - PLAYER_SPECTATE: spawn:/entity: mode toggle. Spawn fields: Name, Type, Offset xyz,
+    Despawn on end toggle. Entity mode: entity:spawned: picker. Audience selector.
+    duration_ticks shortcut (auto-creates PLAYER_SPECTATE_END cue at spectate_tick +
+    duration_ticks; leave blank for manual placement). [▶ Preview]. No preset.
+  - PLAYER_SPECTATE_END: destination selector (restore / mark: / entity:spawned:).
+    Audience selector. No preview. No preset.
+  - PLAYER_MOUNT: same spawn:/entity: model as PLAYER_SPECTATE. Spawn fields: Name,
+    Type, Offset xyz, Invisible toggle, Despawn on dismount toggle. duration_ticks
+    shortcut auto-creates PLAYER_DISMOUNT. [▶ Preview]. No preset.
+  - PLAYER_DISMOUNT: audience selector only. No preview. No preset.
+  - CAMERA_PHRASE: PHRASE type with Camera instruments in step editor. Preset ✅.
+    Named presets: camera.phrase.[slug]. Use same PHRASE infrastructure as prior depts.
+
+**Part C — CameraPanelBuilder**
+
+**Part D — Wire into TechManager:** add `camera.` prefix dispatch routing
+
+- Bump build.gradle.kts: 2.40.0 → 2.41.0
+- Commit: "OPS-029 Group 5 Camera: CameraEditSession + CameraPanelBuilder + CAMERA_LOCK/MOVEMENT_LOCK/BOUNDARY_CHECK/VIEW_CHECK event types (v2.41.0)"
+- Push the branch. Stop there — Alan reviews and merges.
+
+Do NOT run gradle or gradlew. Write the code, bump the version, commit, push. Stop.
+```
+
+---
+
+## Choreography session (filled in — current next)
+
+```
+You are continuing OPS-029 Phase 2 on the ScaenaShows plugin.
+
+Current state:
+- main is at v2.41.0 (Camera merged) — clean, no open branches
+- Group 5 so far: Casting (v2.33.0/v2.35.0), Wardrobe (v2.34.0), Sound (v2.36.0),
+  Voice (v2.37.0), Effects (v2.38.0), Fireworks (v2.39.0), Lighting (v2.40.0),
+  Camera (v2.41.0)
+- Next: Choreography dept edit session, target v2.42.0
+- Feature branch: claude/ops-029-group5-choreography
+
+**READ STRATEGY — issue all file reads in one parallel batch before writing any code:**
+
+Full reads (short files):
+- CLAUDE.md
+- kb/system/ops-029-impl-plan.md
+- kb/departments/choreography/choreography.kb.md
+
+Targeted section reads (large files — use offset/limit):
+- kb/system/ops-029-design-session-2026-04-05.md  lines 333–416  (§9 Universal Shell)
+- kb/system/phase2-department-panels.md  lines 1268–1339  (Choreography section — full to end of file)
+- kb/system/cue-show-yaml-schema.md  lines 641–692  (SPAWN_ENTITY + DESPAWN_ENTITY)
+- kb/system/cue-show-yaml-schema.md  lines 693–808  (ENTITY_AI + ENTITY_VELOCITY + FACE + CROSS_TO)
+- kb/system/cue-show-yaml-schema.md  lines 779–810  (ENTER event type)
+- src/main/java/com/scaena/shows/tech/CameraEditSession.java  lines 1–80  (most recent dept — pattern reference)
+
+Then implement:
+- git checkout -b claude/ops-029-group5-choreography
+
+**ChoreographyEditSession implements DeptEditSession:**
+
+Six panel modes (each routes from `choreo.` prefix based on first event type in cue):
+
+- **ENTRANCE** — detect SPAWN_ENTITY (Appear mode) or ENTER (Arrive mode).
+  Appear: mark picker, entity type selector, optional name field, audience picker. No preset.
+  Arrive: wing mark picker + destination mark picker + optional speed preset. No preset.
+
+- **CHARACTER EXIT** — detect DESPAWN_ENTITY (Vanish) or CROSS_TO-to-wing (Exit).
+  Vanish: target entity picker, optional particle toggle. No preset.
+  Exit: target entity picker, wing mark picker, AI speed preset selector. No preset.
+
+- **CHARACTER CROSS** — CROSS_TO event. Mode toggle: Instant (teleport) / AI (pathfinder).
+  Both: target entity picker, destination picker (named mark or relative offset x/z/y).
+  AI mode adds: speed preset selector (Creep/Slow/Normal/Fast/Sprint). Anchor field both modes.
+  Auto-preview OFF (physically moves entity on each change — disruptive). [▶ Preview] only.
+  Preset ✅ — AI Cross presets capture entity type + speed + anchor. Naming: choreo.cross.[mode].[slug].
+
+- **CHARACTER LOOK** — compound FACE event (entity target, not player target).
+  look_at picker: mark / other entity / player / compass direction / raw yaw value.
+  Pitch field (gapped — Choreography notes pitch is unreliable on entities; panel shows
+  warning: "Pitch unreliable on entities — yaw only is recommended").
+  No auto-preview (snaps entity head). [▶ Preview] only. No preset.
+
+- **PERFORMER STATE** — ENTITY_AI toggle.
+  Target entity picker. State toggle: Puppet (AI off) / Performer (AI on).
+  Panel note: "For sustained stillness, use Puppet. Hold only zeroes velocity at one tick."
+  No preview, no preset.
+
+- **CHARACTER VELOCITY** — ENTITY_VELOCITY event.
+  Target entity picker. Vector fields x/y/z (scroll ±0.1/notch, Shift ±1.0).
+  Named preset picker: gentle bounce / dramatic launch / float arc.
+  Anchor field. Auto-preview OFF. [▶ Preview]. Preset ✅. Naming: choreo.velocity.[slug].
+
+- **CHOREO_PHRASE** — PHRASE container with Choreography events in step editor.
+  Same PHRASE infrastructure as prior depts (Camera, Voice). Preset ✅.
+  Named presets: choreo.phrase.[slug]. Panel pre-selects Choreography dept for first step.
+
+**ChoreographyPanelBuilder** — static panel methods, one per mode.
+
+**Wire into TechManager:** add `choreo.` prefix dispatch routing (same pattern as existing depts).
+
+- Bump build.gradle.kts: 2.41.0 → 2.42.0
+- Commit: "OPS-029 Group 5 Choreography: ChoreographyEditSession + ChoreographyPanelBuilder (v2.42.0)"
 - Push the branch. Stop there — Alan reviews and merges.
 
 Do NOT run gradle or gradlew. Write the code, bump the version, commit, push. Stop.
