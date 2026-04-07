@@ -68,7 +68,7 @@ Alan moves between shows freely. There's no lock on which show is primary.
 3. **If working on a specific show:** read that show's `direction/[show_id].status.md`, then `[show_id].prompt-book.yml` (if it exists — showcase.01 has one; it's the single source of truth for structural facts and committed params). Then read `direction/[show_id].show-direction.md` for creative context.
 4. **If writing shows or cues:** read `kb/production-team.md`, then `kb/departments/show-director/show-director.kb.md`. Write the Show Director brief before any YAML. Read the relevant department KB(s) before writing YAML for their tools.
 5. **If creating cues:** naming is `[category].[archetype].[variant]` per spec §9; add `tags:` per taxonomy spec §10
-6. **If writing Java:** re-skim the relevant spec section first. Capability gaps go in `ops-inbox.md` — that's Alan's list, for plugin-level Java work only.
+6. **If writing Java:** re-skim the relevant spec section first. Capability gaps go in `ops-inbox.md` — that's Alan's list, for plugin-level Java work only. **Do NOT attempt to run `gradle`, `gradlew`, or any build command** — the Claude Code environment cannot build this project (closed sandbox, no loopback). Alan builds locally. Write the code, commit, push — stop there.
 
 **[show_id].prompt-book.yml:** Where it exists, this is the show's settled structural facts — cast, wardrobe, set, scenes, key mechanics, params, script lines, and readiness state. Replaces `show-params.md` entirely (OPS-027). A value in the prompt-book means "build from this." A TBD means it's still in play. The plugin reads it at TechSession init; the Parameter tool writes back to it on SAVE. Department briefs reference the prompt-book rather than restating facts.
 
@@ -216,7 +216,9 @@ Do not reopen these without Alan.
 **Current version:** `2.32.0`
 **Version file:** `build.gradle.kts` — the `version = "x.y.z"` line
 
-Before telling Alan to build, either bump the version or explicitly state why no bump is needed.
+**Alan builds locally. Claude Code never runs the build.** The Claude Code environment is a closed sandbox with no loopback — `gradle`/`gradlew` always fails here. Write the code, bump the version, commit, push. Alan runs the build and confirms. Do not attempt `gradle` or `gradlew` under any circumstances.
+
+Before Alan builds, either bump the version or explicitly state why no bump is needed.
 
 | Change type | Bump |
 |-------------|------|
