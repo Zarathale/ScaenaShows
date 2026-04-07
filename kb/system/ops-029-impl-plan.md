@@ -1,7 +1,7 @@
 ---
 document: OPS-029 Phase 2 Implementation Plan
 date: 2026-04-06
-status: Active — Groups 0–4 committed, Group 5 (Casting, Wardrobe, Sound, Voice, Effects) committed
+status: Active — Groups 0–4 committed, Group 5 (Casting, Wardrobe, Sound, Voice, Effects, Fireworks) committed
 scope: TechCueSession, ShowYamlEditor, and related work sequenced from ops-inbox
 ---
 
@@ -14,7 +14,7 @@ new classes, build sequence, and OPS items sequenced in from the inbox.
 
 ## Current State — Read This First
 
-**Groups 0–4 + Group 5 Casting, Wardrobe, Sound, Voice, and Effects are all committed at v2.38.0. Ready to build Fireworks.**
+**Groups 0–4 + Group 5 Casting, Wardrobe, Sound, Voice, Effects, and Fireworks are all committed at v2.39.0. Ready to build Lighting.**
 
 ~~Step 1 — Version bump~~ ✅ Done. `build.gradle.kts` is at `2.38.0`, build confirmed clean.
 ~~Step 2 — Git cleanup~~ ✅ Done. `.claude/` worktrees untracked, `.gitattributes` added.
@@ -274,25 +274,27 @@ Branch naming: `claude/ops-029-group5-[dept]`
 5. [x] **Effects** — potion effect selector; auto-preview ✅ v2.38.0
    - `EffectsEditSession.java`, `EffectsPanelBuilder.java` committed on `main` (PR #9)
 
-6. [ ] **Fireworks** — firework builder panel; auto-preview (refire burst)
-   - Read `kb/system/phase2-department-panels.md §Fireworks`
-   - New class: `FireworksEditSession implements DeptEditSession`
-   - Version: 2.39.0
+6. [x] **Fireworks** — firework builder panel; auto-preview (refire burst) ✅ v2.39.0
+   - `FireworksEditSession.java`, `FireworksPanelBuilder.java` committed on `main` (PR #10)
+   - `FireworkEvents.java` extended: `anchor` field on all 5 event types; OPS-035/036 model fields added to FIREWORK_RANDOM
+   - FIREWORK + FIREWORK_CIRCLE + FIREWORK_LINE + FIREWORK_RANDOM active; FIREWORK_FAN + FIREWORK_PHRASE unsupported (graceful fallback)
+   - OPS-034 dependency warning shown inline when player anchor selected; FireworkRegistry not wired (preview uses generic white-star)
 
-7. [ ] **Lighting** — TIME_OF_DAY / WEATHER; world_preview param toggle
+7. [ ] **Lighting** — TIME_OF_DAY / WEATHER / LIGHTNING / TIME_OF_DAY_PATTERN; world_preview param toggle
    - Read `kb/system/phase2-department-panels.md §Lighting`
    - New class: `LightingEditSession implements DeptEditSession`
-   - Version: 2.39.0
+   - New class: `LightingPanelBuilder`
+   - Version: 2.40.0
 
 8. [ ] **Camera** — ROTATE/TELEPORT/CAMERA selectors
    - Read `kb/system/phase2-department-panels.md §Camera`
    - New class: `CameraEditSession implements DeptEditSession`
-   - Version: 2.40.0
+   - Version: 2.41.0
 
 9. [ ] **Choreography** — DANCE selector panel
    - Read `kb/system/phase2-department-panels.md §Choreography`
    - New class: `ChoreographyEditSession implements DeptEditSession`
-   - Version: 2.41.0
+   - Version: 2.42.0
 
 10. [ ] **Set** — Phase 2 panel wrapper only; block diff capture is already done
     - Read `kb/system/phase2-department-panels.md §Set`
@@ -301,7 +303,7 @@ Branch naming: `claude/ops-029-group5-[dept]`
       tracking, bounding box logic, and YAML write are all working. Do not rewrite them.
     - New class: `SetEditSession implements DeptEditSession` — wires the existing Phase 1
       capture into the Phase 2 panel interface. The hard work is already done.
-    - Version: 2.42.0
+    - Version: 2.43.0
 
 ---
 
@@ -379,7 +381,7 @@ Total to fully ship Phase 2: ~2,500 lines across ~12 commits.
 
 ## Version Progression (rough)
 
-Current: `2.38.0` ✅
+Current: `2.39.0` ✅
 
 | Group | Version | Status |
 |---|---|---|
@@ -392,8 +394,8 @@ Current: `2.38.0` ✅
 | Group 5 — Sound | 2.36.0 | ✅ |
 | Group 5 — Voice | 2.37.0 | ✅ |
 | Group 5 — Effects | 2.38.0 | ✅ |
-| Group 5 — Fireworks | 2.39.0 | ⬜ next |
-| Group 5 — Lighting | 2.40.0 | ⬜ |
+| Group 5 — Fireworks | 2.39.0 | ✅ |
+| Group 5 — Lighting | 2.40.0 | ⬜ next |
 | Group 5 — Camera | 2.41.0 | ⬜ |
 | Group 5 — Choreography | 2.42.0 | ⬜ |
 | Group 5 — Set | 2.43.0 | ⬜ |

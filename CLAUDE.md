@@ -30,12 +30,12 @@ All 12 department KBs are now in folder structure (`kb/departments/[dept-slug]/[
 
 **Not show-specific:**
 - R7 debrief ✅ complete (2026-03-28). R8 not yet scheduled.
-- **OPS-029 Phase 2 — Groups 0–4 + Group 5 Casting/Wardrobe/Sound/Voice/Effects committed at v2.38.0. Git clean. Group 5 Fireworks next.**
+- **OPS-029 Phase 2 — Groups 0–4 + Group 5 Casting/Wardrobe/Sound/Voice/Effects/Fireworks committed at v2.39.0. Git clean. Group 5 Lighting next.**
   Groups 0–1 at v2.29.0. Group 2 at v2.30.0. Group 3 at v2.31.0. Group 4 at v2.32.0.
-  Group 5: Casting at v2.33.0 (revised v2.35.0), Wardrobe at v2.34.0, Sound at v2.36.0, Voice at v2.37.0, Effects at v2.38.0.
+  Group 5: Casting at v2.33.0 (revised v2.35.0), Wardrobe at v2.34.0, Sound at v2.36.0, Voice at v2.37.0, Effects at v2.38.0, Fireworks at v2.39.0 (PR #10).
   Read `kb/system/ops-029-impl-plan.md` for full build sequence — it has everything Code needs.
   Read `kb/system/ops-029-design-session-2026-04-05.md` for architecture decisions.
-  **Next: Group 5 Fireworks in Code (feature branch `claude/ops-029-group5-fireworks`), target v2.39.0.**
+  **Next: Group 5 Lighting in Code (feature branch `claude/ops-029-group5-lighting`), target v2.40.0.**
   Note: `SetBuildSession.java`, `BlockBuildListener.java`, `SetBuildWriter.java` are fully
   shipped Phase 1 features — block diff capture is live and wired into `TechSession`/`TechManager`.
   Group 5 Set wraps this in a `DeptEditSession` for Phase 2; the hard capture work is already done.
