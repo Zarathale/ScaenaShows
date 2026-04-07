@@ -2041,6 +2041,8 @@ public final class TechManager {
             SoundPanelBuilder.sendPanel(player, soundSession);
         } else if (editSession instanceof VoiceEditSession voiceSession) {
             VoicePanelBuilder.sendPanel(player, voiceSession);
+        } else if (editSession instanceof SetEditSession setSession) {
+            SetPanelBuilder.sendPanel(player, setSession);
         } else {
             player.sendMessage(MM.deserialize(
                 "<aqua>Editing: <white>" + cueId + "</white></aqua>"
@@ -2181,7 +2183,21 @@ public final class TechManager {
             return new ChoreographyEditSession(
                 cueId, cueSession.getPlayer(), cueSession, editor, cueRegistry, log);
         }
-        // TODO (Group 5): add Camera, Set as each department is implemented.
+        if (cueId.startsWith("set.")) {
+            // Slug enforcement: set cues must have a trailing slug segment.
+            String slug = cueId.contains(".")
+                ? cueId.substring(cueId.lastIndexOf('.') + 1) : "";
+            if (slug.isEmpty()) {
+                cueSession.getPlayer().sendMessage(MM.deserialize(
+                    "<red>Set cue <white>" + cueId + "</white> has no slug. "
+                    + "Add a slug (e.g. <white>set.site_a.my_layout</white>) before editing.</red>"));
+                return null;
+            }
+            return new SetEditSession(
+                cueId, cueSession.getPlayer(), cueSession, editor, cueRegistry,
+                this, plugin, log);
+        }
+        // TODO (Group 5): Camera not yet implemented.
         return null;
     }
 
