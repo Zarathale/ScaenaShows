@@ -107,6 +107,11 @@ public final class EventParser {
                 case REST    -> new UtilityEvents.RestEvent(m);
                 case COMMAND -> new UtilityEvents.CommandEvent(m);
                 case CUE     -> new UtilityEvents.CueRefEvent(m);
+                // §6.10.5 Camera State (OPS-029 Camera)
+                case CAMERA_LOCK     -> new CameraStateEvents.CameraLockEvent(m);
+                case MOVEMENT_LOCK   -> new CameraStateEvents.MovementLockEvent(m);
+                case BOUNDARY_CHECK  -> new CameraStateEvents.BoundaryCheckEvent(m);
+                case VIEW_CHECK      -> new CameraStateEvents.ViewCheckEvent(m);
                 // §6.12 Tech Rehearsal
                 case PAUSE   -> new UtilityEvents.PauseEvent(m);   // OPS-029
             };

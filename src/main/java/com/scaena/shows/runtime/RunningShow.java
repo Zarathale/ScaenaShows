@@ -171,6 +171,14 @@ public final class RunningShow {
     private final Map<UUID, FlightState> flightRestoreMap = new LinkedHashMap<>();
 
     // -----------------------------------------------------------------------
+    // Camera State flags (OPS-029 Camera)
+    // Cross-department flags: any department can set/clear. Stop-safety reset is
+    // implicit — RunningShow is discarded on stop, so flags go with it.
+    // -----------------------------------------------------------------------
+    private boolean cameraLocked   = false;
+    private boolean movementLocked = false;
+
+    // -----------------------------------------------------------------------
     // Spatial anchor position (used for follow mode + static fallback)
     // -----------------------------------------------------------------------
     private Location anchorLocation;   // updated each tick in follow mode
@@ -218,6 +226,12 @@ public final class RunningShow {
     public boolean isPrivate()    { return privateMode; }
     public boolean isScenesMode() { return scenesMode; }
     public String getFollowMode() { return followMode; }
+
+    // Camera state flags (OPS-029 Camera)
+    public boolean isCameraLocked()            { return cameraLocked; }
+    public void    setCameraLocked(boolean v)  { cameraLocked = v; }
+    public boolean isMovementLocked()          { return movementLocked; }
+    public void    setMovementLocked(boolean v){ movementLocked = v; }
 
     public Player getInvoker() {
         if (invokerUuid == null) return null;
