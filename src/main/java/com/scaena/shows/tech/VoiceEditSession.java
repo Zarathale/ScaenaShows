@@ -191,73 +191,73 @@ public final class VoiceEditSession implements DeptEditSession {
         // Detect the first voice event in the cue to determine mode and seed entry state.
         ShowEvent found = findVoiceEvent(cueId);
 
-        // ---- Detect mode and read typed state ----
+        // ---- Detect mode; assign ALL final fields in every branch ----
+        // Java's definite-assignment rules require every final field to be set exactly once.
+        // Each branch sets the active mode's fields from the event and everything else to defaults.
         if (found instanceof PhraseEvent pe) {
-            mode = EventMode.PHRASE;
-            entryPhraseAudience = pe.audience;
-            entryPhraseSteps    = deepCopySteps(pe.rawSteps);
+            mode                 = EventMode.PHRASE;
+            entryMsgAudience     = "participants"; entryMsgText          = "";
+            entryTitleAudience   = "participants"; entryTitleText        = ""; entryTitleSubtitle = "";
+            entryTitleFadeIn     = 10;             entryTitleStay        = 40; entryTitleFadeOut  = 10;
+            entryAbAudience      = "participants"; entryAbText           = ""; entryAbDurationTicks = 60;
+            entryBbTitle         = "";             entryBbColor          = "YELLOW"; entryBbOverlay = "PROGRESS";
+            entryBbAudience      = "participants"; entryBbDurationTicks  = 200;
+            entryBbFadeInTicks   = 10;             entryBbFadeOutTicks   = 20;
+            entryPhraseAudience  = pe.audience;    entryPhraseSteps      = deepCopySteps(pe.rawSteps);
         } else if (found instanceof MessageEvent me) {
-            mode = EventMode.MESSAGE;
-            entryMsgAudience = me.audience;
-            entryMsgText     = me.message;
+            mode                 = EventMode.MESSAGE;
+            entryMsgAudience     = me.audience;    entryMsgText          = me.message;
+            entryTitleAudience   = "participants"; entryTitleText        = ""; entryTitleSubtitle = "";
+            entryTitleFadeIn     = 10;             entryTitleStay        = 40; entryTitleFadeOut  = 10;
+            entryAbAudience      = "participants"; entryAbText           = ""; entryAbDurationTicks = 60;
+            entryBbTitle         = "";             entryBbColor          = "YELLOW"; entryBbOverlay = "PROGRESS";
+            entryBbAudience      = "participants"; entryBbDurationTicks  = 200;
+            entryBbFadeInTicks   = 10;             entryBbFadeOutTicks   = 20;
+            entryPhraseAudience  = "participants"; entryPhraseSteps      = new ArrayList<>();
         } else if (found instanceof TitleEvent te) {
-            mode = EventMode.TITLE;
-            entryTitleAudience = te.audience;
-            entryTitleText     = te.title;
-            entryTitleSubtitle = te.subtitle;
-            entryTitleFadeIn   = te.fadeIn;
-            entryTitleStay     = te.stay;
-            entryTitleFadeOut  = te.fadeOut;
+            mode                 = EventMode.TITLE;
+            entryMsgAudience     = "participants"; entryMsgText          = "";
+            entryTitleAudience   = te.audience;    entryTitleText        = te.title;
+            entryTitleSubtitle   = te.subtitle;    entryTitleFadeIn      = te.fadeIn;
+            entryTitleStay       = te.stay;        entryTitleFadeOut     = te.fadeOut;
+            entryAbAudience      = "participants"; entryAbText           = ""; entryAbDurationTicks = 60;
+            entryBbTitle         = "";             entryBbColor          = "YELLOW"; entryBbOverlay = "PROGRESS";
+            entryBbAudience      = "participants"; entryBbDurationTicks  = 200;
+            entryBbFadeInTicks   = 10;             entryBbFadeOutTicks   = 20;
+            entryPhraseAudience  = "participants"; entryPhraseSteps      = new ArrayList<>();
         } else if (found instanceof ActionBarEvent ae) {
-            mode = EventMode.ACTION_BAR;
-            entryAbAudience      = ae.audience;
-            entryAbText          = ae.message;
+            mode                 = EventMode.ACTION_BAR;
+            entryMsgAudience     = "participants"; entryMsgText          = "";
+            entryTitleAudience   = "participants"; entryTitleText        = ""; entryTitleSubtitle = "";
+            entryTitleFadeIn     = 10;             entryTitleStay        = 40; entryTitleFadeOut  = 10;
+            entryAbAudience      = ae.audience;    entryAbText           = ae.message;
             entryAbDurationTicks = ae.durationTicks;
+            entryBbTitle         = "";             entryBbColor          = "YELLOW"; entryBbOverlay = "PROGRESS";
+            entryBbAudience      = "participants"; entryBbDurationTicks  = 200;
+            entryBbFadeInTicks   = 10;             entryBbFadeOutTicks   = 20;
+            entryPhraseAudience  = "participants"; entryPhraseSteps      = new ArrayList<>();
         } else if (found instanceof BossbarEvent be) {
-            mode = EventMode.BOSSBAR;
-            entryBbTitle         = be.title;
-            entryBbColor         = be.color;
-            entryBbOverlay       = be.overlay;
-            entryBbAudience      = be.audience;
+            mode                 = EventMode.BOSSBAR;
+            entryMsgAudience     = "participants"; entryMsgText          = "";
+            entryTitleAudience   = "participants"; entryTitleText        = ""; entryTitleSubtitle = "";
+            entryTitleFadeIn     = 10;             entryTitleStay        = 40; entryTitleFadeOut  = 10;
+            entryAbAudience      = "participants"; entryAbText           = ""; entryAbDurationTicks = 60;
+            entryBbTitle         = be.title;       entryBbColor          = be.color;
+            entryBbOverlay       = be.overlay;     entryBbAudience       = be.audience;
             entryBbDurationTicks = be.durationTicks;
-            entryBbFadeInTicks   = be.fadeInTicks;
-            entryBbFadeOutTicks  = be.fadeOutTicks;
+            entryBbFadeInTicks   = be.fadeInTicks; entryBbFadeOutTicks   = be.fadeOutTicks;
+            entryPhraseAudience  = "participants"; entryPhraseSteps      = new ArrayList<>();
         } else {
             // Default: MESSAGE mode for empty/stub cues
-            mode = EventMode.MESSAGE;
-        }
-
-        // ---- Assign defaults for fields not set by the detected mode ----
-        // (Java requires all final fields to be definitely assigned.)
-        if (mode != EventMode.MESSAGE) {
-            entryMsgAudience = "participants";
-            entryMsgText     = "";
-        }
-        if (mode != EventMode.TITLE) {
-            entryTitleAudience = "participants";
-            entryTitleText     = "";
-            entryTitleSubtitle = "";
-            entryTitleFadeIn   = 10;
-            entryTitleStay     = 40;
-            entryTitleFadeOut  = 10;
-        }
-        if (mode != EventMode.ACTION_BAR) {
-            entryAbAudience      = "participants";
-            entryAbText          = "";
-            entryAbDurationTicks = 60;
-        }
-        if (mode != EventMode.BOSSBAR) {
-            entryBbTitle         = "";
-            entryBbColor         = "YELLOW";
-            entryBbOverlay       = "PROGRESS";
-            entryBbAudience      = "participants";
-            entryBbDurationTicks = 200;
-            entryBbFadeInTicks   = 10;
-            entryBbFadeOutTicks  = 20;
-        }
-        if (mode != EventMode.PHRASE) {
-            entryPhraseAudience = "participants";
-            entryPhraseSteps    = new ArrayList<>();
+            mode                 = EventMode.MESSAGE;
+            entryMsgAudience     = "participants"; entryMsgText          = "";
+            entryTitleAudience   = "participants"; entryTitleText        = ""; entryTitleSubtitle = "";
+            entryTitleFadeIn     = 10;             entryTitleStay        = 40; entryTitleFadeOut  = 10;
+            entryAbAudience      = "participants"; entryAbText           = ""; entryAbDurationTicks = 60;
+            entryBbTitle         = "";             entryBbColor          = "YELLOW"; entryBbOverlay = "PROGRESS";
+            entryBbAudience      = "participants"; entryBbDurationTicks  = 200;
+            entryBbFadeInTicks   = 10;             entryBbFadeOutTicks   = 20;
+            entryPhraseAudience  = "participants"; entryPhraseSteps      = new ArrayList<>();
         }
 
         // ---- Initialise current state from entry snapshots ----
