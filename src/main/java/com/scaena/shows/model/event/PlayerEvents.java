@@ -48,40 +48,149 @@ public final class PlayerEvents {
         @Override public EventType type() { return EventType.PLAYER_VELOCITY; }
     }
 
+    /**
+     * PLAYER_SPECTATE — Phase 2 extended version.
+     *
+     * Two mutually exclusive modes:
+     *   spawn: mode — entity is born at spectate time (invisible by default for camera drones).
+     *   entity: mode — references an entity already present in the scene.
+     *
+     * If the {@code spawn:} key is present in the YAML map, spawn mode is active.
+     * Otherwise entity mode is used (original behaviour).
+     */
     public static final class PlayerSpectateEvent extends ShowEvent {
-        public final String entity;       // entity:spawned:Name
-        public final String audience;
-        public final int durationTicks;   // -1 = until PLAYER_SPECTATE_END
+        // ---- entity: mode ----
+        public final String entity;       // entity:spawned:Name (or "" in spawn mode)
 
+        // ---- spawn: mode ----
+        public final boolean spawnMode;
+        public final String  spawnName;
+        public final String  spawnType;   // EntityType name, e.g. "ARMOR_STAND"
+        public final double  spawnOffX;
+        public final double  spawnOffY;
+        public final double  spawnOffZ;
+        public final boolean despawnOnEnd;
+
+        // ---- shared ----
+        public final String audience;
+        public final int    durationTicks;   // -1 = until PLAYER_SPECTATE_END (Phase 2 shortcut)
+
+        @SuppressWarnings("unchecked")
         public PlayerSpectateEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
-            this.entity        = str(m, "entity", "");
             this.audience      = str(m, "audience", "participants");
             this.durationTicks = intVal(m, "duration_ticks", -1);
+
+            if (m.containsKey("spawn")) {
+                // spawn: mode
+                this.spawnMode = true;
+                Map<String, Object> sp = m.get("spawn") instanceof Map<?, ?> spRaw
+                    ? (Map<String, Object>) spRaw : Map.of();
+                this.spawnName = str(sp, "name", "CinematicCamera");
+                this.spawnType = str(sp, "type", "ARMOR_STAND").toUpperCase();
+                Map<String, Object> off = sp.get("offset") instanceof Map<?, ?> offRaw
+                    ? (Map<String, Object>) offRaw : Map.of();
+                this.spawnOffX      = dblVal(off, "x", 0);
+                this.spawnOffY      = dblVal(off, "y", 0);
+                this.spawnOffZ      = dblVal(off, "z", 0);
+                this.despawnOnEnd   = boolVal(sp, "despawn_on_end", true);
+                this.entity         = "";
+            } else {
+                // entity: mode (original)
+                this.spawnMode    = false;
+                this.spawnName    = "";
+                this.spawnType    = "ARMOR_STAND";
+                this.spawnOffX    = 0;
+                this.spawnOffY    = 0;
+                this.spawnOffZ    = 0;
+                this.despawnOnEnd = false;
+                this.entity       = str(m, "entity", "");
+            }
         }
 
         @Override public EventType type() { return EventType.PLAYER_SPECTATE; }
     }
 
+    /**
+     * PLAYER_SPECTATE_END — Phase 2 extended version.
+     *
+     * destination: restore (default) | mark:Name | entity:spawned:Name
+     */
     public static final class PlayerSpectateEndEvent extends ShowEvent {
         public final String audience;
+        /**
+         * Where to place the player when spectate ends.
+         * "restore"           — return to pre-spectate position (default)
+         * "mark:Name"         — teleport to a defined mark
+         * "entity:spawned:N"  — teleport to the drone's current position
+         */
+        public final String destination;
 
         public PlayerSpectateEndEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
-            this.audience = str(m, "audience", "participants");
+            this.audience    = str(m, "audience", "participants");
+            this.destination = str(m, "destination", "restore");
         }
 
         @Override public EventType type() { return EventType.PLAYER_SPECTATE_END; }
     }
 
+    /**
+     * PLAYER_MOUNT — Phase 2 extended version.
+     *
+     * Two mutually exclusive modes:
+     *   spawn: mode — entity is born at mount time.
+     *   entity: mode — references an entity already present in the scene.
+     */
     public static final class PlayerMountEvent extends ShowEvent {
-        public final String entity;
-        public final String audience;
+        // ---- entity: mode ----
+        public final String  entity;
 
+        // ---- spawn: mode ----
+        public final boolean spawnMode;
+        public final String  spawnName;
+        public final String  spawnType;
+        public final double  spawnOffX;
+        public final double  spawnOffY;
+        public final double  spawnOffZ;
+        public final boolean spawnInvisible;
+        public final boolean despawnOnDismount;
+
+        // ---- shared ----
+        public final String audience;
+        public final int    durationTicks;   // -1 = until PLAYER_DISMOUNT (Phase 2 shortcut)
+
+        @SuppressWarnings("unchecked")
         public PlayerMountEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
-            this.entity   = str(m, "entity", "");
-            this.audience = str(m, "audience", "participants");
+            this.audience      = str(m, "audience", "participants");
+            this.durationTicks = intVal(m, "duration_ticks", -1);
+
+            if (m.containsKey("spawn")) {
+                this.spawnMode = true;
+                Map<String, Object> sp = m.get("spawn") instanceof Map<?, ?> spRaw
+                    ? (Map<String, Object>) spRaw : Map.of();
+                this.spawnName          = str(sp, "name", "GuideEntity");
+                this.spawnType          = str(sp, "type", "HORSE").toUpperCase();
+                Map<String, Object> off = sp.get("offset") instanceof Map<?, ?> offRaw
+                    ? (Map<String, Object>) offRaw : Map.of();
+                this.spawnOffX          = dblVal(off, "x", 0);
+                this.spawnOffY          = dblVal(off, "y", 0);
+                this.spawnOffZ          = dblVal(off, "z", 0);
+                this.spawnInvisible     = boolVal(sp, "invisible", false);
+                this.despawnOnDismount  = boolVal(sp, "despawn_on_dismount", true);
+                this.entity             = "";
+            } else {
+                this.spawnMode         = false;
+                this.spawnName         = "";
+                this.spawnType         = "HORSE";
+                this.spawnOffX         = 0;
+                this.spawnOffY         = 0;
+                this.spawnOffZ         = 0;
+                this.spawnInvisible    = false;
+                this.despawnOnDismount = false;
+                this.entity            = str(m, "entity", "");
+            }
         }
 
         @Override public EventType type() { return EventType.PLAYER_MOUNT; }

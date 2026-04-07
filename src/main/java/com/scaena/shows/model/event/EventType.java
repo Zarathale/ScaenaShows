@@ -42,6 +42,9 @@ public enum EventType {
     PLAYER_SPECTATE_END, PLAYER_MOUNT, PLAYER_DISMOUNT,
     PLAYER_FLIGHT,
 
+    // §6.10.5 Camera State — cross-department flags and conditional primitives (OPS-029 Camera)
+    CAMERA_LOCK, MOVEMENT_LOCK, BOUNDARY_CHECK, VIEW_CHECK,
+
     // §6.11 Utility
     REST, COMMAND, CUE,
 
