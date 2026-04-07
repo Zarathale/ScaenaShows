@@ -1,7 +1,7 @@
 ---
 document: OPS-029 Phase 2 Implementation Plan
 date: 2026-04-06
-status: Active — Groups 0–4 committed, Group 5 next
+status: Active — Groups 0–4 committed, Group 5 (Casting, Wardrobe, Sound) committed
 scope: TechCueSession, ShowYamlEditor, and related work sequenced from ops-inbox
 ---
 
@@ -14,30 +14,31 @@ new classes, build sequence, and OPS items sequenced in from the inbox.
 
 ## Current State — Read This First
 
-**Groups 0–4 + Group 5 Casting and Wardrobe are all committed on `main` at v2.35.0. Git is clean. Ready to build.**
+**Groups 0–4 + Group 5 Casting, Wardrobe, and Sound are all committed at v2.36.0. Ready to build Voice.**
 
-~~Step 1 — Version bump~~ ✅ Done. `build.gradle.kts` is at `2.35.0`, build confirmed clean.
+~~Step 1 — Version bump~~ ✅ Done. `build.gradle.kts` is at `2.36.0`, build confirmed clean.
 ~~Step 2 — Git cleanup~~ ✅ Done. `.claude/` worktrees untracked, `.gitattributes` added.
 
 Group 5 progress:
 - ~~Casting~~ ✅ Committed. Initial at v2.33.0; revised at v2.35.0 (PR #5).
 - ~~Wardrobe~~ ✅ Committed at v2.34.0 (PR #4).
+- ~~Sound~~ ✅ Committed at v2.36.0. `SoundEditSession.java`, `SoundPanelBuilder.java`. Auto-preview wired; SOUND + STOP_SOUND both handled.
 
 ### Git workflow rule for all Code sessions
 
 **Always branch before any Java work. Never commit directly to `main`.**
 
 ```bash
-git checkout -b claude/ops-029-group5-sound
+git checkout -b claude/ops-029-group5-voice
 ```
 
 Commit message format: `OPS-029 Group 5 [Dept]: [what] (vX.Y.Z)`
 Push the branch. Stop there. Alan reviews and merges via GitHub Desktop.
 
-### Begin Group 5 Sound
+### Begin Group 5 Voice
 
-Next department is **Sound** — param panel with auto-preview (refire SOUND event on change).
-Target version: **2.36.0**
+Next department is **Voice** — script line text input; BOSSBAR/ACTION_BAR/TITLE sub-panel.
+Target version: **2.37.0**
 See § Build Sequence → Group 5 below.
 
 ---
@@ -260,15 +261,15 @@ Branch naming: `claude/ops-029-group5-[dept]`
 2. [x] **Wardrobe** — slot selector panel; leather color sub-panel ✅ v2.34.0
    - `WardrobeEditSession.java`, `WardrobePanelBuilder.java` committed on `main`
 
-3. [ ] **Sound** — param panel; auto-preview (refire SOUND event on change)
-   - Read `kb/system/phase2-department-panels.md §Sound`
-   - New class: `SoundEditSession implements DeptEditSession`
-   - Version: 2.35.0
+3. [x] **Sound** — param panel; auto-preview (refire SOUND event on change) ✅ v2.36.0
+   - `SoundEditSession.java`, `SoundPanelBuilder.java` committed on `main`
+   - Handles SOUND (5 params) + STOP_SOUND (source only); auto-preview refires on change
+   - TechManager wired: `sound.` prefix → SoundEditSession
 
 4. [ ] **Voice** — script line text input; BOSSBAR/ACTION_BAR/TITLE sub-panel
    - Read `kb/system/phase2-department-panels.md §Voice`
    - New class: `VoiceEditSession implements DeptEditSession`
-   - Version: 2.36.0
+   - Version: 2.37.0
 
 5. [ ] **Effects** — potion effect selector; auto-preview
    - Read `kb/system/phase2-department-panels.md §Effects`
@@ -380,7 +381,7 @@ Total to fully ship Phase 2: ~2,500 lines across ~12 commits.
 
 ## Version Progression (rough)
 
-Current: `2.35.0` ✅
+Current: `2.36.0` ✅
 
 | Group | Version | Status |
 |---|---|---|
@@ -390,8 +391,8 @@ Current: `2.35.0` ✅
 | Group 4 (panel + commands) | 2.32.0 | ✅ |
 | Group 5 — Casting | 2.33.0 / 2.35.0 | ✅ |
 | Group 5 — Wardrobe | 2.34.0 | ✅ |
-| Group 5 — Sound | 2.36.0 | next |
-| Group 5 — Voice | 2.37.0 | |
+| Group 5 — Sound | 2.36.0 | ✅ |
+| Group 5 — Voice | 2.37.0 | next |
 | Group 5 — Effects | 2.38.0 | |
 | Group 5 — Fireworks | 2.39.0 | |
 | Group 5 — Lighting | 2.40.0 | |
