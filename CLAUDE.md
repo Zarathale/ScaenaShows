@@ -26,19 +26,16 @@ All 12 department KBs are now in folder structure (`kb/departments/[dept-slug]/[
 - Gates 1 (Casting) ✅ and 2 (Wardrobe) ✅ closed. Kit locked, arc staged, script v2 complete.
 - Gate 3 (Set Scouting) open. Zarathale scouts Sites B–F using `direction/showcase.01.scouting-field-guide.md`. Site A scouted 2026-03-30.
 - Gate 4 (Intake) pending Gate 3. Two TBDs remain: victory coda fireworks (Mira) + victory levitation amplifier (Effects, pending ceiling clearance).
-- Engine at 2.42.0 on main — OPS-027 (Phase 1) shipped. OPS-029 Groups 0–5 (Casting, Wardrobe, Sound, Voice, Effects, Fireworks, Lighting, Camera, Choreography) committed. Prompt Book is the authoritative committed-state artifact.
+- Engine at 2.43.0 on main — OPS-027 (Phase 1) shipped. OPS-029 Groups 0–5 (all 10 departments: Casting, Wardrobe, Sound, Voice, Effects, Fireworks, Lighting, Camera, Choreography, Set) committed. Prompt Book is the authoritative committed-state artifact.
 
 **Not show-specific:**
 - R7 debrief ✅ complete (2026-03-28). R8 not yet scheduled.
-- **OPS-029 Phase 2 — Groups 0–4 + Group 5 through Choreography committed at v2.42.0. Next: Set at v2.43.0.**
+- **OPS-029 Phase 2 — All groups complete. ✅ Set shipped at v2.43.0 (PR #14). All 10 dept sessions done.**
   Groups 0–1 at v2.29.0. Group 2 at v2.30.0. Group 3 at v2.31.0. Group 4 at v2.32.0.
-  Group 5: Casting at v2.33.0 (revised v2.35.0), Wardrobe at v2.34.0, Sound at v2.36.0, Voice at v2.37.0, Effects at v2.38.0, Fireworks at v2.39.0 (PR #10), Lighting at v2.40.0, Camera at v2.41.0 (PR #12), Choreography at v2.42.0 (PR #13).
-  Read `kb/system/ops-029-impl-plan.md` for full build sequence — it has everything Code needs.
+  Group 5: Casting at v2.33.0 (revised v2.35.0), Wardrobe at v2.34.0, Sound at v2.36.0, Voice at v2.37.0, Effects at v2.38.0, Fireworks at v2.39.0 (PR #10), Lighting at v2.40.0, Camera at v2.41.0 (PR #12), Choreography at v2.42.0 (PR #13), Set at v2.43.0 (PR #14).
+  Read `kb/system/ops-029-impl-plan.md` for full build sequence and post-Phase-2 queue.
   Read `kb/system/ops-029-design-session-2026-04-05.md` for architecture decisions.
-  **Next: Group 5 Set in Code (feature branch `claude/ops-029-group5-set`), target v2.43.0.**
-  Note: `SetBuildSession.java`, `BlockBuildListener.java`, `SetBuildWriter.java` are fully
-  shipped Phase 1 features — block diff capture is live and wired into `TechSession`/`TechManager`.
-  Group 5 Set wraps this in a `DeptEditSession` for Phase 2; the hard capture work is already done.
+  **Next (Java): OPS-033 Part B — Phase 1 display redesign (now unblocked). See impl plan OPS items section.**
   Detailed content in standalone docs:
   - `kb/system/phase2-department-panels.md` — all 10 department panel specs
   - `kb/system/pattern-phrase-spec.md` — PATTERN, PHRASE, Tempo Architecture
@@ -214,11 +211,7 @@ Do not reopen these without Alan.
 
 ## Versioning Policy
 
-<<<<<<< Updated upstream
 **Current version:** `2.43.0`
-=======
-**Current version:** `2.42.0`
->>>>>>> Stashed changes
 **Version file:** `build.gradle.kts` — the `version = "x.y.z"` line
 
 **Alan builds locally. Claude Code never runs the build.** The Claude Code environment is a closed sandbox with no loopback — `gradle`/`gradlew` always fails here. Write the code, bump the version, commit, push. Alan runs the build and confirms. Do not attempt `gradle` or `gradlew` under any circumstances.
@@ -261,5 +254,4 @@ Three agents touch this repo. Keep them in their lanes.
 - Never `git push origin main` directly
 
 **Cleaning up tracked artifacts:**
-- `.claude/worktrees/` gets created by Code for isolated tasks. `.claude/` is in `.gitignore` but old worktrees may still be tracked. Fix: `git rm --cached -r .claude/` then commit.
-- Line-ending noise (CRLF/LF): add `.g
+- `.claude/worktrees/` gets created by Code for isolated tasks. `.claude/` is in `.gitignore` but old worktrees may still be track

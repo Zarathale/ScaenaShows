@@ -1,7 +1,7 @@
 ---
 document: OPS-029 Phase 2 Implementation Plan
 date: 2026-04-07
-status: Active — Groups 0–4 committed, Group 5 through Choreography committed. Next: Set (v2.43.0).
+status: Active — Groups 0–4 committed, all Group 5 departments committed. Set shipped at v2.43.0 (PR #14). All 10 dept sessions complete. Next: OPS-033 Part B or post-Phase-2 work.
 scope: TechCueSession, ShowYamlEditor, and related work sequenced from ops-inbox
 ---
 
@@ -14,7 +14,7 @@ new classes, build sequence, and OPS items sequenced in from the inbox.
 
 ## Current State — Read This First
 
-**Groups 0–4 + Group 5 Casting, Wardrobe, Sound, Voice, Effects, Fireworks, Lighting, Camera, and Choreography are all committed and merged to main. Choreography at v2.42.0 (PR #13). Ready to build Set.**
+**All Groups 0–4 and all 10 Group 5 department sessions are committed and merged to main. Set shipped at v2.43.0 (PR #14). OPS-029 Phase 2 Group 5 is complete. Next: OPS-033 Part B (Phase 1 display redesign) or other post-Phase-2 work.**
 
 ~~Step 1 — Version bump~~ ✅ Done. `build.gradle.kts` is at `2.40.0`, build confirmed clean.
 ~~Step 2 — Git cleanup~~ ✅ Done. `.claude/` worktrees untracked, `.gitattributes` added.
@@ -37,11 +37,10 @@ git checkout -b claude/ops-029-group5-fireworks
 Commit message format: `OPS-029 Group 5 [Dept]: [what] (vX.Y.Z)`
 Push the branch. Stop there. Alan reviews and merges via GitHub Desktop.
 
-### Begin Group 5 Choreography
+### ✅ Group 5 Complete
 
-Next department is **Choreography** — character movement, AI/pathfinding, PHRASE container.
-Target version: **2.42.0**
-See § Build Sequence → Group 5 below.
+All 10 department edit sessions shipped. Set was the final one — v2.43.0 (PR #14).
+**Next Java work:** OPS-033 Part B — Phase 1 display redesign (unblocked post-Set). See § OPS Items below.
 
 ---
 
@@ -290,14 +289,9 @@ Branch naming: `claude/ops-029-group5-[dept]`
 9. [x] **Choreography** — character movement panels (ENTRANCE, CHARACTER EXIT/CROSS/LOOK/VELOCITY, PERFORMER STATE, CHOREO_PHRASE) ✅ v2.42.0
    - `ChoreographyEditSession.java`, `ChoreographyPanelBuilder.java` committed on `main` (PR #13)
 
-10. [ ] **Set** — Phase 2 panel wrapper only; block diff capture is already done
-    - Read `kb/system/phase2-department-panels.md §Set`
-    - `SetBuildSession.java`, `BlockBuildListener.java`, `SetBuildWriter.java` are **fully
-      implemented and live in Phase 1** (`TechSession`/`TechManager`). The in-world block
-      tracking, bounding box logic, and YAML write are all working. Do not rewrite them.
-    - New class: `SetEditSession implements DeptEditSession` — wires the existing Phase 1
-      capture into the Phase 2 panel interface. The hard work is already done.
-    - Version: 2.43.0
+10. [x] **Set** — Phase 2 panel wrapper; wires existing Phase 1 block capture into DeptEditSession ✅ v2.43.0
+    - `SetEditSession.java`, `SetPanelBuilder.java` committed on `main` (PR #14)
+    - `SetBuildSession.java`, `BlockBuildListener.java`, `SetBuildWriter.java` are Phase 1 features — all live, unchanged.
 
 ---
 
@@ -375,7 +369,7 @@ Total to fully ship Phase 2: ~2,500 lines across ~12 commits.
 
 ## Version Progression (rough)
 
-Current: `2.42.0` on main
+Current: `2.43.0` on main — **All Phase 2 Group 5 departments complete.**
 
 | Group | Version | Status |
 |---|---|---|
@@ -392,4 +386,4 @@ Current: `2.42.0` on main
 | Group 5 — Lighting | 2.40.0 | ✅ |
 | Group 5 — Camera | 2.41.0 | ✅ |
 | Group 5 — Choreography | 2.42.0 | ✅ |
-| Group 5 — Set | 2.43.0 | ⬜ next |
+| Group 5 — Set | 2.43.0 | ✅ |
