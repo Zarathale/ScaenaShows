@@ -14,25 +14,30 @@ new classes, build sequence, and OPS items sequenced in from the inbox.
 
 ## Current State — Read This First
 
-**Groups 0–4 are all committed on `main` at v2.32.0. Git is clean. Ready to build.**
+**Groups 0–4 + Group 5 Casting and Wardrobe are all committed on `main` at v2.35.0. Git is clean. Ready to build.**
 
-~~Step 1 — Version bump~~ ✅ Done. `build.gradle.kts` is at `2.32.0`, build confirmed clean.
+~~Step 1 — Version bump~~ ✅ Done. `build.gradle.kts` is at `2.35.0`, build confirmed clean.
 ~~Step 2 — Git cleanup~~ ✅ Done. `.claude/` worktrees untracked, `.gitattributes` added.
+
+Group 5 progress:
+- ~~Casting~~ ✅ Committed. Initial at v2.33.0; revised at v2.35.0 (PR #5).
+- ~~Wardrobe~~ ✅ Committed at v2.34.0 (PR #4).
 
 ### Git workflow rule for all Code sessions
 
 **Always branch before any Java work. Never commit directly to `main`.**
 
 ```bash
-git checkout -b claude/ops-029-group5-casting
+git checkout -b claude/ops-029-group5-sound
 ```
 
 Commit message format: `OPS-029 Group 5 [Dept]: [what] (vX.Y.Z)`
 Push the branch. Stop there. Alan reviews and merges via GitHub Desktop.
 
-### Begin Group 5
+### Begin Group 5 Sound
 
-Start with **Casting** (simplest: panel only, live param swap, no world capture).
+Next department is **Sound** — param panel with auto-preview (refire SOUND event on change).
+Target version: **2.36.0**
 See § Build Sequence → Group 5 below.
 
 ---
@@ -249,17 +254,11 @@ Branch naming: `claude/ops-029-group5-[dept]`
 
 **Priority order (simplest → most complex):**
 
-1. [ ] **Casting** — panel only; live param swap on param change; no world capture
-   - Read `kb/system/phase2-department-panels.md §Casting` for panel spec
-   - Read `kb/departments/casting/casting.kb.md` for dept context
-   - New class: `CastingEditSession implements DeptEditSession`
-   - No auto-preview needed — Casting changes take effect on next Phase 1 materialization
-   - Version: 2.33.0
+1. [x] **Casting** — panel only; live param swap on param change; no world capture ✅ v2.33.0 / v2.35.0
+   - `CastingEditSession.java`, `CastingPanelBuilder.java` committed on `main`
 
-2. [ ] **Wardrobe** — slot selector panel; leather color sub-panel
-   - Read `kb/system/phase2-department-panels.md §Wardrobe`
-   - New class: `WardrobeEditSession implements DeptEditSession`
-   - Version: 2.34.0
+2. [x] **Wardrobe** — slot selector panel; leather color sub-panel ✅ v2.34.0
+   - `WardrobeEditSession.java`, `WardrobePanelBuilder.java` committed on `main`
 
 3. [ ] **Sound** — param panel; auto-preview (refire SOUND event on change)
    - Read `kb/system/phase2-department-panels.md §Sound`
@@ -381,7 +380,7 @@ Total to fully ship Phase 2: ~2,500 lines across ~12 commits.
 
 ## Version Progression (rough)
 
-Current: `2.32.0` ✅
+Current: `2.35.0` ✅
 
 | Group | Version | Status |
 |---|---|---|
@@ -389,14 +388,14 @@ Current: `2.32.0` ✅
 | Group 2 (step mode) | 2.30.0 | ✅ |
 | Group 3 (TechCueSession core) | 2.31.0 | ✅ |
 | Group 4 (panel + commands) | 2.32.0 | ✅ |
-| Group 5 — Casting | 2.33.0 | next |
-| Group 5 — Wardrobe | 2.34.0 | |
-| Group 5 — Sound | 2.35.0 | |
-| Group 5 — Voice | 2.36.0 | |
-| Group 5 — Effects | 2.37.0 | |
-| Group 5 — Fireworks | 2.38.0 | |
-| Group 5 — Lighting | 2.39.0 | |
-| Group 5 — Camera | 2.40.0 | |
-| Group 5 — Choreography | 2.41.0 | |
-| Group 5 — Set | 2.42.0 | |
+| Group 5 — Casting | 2.33.0 / 2.35.0 | ✅ |
+| Group 5 — Wardrobe | 2.34.0 | ✅ |
+| Group 5 — Sound | 2.36.0 | next |
+| Group 5 — Voice | 2.37.0 | |
+| Group 5 — Effects | 2.38.0 | |
+| Group 5 — Fireworks | 2.39.0 | |
+| Group 5 — Lighting | 2.40.0 | |
+| Group 5 — Camera | 2.41.0 | |
+| Group 5 — Choreography | 2.42.0 | |
+| Group 5 — Set | 2.43.0 | |
 | OPS-043 + OPS-040 | slots into any Group 5 window | |

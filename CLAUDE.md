@@ -26,15 +26,16 @@ All 12 department KBs are now in folder structure (`kb/departments/[dept-slug]/[
 - Gates 1 (Casting) ✅ and 2 (Wardrobe) ✅ closed. Kit locked, arc staged, script v2 complete.
 - Gate 3 (Set Scouting) open. Zarathale scouts Sites B–F using `direction/showcase.01.scouting-field-guide.md`. Site A scouted 2026-03-30.
 - Gate 4 (Intake) pending Gate 3. Two TBDs remain: victory coda fireworks (Mira) + victory levitation amplifier (Effects, pending ceiling clearance).
-- Engine at 2.32.0 — OPS-027 (Phase 1) shipped. OPS-029 Groups 0–4 all committed. Prompt Book is the authoritative committed-state artifact.
+- Engine at 2.35.0 — OPS-027 (Phase 1) shipped. OPS-029 Groups 0–5 (Casting, Wardrobe) committed. Prompt Book is the authoritative committed-state artifact.
 
 **Not show-specific:**
 - R7 debrief ✅ complete (2026-03-28). R8 not yet scheduled.
-- **OPS-029 Phase 2 — Groups 0–4 committed at v2.32.0. Git clean. Group 5 next.**
+- **OPS-029 Phase 2 — Groups 0–4 + Group 5 Casting/Wardrobe committed at v2.35.0. Git clean. Group 5 Sound next.**
   Groups 0–1 at v2.29.0. Group 2 at v2.30.0. Group 3 at v2.31.0. Group 4 at v2.32.0.
+  Group 5: Casting at v2.33.0 (revised v2.35.0), Wardrobe at v2.34.0.
   Read `kb/system/ops-029-impl-plan.md` for full build sequence — it has everything Code needs.
   Read `kb/system/ops-029-design-session-2026-04-05.md` for architecture decisions.
-  **Next: begin Group 5 in Code (Casting dept first, feature branch).**
+  **Next: Group 5 Sound in Code (feature branch `claude/ops-029-group5-sound`), target v2.36.0.**
   Note: `SetBuildSession.java`, `BlockBuildListener.java`, `SetBuildWriter.java` are fully
   shipped Phase 1 features — block diff capture is live and wired into `TechSession`/`TechManager`.
   Group 5 Set wraps this in a `DeptEditSession` for Phase 2; the hard capture work is already done.
@@ -213,7 +214,7 @@ Do not reopen these without Alan.
 
 ## Versioning Policy
 
-**Current version:** `2.32.0`
+**Current version:** `2.35.0`
 **Version file:** `build.gradle.kts` — the `version = "x.y.z"` line
 
 **Alan builds locally. Claude Code never runs the build.** The Claude Code environment is a closed sandbox with no loopback — `gradle`/`gradlew` always fails here. Write the code, bump the version, commit, push. Alan runs the build and confirms. Do not attempt `gradle` or `gradlew` under any circumstances.
@@ -257,18 +258,4 @@ Three agents touch this repo. Keep them in their lanes.
 
 **Cleaning up tracked artifacts:**
 - `.claude/worktrees/` gets created by Code for isolated tasks. `.claude/` is in `.gitignore` but old worktrees may still be tracked. Fix: `git rm --cached -r .claude/` then commit.
-- Line-ending noise (CRLF/LF): add `.gitattributes` with `*.java text=auto eol=lf` if Java files keep showing as modified with no real changes.
-
----
-
-## Cue Authoring Notes
-
-Before building new cues: propose a short list of archetypes and wait for alignment. Do not build until Alan confirms. See `kb/departments/voice/showsprite.context.md §Cue Library Authoring` for full methodology.
-
-When building cues for review:
-1. Build a **demo show**: quiet Sprite intro → cue fires → labeled in chat
-2. Generate a **run sheet** — save in the show folder at `[show_id]/[show_id].run-sheet.md`
-3. Each run sheet entry: Intention, Function, Mechanics, Watch question, Notes
-4. Number every cue (C1, C3, C7) so Alan can take notes by number
-
-Alan reviews in-game on one screen, run sheet on another. Debriefs by cue number.
+- Line-ending noise (CRLF/LF): add `.g
