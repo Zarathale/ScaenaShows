@@ -2039,6 +2039,8 @@ public final class TechManager {
             WardrobePanelBuilder.sendPanel(player, wardrobeSession);
         } else if (editSession instanceof SoundEditSession soundSession) {
             SoundPanelBuilder.sendPanel(player, soundSession);
+        } else if (editSession instanceof VoiceEditSession voiceSession) {
+            VoicePanelBuilder.sendPanel(player, voiceSession);
         } else {
             player.sendMessage(MM.deserialize(
                 "<aqua>Editing: <white>" + cueId + "</white></aqua>"
@@ -2159,7 +2161,11 @@ public final class TechManager {
             return new SoundEditSession(
                 cueId, cueSession.getPlayer(), cueSession, editor, cueRegistry, log);
         }
-        // TODO (Group 5): add Voice, Effects, Fireworks, Lighting,
+        if (cueId.startsWith("voice.")) {
+            return new VoiceEditSession(
+                cueId, cueSession.getPlayer(), cueSession, editor, cueRegistry, log);
+        }
+        // TODO (Group 5): add Effects, Fireworks, Lighting,
         //   Camera, Choreography, Set as each department is implemented.
         return null;
     }

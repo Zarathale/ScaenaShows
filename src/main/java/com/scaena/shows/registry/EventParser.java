@@ -47,6 +47,7 @@ public final class EventParser {
                 case BOSSBAR          -> new TextEvents.BossbarEvent(m);
                 case PLAYER_CHOICE    -> new TextEvents.PlayerChoiceEvent(m);
                 case BOSS_HEALTH_BAR  -> new TextEvents.BossHealthBarEvent(m);
+                case PHRASE           -> new TextEvents.PhraseEvent(m);
                 // §6.2 Sound
                 case SOUND      -> new SoundEvents.SoundEvent(m);
                 case STOP_SOUND -> new SoundEvents.StopSoundEvent(m);

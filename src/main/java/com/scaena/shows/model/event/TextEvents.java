@@ -1,6 +1,7 @@
 package com.scaena.shows.model.event;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -139,6 +140,36 @@ public final class TextEvents {
         }
 
         @Override public EventType type() { return EventType.BOSS_HEALTH_BAR; }
+    }
+
+    // ------------------------------------------------------------------
+    // PHRASE — multi-step voice script container
+    // Phase 2 primary authoring surface. Executor is no-op; runtime expansion deferred.
+    // Each step has "at" (absolute tick) or "after" (relative to previous) timing,
+    // plus an "events" list (raw maps, not fully parsed into typed events).
+    // ------------------------------------------------------------------
+    public static final class PhraseEvent extends ShowEvent {
+        public final String audience;
+        /** Raw step maps as parsed from YAML. Each has "at"/"after" + "events". */
+        public final List<Map<String, Object>> rawSteps;
+
+        @SuppressWarnings("unchecked")
+        public PhraseEvent(Map<String, Object> m) {
+            super(intVal(m, "at", 0));
+            this.audience = str(m, "audience", "participants");
+            List<Map<String, Object>> parsed = new ArrayList<>();
+            Object stepsRaw = m.get("steps");
+            if (stepsRaw instanceof List<?> list) {
+                for (Object item : list) {
+                    if (item instanceof Map<?, ?> sm) {
+                        parsed.add(new LinkedHashMap<>((Map<String, Object>) sm));
+                    }
+                }
+            }
+            this.rawSteps = List.copyOf(parsed);
+        }
+
+        @Override public EventType type() { return EventType.PHRASE; }
     }
 
     // ------------------------------------------------------------------

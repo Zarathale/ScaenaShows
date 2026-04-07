@@ -8,6 +8,7 @@ public enum EventType {
 
     // §6.1 Text and Display
     MESSAGE, TITLE, TITLE_CLEAR, ACTION_BAR, BOSSBAR, PLAYER_CHOICE, BOSS_HEALTH_BAR,
+    PHRASE,             // Multi-step voice script container (Phase 2 authoring; runtime deferred)
 
     // §6.2 Sound
     SOUND, STOP_SOUND,

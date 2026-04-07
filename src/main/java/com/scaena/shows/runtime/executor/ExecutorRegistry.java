@@ -51,6 +51,7 @@ public final class ExecutorRegistry {
         executors.put(EventType.BOSSBAR,         text);
         executors.put(EventType.PLAYER_CHOICE,   text);
         executors.put(EventType.BOSS_HEALTH_BAR, entity); // entity-linked — routed to EntityEventExecutor
+        executors.put(EventType.PHRASE,          text);   // no-op for now; Phase 2 authoring surface
 
         // §6.2 Sound
         executors.put(EventType.SOUND,      sound);
