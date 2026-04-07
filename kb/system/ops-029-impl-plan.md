@@ -1,7 +1,7 @@
 ---
 document: OPS-029 Phase 2 Implementation Plan
 date: 2026-04-06
-status: Active — Groups 0–4 committed, Group 5 (Casting, Wardrobe, Sound, Voice) committed
+status: Active — Groups 0–4 committed, Group 5 (Casting, Wardrobe, Sound, Voice, Effects) committed
 scope: TechCueSession, ShowYamlEditor, and related work sequenced from ops-inbox
 ---
 
@@ -14,9 +14,9 @@ new classes, build sequence, and OPS items sequenced in from the inbox.
 
 ## Current State — Read This First
 
-**Groups 0–4 + Group 5 Casting, Wardrobe, Sound, and Voice are all committed at v2.37.0. Ready to build Effects.**
+**Groups 0–4 + Group 5 Casting, Wardrobe, Sound, Voice, and Effects are all committed at v2.38.0. Ready to build Fireworks.**
 
-~~Step 1 — Version bump~~ ✅ Done. `build.gradle.kts` is at `2.37.0`, build confirmed clean.
+~~Step 1 — Version bump~~ ✅ Done. `build.gradle.kts` is at `2.38.0`, build confirmed clean.
 ~~Step 2 — Git cleanup~~ ✅ Done. `.claude/` worktrees untracked, `.gitattributes` added.
 
 Group 5 progress:
@@ -24,22 +24,23 @@ Group 5 progress:
 - ~~Wardrobe~~ ✅ Committed at v2.34.0 (PR #4).
 - ~~Sound~~ ✅ Committed at v2.36.0. `SoundEditSession.java`, `SoundPanelBuilder.java`. Auto-preview wired; SOUND + STOP_SOUND both handled.
 - ~~Voice~~ ✅ Committed at v2.37.0. `VoiceEditSession.java`, `VoicePanelBuilder.java`. PRs #7 + #8 (fix: definite-assignment for final fields).
+- ~~Effects~~ ✅ Committed at v2.38.0 (PR #9). `EffectsEditSession.java`, `EffectsPanelBuilder.java`.
 
 ### Git workflow rule for all Code sessions
 
 **Always branch before any Java work. Never commit directly to `main`.**
 
 ```bash
-git checkout -b claude/ops-029-group5-voice
+git checkout -b claude/ops-029-group5-fireworks
 ```
 
 Commit message format: `OPS-029 Group 5 [Dept]: [what] (vX.Y.Z)`
 Push the branch. Stop there. Alan reviews and merges via GitHub Desktop.
 
-### Begin Group 5 Effects
+### Begin Group 5 Fireworks
 
-Next department is **Effects** — potion effect selector; auto-preview.
-Target version: **2.38.0**
+Next department is **Fireworks** — firework builder panel; auto-preview (refire burst).
+Target version: **2.39.0**
 See § Build Sequence → Group 5 below.
 
 ---
@@ -270,15 +271,13 @@ Branch naming: `claude/ops-029-group5-[dept]`
 4. [x] **Voice** — script line text input; BOSSBAR/ACTION_BAR/TITLE sub-panel ✅ v2.37.0
    - `VoiceEditSession.java`, `VoicePanelBuilder.java` committed on `main` (PRs #7, #8)
 
-5. [ ] **Effects** — potion effect selector; auto-preview
-   - Read `kb/system/phase2-department-panels.md §Effects`
-   - New class: `EffectsEditSession implements DeptEditSession`
-   - Version: 2.37.0
+5. [x] **Effects** — potion effect selector; auto-preview ✅ v2.38.0
+   - `EffectsEditSession.java`, `EffectsPanelBuilder.java` committed on `main` (PR #9)
 
 6. [ ] **Fireworks** — firework builder panel; auto-preview (refire burst)
    - Read `kb/system/phase2-department-panels.md §Fireworks`
    - New class: `FireworksEditSession implements DeptEditSession`
-   - Version: 2.38.0
+   - Version: 2.39.0
 
 7. [ ] **Lighting** — TIME_OF_DAY / WEATHER; world_preview param toggle
    - Read `kb/system/phase2-department-panels.md §Lighting`
@@ -380,7 +379,7 @@ Total to fully ship Phase 2: ~2,500 lines across ~12 commits.
 
 ## Version Progression (rough)
 
-Current: `2.37.0` ✅
+Current: `2.38.0` ✅
 
 | Group | Version | Status |
 |---|---|---|
@@ -392,8 +391,8 @@ Current: `2.37.0` ✅
 | Group 5 — Wardrobe | 2.34.0 | ✅ |
 | Group 5 — Sound | 2.36.0 | ✅ |
 | Group 5 — Voice | 2.37.0 | ✅ |
-| Group 5 — Effects | 2.38.0 | ⬜ next |
-| Group 5 — Fireworks | 2.39.0 | ⬜ |
+| Group 5 — Effects | 2.38.0 | ✅ |
+| Group 5 — Fireworks | 2.39.0 | ⬜ next |
 | Group 5 — Lighting | 2.40.0 | ⬜ |
 | Group 5 — Camera | 2.41.0 | ⬜ |
 | Group 5 — Choreography | 2.42.0 | ⬜ |

@@ -368,7 +368,7 @@ public final class EffectsPanelBuilder {
 
         Component xRow = buildVecAxisRow("X:", session.getCurrentVecX(),
             "vec_x_down", "vec_x_up", "vec_x_shift_down", "vec_x_shift_up", "");
-        Component yLabel = EffectsEditSession.yVecLabel(session.getCurrentVecY());
+        String yLabel = EffectsEditSession.yVecLabel(session.getCurrentVecY());
         Component yRow = buildVecAxisRow("Y:", session.getCurrentVecY(),
             "vec_y_down", "vec_y_up", "vec_y_shift_down", "vec_y_shift_up", yLabel);
         Component zRow = buildVecAxisRow("Z:", session.getCurrentVecZ(),
