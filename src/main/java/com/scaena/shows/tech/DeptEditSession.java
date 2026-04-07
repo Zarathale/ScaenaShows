@@ -37,4 +37,11 @@ public interface DeptEditSession {
      * Called when the player clicks [Cancel].
      */
     void onCancel();
+
+    /**
+     * Handle a typed param change from /scaena tech2 editparam <key> <value>.
+     * Returns true if the key was recognised and handled; false otherwise.
+     * Default: no-op, returns false (departments that don't support this override).
+     */
+    default boolean onEditParam(String key, String value) { return false; }
 }

@@ -2026,14 +2026,21 @@ public final class TechManager {
             return;
         }
 
-        // TODO (Group 5): route to the appropriate DeptEditSession implementation
-        // based on the department prefix of cueId (e.g. "casting." → CastingEditSession).
-        // For now, show the universal edit shell so the UX is visible.
+        // Route to department-specific edit session based on cue ID prefix.
+        DeptEditSession editSession = buildDeptEditSession(cueId, cueSession);
+        cueSession.setActiveEditSession(editSession);
 
         CuePanelBuilder.showEditBossBar(player, cueId, cueSession);
-        player.sendMessage(MM.deserialize(
-            "<aqua>Editing: <white>" + cueId + "</white></aqua>"
-            + "  <gray>(department panel coming in Group 5)</gray>"));
+
+        // Send the department panel (or fallback message for unimplemented departments)
+        if (editSession instanceof CastingEditSession castingSession) {
+            CastingPanelBuilder.sendPanel(player, castingSession);
+        } else {
+            player.sendMessage(MM.deserialize(
+                "<aqua>Editing: <white>" + cueId + "</white></aqua>"
+                + "  <gray>(department panel not yet implemented)</gray>"));
+        }
+
         CuePanelBuilder.sendSaveCancelButtons(player);
 
         // Start periodic button refresh (re-send every 5s so buttons don't scroll away)
@@ -2105,6 +2112,45 @@ public final class TechManager {
     // -----------------------------------------------------------------------
     // Phase 2 helpers
     // -----------------------------------------------------------------------
+
+    /**
+     * Handle a /scaena tech2 editparam <key> <value> command.
+     * Delegates to the active DeptEditSession's onEditParam().
+     * If the key is "entity_type_panel", sends the Casting type selector sub-panel.
+     */
+    public void dispatchEditParam(Player player, String key, String value) {
+        TechCueSession cueSession = getTechCueSession(player);
+        if (cueSession == null || !cueSession.isEditing()) {
+            player.sendMessage(MM.deserialize("<yellow>No active edit session.</yellow>"));
+            return;
+        }
+        // Special: open entity type sub-panel without changing state
+        if ("entity_type_panel".equalsIgnoreCase(key)) {
+            CastingPanelBuilder.sendEntityTypePanel(player);
+            return;
+        }
+        DeptEditSession editSession = cueSession.getActiveEditSession();
+        if (editSession == null || !editSession.onEditParam(key, value)) {
+            player.sendMessage(MM.deserialize(
+                "<yellow>Unknown param '" + key + "' for this edit session.</yellow>"));
+        }
+    }
+
+    /**
+     * Build the appropriate DeptEditSession for the given cue ID.
+     * Routing is by cue ID prefix: "casting." → CastingEditSession.
+     * Returns null for unimplemented departments (edit shell still shown).
+     */
+    private DeptEditSession buildDeptEditSession(String cueId, TechCueSession cueSession) {
+        ShowYamlEditor editor = editorFor(cueSession);
+        if (cueId.startsWith("casting.")) {
+            return new CastingEditSession(
+                cueId, cueSession.getPlayer(), cueSession, editor, cueRegistry, log);
+        }
+        // TODO (Group 5): add Wardrobe, Sound, Voice, Effects, Fireworks, Lighting,
+        //   Camera, Choreography, Set as each department is implemented.
+        return null;
+    }
 
     /** Build a ShowYamlEditor for the given session. */
     private ShowYamlEditor editorFor(TechCueSession cueSession) {
