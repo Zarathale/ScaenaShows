@@ -26,16 +26,16 @@ All 12 department KBs are now in folder structure (`kb/departments/[dept-slug]/[
 - Gates 1 (Casting) ✅ and 2 (Wardrobe) ✅ closed. Kit locked, arc staged, script v2 complete.
 - Gate 3 (Set Scouting) open. Zarathale scouts Sites B–F using `direction/showcase.01.scouting-field-guide.md`. Site A scouted 2026-03-30.
 - Gate 4 (Intake) pending Gate 3. Two TBDs remain: victory coda fireworks (Mira) + victory levitation amplifier (Effects, pending ceiling clearance).
-- Engine at 2.36.0 — OPS-027 (Phase 1) shipped. OPS-029 Groups 0–5 (Casting, Wardrobe, Sound) committed. Prompt Book is the authoritative committed-state artifact.
+- Engine at 2.37.0 — OPS-027 (Phase 1) shipped. OPS-029 Groups 0–5 (Casting, Wardrobe, Sound, Voice) committed. Prompt Book is the authoritative committed-state artifact.
 
 **Not show-specific:**
 - R7 debrief ✅ complete (2026-03-28). R8 not yet scheduled.
-- **OPS-029 Phase 2 — Groups 0–4 + Group 5 Casting/Wardrobe/Sound committed at v2.36.0. Git clean. Group 5 Voice next.**
+- **OPS-029 Phase 2 — Groups 0–4 + Group 5 Casting/Wardrobe/Sound/Voice committed at v2.37.0. Git clean. Group 5 Effects next.**
   Groups 0–1 at v2.29.0. Group 2 at v2.30.0. Group 3 at v2.31.0. Group 4 at v2.32.0.
-  Group 5: Casting at v2.33.0 (revised v2.35.0), Wardrobe at v2.34.0, Sound at v2.36.0.
+  Group 5: Casting at v2.33.0 (revised v2.35.0), Wardrobe at v2.34.0, Sound at v2.36.0, Voice at v2.37.0.
   Read `kb/system/ops-029-impl-plan.md` for full build sequence — it has everything Code needs.
   Read `kb/system/ops-029-design-session-2026-04-05.md` for architecture decisions.
-  **Next: Group 5 Voice in Code (feature branch `claude/ops-029-group5-voice`), target v2.37.0.**
+  **Next: Group 5 Effects in Code (feature branch `claude/ops-029-group5-effects`), target v2.38.0.**
   Note: `SetBuildSession.java`, `BlockBuildListener.java`, `SetBuildWriter.java` are fully
   shipped Phase 1 features — block diff capture is live and wired into `TechSession`/`TechManager`.
   Group 5 Set wraps this in a `DeptEditSession` for Phase 2; the hard capture work is already done.
@@ -214,7 +214,7 @@ Do not reopen these without Alan.
 
 ## Versioning Policy
 
-**Current version:** `2.36.0`
+**Current version:** `2.37.0`
 **Version file:** `build.gradle.kts` — the `version = "x.y.z"` line
 
 **Alan builds locally. Claude Code never runs the build.** The Claude Code environment is a closed sandbox with no loopback — `gradle`/`gradlew` always fails here. Write the code, bump the version, commit, push. Alan runs the build and confirms. Do not attempt `gradle` or `gradlew` under any circumstances.
