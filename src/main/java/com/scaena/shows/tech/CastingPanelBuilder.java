@@ -65,12 +65,12 @@ public final class CastingPanelBuilder {
             .append(Component.text("  ", COL_SEP))
             .append(Component.text(session.cueId(), COL_HEADER));
 
-        // entity_type row
+        // entity_type row — [Change ▸] opens the type selector sub-panel
         Component entityTypeRow = buildFieldRow(
             "Entity type:",
             session.getCurrentEntityType(),
             clickBtn("[Change ▸]",
-                "/scaena tech2 editparam entity_type " + session.getCurrentEntityType(),
+                "/scaena tech2 editparam entity_type_panel open",
                 COL_BTN, "Click to open entity type selector")
         );
 
