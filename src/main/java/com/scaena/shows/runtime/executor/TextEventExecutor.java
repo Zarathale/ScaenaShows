@@ -141,16 +141,22 @@ public final class TextEventExecutor implements EventExecutor {
         catch (Exception ex) { overlay = BossBar.Overlay.PROGRESS; }
 
         Component title = MM.deserialize(e.title);
-        BossBar bar = BossBar.bossBar(title, 0f, color, overlay);
+        float clampedStart = Math.max(0f, Math.min(1f, e.startProgress));
+        BossBar bar = BossBar.bossBar(title, clampedStart, color, overlay);
 
         List<Player> audience = AudienceResolver.resolve(e.audience, show);
         for (Player p : audience) p.showBossBar(bar);
         show.addActiveBossBar(bar);
 
-        // Animate: fade in (0→1) over fadeInTicks, hold at 1, fade out (1→0) over fadeOutTicks
-        long totalTicks = e.durationTicks;
-        long fadeInEnd  = e.fadeInTicks;
+        // Static mode: hold at startProgress indefinitely; show stop cleans up via activeBossBars
+        if (e.staticMode) return;
+
+        // Animate: fade in (startProgress→1) over fadeInTicks, hold at 1,
+        //          fade out (1→endProgress) over fadeOutTicks
+        long totalTicks   = e.durationTicks;
+        long fadeInEnd    = e.fadeInTicks;
         long fadeOutStart = totalTicks - e.fadeOutTicks;
+        float clampedEnd  = Math.max(0f, Math.min(1f, e.endProgress));
 
         new BukkitRunnable() {
             long tick = 0;
@@ -165,9 +171,13 @@ public final class TextEventExecutor implements EventExecutor {
                 }
                 float progress;
                 if (tick <= fadeInEnd && fadeInEnd > 0) {
-                    progress = (float) tick / fadeInEnd;
+                    // Fade in: startProgress → 1.0
+                    float t = (float) tick / fadeInEnd;
+                    progress = clampedStart + (1f - clampedStart) * t;
                 } else if (tick >= fadeOutStart && e.fadeOutTicks > 0) {
-                    progress = (float) (totalTicks - tick) / e.fadeOutTicks;
+                    // Fade out: 1.0 → endProgress
+                    float t = (float) (totalTicks - tick) / e.fadeOutTicks;
+                    progress = clampedEnd + (1f - clampedEnd) * t;
                 } else {
                     progress = 1f;
                 }

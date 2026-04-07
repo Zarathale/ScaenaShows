@@ -170,11 +170,19 @@ public final class VisualEventExecutor implements EventExecutor {
 
     // ------------------------------------------------------------------
     // LIGHTNING (cosmetic only — no damage, no fire per spec §15)
+    // OPS-034: anchor:player resolves from the live player position at fire time
     // ------------------------------------------------------------------
     private void handleLightning(LightningEvent e, RunningShow show) {
-        Location anchor = show.getAnchorLocation();
-        if (anchor == null) return;
-        Location strike = anchor.clone().add(e.offsetX, e.offsetY, e.offsetZ);
-        anchor.getWorld().strikeLightningEffect(strike);
+        Location base;
+        if ("player".equalsIgnoreCase(e.anchor)) {
+            List<Player> participants = show.getOnlineParticipants();
+            if (participants.isEmpty()) return;
+            base = participants.get(0).getLocation();
+        } else {
+            base = show.getAnchorLocation();
+            if (base == null) return;
+        }
+        Location strike = base.clone().add(e.offsetX, e.offsetY, e.offsetZ);
+        strike.getWorld().strikeLightningEffect(strike);
     }
 }

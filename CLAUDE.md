@@ -211,7 +211,7 @@ Do not reopen these without Alan.
 
 ## Versioning Policy
 
-**Current version:** `2.43.0`
+**Current version:** `2.44.0`
 **Version file:** `build.gradle.kts` — the `version = "x.y.z"` line
 
 **Alan builds locally. Claude Code never runs the build.** The Claude Code environment is a closed sandbox with no loopback — `gradle`/`gradlew` always fails here. Write the code, bump the version, commit, push. Alan runs the build and confirms. Do not attempt `gradle` or `gradlew` under any circumstances.

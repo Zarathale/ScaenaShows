@@ -194,21 +194,26 @@ public final class FireworkEvents {
     // ------------------------------------------------------------------
     // FIREWORK_RANDOM — scatter pattern; N fireworks at random XZ positions within a radius.
     // All fireworks launch simultaneously (no chase).
+    // OPS-035: y_variation adds randomized per-rocket Y height.
+    // OPS-036: presets pool — per-rocket preset drawn from list; wins over single preset.
     // ------------------------------------------------------------------
     public static final class FireworkRandomEvent extends ShowEvent {
         public final String anchor;       // scene_origin | player
         public final String preset;
+        public final List<String> presets; // OPS-036: pool; wins over single preset if non-empty
         public final XZOffset originOffset;
         public final double radius;
         public final int count;
         public final String yMode;
         public final double yOffset;
+        public final double yVariation;   // OPS-035: per-rocket Y randomization range; 0.0 = flat
         public final String powerVariation;   // UNIFORM | RAMP_UP | RAMP_DOWN | ALTERNATE | RANDOM
         public final String colorVariation;   // UNIFORM | RAINBOW | GRADIENT | ALTERNATE
         public final String gradientFrom;
         public final String gradientTo;
         public final Long seed; // null = different every run
 
+        @SuppressWarnings("unchecked")
         public FireworkRandomEvent(Map<String, Object> m) {
             super(intVal(m, "at", 0));
             this.anchor          = str(m, "anchor", "scene_origin");
@@ -218,12 +223,22 @@ public final class FireworkEvents {
             this.count           = intVal(m, "count", 6);
             this.yMode           = str(m, "y_mode", "surface");
             this.yOffset         = dblVal(m, "y_offset", 2);
+            this.yVariation      = dblVal(m, "y_variation", 0.0);
             this.powerVariation  = str(m, "power_variation", "UNIFORM").toUpperCase();
             this.colorVariation  = str(m, "color_variation", "UNIFORM").toUpperCase();
             this.gradientFrom    = str(m, "gradient_from", "#FF0000");
             this.gradientTo      = str(m, "gradient_to", "#0000FF");
             Object seedRaw       = m.get("seed");
             this.seed            = (seedRaw instanceof Number n) ? n.longValue() : null;
+            // Parse presets pool (OPS-036)
+            List<String> parsedPresets = new ArrayList<>();
+            Object presetsRaw = m.get("presets");
+            if (presetsRaw instanceof List<?> list) {
+                for (Object item : list) {
+                    if (item != null) parsedPresets.add(item.toString());
+                }
+            }
+            this.presets = List.copyOf(parsedPresets);
         }
 
         @Override public EventType type() { return EventType.FIREWORK_RANDOM; }
