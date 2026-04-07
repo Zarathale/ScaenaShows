@@ -2177,11 +2177,11 @@ public final class TechManager {
             return new LightingEditSession(
                 cueId, cueSession.getPlayer(), cueSession, editor, cueRegistry, log);
         }
-        if (cueId.startsWith("camera.")) {
-            return new CameraEditSession(
+        if (cueId.startsWith("choreo.")) {
+            return new ChoreographyEditSession(
                 cueId, cueSession.getPlayer(), cueSession, editor, cueRegistry, log);
         }
-        // TODO (Group 5): add Choreography, Set as each department is implemented.
+        // TODO (Group 5): add Camera, Set as each department is implemented.
         return null;
     }
 
