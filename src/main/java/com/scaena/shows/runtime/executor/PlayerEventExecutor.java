@@ -1,5 +1,6 @@
 package com.scaena.shows.runtime.executor;
 
+import com.scaena.shows.model.Mark;
 import com.scaena.shows.model.ShowSet;
 import com.scaena.shows.model.event.PlayerEvents.*;
 import com.scaena.shows.model.event.ShowEvent;
@@ -94,12 +95,23 @@ public final class PlayerEventExecutor implements EventExecutor {
     // PLAYER_SPECTATE
     // Temporarily switches players to SPECTATOR so setSpectatorTarget() works.
     // Records prior gamemode for restoration on show end or PLAYER_SPECTATE_END.
+    //
+    // Phase 2 spawn: mode — spawns the camera entity at anchor+offset, makes it
+    // invisible, registers it in the show's spawned entity map, then attaches spectate.
     // ------------------------------------------------------------------
     private void handleSpectate(PlayerSpectateEvent e, RunningShow show) {
-        Entity target = show.getSpawnedEntity(
-            e.entity.startsWith("entity:spawned:") ? e.entity.substring(15) : e.entity);
+        Entity target;
+        if (e.spawnMode) {
+            target = spawnDroneEntity(e.spawnName, e.spawnType,
+                e.spawnOffX, e.spawnOffY, e.spawnOffZ, true, show);
+        } else {
+            String name = e.entity.startsWith("entity:spawned:") ? e.entity.substring(15) : e.entity;
+            target = show.getSpawnedEntity(name);
+        }
+
         if (target == null) {
-            log.warning("[ScaenaShows] PLAYER_SPECTATE: entity not found: " + e.entity);
+            log.warning("[ScaenaShows] PLAYER_SPECTATE: entity not found/spawned: "
+                + (e.spawnMode ? e.spawnName : e.entity));
             return;
         }
 
@@ -113,28 +125,101 @@ public final class PlayerEventExecutor implements EventExecutor {
 
     // ------------------------------------------------------------------
     // PLAYER_SPECTATE_END
+    //
+    // Phase 2 destination field: restore | mark:Name | entity:spawned:Name
     // ------------------------------------------------------------------
     private void handleSpectateEnd(PlayerSpectateEndEvent e, RunningShow show) {
+        Location anchor = show.getAnchorLocation();
+
         for (Player p : AudienceResolver.resolve(e.audience, show)) {
             p.setSpectatorTarget(null);
             GameMode prior = show.getSpectateRestoreMap().remove(p.getUniqueId());
             p.setGameMode(prior != null ? prior : GameMode.SURVIVAL);
+
+            String dest = e.destination;
+            if (dest != null && !dest.isEmpty() && !"restore".equalsIgnoreCase(dest)) {
+                Location teleportTo = null;
+                if (dest.startsWith("mark:") && anchor != null) {
+                    String markName = dest.substring(5);
+                    com.scaena.shows.model.Mark mark = show.show.marks.get(markName);
+                    if (mark != null) {
+                        teleportTo = new Location(anchor.getWorld(),
+                            anchor.getX() + mark.x(),
+                            anchor.getY() + mark.y(),
+                            anchor.getZ() + mark.z());
+                    }
+                } else if (dest.startsWith("entity:spawned:")) {
+                    Entity droneLoc = show.getSpawnedEntity(dest.substring(15));
+                    if (droneLoc != null) teleportTo = droneLoc.getLocation().clone();
+                }
+                if (teleportTo != null) p.teleport(teleportTo);
+            }
+            // destination == "restore" or empty: player body already restored by gamemode switch
         }
     }
 
     // ------------------------------------------------------------------
     // PLAYER_MOUNT
+    //
+    // Phase 2 spawn: mode — spawns a rideable entity and mounts the player on it.
     // ------------------------------------------------------------------
     private void handleMount(PlayerMountEvent e, RunningShow show) {
-        Entity mountEntity = show.getSpawnedEntity(
-            e.entity.startsWith("entity:spawned:") ? e.entity.substring(15) : e.entity);
+        Entity mountEntity;
+        if (e.spawnMode) {
+            mountEntity = spawnDroneEntity(e.spawnName, e.spawnType,
+                e.spawnOffX, e.spawnOffY, e.spawnOffZ, e.spawnInvisible, show);
+        } else {
+            String name = e.entity.startsWith("entity:spawned:") ? e.entity.substring(15) : e.entity;
+            mountEntity = show.getSpawnedEntity(name);
+        }
+
         if (mountEntity == null) {
-            log.warning("[ScaenaShows] PLAYER_MOUNT: entity not found: " + e.entity);
+            log.warning("[ScaenaShows] PLAYER_MOUNT: entity not found/spawned: "
+                + (e.spawnMode ? e.spawnName : e.entity));
             return;
         }
         for (Player p : AudienceResolver.resolve(e.audience, show)) {
             mountEntity.addPassenger(p);
         }
+    }
+
+    /**
+     * Spawn an entity for Phase 2 PLAYER_SPECTATE or PLAYER_MOUNT spawn: mode.
+     * The entity is placed at anchor + offset, optionally made invisible, and
+     * registered in the show's spawned entity map.
+     *
+     * @param name      name to register under (entity:spawned:Name key)
+     * @param typeName  EntityType name (e.g. "ARMOR_STAND")
+     * @param invisible if true, make the entity invisible via metadata
+     */
+    private Entity spawnDroneEntity(String name, String typeName,
+                                     double offX, double offY, double offZ,
+                                     boolean invisible, RunningShow show) {
+        Location anchor = show.getAnchorLocation();
+        if (anchor == null) {
+            log.warning("[ScaenaShows] spawn: mode — no anchor location available");
+            return null;
+        }
+
+        org.bukkit.entity.EntityType entityType;
+        try {
+            entityType = org.bukkit.entity.EntityType.valueOf(typeName.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            log.warning("[ScaenaShows] spawn: mode — unknown EntityType: " + typeName);
+            return null;
+        }
+
+        Location spawnLoc = anchor.clone().add(offX, offY, offZ);
+        Entity entity = spawnLoc.getWorld().spawnEntity(spawnLoc, entityType);
+
+        if (invisible) {
+            entity.setInvisible(true);
+        }
+
+        if (!name.isEmpty()) {
+            show.registerSpawnedEntity(name, entity);
+        }
+        return entity;
     }
 
     // ------------------------------------------------------------------

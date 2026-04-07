@@ -38,10 +38,12 @@ public final class ExecutorRegistry {
         StageEventExecutor stage     = new StageEventExecutor(plugin);
         PlayerEventExecutor player   = new PlayerEventExecutor(plugin);
         UtilityEventExecutor utility = new UtilityEventExecutor(log);
+        CameraStateEventExecutor cameraState = new CameraStateEventExecutor(plugin);
 
-        // Break construction-time circularity: TeamEventExecutor needs ExecutorRegistry to dispatch
-        // GROUP_EVENT sub-cue events. Set it via setter after this registry is constructed.
+        // Break construction-time circularity: TeamEventExecutor and CameraStateEventExecutor
+        // need ExecutorRegistry to dispatch sub-events. Set via setter after construction.
         team.setExecutorRegistry(this);
+        cameraState.setExecutorRegistry(this);
 
         // §6.1 Text and Display
         executors.put(EventType.MESSAGE,         text);
@@ -121,6 +123,12 @@ public final class ExecutorRegistry {
         executors.put(EventType.REST,    utility);
         executors.put(EventType.COMMAND, utility);
         executors.put(EventType.CUE,     utility);
+
+        // §6.10.5 Camera State (OPS-029 Camera)
+        executors.put(EventType.CAMERA_LOCK,    cameraState);
+        executors.put(EventType.MOVEMENT_LOCK,  cameraState);
+        executors.put(EventType.BOUNDARY_CHECK, cameraState);
+        executors.put(EventType.VIEW_CHECK,     cameraState);
 
         // §6.12 Tech Rehearsal
         executors.put(EventType.PAUSE,   utility);   // OPS-029: no-op executor
