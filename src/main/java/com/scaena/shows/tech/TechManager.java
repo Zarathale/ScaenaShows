@@ -199,7 +199,7 @@ public final class TechManager {
         }
 
         // Send panel
-        TechPanelBuilder.send(player, session);
+        TechPanelBuilder.send(player, session, hasCueSession(player));
 
         log.info("[Tech] " + player.getName() + " entered tech mode for " + showId
             + (targetScene != null ? " @ " + targetScene : ""));
@@ -336,7 +336,7 @@ public final class TechManager {
 
         // Update displays
         TechSidebarDisplay.show(player, session);
-        TechPanelBuilder.send(player, session);
+        TechPanelBuilder.send(player, session, hasCueSession(player));
 
         log.info("[Tech] " + player.getName() + " loaded scene " + sceneId
             + " for " + session.showId());
@@ -396,7 +396,7 @@ public final class TechManager {
         }
 
         TechSidebarDisplay.show(player, session);
-        TechPanelBuilder.send(player, session);
+        TechPanelBuilder.send(player, session, hasCueSession(player));
     }
 
     // -----------------------------------------------------------------------
@@ -407,7 +407,7 @@ public final class TechManager {
         TechSession session = sessions.get(player.getUniqueId());
         if (session == null) return;
         session.enterCaptureMode(markName);
-        TechPanelBuilder.send(player, session);
+        TechPanelBuilder.send(player, session, hasCueSession(player));
         // Actionbar task picks up captureMode flag and shows live coords
     }
 
@@ -415,7 +415,7 @@ public final class TechManager {
         TechSession session = sessions.get(player.getUniqueId());
         if (session == null) return;
         session.exitCaptureMode();
-        TechPanelBuilder.send(player, session);
+        TechPanelBuilder.send(player, session, hasCueSession(player));
     }
 
     /** Called when player right-clicks slot 8 (capture slot) in capture mode. */
@@ -452,7 +452,7 @@ public final class TechManager {
             markName, loc.getX(), loc.getY(), loc.getZ());
         flashConfirm(session, msg);
 
-        TechPanelBuilder.send(player, session);
+        TechPanelBuilder.send(player, session, hasCueSession(player));
         TechSidebarDisplay.show(player, session);
     }
 
