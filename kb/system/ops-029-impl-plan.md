@@ -1,7 +1,7 @@
 ---
 document: OPS-029 Phase 2 Implementation Plan
 date: 2026-04-07
-status: Active — Groups 0–4 committed, all Group 5 departments committed. Set shipped at v2.43.0 (PR #14). All 10 dept sessions complete. Next: OPS-033 Part B or post-Phase-2 work.
+status: Complete — all groups shipped. Retained as architectural reference. Active work tracked in ops-inbox.md.
 scope: TechCueSession, ShowYamlEditor, and related work sequenced from ops-inbox
 ---
 

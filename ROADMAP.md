@@ -80,22 +80,45 @@ These are fundamentally different activities and should be treated as such:
 
 ---
 
-## The Composition Surface *(what gets built next)*
+## The Composition Surface
 
-The engine is complete. The production team is in place. The next build horizon is the in-game composition surface — the UX layer that makes real-time directing possible.
+The engine is complete. The production team is in place. The in-game composition surface exists — Phase 2 shipped the Timeline Editor (TechCueSession), the department edit sessions, the Prompt Book, and the full panel infrastructure. The bones are built.
 
 Three components, in dependency order:
 
-**1. Scaffold Generator**
-Input: Prompt Book. Output: minimal valid show YAML with scene structure and timing stubs. Zero creativity — purely deterministic. Regenerable until the timeline has content.
+**1. Scaffold Generator** *(OPS-030 — next up)*
+Input: Prompt Book. Output: minimal valid show YAML with scene structure and timing stubs. Zero creativity — purely deterministic. Regenerable until the timeline has content. Currently handled by Claude manually; this closes that gap.
 
-**2. Timeline Editor** *(this is the real product)*
-Inside Minecraft: insert cue, move cue, adjust timing, preview, repeat. This is where the creative loop lives. The UX goal is zero friction between "I want to try this" and "let me see what it does."
+**2. Timeline Editor** *(shipped — v2.x / Phase 2)*
+TechCueSession, ShowYamlEditor, CuePanelBuilder, and all 10 department edit sessions. The creative loop is possible. The UX needs alignment work — see v3.0 below.
 
-**3. Cue Library Browser**
+**3. Cue Library Browser** *(future)*
 Categorized, eventually searchable, eventually previewable. Replaces YAML entirely for most authoring decisions. The director browses, picks, and places — no schema knowledge required.
 
-Phase 2 is not "refinement." It is the composition surface. Creation happens here.
+---
+
+## Version Milestones
+
+### v3.0 — Panel UX Alignment *(current)*
+
+The composition surface works. The UX is inconsistent. Panels were built department by department and each inherited its own conventions. v3.0 is the alignment pass: establish a shared panel grammar across the entire app, then apply it panel by panel until the experience is coherent enough to direct from.
+
+**Two layers of work:**
+
+**Layer 1 — Cross-cutting decisions (make once, apply everywhere)**
+How tick values are displayed. How multi-choice selectors look. How text input works. How increment/decrement is expressed. What required vs. optional fields look like. Field ordering conventions. How much help text is appropriate and where it lives. Field label language. Once settled, these become the house standard for all panels.
+
+**Layer 2 — Per-panel review**
+Go panel by panel against the Layer 1 standard. Fix ordering, labeling, navigation, and gaps. Each panel review may produce immediate fixes, new OPS items, or additions to the future list.
+
+**Panel priority order:**
+Voice → Casting → Choreography → Camera → remaining departments
+
+**Target:** all priority panels through both layers. Then v4.0.
+
+### v4.0 — Directed *(target)*
+
+All panels through Layer 1 and Layer 2. The experience is coherent. Alan can direct a show from inside the game without friction. This is the milestone that unlocks serious Watch Rounds and iterative show development at the pace the tool was designed for.
 
 ---
 

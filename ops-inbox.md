@@ -569,120 +569,15 @@ This ticket's scope is therefore split:
 
 ---
 
-### OPS-034 [java-gap] Player-anchored LIGHTNING executor — resolve target position at fire time
-
-**Area:** Execution engine (`VisualEventExecutor.handleLightning()`)
-**Filed:** 2026-04-05
-**Priority:** Low — not blocking Phase 2 (scene-origin anchoring ships first); needed before player-anchored LIGHTNING presets can be used in production
-
-**Problem:**
-The current spatial anchor model locks the anchor at show invocation time (`Static mode: Anchor locked at invocation time`). LIGHTNING events currently resolve their offset from that single invocation-time anchor. This means a LIGHTNING strike cannot target a position relative to where the player is standing *when the event fires* — only relative to where they were when `/show play` was called.
-
-**Desired capability:**
-LIGHTNING events (and presets) should support a dual-anchor model:
-
-| Anchor type | Behavior |
-|---|---|
-| `scene_origin` | Current behavior — offset from scene origin mark, locked at invocation time |
-| `player` | New — offset resolved from the player's actual position at event-fire time |
-
-**Use case:**
-A `lightning.player.surprise_close` preset — `{anchor: player, x: 1, y: 0, z: 1}` — fires a cosmetic strike just in front of the player regardless of their current position. This is a repeatable, named pattern with legitimate show value.
-
-**Design note:**
-`anchor: player` requires the executor to call `player.getLocation()` at the moment the event fires (not at `RunningShow` init). This is a targeted change to `VisualEventExecutor.handleLightning()` only — no changes to `ShowScheduler`, `RunningShow`, or the spatial anchor model for other event types. The dual-anchor flag should be carried in the `LightningEvent` model.
-
-**YAML field (proposed):**
-```yaml
-type: LIGHTNING
-anchor: player   # scene_origin | player — default: scene_origin
-offset:
-  x: 1
-  y: 0
-  z: 1
-```
-
-**Preset field format (proposed):**
-```yaml
-id: lighting.lightning.player.surprise_close
-anchor: player
-offset: {x: 1, y: 0, z: 1}
-```
-
-**Dependency:** Phase 2 preset library file structure (OPS-029 §14 open item) — `lighting-configs.yml` is where these presets will live.
+### OPS-034 ~~[java-gap]~~ → **RESOLVED in 2.44.0** — see Resolved section below
 
 ---
 
-### OPS-035 [java-gap] FIREWORK_RANDOM: y_variation field — randomized Y height per rocket
-
-**Area:** Execution engine (`FireworkEventExecutor.handleRandom()`)
-**Filed:** 2026-04-05
-**Priority:** Low — not blocking Phase 2 panel; needed before y_variation YAML authors correctly in production
-
-**Problem:**
-`FIREWORK_RANDOM` currently launches all rockets at a uniform Y offset (`y_offset` field).
-There is no way to vary burst altitude within a scatter — all rockets in a scatter spawn
-at the same height, producing a flat plane of bursts even when `y_mode: surface` would
-otherwise suggest terrain variation.
-
-**Desired capability:**
-Add `y_variation` field to `FIREWORK_RANDOM`. Each rocket's Y position is randomized
-between `y_offset` (floor) and `y_offset + y_variation` (ceiling). Absent or zero
-`y_variation` preserves current flat behavior exactly.
-
-**YAML field (proposed):**
-```yaml
-type: FIREWORK_RANDOM
-y_offset: 2
-y_variation: 4     # each rocket spawns between Y+2 and Y+6 — textured scatter
-```
-
-**Implementation note:**
-In `handleRandom()`, per-rocket Y is currently `anchorY + y_offset`. With this change:
-`anchorY + y_offset + random.nextDouble() * y_variation`. Seeded random should be used
-if `seed` is set, for reproducibility.
+### OPS-035 ~~[java-gap]~~ → **RESOLVED in 2.44.0** — see Resolved section below
 
 ---
 
-### OPS-036 [java-gap] FIREWORK_RANDOM: preset pool — draw from multiple presets per rocket
-
-**Area:** Execution engine (`FireworkEventExecutor.handleRandom()`), YAML model (`FireworkRandomEvent`)
-**Filed:** 2026-04-05
-**Priority:** Low — not blocking Phase 2 panel; needed before preset pool YAML executes correctly
-
-**Problem:**
-`FIREWORK_RANDOM` currently accepts a single `preset` ID. Every rocket in the scatter
-uses the same rocket appearance. There is no way to produce a multi-color scatter from
-a named set of presets — the author must either use `color_variation` (which overrides
-preset colors) or manually stack multiple pattern events.
-
-**Desired capability:**
-Add `presets` (list) field to `FIREWORK_RANDOM` as a pool mode. When `presets:` is
-present, each rocket draws one preset at random from the list. `preset` (single) and
-`presets` (pool) are mutually exclusive; `presets` wins if both are present.
-
-`color_variation` stacks on top of the pool draw — color_variation applies per-rocket
-after the preset is selected, overriding that preset's primary colors per normal
-color_variation rules.
-
-**YAML field (proposed):**
-```yaml
-# pool mode — each of 12 rockets draws one preset at random
-type: FIREWORK_RANDOM
-count: 12
-radius: 6
-presets:
-  - scae_star_warm
-  - bday_confetti_ball
-  - pride_burst_rainbow
-color_variation: RAINBOW    # stacks — overrides primary colors after pool draw
-```
-
-**Implementation note:**
-`FireworkRandomEvent` needs a `List<String> presets` field alongside the existing
-`String preset`. In `handleRandom()`, per-rocket preset selection: if `presets` is
-non-empty, draw `presets.get(random.nextInt(presets.size()))`. Seeded random used if
-`seed` set, for reproducibility.
+### OPS-036 ~~[java-gap]~~ → **RESOLVED in 2.44.0** — see Resolved section below
 
 ---
 
@@ -787,47 +682,7 @@ infrastructure and it's worth coordinating the implementation.
 
 ---
 
-### OPS-043 [java-gap] BOSSBAR progress control — start_progress, end_progress, static mode
-
-**Area:** Voice department, TextEventExecutor
-**Filed:** 2026-04-05
-**Priority:** Medium — authoring flexibility; structural bossbar use case blocked
-
-**Problem:**
-The current BOSSBAR executor hardcodes progress to start at `0f` and animate 0→1→0 over
-`duration_ticks`. Three capabilities are missing:
-
-1. **`start_progress`** — start the bar at an arbitrary fill value (e.g., 0.4 = 40% full).
-   Currently hardcoded to `0f` in `BossBar.bossBar(title, 0f, color, overlay)`.
-
-2. **`end_progress`** — end the bar at an arbitrary fill value instead of always emptying to 0.
-   Currently the bar always fades out to empty and hides.
-
-3. **Static / frozen mode** — hold a fixed progress value indefinitely without any fill
-   animation. Primary use case: a persistent structural label at the top of the screen (full
-   bar, no timer feel). Currently impossible — the animation always runs.
-
-**Desired YAML:**
-```yaml
-type: BOSSBAR
-title: "<gold>Preparing for Battle</gold>"
-color: YELLOW
-overlay: PROGRESS
-audience: participants
-duration_ticks: 400
-start_progress: 1.0   # appear fully filled (no fill-in animation needed)
-end_progress: 1.0     # stay fully filled (no empty-out animation)
-fade_in_ticks: 0
-fade_out_ticks: 20
-```
-
-**Java changes needed:**
-- Add `startProgress` and `endProgress` fields to `BossbarEvent` (defaults: 0.0 and 1.0 —
-  preserves current behavior)
-- Update `handleBossbar()` animation logic to interpolate from `startProgress` to `endProgress`
-  during fade-in, hold at `endProgress`, then interpolate `endProgress` → 0 during fade-out
-- Static mode: `start_progress == end_progress` with `fade_in_ticks: 0` and `fade_out_ticks: 0`
-  — bar appears at fixed progress, holds for `duration_ticks`, disappears
+### OPS-043 ~~[java-gap]~~ → **RESOLVED in 2.44.0** — see Resolved section below
 
 ---
 
@@ -942,36 +797,7 @@ participants without requiring an active bossbar.
 
 ---
 
-### OPS-040 [java-gap] ROTATE: add pitch field — smooth tilt to match smooth pan
-
-**Area:** Camera department, StageEventExecutor
-**Filed:** 2026-04-05
-**Priority:** Medium — fills the last first-class camera movement gap
-
-**Problem:**
-`ROTATE` (OPS-005, shipped 2.26.0) handles smooth yaw (pan) cleanly. Pitch (tilt) has no equivalent — the only smooth tilt path is the spectate drone workaround. Camera department needs first-class smooth pitch to match the smooth pan capability already in the engine.
-
-**Desired capability:**
-Extend `ROTATE` to support optional pitch fields alongside the existing yaw fields:
-
-```yaml
-type: ROTATE
-target: player
-delta: -90.0          # pan left 90° (existing)
-delta_pitch: -30.0    # tilt up 30° (new)
-duration_ticks: 40
-```
-
-Both axes interpolate simultaneously over `duration_ticks`. Either axis is optional — yaw-only and pitch-only are both valid. Absolute `pitch:` field alongside the existing absolute `yaw:` field.
-
-**Pitch range:** -90.0 (straight up) to +90.0 (straight down). No wrap-around issue — pitch clamps at extremes.
-
-**Java changes:**
-- `RotateEvent` — add `pitch` (absolute) and `deltaPitch` fields; `isPitchDelta()` helper; mutual exclusivity same as yaw
-- `handleRotate()` — interpolate both axes in the same BukkitRunnable loop when pitch is present
-- No new event type, no new stop-safety work — pitch cleanup follows the same task cancellation already in place
-
-**Note:** `CAMERA_PATTERN` (pan/tilt sweep via discrete PLAYER_TELEPORT steps) was evaluated and rejected — ROTATE + pitch extension covers the same ground with genuinely smooth interpolation.
+### OPS-040 ~~[java-gap]~~ → **RESOLVED in 2.44.0** — see Resolved section below
 
 ---
 
@@ -1033,6 +859,60 @@ Normal mode (mode 4) is the redundancy concern. It shows show ID and scene label
 ---
 
 ## Resolved
+
+---
+
+### OPS-043 [resolved] BOSSBAR progress control — start_progress, end_progress, static mode ✓
+**Resolved:** 2026-04-07 | **Filed:** 2026-04-05 | **Area:** Voice department, TextEventExecutor
+**Version:** 2.44.0
+
+**What shipped:**
+- `BossbarEvent` — added `startProgress` (float, default `0f`), `endProgress` (float, default `0f`), `staticMode` (boolean, default `false`) fields
+- `handleBossbar()` — initializes bar at `startProgress` (was hardcoded `0f`); fade-in animates `startProgress → 1.0`; fade-out animates `1.0 → endProgress` (was always `0→1→0`)
+- `static: true` skips the animation loop entirely and holds the bar at `startProgress` indefinitely; cleaned up on show stop via existing `activeBossBars` infrastructure
+- `EventParser` — reads `start_progress:`, `end_progress:`, `static:` fields
+
+---
+
+### OPS-040 [resolved] ROTATE pitch — smooth tilt to match smooth pan ✓
+**Resolved:** 2026-04-07 | **Filed:** 2026-04-05 | **Area:** Camera department, StageEventExecutor
+**Version:** 2.44.0
+
+**What shipped:**
+- `RotateEvent` — added `pitch` (absolute) and `deltaPitch` (relative) fields; `hasPitchChange()` and `isPitchDelta()` helpers; `pitch` wins if both present (mirrors yaw mutual exclusivity)
+- `handleRotate()` — both instant-snap and smooth-pan paths now interpolate pitch simultaneously with yaw; pitch clamped to `[-90.0, 90.0]` per tick
+- No pitch fields → zero change to existing behavior; no new stop-safety work needed
+
+---
+
+### OPS-034 [resolved] LIGHTNING player anchor — live position at fire time ✓
+**Resolved:** 2026-04-07 | **Filed:** 2026-04-05 | **Area:** Execution engine, VisualEventExecutor
+**Version:** 2.44.0
+
+**What shipped:**
+- `LightningEvent` — added `anchor` field (`scene_origin` default / `player`)
+- `handleLightning()` — `anchor: player` resolves base position from the first online participant's live `getLocation()` at event-fire time (not at `RunningShow` init); offset applied on top; `scene_origin` preserves existing behavior exactly
+- Change is targeted to `handleLightning()` only — no changes to `ShowScheduler`, `RunningShow`, or any other event type's anchor model
+
+---
+
+### OPS-035 [resolved] FIREWORK_RANDOM y_variation — randomized Y height per rocket ✓
+**Resolved:** 2026-04-07 | **Filed:** 2026-04-05 | **Area:** Execution engine, FireworkEventExecutor
+**Version:** 2.44.0
+
+**What shipped:**
+- `FireworkRandomEvent` — added `yVariation` field (double, default `0.0`)
+- `handleRandom()` — per-rocket Y is now `yOffset + rand.nextDouble() * yVariation`; uses seeded RNG if `seed` is set for reproducibility; `yVariation: 0.0` or absent is a strict no-op
+
+---
+
+### OPS-036 [resolved] FIREWORK_RANDOM preset pool — draw from multiple presets per rocket ✓
+**Resolved:** 2026-04-07 | **Filed:** 2026-04-05 | **Area:** Execution engine, FireworkEventExecutor
+**Version:** 2.44.0
+
+**What shipped:**
+- `FireworkRandomEvent` — added `List<String> presets` field; `presets` wins over single `preset` if both present
+- `handleRandom()` — when `presets` is non-empty, each rocket draws a random preset ID from the pool using seeded RNG; `color_variation` and `power_variation` apply per-rocket after the pool draw, same as the single-preset path; empty/absent `presets` falls through to existing behavior unchanged
 
 ---
 
