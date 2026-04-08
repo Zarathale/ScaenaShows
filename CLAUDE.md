@@ -35,7 +35,8 @@ All 12 department KBs are now in folder structure (`kb/departments/[dept-slug]/[
   Group 5: Casting at v2.33.0 (revised v2.35.0), Wardrobe at v2.34.0, Sound at v2.36.0, Voice at v2.37.0, Effects at v2.38.0, Fireworks at v2.39.0 (PR #10), Lighting at v2.40.0, Camera at v2.41.0 (PR #12), Choreography at v2.42.0 (PR #13), Set at v2.43.0 (PR #14).
   `kb/system/ops-029-impl-plan.md` retained as architectural reference (complete). `kb/system/ops-029-design-session-2026-04-05.md` for architecture decisions.
 - **OPS-040/043/034/035/036 executor polish — ✅ Shipped at v2.44.0.** ROTATE pitch, BOSSBAR progress control, LIGHTNING player anchor, FIREWORK_RANDOM y_variation + preset pool.
-  **Next (Java): OPS-033 Part B — Phase 1 display redesign (now unblocked). See impl plan OPS items section.**
+- **v3 UX alignment underway. [Timeline ▸] button — ✅ Shipped at v3.1.0 (PR #16).** Phase 1 panel now bridges to Phase 2 timeline editor.
+  **Next (Java): OPS-033 Part B — Phase 1 display redesign. Then: Phase 1 + Phase 2 deep dive (Voice, one scene).**
   Detailed content in standalone docs:
   - `kb/system/phase2-department-panels.md` — all 10 department panel specs
   - `kb/system/pattern-phrase-spec.md` — PATTERN, PHRASE, Tempo Architecture
@@ -211,7 +212,7 @@ Do not reopen these without Alan.
 
 ## Versioning Policy
 
-**Current version:** `3.0.0`
+**Current version:** `3.1.0`
 **Version file:** `build.gradle.kts` — the `version = "x.y.z"` line
 
 **Alan builds locally. Claude Code never runs the build.** The Claude Code environment is a closed sandbox with no loopback — `gradle`/`gradlew` always fails here. Write the code, bump the version, commit, push. Alan runs the build and confirms. Do not attempt `gradle` or `gradlew` under any circumstances.
