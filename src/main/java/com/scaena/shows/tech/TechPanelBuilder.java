@@ -48,11 +48,11 @@ public final class TechPanelBuilder {
     // -----------------------------------------------------------------------
 
     /** Build and send the main tech panel to the player. */
-    public static void send(Player player, TechSession session) {
-        player.sendMessage(buildPanel(session));
+    public static void send(Player player, TechSession session, boolean phase2Active) {
+        player.sendMessage(buildPanel(session, phase2Active));
     }
 
-    public static Component buildPanel(TechSession session) {
+    public static Component buildPanel(TechSession session, boolean phase2Active) {
         PromptBook book = session.book();
         PromptBook.SceneSpec scene = session.book().findScene(session.currentSceneId());
 
@@ -74,7 +74,7 @@ public final class TechPanelBuilder {
         Component marks = buildMarksRow(session, scene);
 
         // Actions row
-        Component actions = buildActionsRow(session);
+        Component actions = buildActionsRow(session, phase2Active);
 
         return Component.empty()
             .append(sep).append(Component.newline())
@@ -147,8 +147,9 @@ public final class TechPanelBuilder {
     // Actions row
     // -----------------------------------------------------------------------
 
-    private static Component buildActionsRow(TechSession session) {
+    private static Component buildActionsRow(TechSession session, boolean phase2Active) {
         boolean dirty = session.hasUnsavedChanges();
+        String showId = session.book().showId();
 
         Component focusMark = Component.text("[Focus Mark...]", COL_MARK)
             .clickEvent(ClickEvent.runCommand("/scaena tech marklist"))
@@ -157,6 +158,14 @@ public final class TechPanelBuilder {
         Component params = Component.text("[Params]", COL_ACTIVE)
             .clickEvent(ClickEvent.runCommand("/scaena tech params"))
             .hoverEvent(HoverEvent.showText(Component.text("Open parameter panel")));
+
+        Component timeline = phase2Active
+            ? Component.text("[Timeline \u2713]", COL_ACTIVE)
+                .clickEvent(ClickEvent.runCommand("/scaena tech2 panel"))
+                .hoverEvent(HoverEvent.showText(Component.text("Re-send the cue panel")))
+            : Component.text("[Timeline \u25b8]", COL_ACTION)
+                .clickEvent(ClickEvent.runCommand("/scaena tech2 " + showId))
+                .hoverEvent(HoverEvent.showText(Component.text("Open the timeline editor")));
 
         Component save = Component.text("[Save]",
                 dirty ? COL_SAVE : COL_INACTIVE)
@@ -178,6 +187,8 @@ public final class TechPanelBuilder {
         return focusMark
             .append(Component.text("   "))
             .append(params)
+            .append(Component.text("   "))
+            .append(timeline)
             .append(Component.text("   "))
             .append(save)
             .append(Component.text("  "))
